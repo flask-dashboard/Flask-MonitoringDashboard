@@ -1,0 +1,25 @@
+{% extends "layout.html" %}
+{% block content %}
+<h1>Quote of the day</h1>
+<p>Your quote of the day is:</p>
+<p><b><i><center>{{ quote }}</center></i></b></p>
+
+    {% from "_formhelpers.html" import render_field %}
+    <h2>Add a new quote</h2>
+    <form action = "" method = post>
+        {{  form.csrf_token }}
+        <dl>
+        {{ render_field(form.quote) }}
+        </dl>
+        {{ form.submit }}
+    </form>
+
+    <h2>Your quotes</h2>
+    <p>Once you've added a quote, there is no way to delete them ;)</p>
+    <ul>
+        {% for quote in quotes %}
+            <li>{{ quote[2] }}</li>
+        {% endfor %}
+    </ul>
+
+{% endblock %}
