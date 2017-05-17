@@ -1,0 +1,66 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<title>Dashboard for automatic monitoring of python web services</title>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+		<!--[if lte IE 8]><script src="/static-{{ link }}/assets/js/ie/html5shiv.js"></script><![endif]-->
+		<link rel="stylesheet" href="/static-{{ link }}/assets/css/main.css" />
+		<!--[if lte IE 9]><link rel="stylesheet" href="/static-{{ link }}/assets/css/ie9.css" /><![endif]-->
+		<!--[if lte IE 8]><link rel="stylesheet" href="/static-{{ link }}/assets/css/ie8.css" /><![endif]-->
+	</head>
+	<body>
+        <!-- Wrapper -->
+        <div id="wrapper">
+
+            <!-- Main -->
+            <div id="main">
+                <div class="inner">
+
+                    <!-- Banner -->
+                    <section id="banner">
+                        <div class="content">
+                            {% block content %}{% endblock %}
+                        </div>
+                    </section>
+                </div>
+            </div>
+
+            <!-- Sidebar -->
+            <div id="sidebar">
+                <div class="inner">
+
+                    <!-- Menu -->
+                    <nav id="menu">
+                        <header class="major">
+                            <h2>Menu</h2>
+                        </header>
+                        <ul>
+                            <li><a href="/{{ link }}">Homepage</a></li>
+                            <li><a href="/{{ link }}/how-to-install">How to install</a></li>
+                            <li><a href="/{{ link }}/how-to-use">How to use</a></li>
+                            <li><span class="opener">Dashboard</span>
+                                <ul>
+                                    <li><a href="/{{ link }}/rules">Rules</a></li>
+                                    <li><a href="/{{ link }}/measurements">Measurements</a></li>
+                                </ul>
+                            </li>
+                            <li><a href="/{{ link }}/settings">Settings</a></li>
+                            {% if session.get(link + '_logged_in') %}
+                                <li><a href="/{{ link }}/logout">Logout</a></li>
+                            {% endif %}
+                        </ul>
+                    </nav>
+                </div>
+            </div>
+        </div>
+
+        <!-- Scripts -->
+        <script src="/static-{{ link }}/assets/js/jquery.min.js"></script>
+        <script src="/static-{{ link }}/assets/js/skel.min.js"></script>
+        <script src="/static-{{ link }}/assets/js/util.js"></script>
+        <script src="/static-{{ link }}/assets/js/sort.js"></script>
+        <!--[if lte IE 8]><script src="/static-{{ link }}/assets/js/ie/respond.min.js"></script><![endif]-->
+        <script src="/static-{{ link }}/assets/js/main.js"></script>
+	</body>
+</html>

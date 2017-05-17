@@ -1,0 +1,39 @@
+{% extends "default.html" %}
+{% block content %}
+<header>
+    <h1>Dashboard</h1>
+    <p>A dashboard for automatic monitoring of python web services</p>
+</header>
+<h2>All rules</h2>
+
+<form action="" method="post">
+    {{ form.hidden_tag() }}
+    <table id="sortable">
+        <tr>
+            <th onclick="sortTable(0)">Rule</th>
+            <th onclick="sortTable(1)">HTTP Method</th>
+            <th onclick="sortTable(2)">Endpoint</th>
+            <th onclick="sortTable(3)">Last accessed</th>
+            <th>Monitor</th>
+        </tr>
+        {% for rule in rules %}
+            <tr>
+                <td>{{ rule.rule }}</td>
+                <td>{{ ", ".join(rule.methods) }}</td>
+                <td>{{ rule.endpoint }}</td>
+                {% for a in access %}
+                    {% if rule.endpoint == a.endpoint %}
+                        <td>{{ a.last_accessed }}</td>
+                    {% endif %}
+                {% endfor %}
+                <td>
+                    <input id="checkbox-{{rule.endpoint}}" name="checkbox-{{rule.endpoint}}"
+                           type="checkbox" {{'checked' if values[rule.endpoint] }} >
+                    <label for="checkbox-{{rule.endpoint}}">monitor</label>
+                </td>
+            </tr>
+        {% endfor %}
+    </table>
+    {{ form.submit() }}
+</form>
+{% endblock %}
