@@ -1,0 +1,54 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<title>Dashboard for automatic monitoring of python web services</title>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+		<!--[if lte IE 8]><script src="/{{ link }}/static/assets/js/ie/html5shiv.js"></script><![endif]-->
+		<link rel="stylesheet" href="/{{ link }}/static/assets/css/main.css" />
+		<!--[if lte IE 9]><link rel="stylesheet" href="/{{ link }}/static/assets/css/ie9.css" /><![endif]-->
+		<!--[if lte IE 8]><link rel="stylesheet" href="/{{ link }}/static/assets/css/ie8.css" /><![endif]-->
+	</head>
+	<body>
+        <!-- Wrapper -->
+        <div id="wrapper">
+
+            <!-- Main -->
+            <div id="main">
+                <div class="inner">
+                    <div id="page-wrap">
+                        <!-- Banner -->
+                        <section id="banner">
+                            <div class="content">
+                                <header>
+                                    <h1>Login</h1>
+                                    <p>A dashboard for automatic monitoring of python web services</p>
+                                </header>
+
+                                <ul>
+                                    {% for error in form.errors %}
+                                        <li style="color: red;">{{ form.errors[error][0] }}</li>
+                                    {% endfor %}
+                                </ul>
+
+                                <form action="" method="POST">
+                                    {{ form.hidden_tag() }}
+                                    {{ form.name.label }} {{ form.name }} <br />
+                                    {{ form.password.label }} {{ form.password }}<br />
+                                    {{ form.submit }}
+                                </form>
+                            </div>
+                        </section>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Scripts -->
+        <script src="/{{ link }}/static/assets/js/jquery.min.js"></script>
+        <script src="/{{ link }}/static/assets/js/skel.min.js"></script>
+        <script src="/{{ link }}/static/assets/js/util.js"></script>
+        <!--[if lte IE 8]><script src="/{{ link }}/static/assets/js/ie/respond.min.js"></script><![endif]-->
+        <script src="/{{ link }}/static/assets/js/main.js"></script>
+	</body>
+</html>
