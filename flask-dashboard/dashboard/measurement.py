@@ -1,7 +1,11 @@
+"""
+    Contains all functions that are used to track the performance of the flask-application.
+    See init_measurement() for more detailed info.
+"""
 import time
 import datetime
 from functools import wraps
-from dashboard import user_app
+from dashboard import user_app, config
 from dashboard.database.monitor_rules import get_monitor_rules
 from dashboard.database.endpoint import update_last_accessed
 from dashboard.database.function_calls import add_function_call
@@ -16,7 +20,11 @@ def init_measurement():
     for rule in get_monitor_rules():
         user_app.view_functions[rule.endpoint] = track_performance(user_app.view_functions[rule.endpoint])
 
-    for rule in user_app.url_map.iter_rules():
+    # filter dashboard rules
+    rules = user_app.url_map.iter_rules()
+    rules = [r for r in rules if not r.rule.startswith('/' + config.link)
+             and not r.rule.startswith('/static-' + config.link)]
+    for rule in rules:
         user_app.view_functions[rule.endpoint] = track_last_accessed(user_app.view_functions[rule.endpoint])
 
 
@@ -42,8 +50,6 @@ def track_last_accessed(func):
     """ Keep track of the last access time of the endpoints. """
     @wraps(func)
     def wrapper(*args, **kwargs):
-        t = datetime.datetime.now()
-        update_last_accessed(endpoint=func.__name__, value=t)
-        result = func(*args, **kwargs)
-        return result
+        update_last_accessed(endpoint=func.__name__, value=datetime.datetime.now())
+        return func(*args, **kwargs)
     return wrapper

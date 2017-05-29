@@ -1,6 +1,6 @@
-from flask import session, request
+from flask import session, request, render_template
 
-from dashboard import user_app, link, version, env, user_var, database_name
+from dashboard import blueprint, config, user_app
 from dashboard.database.endpoint import get_monitor_rule, update_monitor_rule, get_last_accessed_times
 from dashboard.database.monitor_rules import reset_monitor_endpoints
 from dashboard.database.settings import get_setting, set_setting
@@ -9,9 +9,9 @@ from dashboard.measurement import track_performance
 from dashboard.security import secure
 
 
-@user_app.route('/' + link + '/settings', methods=['GET', 'POST'])
+@blueprint.route('/settings', methods=['GET', 'POST'])
 @secure
-def dashboard_settings():
+def settings():
     form = ChangeSetting()
     form.username.data = get_setting('username', 'admin')
     old_password = get_setting('password', 'admin')
@@ -22,17 +22,16 @@ def dashboard_settings():
         if form.password.data:
             set_setting('password', form.password.data)
 
-    return env.get_template('settings.html').\
-        render(link=link, session=session, version=version, database_name=database_name, user_var=user_var,
-               form=form, old_password=old_password)
+    return render_template('settings.html', link=config.link, session=session, version=config.version,
+                           database_name=config.database_name, group=config.group, form=form, old_password=old_password)
 
 
-@user_app.route('/' + link + '/rules', methods=['GET', 'POST'])
+@blueprint.route('/rules', methods=['GET', 'POST'])
 @secure
-def render_dashboard():
+def rules():
     form = MonitorDashboard()
     values = {}
-    rules = user_app.url_map.iter_rules()
+    all_rules = user_app.url_map.iter_rules()
 
     if request.method == 'POST' and form.validate():
         # Remove the monitor endpoints from the database
@@ -59,5 +58,9 @@ def render_dashboard():
 
     la = get_last_accessed_times()
 
-    return env.get_template('rules.html').\
-        render(rules=rules, access=la, form=form, link=link, session=session, values=values)
+    # filter dashboard rules
+    all_rules = [r for r in all_rules if not r.rule.startswith('/' + config.link)
+                 and not r.rule.startswith('/static-' + config.link)]
+
+    return render_template('rules.html', rules=all_rules, access=la, form=form, link=config.link, session=session,
+                           values=values)

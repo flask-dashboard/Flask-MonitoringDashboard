@@ -1,7 +1,7 @@
 from functools import wraps
-from dashboard import user_app, link
+from dashboard import user_app, config
 from dashboard.database.settings import get_setting
-from flask import session, redirect
+from flask import session, redirect, url_for
 
 
 def secure(func):
@@ -14,11 +14,10 @@ def secure(func):
     """
     @wraps(func)
     def wrapper(*args, **kwargs):
-        if (user_app and user_app.debug) or (
-                    session and session.get(link + '_logged_in')):
+        if user_app.debug or (session and session.get(config.link + '_logged_in')):
             return func(*args, **kwargs)
         else:
-            return redirect('/' + link + '/login')
+            return redirect(url_for('dashboard.login'))
     return wrapper
 
 
@@ -30,9 +29,9 @@ def check_login(name, password):
 
 
 def on_login():
-    session[link + '_logged_in'] = True
+    session[config.link + '_logged_in'] = True
 
 
 def on_logout():
-    session.pop(link + '_logged_in', None)
-    return redirect('/' + link)
+    session.pop(config.link + '_logged_in', None)
+    return redirect(url_for('dashboard.index'))

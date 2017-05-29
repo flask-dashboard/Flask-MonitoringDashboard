@@ -1,87 +1,57 @@
 import pygal
-from collections import Counter
-from flask import session, url_for
+from flask import session, url_for, render_template
 from werkzeug.routing import BuildError
 
-from dashboard import user_app, link, env
+from dashboard import blueprint, config
 from dashboard.database import FunctionCall
 from dashboard.database.endpoint import get_endpoint_column, get_endpoint_results, get_monitor_rule
-from dashboard.database.endpoint import get_all_measurement, get_last_accessed_times, get_line_results
+from dashboard.database.endpoint import get_last_accessed_times, get_line_results
 from dashboard.database.function_calls import get_times
 from dashboard.security import secure
 
 
-@user_app.route('/' + link + '/measurements')
+@blueprint.route('/measurements')
 @secure
-def render_dashboard_results():
+def measurements():
     t = get_times()
     la = get_last_accessed_times()
-    return env.get_template('measurements.html').\
-        render(times=t, access=la, link=link, session=session)
+    return render_template('measurements.html', times=t, access=la, link=config.link, session=session)
 
 
-@user_app.route('/' + link + '/show-graph/<string:endpoint>')
+@blueprint.route('/show-graph/<string:endpoint>')
 @secure
-def dashboard_show_graph(endpoint):
-    # create line diagram
+def show_graph(endpoint):
+
+    # bar chart
     data = get_line_results(endpoint)
-    line_chart = pygal.HorizontalLine(height=100+len(data)*30, show_minor_x_labels=False)
-    line_chart.title = 'Execution time per hour'
-    line_chart.x_labels = []
+    times_chart = pygal.HorizontalBar(height=100+len(data)*30)
+    times_chart.x_labels = []
     list_avg = []
     list_min = []
     list_max = []
     list_count = []
     for d in data:
-        line_chart.x_labels.append(d.newTime)
-        list_avg.append(d.avg)
+        times_chart.x_labels.append(d.newTime)
         list_min.append(d.min)
+        list_avg.append(d.avg)
         list_max.append(d.max)
         list_count.append(d.count)
-    print(line_chart.x_labels)
-    line_chart.add('Maximum', list_max)
-    line_chart.add('Average', list_avg)
-    line_chart.add('Minimum', list_min)
-    line_chart.add('Hits', list_count, secondary=True)
-    chart_data = line_chart.render_data_uri()
+    times_chart.add('Minimum', list_min, formatter=lambda x: '%.2f ms' % x)
+    times_chart.add('Average', list_avg, formatter=lambda x: '%.2f ms' % x)
+    times_chart.add('Maximum', list_max, formatter=lambda x: '%.2f ms' % x)
+    times_data = times_chart.render_data_uri()
 
+    hits_chart = pygal.HorizontalBar(height=100+len(data)*30, show_legend=False)
+    hits_chart.x_labels = []
     for d in data:
-        print(d)
+        hits_chart.x_labels.append(d.newTime)
+    hits_chart.add('Hits', list_count)
+    hits_data = hits_chart.render_data_uri()
 
-    # get measurements from data and create histogram
-    result = get_all_measurement(endpoint)
+    # get measurements from database
     rule = get_monitor_rule(endpoint)
-    execution_times = []
-    for data in result:
-        execution_times.append(round(data.execution_time))
-    hist = Counter(execution_times)
 
-    # Create tuple list
-    tuple_list = []
-    for data in hist:
-        tuple_list.append((hist[data], data, data+1))
-
-    # Create graph
-    graph = pygal.Histogram()
-    graph.title = 'Histogram of execution times'
-    graph.add("Execution time", tuple_list)
-    graph_data = graph.render_data_uri()
-
-    # Fill table with data from db
-    cols = get_endpoint_column(endpoint, FunctionCall.version)
-    rows = get_endpoint_column(endpoint, FunctionCall.group_by)
-    rows2 = get_endpoint_column(endpoint, FunctionCall.ip)
-    table_data = {}
-    table_data2 = {}
-    for c in cols:
-        table_data[c.version] = {}
-        table_data2[c.version] = {}
-
-    for d in get_endpoint_results(endpoint, FunctionCall.group_by):
-        table_data[d.version][d.group_by] = d
-
-    for d in get_endpoint_results(endpoint, FunctionCall.ip):
-        table_data2[d.version][d.ip] = d
+    versions = [str(c.version) for c in get_endpoint_column(endpoint, FunctionCall.version)]
 
     # urls that require additional arguments, like /static/<file> cannot be retrieved.
     # This raises a BuildError
@@ -90,6 +60,43 @@ def dashboard_show_graph(endpoint):
     except BuildError:
         url = None
 
-    return env.get_template('show-graph.html').\
-        render(link=link, session=session, rule=rule, graph_data=graph_data, rows=rows, rows2=rows2, cols=cols,
-               table_data=table_data, table_data2=table_data2, url=url, chart_data=chart_data)
+    # define the rows
+    user_data = {}
+    ip_data = {}
+    for d in [str(c.group_by) for c in get_endpoint_column(endpoint, FunctionCall.group_by)]:
+        user_data[d] = {}
+        for v in versions:
+            user_data[d][v] = 0
+    for d in [str(c.ip) for c in get_endpoint_column(endpoint, FunctionCall.ip)]:
+        ip_data[d] = {}
+        for v in versions:
+            ip_data[d][v] = 0
+
+    # fill the rows with data
+    for d in get_endpoint_results(endpoint, FunctionCall.group_by):
+        user_data[str(d.group_by)][d.version] = d.average
+    for d in get_endpoint_results(endpoint, FunctionCall.ip):
+        ip_data[str(d.ip)][d.version] = d.average
+
+    # dot charts
+    dot_chart_user = pygal.Dot(x_label_rotation=30, show_legend=False, height=200+len(user_data)*40)
+    dot_chart_user.x_labels = versions
+
+    dot_chart_ip = pygal.Dot(x_label_rotation=30, show_legend=False, height=200+len(ip_data)*40)
+    dot_chart_ip.x_labels = versions
+
+    # add rows to the charts
+    for d in [str(c.group_by) for c in get_endpoint_column(endpoint, FunctionCall.group_by)]:
+        data = []
+        for v in versions:
+            data.append(user_data[d][v])
+        dot_chart_user.add(d, data, formatter=lambda x: '%.2f ms' % x)
+    for d in [str(c.ip) for c in get_endpoint_column(endpoint, FunctionCall.ip)]:
+        data = []
+        for v in versions:
+            data.append(ip_data[d][v])
+        dot_chart_ip.add(d, data, formatter=lambda x: '%.2f ms' % x)
+
+    return render_template('show-graph.html', link=config.link, session=session, rule=rule, url=url,
+                           times_data=times_data, hits_data=hits_data, dot_chart_user=dot_chart_user.render_data_uri(),
+                           dot_chart_ip=dot_chart_ip.render_data_uri())

@@ -18,7 +18,7 @@ class Login(FlaskForm):
 
 
 class ChangeSetting(FlaskForm):
-    """ Used for changing the username of password that is required to login on the dashboard. """
+    """ Used for changing the username or password that is required to login on the dashboard. """
     username = StringField('Username', [validators.required()])
     password = PasswordField('New password', [validators.equal_to(fieldname='confirm')])
     confirm = PasswordField('Confirm password')

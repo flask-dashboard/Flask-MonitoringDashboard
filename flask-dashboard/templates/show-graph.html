@@ -9,61 +9,31 @@
 <table>
     <tr><td><b>Endpoint</b></td><td>{{ rule.endpoint }}</td></tr>
     <tr><td><b>Added since version: </b></td><td>{{ rule.version_added }}</td></tr>
-    <tr><td><b>Date added: </b></td><td>{{ rule.time_added }}</td></tr>
+    <tr><td><b>Date added: </b></td><td>{{ "{:%Y-%m-%d %H:%M:%S }".format(rule.time_added) }}</td></tr>
     {% if url %}
         <tr><td><b>Url: </b></td><td><a href="{{ url }}">{{ url }}</a></td></tr>
     {%  endif %}
-    <tr><td><b>Last accessed: </b></td><td>{{ rule.last_accessed }}</td></tr>
+    <tr><td><b>Last accessed: </b></td><td>{{ "{:%Y-%m-%d %H:%M:%S }".format(rule.last_accessed) }}</td></tr>
 </table>
     <br />
 
-<h2>Histogram</h2>
+<h2>Execution time (in ms) per hour</h2>
 <div class="container" align="left">
-    <embed type="image/svg+xml" src={{graph_data|safe}} style='max-width:1000px'></embed>
+    <embed type="image/svg+xml" src={{times_data|safe}} style='max-width:1000px'></embed>
 </div> <br/>
 
-<h2>Line graph</h2>
+<h2>Number of hits per hour</h2>
 <div class="container" align="left">
-    <embed type="image/svg+xml" src={{chart_data|safe}} style='max-width:1000px'></embed>
+    <embed type="image/svg+xml" src={{hits_data|safe}} style='max-width:1000px'></embed>
 </div> <br/>
 
-<h2>Table with measurements</h2>
-<h3>Users</h3>
-<table>
-    <tr>
-        <th>User</th>
-        {% for col in cols %}
-            <th>Version {{ col.version }}</th>
-        {% endfor %}
-    </tr>
-    {% for row in rows %}
-        <tr>
-            <td>{{ row.group_by }}</td>
-            {% for col in cols %}
-                {% set entry = table_data[col.version][row.group_by] %}
-                <td>{{ ((entry.average*10)|round)/10 }} ms ({{ entry.count }} hit{{ 's' if entry.count != 1 }})</td>
-            {% endfor %}
-        </tr>
-    {% endfor %}
-</table>
+<h2>Execution time (in ms) per version per user</h2>
+<div class="container" align="left">
+    <embed type="image/svg+xml" src={{dot_chart_user|safe}} style='max-width:1000px'></embed>
+</div> <br/>
 
-
-<h3>IP address</h3>
-<table>
-    <tr>
-        <th>IP</th>
-        {% for col in cols %}
-            <th>Version {{ col.version }}</th>
-        {% endfor %}
-    </tr>
-    {% for row in rows2 %}
-        <tr>
-            <td>{{ row.ip }}</td>
-            {% for col in cols %}
-                {% set entry = table_data2[col.version][row.ip] %}
-                <td>{{ ((entry.average*10)|round)/10 }} ms ({{ entry.count }} hit{{ 's' if entry.count != 1 }})</td>
-            {% endfor %}
-        </tr>
-    {% endfor %}
-</table>
+<h2>Execution time (in ms) per version per ip</h2>
+<div class="container" align="left">
+    <embed type="image/svg+xml" src={{dot_chart_ip|safe}} style='max-width:1000px'></embed>
+</div> <br/>
 {% endblock %}

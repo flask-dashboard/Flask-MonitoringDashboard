@@ -1,13 +1,16 @@
 from flask import Flask, redirect, url_for
 import dashboard
+import os
 
 user_app = Flask(__name__)
-dashboard.config(app=user_app)
+here = os.path.abspath(os.path.dirname(__file__))
+dashboard.config.from_file(here + '/config.cfg')
+dashboard.bind(app=user_app)
 
 
 @user_app.route('/')
 def main():
-    return redirect(url_for('dashboard_index'))
+    return redirect(url_for('dashboard.index'))
 
 
 if __name__ == '__main__':

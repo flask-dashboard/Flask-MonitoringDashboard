@@ -4,7 +4,8 @@ Contains all functions that access a single endpoint
 from sqlalchemy import func, text
 from sqlalchemy.orm.exc import NoResultFound
 import datetime
-from dashboard import version
+
+from dashboard import config
 from dashboard.database import session_scope, FunctionCall, MonitorRule
 
 
@@ -28,7 +29,7 @@ def get_endpoint_column(endpoint, column):
     with session_scope() as db_session:
         result = db_session.query(column). \
             filter(FunctionCall.endpoint == endpoint). \
-            group_by(column).order_by(column).all()
+            group_by(column).all()
         db_session.expunge_all()
         return result
 
@@ -59,7 +60,8 @@ def get_monitor_rule(endpoint):
             return result
     except NoResultFound:
         with session_scope() as db_session:
-            db_session.add(MonitorRule(endpoint=endpoint, version_added=version, time_added=datetime.datetime.now()))
+            db_session.add(MonitorRule(endpoint=endpoint, version_added=config.version, time_added=datetime.datetime.now()))
+
         # return new added row
         return get_monitor_rule(endpoint)
 

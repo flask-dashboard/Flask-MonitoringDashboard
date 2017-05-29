@@ -4068,3 +4068,8 @@
     width: 800px;
     margin: 0 auto;
 }
+
+.clickable {
+	cursor: pointer;
+	cursor: hand;
+}

@@ -1,11 +1,12 @@
 """
-Creates the database and serves an easy way of safely using them (see: session_scope() )
+    Creates the database. 
+    For information about how to access the database via a session-variable, see: session_scope() 
 """
 
 from sqlalchemy import Column, Integer, String, DateTime, create_engine, Float, Boolean
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.ext.declarative import declarative_base
-from dashboard import database_name
+from dashboard import config
 from contextlib import contextmanager
 
 Base = declarative_base()
@@ -51,7 +52,7 @@ class Setting(Base):
     value = Column(String(100))
 
 # define the database
-engine = create_engine('sqlite:///' + database_name)
+engine = create_engine(config.database_name)
 
 # creates all tables in the database
 Base.metadata.create_all(engine)

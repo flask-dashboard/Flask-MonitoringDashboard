@@ -9,9 +9,10 @@ Installation
 ============
 To install from source, download the source code, then run this:
 
-    python3 setup.py install
+    python setup.py install
 
-If you don't have permission, than run with sudo
+If you don't have permission, than consider using a virtual environment.
+For more info about virtualenvs, see this link: http://python-guide-pt-br.readthedocs.io/en/latest/dev/virtualenvs/
     
 Setup
 =====
@@ -21,7 +22,7 @@ Adding the extension is simple:
     import dashboard
 
     app = Flask(__name__)
-    dashboard.config(app)
+    dashboard.bind(app)
     
 Usage
 =====

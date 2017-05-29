@@ -4,8 +4,8 @@ Contains all functions that access any functionCall-object
 
 from flask import session, request
 from sqlalchemy import func, desc
+from dashboard import config
 import datetime
-from dashboard import group, version
 from dashboard.database import session_scope, FunctionCall
 
 
@@ -13,10 +13,10 @@ def add_function_call(time, endpoint):
     """ Add a measurement to the database. """
     with session_scope() as db_session:
         group_by = None
-        if group:
-            group_by = session.get(group)
+        if config.group:
+            group_by = session.get(config.group)
         ip = request.environ['REMOTE_ADDR']
-        call = FunctionCall(endpoint=endpoint, execution_time=time, version=version,
+        call = FunctionCall(endpoint=endpoint, execution_time=time, version=config.version,
                             time=datetime.datetime.now(), group_by=str(group_by), ip=ip)
         db_session.add(call)
 
