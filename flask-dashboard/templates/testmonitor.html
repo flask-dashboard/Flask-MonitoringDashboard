@@ -1,0 +1,35 @@
+{% extends "default.html" %}
+{% block content %}
+<header>
+    <h1>Dashboard</h1>
+    <p>A dashboard for automatic monitoring of python web services</p>
+</header>
+<h2>All tests</h2>
+
+<form action="" method="post">
+    {{ form.hidden_tag() }}
+    <table id="sortable">
+        <tr>
+            <th class="clickable" onclick="sortTable(0)">Name:  <i>functionName (fileName.className)</i></th>
+            <th class="clickable" onclick="sortTable(1)">Run .. times</th>
+            <th class="clickable" onclick="sortTable(2)">Average execution time</th>
+            <th class="clickable" onclick="sortTable(3)">Last run</th>
+            <th>Run</th>
+        </tr>
+        {% for test in tests %}
+            <tr>
+                <td>{{ test.name }}</td>
+                <td>{{ test.timesRun }}</td>
+                <td>not implemented yet</td>
+                <td>{{ "{:%Y-%m-%d %H:%M:%S }".format(test.lastRun) if test.lastRun != None else "Never"}}</td>
+                <td>
+                    <input id="checkbox-{{test.name}}" name="checkbox-{{test.name}}"
+                           type="checkbox" {{'checked' if test.run }} >
+                    <label for="checkbox-{{test.name}}"></label>
+                </td>
+            </tr>
+        {% endfor %}
+    </table>
+    {{ form.submit() }}
+</form>
+{% endblock %}

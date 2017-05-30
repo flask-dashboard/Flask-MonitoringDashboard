@@ -15,6 +15,7 @@ class Config(object):
         self.version = '1.0'
         self.link = 'dashboard'
         self.database_name = 'sqlite:///flask-dashboard.db'
+        self.test_dir = './'
         self.group = None
 
     def from_file(self, config_file):
@@ -47,19 +48,19 @@ class Config(object):
                 self.link = parser.get('dashboard', 'CUSTOM_LINK')
             if parser.has_option('dashboard', 'DATABASE'):
                 self.database_name = parser.get('dashboard', 'DATABASE')
+            if parser.has_option('dashboard', 'TEST_DIR'):
+                self.test_dir = parser.get('dashboard', 'TEST_DIR')
             if parser.has_option('dashboard', 'GROUP_BY'):
                 self.group = parser.get('dashboard', 'GROUP_BY')
             # When the option git is selected, it overrides the given version
             if parser.has_option('dashboard', 'GIT'):
                 git = parser.get('dashboard', 'GIT')
                 try:
-                    # location to git-folder
-                    directory = str(config_file.rsplit('/', 1)[0]) + git
                     # current hash can be found in the link in HEAD-file in git-folder
                     # The file is specified by: 'ref: <location>'
-                    git_file = (open(os.path.join(directory, 'HEAD')).read().rsplit(': ', 1)[1]).rstrip()
+                    git_file = (open(os.path.join(git, 'HEAD')).read().rsplit(': ', 1)[1]).rstrip()
                     # read the git-version
-                    self.version = open(directory + '/' + git_file).read()
+                    self.version = open(git + '/' + git_file).read()
                 except IOError:
                     print("Error reading one of the files to retrieve the current git-version.")
                     raise

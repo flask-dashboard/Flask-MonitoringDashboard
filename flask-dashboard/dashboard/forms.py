@@ -11,7 +11,7 @@ class MonitorDashboard(FlaskForm):
 
 
 class Login(FlaskForm):
-    """ Used for serving a login form on /{{ link}}/login. """
+    """ Used for serving a login form on /{{ link }}/login. """
     name = StringField('Username', [validators.required()])
     password = PasswordField('Password', [validators.required()])
     submit = SubmitField('Login')
@@ -23,3 +23,8 @@ class ChangeSetting(FlaskForm):
     password = PasswordField('New password', [validators.equal_to(fieldname='confirm')])
     confirm = PasswordField('Confirm password')
     submit = SubmitField('Update changes')
+
+
+class RunTests(FlaskForm):
+    """ Used for serving a login form on /{{ link }}/testmonitor. """
+    submit = SubmitField('Run selected tests')

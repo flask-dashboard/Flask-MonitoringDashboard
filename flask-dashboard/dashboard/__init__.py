@@ -15,6 +15,7 @@
 import os
 from flask import Blueprint
 from dashboard.config import Config
+from unittest import TestLoader
 
 config = Config()
 user_app = None
@@ -48,3 +49,16 @@ def bind(app):
 
     # register the blueprint to the app
     app.register_blueprint(blueprint, url_prefix='/' + config.link)
+
+    # search for tests
+    from dashboard.database.tests import add_test, get_tests
+    suites = TestLoader().discover(config.test_dir, pattern="*test*.py")
+    existing_tests = get_tests()
+    tests = []
+    for t in existing_tests:
+        tests.append(t.name)
+    for suite in suites:
+        for case in suite:
+            for test in case:
+                if str(test) not in tests:
+                    add_test(str(test))

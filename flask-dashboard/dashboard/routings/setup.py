@@ -3,10 +3,14 @@ from flask import session, request, render_template
 from dashboard import blueprint, config, user_app
 from dashboard.database.endpoint import get_monitor_rule, update_monitor_rule, get_last_accessed_times
 from dashboard.database.monitor_rules import reset_monitor_endpoints
+from dashboard.database.tests import get_tests, reset_run, update_test, get_test
 from dashboard.database.settings import get_setting, set_setting
-from dashboard.forms import MonitorDashboard, ChangeSetting
+from dashboard.forms import MonitorDashboard, ChangeSetting, RunTests
 from dashboard.measurement import track_performance
 from dashboard.security import secure
+from unittest import TestLoader
+
+import datetime
 
 
 @blueprint.route('/settings', methods=['GET', 'POST'])
@@ -23,7 +27,8 @@ def settings():
             set_setting('password', form.password.data)
 
     return render_template('settings.html', link=config.link, session=session, version=config.version,
-                           database_name=config.database_name, group=config.group, form=form, old_password=old_password)
+                           database_name=config.database_name, group=config.group, form=form,
+                           testDir=config.test_dir, old_password=old_password)
 
 
 @blueprint.route('/rules', methods=['GET', 'POST'])
@@ -65,3 +70,26 @@ def rules():
 
     return render_template('rules.html', rules=all_rules, access=la, form=form, link=config.link, session=session,
                            values=values)
+
+
+@blueprint.route('/testmonitor', methods=['GET', 'POST'])
+@secure
+def testmonitor():
+    form = RunTests()
+    if request.method == 'POST' and form.validate():
+
+        suites = TestLoader().discover(config.test_dir, pattern="*test*.py")
+        for suite in suites:
+            for case in suite:
+                for test in case:
+                    result = None
+                    result = test.run(result)
+                    print(result)
+
+        reset_run()
+        for data in request.form:
+            if data.startswith('checkbox-'):
+                name = data.rsplit('-', 1)[1]
+                update_test(name, True, get_test(name).timesRun + 1, datetime.datetime.now())
+
+    return render_template('testmonitor.html', link=config.link, session=session, form=form, tests=get_tests())

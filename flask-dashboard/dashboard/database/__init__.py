@@ -26,6 +26,32 @@ class MonitorRule(Base):
     last_accessed = Column(DateTime)
 
 
+class Tests(Base):
+    """ Table for storing which tests to run. """
+    __tablename__ = 'tests'
+    # name must be unique and acts as a primary key
+    name = Column(String(250), primary_key=True)
+    # boolean to determine whether the test should be run
+    run = Column(Boolean, default=True)
+    # how many times the test was run
+    timesRun = Column(Integer, default=0)
+    # the timestamp of the last time the test was run
+    lastRun = Column(DateTime)
+
+
+class TestRun(Base):
+    """ Table for storing test results. """
+    __tablename__ = 'testRun'
+    # name of executed test
+    name = Column(String(250), primary_key=True)
+    # execution_time in ms
+    execution_time = Column(Float, primary_key=True)
+    # time of adding the result to the database
+    time = Column(DateTime, primary_key=True)
+    # version of the website at the moment of adding the result to the database
+    version = Column(String(100), nullable=False)
+
+
 class FunctionCall(Base):
     """ Table for storing measurements of function calls. """
     __tablename__ = 'functionCalls'

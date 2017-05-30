@@ -6,25 +6,25 @@
 </header>
 
 <h2>Execution times of endpoints</h2>
-<table id="sortable">
+<table class="sortable">
     <tr>
-        <th class="clickable" onclick="sortTable(0)">Endpoint</th>
-        <th class="clickable" onclick="sortTable(1)">Hits</th>
-        <th class="clickable" onclick="sortTable(2)">Last accessed</th>
-        <th class="clickable" onclick="sortTable(3)">Average execution time</th>
+        <th class="clickable">Endpoint</th>
+        <th class="clickable">Hits</th>
+        <th class="clickable">Last accessed</th>
+        <th class="clickable">Average execution time (in ms)</th>
         <th>Graph</th>
     </tr>
     {% for record in times %}
 
         <tr>
-            <td>{{ record.endpoint }}</td>
+            <td style="max-width: 200px; overflow: hidden; white-space: nowrap; text-overflow: ellipsis;">{{ record.endpoint }}</td>
             <td>{{ record.count }}</td>
             {% for a in access %}
                 {% if record.endpoint == a.endpoint %}
-                    <td>{{ "{:%Y-%m-%d %H:%M:%S }".format(a.last_accessed) }}</td>
+                    <td>{{ "{:%Y-%m-%d %H:%M:%S }".format(a.last_accessed) if a.last_accessed else "Never"  }}</td>
                 {% endif %}
             {% endfor %}
-            <td>{{ ((record.average*10)|round)/10 }} ms</td>
+            <td>{{ ((record.average*10)|round)/10 }}</td>
             <td><a href="{{ url_for('dashboard.show_graph', end=record.endpoint) }}">Show graph</a></td>
         </tr>
     {% endfor %}

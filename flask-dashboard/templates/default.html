@@ -8,6 +8,7 @@
 		<link rel="stylesheet" href="{{ url_for('dashboard.static', filename='assets/css/main.css') }}" />
 		<!--[if lte IE 9]><link rel="stylesheet" href="{{ url_for('dashboard.static', filename='assets/css/ie9.css') }}" /><![endif]-->
 		<!--[if lte IE 8]><link rel="stylesheet" href="{{ url_for('dashboard.static', filename='assets/css/ie8.css') }}" /><![endif]-->
+        <script src="{{ url_for('dashboard.static', filename='assets/js/sort.js') }}"></script>
 	</head>
 	<body>
         <!-- Wrapper -->
@@ -43,6 +44,7 @@
                                 <ul>
                                     <li><a href="{{ url_for('dashboard.rules') }}">Rules</a></li>
                                     <li><a href="{{ url_for('dashboard.measurements') }}">Measurements</a></li>
+                                    <li><a href="{{ url_for('dashboard.testmonitor') }}">Test monitor</a></li>
                                 </ul>
                             </li>
                             <li><a href="{{ url_for('dashboard.settings') }}">Settings</a></li>
@@ -59,7 +61,6 @@
         <script src="{{ url_for('dashboard.static', filename='assets/js/jquery.min.js') }}"></script>
         <script src="{{ url_for('dashboard.static', filename='assets/js/skel.min.js') }}"></script>
         <script src="{{ url_for('dashboard.static', filename='assets/js/util.js') }}"></script>
-        <script src="{{ url_for('dashboard.static', filename='assets/js/sort.js') }}"></script>
         <!--[if lte IE 8]><script src="{{ url_for('dashboard.static', filename='assets/js/ie/respond.min.js') }}"></script><![endif]-->
         <script src="{{ url_for('dashboard.static', filename='assets/js/main.js') }}"></script>
 	</body>
