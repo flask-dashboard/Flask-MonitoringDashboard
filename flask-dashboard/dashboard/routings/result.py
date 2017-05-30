@@ -18,12 +18,12 @@ def measurements():
     return render_template('measurements.html', times=t, access=la, link=config.link, session=session)
 
 
-@blueprint.route('/show-graph/<string:endpoint>')
+@blueprint.route('/show-graph/<end>')
 @secure
-def show_graph(endpoint):
+def show_graph(end):
 
     # bar chart
-    data = get_line_results(endpoint)
+    data = get_line_results(end)
     times_chart = pygal.HorizontalBar(height=100+len(data)*30)
     times_chart.x_labels = []
     list_avg = []
@@ -49,33 +49,33 @@ def show_graph(endpoint):
     hits_data = hits_chart.render_data_uri()
 
     # get measurements from database
-    rule = get_monitor_rule(endpoint)
+    rule = get_monitor_rule(end)
 
-    versions = [str(c.version) for c in get_endpoint_column(endpoint, FunctionCall.version)]
+    versions = [str(c.version) for c in get_endpoint_column(end, FunctionCall.version)]
 
     # urls that require additional arguments, like /static/<file> cannot be retrieved.
     # This raises a BuildError
     try:
-        url = url_for(endpoint)
+        url = url_for(end)
     except BuildError:
         url = None
 
     # define the rows
     user_data = {}
     ip_data = {}
-    for d in [str(c.group_by) for c in get_endpoint_column(endpoint, FunctionCall.group_by)]:
+    for d in [str(c.group_by) for c in get_endpoint_column(end, FunctionCall.group_by)]:
         user_data[d] = {}
         for v in versions:
             user_data[d][v] = 0
-    for d in [str(c.ip) for c in get_endpoint_column(endpoint, FunctionCall.ip)]:
+    for d in [str(c.ip) for c in get_endpoint_column(end, FunctionCall.ip)]:
         ip_data[d] = {}
         for v in versions:
             ip_data[d][v] = 0
 
     # fill the rows with data
-    for d in get_endpoint_results(endpoint, FunctionCall.group_by):
+    for d in get_endpoint_results(end, FunctionCall.group_by):
         user_data[str(d.group_by)][d.version] = d.average
-    for d in get_endpoint_results(endpoint, FunctionCall.ip):
+    for d in get_endpoint_results(end, FunctionCall.ip):
         ip_data[str(d.ip)][d.version] = d.average
 
     # dot charts
@@ -86,12 +86,12 @@ def show_graph(endpoint):
     dot_chart_ip.x_labels = versions
 
     # add rows to the charts
-    for d in [str(c.group_by) for c in get_endpoint_column(endpoint, FunctionCall.group_by)]:
+    for d in [str(c.group_by) for c in get_endpoint_column(end, FunctionCall.group_by)]:
         data = []
         for v in versions:
             data.append(user_data[d][v])
         dot_chart_user.add(d, data, formatter=lambda x: '%.2f ms' % x)
-    for d in [str(c.ip) for c in get_endpoint_column(endpoint, FunctionCall.ip)]:
+    for d in [str(c.ip) for c in get_endpoint_column(end, FunctionCall.ip)]:
         data = []
         for v in versions:
             data.append(ip_data[d][v])

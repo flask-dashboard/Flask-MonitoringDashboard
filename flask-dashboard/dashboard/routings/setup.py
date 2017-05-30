@@ -50,7 +50,8 @@ def rules():
                 update_monitor_rule(endpoint, value=True)
                 rule = get_monitor_rule(endpoint)
                 # Add wrappers to the existing functions
-                user_app.view_functions[rule.endpoint] = track_performance(user_app.view_functions[rule.endpoint])
+                user_app.view_functions[rule.endpoint] = track_performance(user_app.view_functions[rule.endpoint],
+                                                                           rule.endpoint)
 
     # store the result from the database in values (used for rendering)
     for rule in user_app.url_map.iter_rules():

@@ -16,7 +16,6 @@
     </tr>
     {% for record in times %}
 
-
         <tr>
             <td>{{ record.endpoint }}</td>
             <td>{{ record.count }}</td>
@@ -26,7 +25,7 @@
                 {% endif %}
             {% endfor %}
             <td>{{ ((record.average*10)|round)/10 }} ms</td>
-            <td><a href="{{ url_for('dashboard.show_graph', endpoint=record.endpoint) }}">Show graph</a></td>
+            <td><a href="{{ url_for('dashboard.show_graph', end=record.endpoint) }}">Show graph</a></td>
         </tr>
     {% endfor %}
 </table>
