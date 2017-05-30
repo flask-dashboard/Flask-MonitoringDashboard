@@ -1,9 +1,11 @@
-# flask-dashboard
+# Flask Dashboard
 Dashboard for automatic monitoring of python web services
 
 This is a flask extension that can be added to your existing flask application.
 
-It measures which python functions are heavily used and which are not. Moreover, you can see the execution time per endpoint.
+It measures which python functions are heavily used and which are not. 
+You can see the execution time and last access time per endpoint.
+Also, unit tests can be run and monitored.
 
 Installation
 ============
@@ -23,7 +25,7 @@ Adding the extension to your flask app is simple:
     
 Usage
 =====
-Once the setup is done, a config file should be set next to the python file that contains the entry point of the app.
+Once the setup is done, a config file ('config.cfg') should be set next to the python file that contains the entry point of the app.
 The following things should be set for best performance:
 
     [dashboard]
