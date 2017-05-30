@@ -8,11 +8,11 @@
 <h2>Do you need a password?</h2>
 <p>If you run your app with in debug-mode: <b>app.run(debug=True)</b>, then you can directly view your
     dashboard without using a password. However, if you run your app in production-mode: <b>app.run(debug=False)</b>,
-    then you're redirected to a login-page. You can change your password in the <a href="/{{ link }}/settings">settings</a>
+    then you're redirected to a login-page. You can change your password in the <a href="{{ url_for('dashboard.settings') }}">settings</a>
     page.</p>
 
 <h2>More information on the config-function</h2>
-<p>As explained in <a href="/{{ link }}/how-to-use">how-to-use</a>, the only code required for
+<p>As explained in <a href="{{ url_for('dashboard.how_to_install') }}">how-to-install</a>, the only code required for
     configuring this project is the following:</p>
 <pre><code>from flask import Flask
 import dashboard

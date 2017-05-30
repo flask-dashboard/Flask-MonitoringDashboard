@@ -24,5 +24,5 @@ dashboard.bind(app)
 </code></pre>
 
 <h2>Usage</h2>
-<p>Once the setup is done, you can view the dashboard at <a href="/{{ link }}">/{{ link }}</a></p>
+<p>Once the setup is done, you can view the dashboard at <a href="{{ url_for('dashboard.index') }}">{{ url_for('dashboard.index') }}</a></p>
 {% endblock %}
