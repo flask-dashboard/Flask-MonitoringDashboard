@@ -13,15 +13,5 @@ def main():
     return "hello_world"
 
 
-@user_app.route('/page')
-def page():
-    return "hello_world"
-
-
-@user_app.route('/qwertyuiopasdfghjklzxcvbnmqwertyuiopasdfghjklzxcvbnmqwertyuiopasdfghjklzxcvbnm')
-def qwertyuiopasdfghjklzxcvbnmqwertyuiopasdfghjklzxcvbnmqwertyuiopasdfghjklzxcvbnm():
-    return "/qwertyuiopasdfghjklzxcvbnmqwertyuiopasdfghjklzxcvbnmqwertyuiopasdfghjklzxcvbnm"
-
-
 if __name__ == '__main__':
     user_app.run(debug=True, host='0.0.0.0')
