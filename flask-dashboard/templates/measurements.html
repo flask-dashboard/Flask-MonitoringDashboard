@@ -21,7 +21,7 @@
             <td>{{ record.count }}</td>
             {% for a in access %}
                 {% if record.endpoint == a.endpoint %}
-                    <td>{{ "{:%Y-%m-%d %H:%M:%S }".format(a.last_accessed) if a.last_accessed else "Never"  }}</td>
+                    <td>{{ "{:%Y-%m-%d %H:%M:%S }".format(a.last_accessed) if a.last_accessed }}</td>
                 {% endif %}
             {% endfor %}
             <td>{{ ((record.average*10)|round)/10 }}</td>
