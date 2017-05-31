@@ -91,6 +91,9 @@ ENV/
 # config file
 *.cfg
 
+# database file
+*.db
+
 # Spyder project settings
 .spyderproject
 
