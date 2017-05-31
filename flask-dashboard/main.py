@@ -8,15 +8,16 @@ dashboard.config.from_file(here + '/config.cfg')
 
 
 def get_session_id():
-    return "123456"
+    # implement here your own custom function
+    return "12345"
 
-dashboard.config.retrieve_group_by = get_session_id
+dashboard.config.get_group_by = get_session_id
 dashboard.bind(app=user_app)
 
 
 @user_app.route('/')
 def main():
-    return "hello_world"
+    return redirect(url_for('dashboard.index'))
 
 
 if __name__ == '__main__':

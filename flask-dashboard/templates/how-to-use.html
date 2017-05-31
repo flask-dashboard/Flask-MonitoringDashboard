@@ -26,8 +26,15 @@ dashboard.bind(app)
 <pre><code>[dashboard]
 DATABASE=sqlite:///flask-dashboard.db
 CUSTOM_LINK=dashboard
-APP_VERSION=1.0
-GROUP_BY=None</code></pre>
+APP_VERSION=1.0</code></pre>
+<p>Thus, the configuration of the dashboard is: </p>
+<pre><code>from flask import Flask
+import dashboard
+
+app = Flask(__name__)
+dashboard.config.from_file('absolute_path_to_your_file.cfg')
+dashboard.bind(app)
+</code></pre></code></pre>
 
 <p>The need and usage of all variables are explained below:</p>
 
@@ -60,11 +67,18 @@ The value of the variable is relative to the location of your config-file.'/.git
 
 <h3>Tracking the performance of different users</h3>
 <p>The main functionality of this extension is to see whether different users of your application
-    perform better than others. Which users get fast execution times, and which not? To specify the selection of
-    different users, you have to specify a group_by-variable. Suppose you save your username in session['username'],
-    then the function groups all execution times based on session['username']. In this case, the group_by-variable
-    is 'username'.</p>
-<pre><code>GROUP_BY='username'</code></pre>
-<p>By default, the performance per user is not configured. If you don't use session-variables, then you can't use
-    this feature. </p>
+    perform better than others. Which users get fast execution times, and which do not? To differentiate between the
+    users, you have to set up your own function which retrieves the session_id or username of a specific user that is
+requesting your site. The specifying your function is done using the following lines of code:</p>
+<pre><code>from flask import Flask
+import dashboard
+
+app = Flask(__name__)
+
+def get_user_name():
+    return session.get('user_name')
+
+dashboard.config.get_group_by = get_user_name           # important, do not use: 'get_user_name()'
+dashboard.bind(app)</code></pre>
+<p>By default, the performance per user is not configured.</p>
 {% endblock %}

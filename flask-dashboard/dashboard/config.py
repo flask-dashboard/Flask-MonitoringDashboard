@@ -16,10 +16,9 @@ class Config(object):
         self.link = 'dashboard'
         self.database_name = 'sqlite:///flask-dashboard.db'
         self.test_dir = './'
-        self.group = None
 
-        # define a custom function to retrieve the session_id
-        self.retrieve_group_by = None
+        # define a custom function to retrieve the session_id or username
+        self.get_group_by = None
 
     def from_file(self, config_file):
         """
@@ -30,7 +29,6 @@ class Config(object):
             DATABASE: Suppose you have multiple projects where you're working on and want to 
                 separate the results. Then you can specify different database_names, such that the 
                 result of each project is stored in its own database.
-            GROUP_BY: applies as a filter to sort the results based on this group_by-tag.
             
             Since updating the version in the config-file when updating code isn't very useful, it
             is a better idea to provide the location of the git-folder. From the git-folder. The 
@@ -53,8 +51,6 @@ class Config(object):
                 self.database_name = parser.get('dashboard', 'DATABASE')
             if parser.has_option('dashboard', 'TEST_DIR'):
                 self.test_dir = parser.get('dashboard', 'TEST_DIR')
-            if parser.has_option('dashboard', 'GROUP_BY'):
-                self.group = parser.get('dashboard', 'GROUP_BY')
             # When the option git is selected, it overrides the given version
             if parser.has_option('dashboard', 'GIT'):
                 git = parser.get('dashboard', 'GIT')
