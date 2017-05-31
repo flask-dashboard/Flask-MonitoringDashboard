@@ -57,6 +57,18 @@ def get_results():
         return result
 
 
+def get_res_current(version):
+    """ Return entries of measurements with their average from the current project version only. """
+    with session_scope() as db_session:
+        result = db_session.query(TestRun.name,
+                                  func.count(TestRun.execution_time).label('count'),
+                                  func.avg(TestRun.execution_time).label('average'))\
+                                  .filter(TestRun.version == version)\
+                                  .group_by(TestRun.name).order_by(desc('count')).all()
+        db_session.expunge_all()
+        return result
+
+
 def get_line_results():
     with session_scope() as db_session:
         result = db_session.query(TestRun.version,

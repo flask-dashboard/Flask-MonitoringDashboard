@@ -11,14 +11,16 @@
         <table class="sortable">
             <tr>
                 <th class="clickable">Name: <i>functionName (fileName.className)</i></th>
-                <th class="clickable">Run .. times</th>
-                <th class="clickable">Average execution time (in ms)</th>
+                <th class="clickable">Run .. times<br>[all versions]</th>
+                <th class="clickable">Average run time<br>[all versions]<br>(in ms)</th>
+                <th class="clickable">Run .. times<br>[current version]</th>
+                <th class="clickable">Average run time<br>[current version]<br>(in ms)</th>
                 <th class="clickable">Last run</th>
                 <th>Run</th>
             </tr>
             {% for test in tests %}
                 <tr>
-                    <td>{{ test.name }} <b style="color:green;">{{ "   Succeeded" if test.succeeded }}</b>
+                    <td>{{ test.name }} <br> <b style="color:green;">{{ "   Succeeded" if test.succeeded }}</b>
                         <b style="color:red;">{{ "   Failed" if test.succeeded == False }}</b>
                         <b style="color:black;">{{ "   Never run" if test.succeeded == None }}</b>
                     </td>
@@ -27,6 +29,17 @@
                             {% if result.name == test.name %}
                                 <td>{{ result.count if result.count else "" }}</td>
                                 <td>{{ ((result.average*10)|round)/10 if result.average else "" }}</td>
+                            {% endif %}
+                        {% endfor %}
+                    {% else %}
+                        <td></td>
+                        <td></td>
+                    {% endif %}
+                    {% if res_current_version[0] %}
+                        {% for res in res_current_version %}
+                            {% if res.name == test.name %}
+                                <td>{{ res.count if res.count else "" }}</td>
+                                <td>{{ ((res.average*10)|round)/10 if res.average else "" }}</td>
                             {% endif %}
                         {% endfor %}
                     {% else %}

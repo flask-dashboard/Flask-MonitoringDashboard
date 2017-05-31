@@ -3,7 +3,8 @@ from flask import session, request, render_template
 from dashboard import blueprint, config, user_app
 from dashboard.database.endpoint import get_monitor_rule, update_monitor_rule, get_last_accessed_times
 from dashboard.database.monitor_rules import reset_monitor_endpoints
-from dashboard.database.tests import get_tests, reset_run, update_test, add_test_result, get_results, get_line_results
+from dashboard.database.tests import get_tests, reset_run, update_test, add_test_result, get_results
+from dashboard.database.tests import get_line_results, get_res_current
 from dashboard.database.settings import get_setting, set_setting
 from dashboard.forms import MonitorDashboard, ChangeSetting, RunTests
 from dashboard.measurement import track_performance
@@ -122,4 +123,5 @@ def testmonitor():
         times_data = times_chart.render_data_uri()
 
     return render_template('testmonitor.html', link=config.link, session=session, form=form, tests=get_tests(),
-                           results=get_results(), times_data=times_data)
+                           results=get_results(), res_current_version=get_res_current(config.version),
+                           times_data=times_data)
