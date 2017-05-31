@@ -1,4 +1,21 @@
-<<<<<<< HEAD
+/*
+  SortTable
+  version 2
+  7th April 2007
+  Stuart Langridge, http://www.kryogenix.org/code/browser/sorttable/
+
+  Instructions:
+  Download this file
+  Add <script src="sorttable.js"></script> to your HTML
+  Add class="sortable" to any table you'd like to make sortable
+  Click on the headers to sort
+
+  Thanks to many, many people for contributions and suggestions.
+  Licenced as X11: http://www.kryogenix.org/code/browser/licence.html
+  This basically means: do what you want with it.
+*/
+
+
 var stIsIE = /*@cc_on!@*/false;
 
 sorttable = {
@@ -173,48 +190,6 @@ sorttable = {
             // that it's dd/mm (English imperialism!) and keep looking
             sortfn = sorttable.sort_ddmm;
           }
-=======
-/**
- * Created by patrick on 17-5-17.
- * Script used for sorting tables when clicking on the headers
- * For usage, see: https://www.w3schools.com/howto/howto_js_sort_table.asp
- */
-
-function sortTable(n) {
-  var table, rows, switching, i, x, y, shouldSwitch, dir, switchcount = 0;
-  table = document.getElementById("sortable");
-  switching = true;
-  //Set the sorting direction to ascending:
-  dir = "asc";
-  /*Make a loop that will continue until
-  no switching has been done:*/
-  while (switching) {
-    //start by saying: no switching is done:
-    switching = false;
-    rows = table.getElementsByTagName("TR");
-    /*Loop through all table rows (except the
-    first, which contains table headers):*/
-    for (i = 1; i < (rows.length - 1); i++) {
-      //start by saying there should be no switching:
-      shouldSwitch = false;
-      /*Get the two elements you want to compare,
-      one from current row and one from the next:*/
-      x = rows[i].getElementsByTagName("TD")[n];
-      y = rows[i + 1].getElementsByTagName("TD")[n];
-      /*check if the two rows should switch place,
-      based on the direction, asc or desc:*/
-      if (dir == "asc") {
-        if (x.innerHTML.toLowerCase() > y.innerHTML.toLowerCase() || x.innerHTML.toLowerCase() == "Never") {
-          //if so, mark as a switch and break the loop:
-          shouldSwitch= true;
-          break;
-        }
-      } else if (dir == "desc") {
-        if (x.innerHTML.toLowerCase() < y.innerHTML.toLowerCase() || y.innerHTML.toLowerCase() == "Never") {
-          //if so, mark as a switch and break the loop:
-          shouldSwitch= true;
-          break;
->>>>>>> 484a168b59a0c55a82c1bb75ef1092d4572fd5d2
         }
       }
     }
