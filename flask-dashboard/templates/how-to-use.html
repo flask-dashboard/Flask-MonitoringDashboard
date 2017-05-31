@@ -1,34 +1,36 @@
 {% extends "default.html" %}
 {% block content %}
-<header>
-    <h1>How to use</h1>
-    <p>A dashboard for automatic monitoring of python web services</p>
-</header>
+    <header>
+        <h1>How to use</h1>
+        <p>A dashboard for automatic monitoring of python web services</p>
+    </header>
 
-<h2>Do you need a password?</h2>
-<p>If you run your app with in debug-mode: <b>app.run(debug=True)</b>, then you can directly view your
-    dashboard without using a password. However, if you run your app in production-mode: <b>app.run(debug=False)</b>,
-    then you're redirected to a login-page. You can change your password in the <a href="{{ url_for('dashboard.settings') }}">settings</a>
-    page.</p>
+    <h2>Do you need a password?</h2>
+    <p>If you run your app with in debug-mode: <b>app.run(debug=True)</b>, then you can directly view your
+        dashboard without using a password. However, if you run your app in production-mode: <b>app.run(debug=False)</b>,
+        then you're redirected to a login-page. You can change your password in the <a
+                href="{{ url_for('dashboard.settings') }}">settings</a>
+        page.</p>
 
-<h2>More information on the config-function</h2>
-<p>As explained in <a href="{{ url_for('dashboard.how_to_install') }}">how-to-install</a>, the only code required for
-    configuring this project is the following:</p>
-<pre><code>from flask import Flask
+    <h2>More information on the config-function</h2>
+    <p>As explained in <a href="{{ url_for('dashboard.how_to_install') }}">how-to-install</a>, the only code required
+        for
+        configuring this project is the following:</p>
+    <pre><code>from flask import Flask
 import dashboard
 
 app = Flask(__name__)
 dashboard.bind(app)
 </code></pre>
-<p>But, the code above isn't all you can do with this extension, there are a few more settings
-    that you can achieve with this application. For configuring the settings, you need to have a config-file.
-    An example of a config-file is shown below:</p>
-<pre><code>[dashboard]
+    <p>But, the code above isn't all you can do with this extension, there are a few more settings
+        that you can achieve with this application. For configuring the settings, you need to have a config-file.
+        An example of a config-file is shown below:</p>
+    <pre><code>[dashboard]
 DATABASE=sqlite:///flask-dashboard.db
 CUSTOM_LINK=dashboard
 APP_VERSION=1.0</code></pre>
-<p>Thus, the configuration of the dashboard is: </p>
-<pre><code>from flask import Flask
+    <p>Thus, the configuration of the dashboard is: </p>
+    <pre><code>from flask import Flask
 import dashboard
 
 app = Flask(__name__)
@@ -36,41 +38,43 @@ dashboard.config.from_file('absolute_path_to_your_file.cfg')
 dashboard.bind(app)
 </code></pre></code></pre>
 
-<p>The need and usage of all variables are explained below:</p>
+    <p>The need and usage of all variables are explained below:</p>
 
-<h3>The routing '/dashboard' already exists</h3>
-<p>Suppose you have an enormous website that uses many routings. One of those routings is
-    '/dashboard'. Thus you cannot configure this extension, since each routing must be unique. For this
-    purpose, it is possible to config every page from the extension to a different link. This is done by setting
-    the following variable in the config-file:</p>
-<pre><code>CUSTOM_LINK=dashboard</code></pre>
+    <h3>The routing '/dashboard' already exists</h3>
+    <p>Suppose you have an enormous website that uses many routings. One of those routings is
+        '/dashboard'. Thus you cannot configure this extension, since each routing must be unique. For this
+        purpose, it is possible to config every page from the extension to a different link. This is done by setting
+        the following variable in the config-file:</p>
+    <pre><code>CUSTOM_LINK=dashboard</code></pre>
 
-<h3>A different database location</h3>
-<p>Suppose that you're working on a project for which you have two stages: development-stage and
-    production-stage. You want to separate the data collected from both stages. Then, you have to
-use two database-files, one for each stage. For this purpose, you can add the following variable
-to the config-file:</p>
-<pre><code>DATABASE=sqlite:///flask-dashboard.db</code></pre>
-<p>By default, the standard database name is 'flask_database.db' and can be found at your home-location.</p>
+    <h3>A different database location</h3>
+    <p>Suppose that you're working on a project for which you have two stages: development-stage and
+        production-stage. You want to separate the data collected from both stages. Then, you have to
+        use two database-files, one for each stage. For this purpose, you can add the following variable
+        to the config-file:</p>
+    <pre><code>DATABASE=sqlite:///flask-dashboard.db</code></pre>
+    <p>By default, the standard database name is 'flask_database.db' and can be found at your home-location.</p>
 
-<h3>Tracking the performance of different versions</h3>
-<p>The main functionality of this extension is to see whether different versions of your application
-    perform better than others. Does the execution time of some functions have been improved or not? To specify
-    which version application-version you have, you can add the following variable to the config-file:</p>
-<pre><code>APP_VERSION=1.0</code></pre>
+    <h3>Tracking the performance of different versions</h3>
+    <p>The main functionality of this extension is to see whether different versions of your application
+        perform better than others. Does the execution time of some functions have been improved or not? To specify
+        which version application-version you have, you can add the following variable to the config-file:</p>
+    <pre><code>APP_VERSION=1.0</code></pre>
 
-<p>By default, the version is 1.0.</p>
-<p>If you're using git, then it easier to specify a git location. The version of your app is the
-entire hash-function of your current git-commit. Now, you automatically retrieve a new version if you make a commit.
-The value of the variable is relative to the location of your config-file.'/.git'</p>
+    <p>By default, the version is 1.0.</p>
+    <p>If you're using git, then it easier to specify a git location. The version of your app is the
+        entire hash-function of your current git-commit. Now, you automatically retrieve a new version if you make a
+        commit.
+        The value of the variable is relative to the location of your config-file.'/.git'</p>
     <pre><code>GIT=/.git/</code></pre>
 
-<h3>Tracking the performance of different users</h3>
-<p>The main functionality of this extension is to see whether different users of your application
-    perform better than others. Which users get fast execution times, and which do not? To differentiate between the
-    users, you have to set up your own function which retrieves the session_id or username of a specific user that is
-requesting your site. The specifying your function is done using the following lines of code:</p>
-<pre><code>from flask import Flask
+    <h3>Tracking the performance of different users</h3>
+    <p>The main functionality of this extension is to see whether different users of your application
+        perform better than others. Which users get fast execution times, and which do not? To differentiate between the
+        users, you have to set up your own function which retrieves the session_id or username of a specific user that
+        is
+        requesting your site. The specifying your function is done using the following lines of code:</p>
+    <pre><code>from flask import Flask
 import dashboard
 
 app = Flask(__name__)
@@ -80,5 +84,5 @@ def get_user_name():
 
 dashboard.config.get_group_by = get_user_name           # important, do not use: 'get_user_name()'
 dashboard.bind(app)</code></pre>
-<p>By default, the performance per user is not configured.</p>
+    <p>By default, the performance per user is not configured.</p>
 {% endblock %}

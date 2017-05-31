@@ -2,7 +2,7 @@
 Contains all functions that returns results of all tests
 """
 from dashboard.database import session_scope, Tests, TestRun
-from sqlalchemy import func, desc
+from sqlalchemy import func, desc, text
 
 
 def get_tests():
@@ -30,7 +30,7 @@ def add_test(name):
 def update_test(name, run, last_run, succeeded):
     """ Updates values of a test. """
     with session_scope() as db_session:
-        db_session.query(Tests).filter(Tests.name == name).\
+        db_session.query(Tests).filter(Tests.name == name). \
             update({Tests.run: run, Tests.lastRun: last_run, Tests.succeeded: succeeded})
 
 
@@ -55,3 +55,19 @@ def get_results():
                                   ).group_by(TestRun.name).order_by(desc('count')).all()
         db_session.expunge_all()
         return result
+
+
+def get_line_results():
+    return None
+    # with session_scope() as db_session:
+    #     query = text("""select
+    #             datetime(CAST(strftime('%s', time)/3600 AS INT)*3600, 'unixepoch') AS newTime,
+    #             avg(execution_time) AS avg,
+    #             min(execution_time) as min,
+    #             max(execution_time) as max,
+    #             count(execution_time) as count
+    #         from functioncalls
+    #         where endpoint=:val group by newTime""")
+    #     result = db_session.execute(query, {'val': endpoint})
+    #     data = result.fetchall()
+    #     return data

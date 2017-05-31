@@ -1,27 +1,28 @@
 {% extends "default.html" %}
 {% block content %}
-<header>
-    <h1>Homepage</h1>
-    <p>A dashboard for automatic monitoring of python web services</p>
-</header>
-<p>"The web is the only true object oriented system", says Alan kay, the inventor of
-    object oriented programming. This because the service oriented architecture of the
-    web embodies the early ideas of the OO paradigm much better than the way it has been
-    implemented in the mainstream programming languages. Indeed, the web becomes increasingly
-    a system of interconnected services.</p>
-<p>One of the most popular programming languages of the recent years is Python. Combining a
-    simple structure with a large offer of libraries Python is also one of the most popular
-    languages for implementing web applications and web services. Within the Python ecosystem,
-    one of the most popular solutions for implementing web services in Python is Flask and the
-    Flask-REST package. </p>
-<p>One of the downsides of services is the fact that the developers of the web service do not
-    have information about which parts of their web services are used the most and which are
-    used the least or even not at all. In a Java system, for example, one can perform static
-    analysis to discover such dependencies, but on the web, everything is dynamic. However, there
-    is no equivalent way of analyzing the dependencies to a given web service. The only way to do
-    it is to monitor the actual service being deployed and collect statistical information about
-    it. </p>
-<p>This project is about serving an automatic monitoring extension, than can be easily added to your
-    existing Flask-Webservice. Check <a href="{{ url_for('dashboard.how_to_use') }}">this</a> page to see how to implement
-    this extension in your website.</p>
+    <header>
+        <h1>Homepage</h1>
+        <p>A dashboard for automatic monitoring of python web services</p>
+    </header>
+    <p>"The web is the only true object oriented system", says Alan kay, the inventor of
+        object oriented programming. This because the service oriented architecture of the
+        web embodies the early ideas of the OO paradigm much better than the way it has been
+        implemented in the mainstream programming languages. Indeed, the web becomes increasingly
+        a system of interconnected services.</p>
+    <p>One of the most popular programming languages of the recent years is Python. Combining a
+        simple structure with a large offer of libraries Python is also one of the most popular
+        languages for implementing web applications and web services. Within the Python ecosystem,
+        one of the most popular solutions for implementing web services in Python is Flask and the
+        Flask-REST package. </p>
+    <p>One of the downsides of services is the fact that the developers of the web service do not
+        have information about which parts of their web services are used the most and which are
+        used the least or even not at all. In a Java system, for example, one can perform static
+        analysis to discover such dependencies, but on the web, everything is dynamic. However, there
+        is no equivalent way of analyzing the dependencies to a given web service. The only way to do
+        it is to monitor the actual service being deployed and collect statistical information about
+        it. </p>
+    <p>This project is about serving an automatic monitoring extension, than can be easily added to your
+        existing Flask-Webservice. Check <a href="{{ url_for('dashboard.how_to_use') }}">this</a> page to see how to
+        implement
+        this extension in your website.</p>
 {% endblock %}
