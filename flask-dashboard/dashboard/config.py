@@ -18,6 +18,9 @@ class Config(object):
         self.test_dir = './'
         self.group = None
 
+        # define a custom function to retrieve the session_id
+        self.retrieve_group_by = None
+
     def from_file(self, config_file):
         """
             The config_file must at least contains the following variables in section 'dashboard':

@@ -13,7 +13,9 @@ def add_function_call(time, endpoint):
     """ Add a measurement to the database. """
     with session_scope() as db_session:
         group_by = None
-        if config.group:
+        if config.retrieve_group_by:
+            group_by = config.retrieve_group_by()
+        elif config.group:
             group_by = session.get(config.group)
         ip = request.environ['REMOTE_ADDR']
         call = FunctionCall(endpoint=endpoint, execution_time=time, version=config.version,
