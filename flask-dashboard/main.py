@@ -5,6 +5,13 @@ import os
 user_app = Flask(__name__)
 here = os.path.abspath(os.path.dirname(__file__))
 dashboard.config.from_file(here + '/config.cfg')
+
+
+def get_session_id():
+    # implement here your own custom function
+    return "12345"
+
+dashboard.config.get_group_by = get_session_id
 dashboard.bind(app=user_app)
 
 
