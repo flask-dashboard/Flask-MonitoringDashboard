@@ -10,7 +10,7 @@ dashboard.bind(app=user_app)
 
 @user_app.route('/')
 def main():
-    return "hello_world"
+    return redirect(url_for('dashboard.index'))
 
 
 if __name__ == '__main__':
