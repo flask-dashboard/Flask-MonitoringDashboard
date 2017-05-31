@@ -7,7 +7,6 @@ class MonitorDashboard(FlaskForm):
     """ Used for selecting a number of checkboxes that corresponds to which endpoints should be followed. 
     Since the number of checkboxes is variable (equals the number of endpoints), none of them is added as
     a field to this class. In fact, they are generated in the template in plain html. """
-    submit = SubmitField('Save changes')
 
 
 class Login(FlaskForm):

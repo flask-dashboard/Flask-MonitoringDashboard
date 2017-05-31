@@ -6,7 +6,7 @@
 </header>
 <h2>All rules</h2>
 
-<form action="" method="post">
+<form id="myForm" action="" method="post">
     {{ form.hidden_tag() }}
     <table class="sortable">
         <tr>
@@ -28,12 +28,25 @@
                 {% endfor %}
                 <td>
                     <input id="checkbox-{{rule.endpoint}}" name="checkbox-{{rule.endpoint}}"
-                           type="checkbox" {{'checked' if values[rule.endpoint] }} >
-                    <label for="checkbox-{{rule.endpoint}}"></label>
+                           type="checkbox" {{'checked' if values[rule.endpoint] }} class="checkbox" >
+                    <label for="checkbox-{{rule.endpoint}}" ></label>
                 </td>
             </tr>
         {% endfor %}
     </table>
-    {{ form.submit() }}
 </form>
+<script>
+    $(document).ready(function() {
+      $('.checkbox').click(function() {
+        var formData = $('#myForm').serialize();
+
+        $.ajax({
+          url: '',
+          data: formData,
+          type: 'post',
+          dataType: 'json'
+        });
+      });
+    });
+</script>
 {% endblock %}
