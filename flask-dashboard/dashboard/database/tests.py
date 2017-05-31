@@ -27,11 +27,11 @@ def add_test(name):
         db_session.add(Tests(name=name))
 
 
-def update_test(name, run, timesRun, lastRun):
+def update_test(name, run, last_run, succeeded):
     """ Updates values of a test. """
     with session_scope() as db_session:
         db_session.query(Tests).filter(Tests.name == name).\
-            update({Tests.run: run, Tests.timesRun: timesRun, Tests.lastRun: lastRun})
+            update({Tests.run: run, Tests.lastRun: last_run, Tests.succeeded: succeeded})
 
 
 def reset_run():

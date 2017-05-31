@@ -33,10 +33,10 @@ class Tests(Base):
     name = Column(String(250), primary_key=True)
     # boolean to determine whether the test should be run
     run = Column(Boolean, default=True)
-    # how many times the test was run
-    timesRun = Column(Integer, default=0)
     # the timestamp of the last time the test was run
     lastRun = Column(DateTime)
+    # whether the test succeeded
+    succeeded = Column(Boolean)
 
 
 class TestRun(Base):

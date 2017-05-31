@@ -3,7 +3,7 @@ from flask import session, request, render_template
 from dashboard import blueprint, config, user_app
 from dashboard.database.endpoint import get_monitor_rule, update_monitor_rule, get_last_accessed_times
 from dashboard.database.monitor_rules import reset_monitor_endpoints
-from dashboard.database.tests import get_tests, reset_run, update_test, get_test
+from dashboard.database.tests import get_tests, reset_run, update_test, get_test, add_test_result, get_results
 from dashboard.database.settings import get_setting, set_setting
 from dashboard.forms import MonitorDashboard, ChangeSetting, RunTests
 from dashboard.measurement import track_performance
@@ -83,8 +83,8 @@ def testmonitor():
         for data in request.form:
             if data.startswith('checkbox-'):
                 name = data.rsplit('-', 1)[1]
-                update_test(name, True, get_test(name).timesRun + 1, datetime.datetime.now())
                 test_names.append(name)
+                update_test(name, True, datetime.datetime.now(), None)
 
         suites = TestLoader().discover(config.test_dir, pattern="*test*.py")
         for suite in suites:
@@ -95,7 +95,9 @@ def testmonitor():
                         time1 = time.time()
                         result = test.run(result)
                         time2 = time.time()
+                        update_test(str(test), True, datetime.datetime.now(), result.wasSuccessful())
                         t = (time2 - time1) * 1000
-                        print("Test {2}: Successful? {0} and had an execution time of {1} ms".format(result.wasSuccessful(), t, test))
+                        add_test_result(str(test), t, datetime.datetime.now(), config.version)
 
-    return render_template('testmonitor.html', link=config.link, session=session, form=form, tests=get_tests())
+    return render_template('testmonitor.html', link=config.link, session=session, form=form, tests=get_tests(),
+                           results=get_results())
