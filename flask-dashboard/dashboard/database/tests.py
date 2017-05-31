@@ -58,16 +58,12 @@ def get_results():
 
 
 def get_line_results():
-    return None
-    # with session_scope() as db_session:
-    #     query = text("""select
-    #             datetime(CAST(strftime('%s', time)/3600 AS INT)*3600, 'unixepoch') AS newTime,
-    #             avg(execution_time) AS avg,
-    #             min(execution_time) as min,
-    #             max(execution_time) as max,
-    #             count(execution_time) as count
-    #         from functioncalls
-    #         where endpoint=:val group by newTime""")
-    #     result = db_session.execute(query, {'val': endpoint})
-    #     data = result.fetchall()
-    #     return data
+    with session_scope() as db_session:
+        result = db_session.query(TestRun.version,
+                                  func.avg(TestRun.execution_time).label('avg'),
+                                  func.min(TestRun.execution_time).label('min'),
+                                  func.max(TestRun.execution_time).label('max'),
+                                  func.count(TestRun.execution_time).label('count')
+                                  ).group_by(TestRun.version).order_by(desc('count')).all()
+        db_session.expunge_all()
+        return result

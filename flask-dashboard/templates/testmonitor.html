@@ -45,10 +45,12 @@
         {{ form.submit() }}
     </form>
 
-{#    <h2>Execution time (in ms) per version</h2>#}
-{#    <div class="container" align="center">#}
-{#        <embed type="image/svg+xml" src={{ times_data|safe }} style='max-width:1000px'></embed>#}
-{#    </div> <br/>#}
+    {% if times_data %}
+        <h2>Execution time (in ms) per version</h2>
+        <div class="container" align="center">
+            <embed type="image/svg+xml" src={{ times_data|safe }} style='max-width:1000px'></embed>
+        </div> <br/>
+    {% endif %}
 
 
 {% endblock %}

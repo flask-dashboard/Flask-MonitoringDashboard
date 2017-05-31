@@ -12,6 +12,7 @@ from unittest import TestLoader
 
 import datetime
 import time
+import pygal
 
 
 @blueprint.route('/settings', methods=['GET', 'POST'])
@@ -99,24 +100,26 @@ def testmonitor():
                         t = (time2 - time1) * 1000
                         add_test_result(str(test), t, datetime.datetime.now(), config.version)
 
-    # Let's render a bar chart:
-    # data = get_line_results(end)
-    # times_chart = pygal.HorizontalBar(height=100+len(data)*30)
-    # times_chart.x_labels = []
-    # list_avg = []
-    # list_min = []
-    # list_max = []
-    # list_count = []
-    # for d in data:
-    #     times_chart.x_labels.append(d.newTime)
-    #     list_min.append(d.min)
-    #     list_avg.append(d.avg)
-    #     list_max.append(d.max)
-    #     list_count.append(d.count)
-    # times_chart.add('Minimum', list_min, formatter=lambda x: '%.2f ms' % x)
-    # times_chart.add('Average', list_avg, formatter=lambda x: '%.2f ms' % x)
-    # times_chart.add('Maximum', list_max, formatter=lambda x: '%.2f ms' % x)
-    # times_data = times_chart.render_data_uri()
+    # Let's render a bar chart, if there is data:
+    data = get_line_results()
+    times_data = None
+    if data:
+        times_chart = pygal.HorizontalBar(height=100+len(data)*30)
+        times_chart.x_labels = []
+        list_avg = []
+        list_min = []
+        list_max = []
+        list_count = []
+        for d in data:
+            times_chart.x_labels.append(d.version)
+            list_min.append(d.min)
+            list_avg.append(d.avg)
+            list_max.append(d.max)
+            list_count.append(d.count)
+        times_chart.add('Minimum', list_min, formatter=lambda x: '%.2f ms' % x)
+        times_chart.add('Average', list_avg, formatter=lambda x: '%.2f ms' % x)
+        times_chart.add('Maximum', list_max, formatter=lambda x: '%.2f ms' % x)
+        times_data = times_chart.render_data_uri()
 
     return render_template('testmonitor.html', link=config.link, session=session, form=form, tests=get_tests(),
-                           results=get_results())
+                           results=get_results(), times_data=times_data)
