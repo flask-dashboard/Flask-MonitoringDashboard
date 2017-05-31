@@ -11,6 +11,7 @@ from dashboard.security import secure
 from unittest import TestLoader
 
 import datetime
+import time
 
 
 @blueprint.route('/settings', methods=['GET', 'POST'])
@@ -77,19 +78,24 @@ def rules():
 def testmonitor():
     form = RunTests()
     if request.method == 'POST' and form.validate():
-
-        suites = TestLoader().discover(config.test_dir, pattern="*test*.py")
-        for suite in suites:
-            for case in suite:
-                for test in case:
-                    result = None
-                    result = test.run(result)
-                    print(result)
-
+        test_names = []
         reset_run()
         for data in request.form:
             if data.startswith('checkbox-'):
                 name = data.rsplit('-', 1)[1]
                 update_test(name, True, get_test(name).timesRun + 1, datetime.datetime.now())
+                test_names.append(name)
+
+        suites = TestLoader().discover(config.test_dir, pattern="*test*.py")
+        for suite in suites:
+            for case in suite:
+                for test in case:
+                    if str(test) in test_names:
+                        result = None
+                        time1 = time.time()
+                        result = test.run(result)
+                        time2 = time.time()
+                        t = (time2 - time1) * 1000
+                        print("Test {2}: Successful? {0} and had an execution time of {1} ms".format(result.wasSuccessful(), t, test))
 
     return render_template('testmonitor.html', link=config.link, session=session, form=form, tests=get_tests())
