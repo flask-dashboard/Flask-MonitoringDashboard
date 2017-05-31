@@ -1,0 +1,28 @@
+{% extends "default.html" %}
+{% block content %}
+<header>
+    <h1>How to install</h1>
+    <p>A dashboard for automatic monitoring of python web services</p>
+</header>
+
+<h2>Installation</h2>
+<p>To install from source, download the source code from <a href="https://github.com/FlyingBird95/flask-dashboard">
+    Github</a>, then run this command in the folder where you unpacked the source code:</p>
+<pre><code>python3 setup.py install
+</code></pre>
+<p>Once installed, the module is copied to your installation location of python (usually at:
+    usr/local/lib/python3.4/dist-packages/flask_dashboard-{version}-py3.4.egg/). You are now
+    ready to use the extension:</p>
+
+<h2>Setup</h2>
+<p>Adding the extension is simple:</p>
+<pre><code>from flask import Flask
+import dashboard
+
+app = Flask(__name__)
+dashboard.bind(app)
+</code></pre>
+
+<h2>Usage</h2>
+<p>Once the setup is done, you can view the dashboard at <a href="{{ url_for('dashboard.index') }}">{{ url_for('dashboard.index') }}</a></p>
+{% endblock %}

@@ -1,0 +1,52 @@
+{% extends "default.html" %}
+{% block content %}
+<header>
+    <h1>Dashboard</h1>
+    <p>A dashboard for automatic monitoring of python web services</p>
+</header>
+<h2>All rules</h2>
+
+<form id="myForm" action="" method="post">
+    {{ form.hidden_tag() }}
+    <table class="sortable">
+        <tr>
+            <th class="clickable">Rule</th>
+            <th class="clickable">HTTP Method</th>
+            <th class="clickable">Endpoint</th>
+            <th class="clickable">Last accessed</th>
+            <th>Monitor</th>
+        </tr>
+        {% for rule in rules %}
+            <tr>
+                <td style="max-width: 200px; overflow: hidden; white-space: nowrap; text-overflow: ellipsis;">{{ rule.rule }}</td>
+                <td>{{ ", ".join(rule.methods) }}</td>
+                <td style="max-width: 200px; overflow: hidden; white-space: nowrap; text-overflow: ellipsis;">{{ rule.endpoint }}</td>
+                {% for a in access %}
+                    {% if rule.endpoint == a.endpoint %}
+                        <td>{{ "{:%Y-%m-%d %H:%M:%S }".format(a.last_accessed) if a.last_accessed }}</td>
+                    {% endif %}
+                {% endfor %}
+                <td>
+                    <input id="checkbox-{{rule.endpoint}}" name="checkbox-{{rule.endpoint}}"
+                           type="checkbox" {{'checked' if values[rule.endpoint] }} class="checkbox" >
+                    <label for="checkbox-{{rule.endpoint}}" ></label>
+                </td>
+            </tr>
+        {% endfor %}
+    </table>
+</form>
+<script>
+    $(document).ready(function() {
+      $('.checkbox').click(function() {
+        var formData = $('#myForm').serialize();
+
+        $.ajax({
+          url: '',
+          data: formData,
+          type: 'post',
+          dataType: 'json'
+        });
+      });
+    });
+</script>
+{% endblock %}

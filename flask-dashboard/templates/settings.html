@@ -1,0 +1,50 @@
+{% extends "default.html" %}
+{% block content %}
+<header>
+    <h1>Settings</h1>
+    <p>A dashboard for automatic monitoring of python web services</p>
+</header>
+
+<h2>Current values</h2>
+<table>
+    <tr>
+        <th>Variable</th><th>Value</th>
+    </tr>
+
+    <tr><td>Link</td><td>/{{ link }}</td></tr>
+    <tr><td>Version</td><td>{{ version }}</td></tr>
+    <tr><td>User variable</td><td>{{ group if group != None else "N/A"}}</td></tr>
+    <tr><td>Database name</td><td>{{ database_name }}</td></tr>
+    <tr><td>Test directory</td><td>{{ testDir }}</td></tr>
+    <tr><td>Logged in</td><td>{{ "Yes" if session.get(link + '_logged_in') else "No" }}</td></tr>
+</table>
+
+<h2>Change username or password</h2>
+<ul>
+    {% for error in form.errors %}
+        <li style="color: red;">{{ form.errors[error][0] }}</li>
+    {% endfor %}
+</ul>
+<form action="" method="POST">
+    {{ form.hidden_tag() }}
+    <table>
+        <tr>
+            <td>{{ form.username.label }}</td>
+            <td>{{ form.username }}</td>
+        </tr>
+        <tr>
+            <td><label>Old password: </label></td>
+            <td>{{ old_password }}</td>
+        </tr>
+        <tr>
+            <td>{{ form.password.label }}</td>
+            <td>{{ form.password }}</td>
+        </tr>
+        <tr>
+            <td>{{ form.confirm.label }}</td>
+            <td>{{ form.confirm }}</td>
+        </tr>
+    </table>
+    {{ form.submit }}
+</form>
+{% endblock %}

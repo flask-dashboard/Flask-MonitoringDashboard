@@ -82,6 +82,18 @@ celerybeat-schedule
 venv/
 ENV/
 
+# OS X
+.DS_Store
+
+# Idea
+.idea/
+
+# config file
+*.cfg
+
+# database file
+*.db
+
 # Spyder project settings
 .spyderproject
 
