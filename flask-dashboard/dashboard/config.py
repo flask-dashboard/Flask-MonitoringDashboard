@@ -60,6 +60,8 @@ class Config(object):
                     git_file = (open(os.path.join(git, 'HEAD')).read().rsplit(': ', 1)[1]).rstrip()
                     # read the git-version
                     self.version = open(git + '/' + git_file).read()
+                    # cut version to at most 6 chars
+                    self.version = self.version[:6]
                 except IOError:
                     print("Error reading one of the files to retrieve the current git-version.")
                     raise

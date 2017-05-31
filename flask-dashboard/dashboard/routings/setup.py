@@ -27,7 +27,7 @@ def settings():
             set_setting('password', form.password.data)
 
     return render_template('settings.html', link=config.link, session=session, version=config.version,
-                           database_name=config.database_name, group=config.group, form=form,
+                           database_name=config.database_name, group=config.get_group_by(), form=form,
                            testDir=config.test_dir, old_password=old_password)
 
 
