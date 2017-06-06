@@ -2,7 +2,7 @@ import pygal
 from flask import session, url_for, render_template
 from werkzeug.routing import BuildError
 
-from dashboard import blueprint
+from dashboard import blueprint, config
 from dashboard.database import FunctionCall
 from dashboard.database.endpoint import get_endpoint_column, get_endpoint_results, get_monitor_rule
 from dashboard.database.endpoint import get_last_accessed_times, get_line_results
@@ -15,7 +15,7 @@ from dashboard.security import secure
 def measurements():
     t = get_times()
     la = get_last_accessed_times()
-    return render_template('measurements.html', times=t, access=la, session=session)
+    return render_template('measurements.html', link=config.link, times=t, access=la, session=session)
 
 
 @blueprint.route('/show-graph/<end>')
@@ -97,6 +97,6 @@ def show_graph(end):
             data.append(ip_data[d][v])
         dot_chart_ip.add(d, data, formatter=lambda x: '%.2f ms' % x)
 
-    return render_template('show-graph.html', session=session, rule=rule, url=url, times_data=times_data,
-                           hits_data=hits_data, dot_chart_user=dot_chart_user.render_data_uri(),
+    return render_template('show-graph.html', link=config.link, session=session, rule=rule, url=url,
+                           times_data=times_data, hits_data=hits_data, dot_chart_user=dot_chart_user.render_data_uri(),
                            dot_chart_ip=dot_chart_ip.render_data_uri())
