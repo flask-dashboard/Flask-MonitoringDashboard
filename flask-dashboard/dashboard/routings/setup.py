@@ -14,6 +14,7 @@ from unittest import TestLoader
 import datetime
 import time
 import pygal
+import math
 
 
 @blueprint.route('/settings', methods=['GET', 'POST'])
@@ -117,9 +118,12 @@ def testmonitor():
             list_avg.append(d.avg)
             list_max.append(d.max)
             list_count.append(d.count)
-        times_chart.add('Minimum', list_min, formatter=lambda x: '%.2f ms' % x)
-        times_chart.add('Average', list_avg, formatter=lambda x: '%.2f ms' % x)
-        times_chart.add('Maximum', list_max, formatter=lambda x: '%.2f ms' % x)
+        times_chart.add('Minimum', list_min, formatter=lambda x: '{0}s and {1}ms'.format(math.floor(x/1000),
+                                                                                         round(x % 1000, 2)))
+        times_chart.add('Average', list_avg, formatter=lambda x: '{0}s and {1}ms'.format(math.floor(x/1000),
+                                                                                         round(x % 1000, 2)))
+        times_chart.add('Maximum', list_max, formatter=lambda x: '{0}s and {1}ms'.format(math.floor(x/1000),
+                                                                                         round(x % 1000, 2)))
         times_data = times_chart.render_data_uri()
 
     return render_template('testmonitor.html', link=config.link, session=session, curr=3, form=form, tests=get_tests(),
