@@ -2,7 +2,7 @@
 Contains all functions that returns results of all tests
 """
 from dashboard.database import session_scope, Tests, TestRun
-from sqlalchemy import func, desc
+from sqlalchemy import func, desc, text
 
 
 def get_tests():
@@ -27,11 +27,11 @@ def add_test(name):
         db_session.add(Tests(name=name))
 
 
-def update_test(name, run, timesRun, lastRun):
+def update_test(name, run, last_run, succeeded):
     """ Updates values of a test. """
     with session_scope() as db_session:
-        db_session.query(Tests).filter(Tests.name == name).\
-            update({Tests.run: run, Tests.timesRun: timesRun, Tests.lastRun: lastRun})
+        db_session.query(Tests).filter(Tests.name == name). \
+            update({Tests.run: run, Tests.lastRun: last_run, Tests.succeeded: succeeded})
 
 
 def reset_run():
@@ -53,5 +53,29 @@ def get_results():
                                   func.count(TestRun.execution_time).label('count'),
                                   func.avg(TestRun.execution_time).label('average')
                                   ).group_by(TestRun.name).order_by(desc('count')).all()
+        db_session.expunge_all()
+        return result
+
+
+def get_res_current(version):
+    """ Return entries of measurements with their average from the current project version only. """
+    with session_scope() as db_session:
+        result = db_session.query(TestRun.name,
+                                  func.count(TestRun.execution_time).label('count'),
+                                  func.avg(TestRun.execution_time).label('average'))\
+                                  .filter(TestRun.version == version)\
+                                  .group_by(TestRun.name).order_by(desc('count')).all()
+        db_session.expunge_all()
+        return result
+
+
+def get_line_results():
+    with session_scope() as db_session:
+        result = db_session.query(TestRun.version,
+                                  func.avg(TestRun.execution_time).label('avg'),
+                                  func.min(TestRun.execution_time).label('min'),
+                                  func.max(TestRun.execution_time).label('max'),
+                                  func.count(TestRun.execution_time).label('count')
+                                  ).group_by(TestRun.version).order_by(desc('count')).all()
         db_session.expunge_all()
         return result

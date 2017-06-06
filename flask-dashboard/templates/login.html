@@ -1,54 +1,58 @@
 <!DOCTYPE HTML>
 <html>
-	<head>
-		<title>Dashboard for automatic monitoring of python web services</title>
-		<meta charset="utf-8" />
-		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
-		<!--[if lte IE 8]><script src="{{ url_for('dashboard.static', filename='assets/js/ie/html5shiv.js') }}"></script><![endif]-->
-		<link rel="stylesheet" href="{{ url_for('dashboard.static', filename='assets/css/main.css') }}" />
-		<!--[if lte IE 9]><link rel="stylesheet" href="{{ url_for('dashboard.static', filename='assets/css/ie9.css') }}" /><![endif]-->
-		<!--[if lte IE 8]><link rel="stylesheet" href="{{ url_for('dashboard.static', filename='assets/css/ie8.css') }}" /><![endif]-->
-	</head>
-	<body>
-        <!-- Wrapper -->
-        <div id="wrapper">
+<head>
+    <title>Dashboard for automatic monitoring of python web services</title>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no"/>
+    <!--[if lte IE 8]><script src="{{ url_for('dashboard.static', filename='assets/js/ie/html5shiv.js') }}"></script>
+    <![endif]-->
+    <link rel="stylesheet" href="{{ url_for('dashboard.static', filename='assets/css/main.css') }}"/>
+    <!--[if lte IE 9]><link rel="stylesheet" href="{{ url_for('dashboard.static', filename='assets/css/ie9.css') }}" />
+    <![endif]-->
+    <!--[if lte IE 8]><link rel="stylesheet" href="{{ url_for('dashboard.static', filename='assets/css/ie8.css') }}" />
+    <![endif]-->
+</head>
+<body>
+<!-- Wrapper -->
+<div id="wrapper">
 
-            <!-- Main -->
-            <div id="main">
-                <div class="inner">
-                    <div id="page-wrap">
-                        <!-- Banner -->
-                        <section id="banner">
-                            <div class="content">
-                                <header>
-                                    <h1>Login</h1>
-                                    <p>A dashboard for automatic monitoring of python web services</p>
-                                </header>
+    <!-- Main -->
+    <div id="main">
+        <div class="inner">
+            <div id="page-wrap">
+                <!-- Banner -->
+                <section id="banner">
+                    <div class="content">
+                        <header>
+                            <h1>Login</h1>
+                            <p>A dashboard for automatic monitoring of python web services</p>
+                        </header>
 
-                                <ul>
-                                    {% for error in form.errors %}
-                                        <li style="color: red;">{{ form.errors[error][0] }}</li>
-                                    {% endfor %}
-                                </ul>
+                        <ul>
+                            {% for error in form.errors %}
+                                <li style="color: red;">{{ form.errors[error][0] }}</li>
+                            {% endfor %}
+                        </ul>
 
-                                <form action="" method="POST">
-                                    {{ form.hidden_tag() }}
-                                    {{ form.name.label }} {{ form.name }} <br />
-                                    {{ form.password.label }} {{ form.password }}<br />
-                                    {{ form.submit }}
-                                </form>
-                            </div>
-                        </section>
+                        <form action="" method="POST">
+                            {{ form.hidden_tag() }}
+                            {{ form.name.label }} {{ form.name }} <br/>
+                            {{ form.password.label }} {{ form.password }}<br/>
+                            {{ form.submit }}
+                        </form>
                     </div>
-                </div>
+                </section>
             </div>
         </div>
+    </div>
+</div>
 
-        <!-- Scripts -->
-        <script src="{{ url_for('dashboard.static', filename='assets/js/jquery.min.js') }}"></script>
-        <script src="{{ url_for('dashboard.static', filename='assets/js/skel.min.js') }}"></script>
-        <script src="{{ url_for('dashboard.static', filename='assets/js/util.js') }}"></script>
-        <!--[if lte IE 8]><script src="{{ url_for('dashboard.static', filename='assets/js/ie/respond.min.js') }}"></script><![endif]-->
-        <script src="{{ url_for('dashboard.static', filename='assets/js/main.js') }}"></script>
-	</body>
+<!-- Scripts -->
+<script src="{{ url_for('dashboard.static', filename='assets/js/jquery.min.js') }}"></script>
+<script src="{{ url_for('dashboard.static', filename='assets/js/skel.min.js') }}"></script>
+<script src="{{ url_for('dashboard.static', filename='assets/js/util.js') }}"></script>
+<!--[if lte IE 8]><script src="{{ url_for('dashboard.static', filename='assets/js/ie/respond.min.js') }}"></script>
+<![endif]-->
+<script src="{{ url_for('dashboard.static', filename='assets/js/main.js') }}"></script>
+</body>
 </html>
