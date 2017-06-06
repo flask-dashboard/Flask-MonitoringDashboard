@@ -15,7 +15,7 @@ from dashboard.security import secure
 def measurements():
     t = get_times()
     la = get_last_accessed_times()
-    return render_template('measurements.html', times=t, access=la, link=config.link, session=session)
+    return render_template('measurements.html', link=config.link, times=t, access=la, session=session)
 
 
 @blueprint.route('/show-graph/<end>')

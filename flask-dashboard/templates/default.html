@@ -38,16 +38,9 @@
                             <h2>Menu</h2>
                         </header>
                         <ul>
-                            <li><a href="{{ url_for('dashboard.index') }}">Homepage</a></li>
-                            <li><a href="{{ url_for('dashboard.how_to_install') }}">How to install</a></li>
-                            <li><a href="{{ url_for('dashboard.how_to_use') }}">How to use</a></li>
-                            <li><span class="opener">Dashboard</span>
-                                <ul>
-                                    <li><a href="{{ url_for('dashboard.rules') }}">Rules</a></li>
-                                    <li><a href="{{ url_for('dashboard.measurements') }}">Measurements</a></li>
-                                    <li><a href="{{ url_for('dashboard.testmonitor') }}">Test monitor</a></li>
-                                </ul>
-                            </li>
+                            <li><a href="{{ url_for('dashboard.rules') }}">Rules</a></li>
+                            <li><a href="{{ url_for('dashboard.measurements') }}">Measurements</a></li>
+                            <li><a href="{{ url_for('dashboard.testmonitor') }}">Test monitor</a></li>
                             <li><a href="{{ url_for('dashboard.settings') }}">Settings</a></li>
                             {% if session.get(link + '_logged_in') %}
                                 <li><a href="{{ url_for('dashboard.logout') }}">Logout</a></li>
