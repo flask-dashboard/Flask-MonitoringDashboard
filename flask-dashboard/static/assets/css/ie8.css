@@ -6,16 +6,16 @@
 
 /* Button */
 
-	input[type="submit"],
-	input[type="reset"],
-	input[type="button"],
-	button,
-	.button {
-		border: solid 2px #f56a6a;
-	}
+input[type="submit"],
+input[type="reset"],
+input[type="button"],
+button,
+.button {
+    border: solid 2px #f56a6a;
+}
 
 /* Posts */
 
-	.posts article {
-		width: 40%;
-	}
+.posts article {
+    width: 40%;
+}

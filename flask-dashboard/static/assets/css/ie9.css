@@ -6,68 +6,68 @@
 
 /* Features */
 
-	.features:after {
-		clear: both;
-		content: '';
-		display: block;
-	}
+.features:after {
+    clear: both;
+    content: '';
+    display: block;
+}
 
-	.features article {
-		float: left;
-	}
+.features article {
+    float: left;
+}
 
-		.features article:after {
-			clear: both;
-			content: '';
-			display: block;
-		}
+.features article:after {
+    clear: both;
+    content: '';
+    display: block;
+}
 
-		.features article .icon {
-			float: left;
-		}
+.features article .icon {
+    float: left;
+}
 
 /* Posts */
 
-	.posts:after {
-		clear: both;
-		content: '';
-		display: block;
-	}
+.posts:after {
+    clear: both;
+    content: '';
+    display: block;
+}
 
-	.posts article {
-		float: left;
-	}
+.posts article {
+    float: left;
+}
 
 /* Main */
 
-	#main {
-		padding-left: 24em;
-	}
+#main {
+    padding-left: 24em;
+}
 
 /* Sidebar */
 
-	#sidebar {
-		position: absolute;
-		top: 0;
-		left: 0;
-		min-height: 100%;
-		width: 24em;
-	}
+#sidebar {
+    position: absolute;
+    top: 0;
+    left: 0;
+    min-height: 100%;
+    width: 24em;
+}
 
 /* Banner */
 
-	#banner:after {
-		clear: both;
-		content: '';
-		display: block;
-	}
+#banner:after {
+    clear: both;
+    content: '';
+    display: block;
+}
 
-	#banner .content {
-		float: left;
-		padding-right: 4em;
-	}
+#banner .content {
+    float: left;
+    padding-right: 4em;
+}
 
-	#banner .image {
-		float: left;
-		margin-left: 0;
-	}
+#banner .image {
+    float: left;
+    margin-left: 0;
+}

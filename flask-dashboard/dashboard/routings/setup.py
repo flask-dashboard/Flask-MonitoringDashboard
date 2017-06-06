@@ -29,7 +29,7 @@ def settings():
         if form.password.data:
             set_setting('password', form.password.data)
 
-    return render_template('settings.html', link=config.link, session=session, version=config.version,
+    return render_template('settings.html', link=config.link, session=session, curr=4, version=config.version,
                            database_name=config.database_name, group=config.get_group_by(), form=form,
                            testDir=config.test_dir, old_password=old_password)
 
@@ -71,7 +71,7 @@ def rules():
     all_rules = [r for r in all_rules if not r.rule.startswith('/' + config.link)
                  and not r.rule.startswith('/static-' + config.link)]
 
-    return render_template('rules.html', link=config.link, rules=all_rules, access=la, form=form, session=session,
+    return render_template('rules.html', link=config.link, curr=1, rules=all_rules, access=la, form=form, session=session,
                            values=values)
 
 
@@ -122,6 +122,6 @@ def testmonitor():
         times_chart.add('Maximum', list_max, formatter=lambda x: '%.2f ms' % x)
         times_data = times_chart.render_data_uri()
 
-    return render_template('testmonitor.html', link=config.link, session=session, form=form, tests=get_tests(),
+    return render_template('testmonitor.html', link=config.link, session=session, curr=3, form=form, tests=get_tests(),
                            results=get_results(), res_current_version=get_res_current(config.version),
                            times_data=times_data)
