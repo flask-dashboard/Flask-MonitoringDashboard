@@ -29,7 +29,7 @@ data_files_list.extend(tuple_list('templates'))
 
 setup(
     name='flask_dashboard',
-    version='0.3',
+    version='1.0',
     packages=find_packages(),
     data_files=data_files_list,
     url='https://github.com/FlyingBird95/flask-dashboard',
