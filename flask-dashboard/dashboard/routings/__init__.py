@@ -2,10 +2,9 @@
     Main class for adding all route-functions to user_app.
     Setup requires only to import this file. All other imports are done in this file
 """
-from dashboard import blueprint, loc, config, user_app
-from dashboard.security import secure
+from dashboard import blueprint, loc, user_app
 from flask.helpers import send_from_directory
-from flask import session, render_template, redirect, url_for
+from flask import redirect, url_for
 
 # Import more route-functions
 import dashboard.routings.login

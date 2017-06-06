@@ -26,7 +26,7 @@ def settings():
         if form.password.data:
             set_setting('password', form.password.data)
 
-    return render_template('settings.html', link=config.link, session=session, version=config.version,
+    return render_template('settings.html', session=session, version=config.version,
                            database_name=config.database_name, group=config.get_group_by(), form=form,
                            testDir=config.test_dir, old_password=old_password)
 
@@ -68,8 +68,7 @@ def rules():
     all_rules = [r for r in all_rules if not r.rule.startswith('/' + config.link)
                  and not r.rule.startswith('/static-' + config.link)]
 
-    return render_template('rules.html', rules=all_rules, access=la, form=form, link=config.link, session=session,
-                           values=values)
+    return render_template('rules.html', rules=all_rules, access=la, form=form, session=session, values=values)
 
 
 @blueprint.route('/testmonitor', methods=['GET', 'POST'])
@@ -92,4 +91,4 @@ def testmonitor():
                 name = data.rsplit('-', 1)[1]
                 update_test(name, True, get_test(name).timesRun + 1, datetime.datetime.now())
 
-    return render_template('testmonitor.html', link=config.link, session=session, form=form, tests=get_tests())
+    return render_template('testmonitor.html', session=session, form=form, tests=get_tests())
