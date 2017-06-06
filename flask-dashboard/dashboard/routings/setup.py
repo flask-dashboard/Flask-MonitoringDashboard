@@ -71,7 +71,7 @@ def rules():
     all_rules = [r for r in all_rules if not r.rule.startswith('/' + config.link)
                  and not r.rule.startswith('/static-' + config.link)]
 
-    return render_template('rules.html', rules=all_rules, access=la, form=form, link=config.link, session=session,
+    return render_template('rules.html', link=config.link, rules=all_rules, access=la, form=form, session=session,
                            values=values)
 
 

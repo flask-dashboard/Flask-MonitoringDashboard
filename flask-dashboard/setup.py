@@ -33,7 +33,6 @@ setup(
     packages=find_packages(),
     data_files=data_files_list,
     url='https://github.com/FlyingBird95/flask-dashboard',
-    license='Apache',
     author='Patrick Vogel & Thijs Klooster',
     author_email='p.p.vogel@student.rug.nl',
     description='A dashboard for automatic monitoring of python web services',
@@ -42,6 +41,7 @@ setup(
                       'sqlalchemy>=1.1.9',
                       'wtforms>=2.1',
                       'flask_wtf',
-                      'pygal>=2.3.1', 'configparser'],
+                      'pygal>=2.3.1',
+                      'configparser'],
     zip_safe=False
 )
