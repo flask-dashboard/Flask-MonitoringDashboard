@@ -18,13 +18,13 @@
 
         <tr>
             <td style="max-width: 200px; overflow: hidden; white-space: nowrap; text-overflow: ellipsis;">{{ record.endpoint }}</td>
-            <td>{{ record.count }}</td>
+            <td style="text-align: right;">{{ record.count }}</td>
             {% for a in access %}
                 {% if record.endpoint == a.endpoint %}
                     <td>{{ "{:%Y-%m-%d %H:%M:%S }".format(a.last_accessed) if a.last_accessed }}</td>
                 {% endif %}
             {% endfor %}
-            <td>{{ ((record.average*10)|round)/10 }}</td>
+            <td style="text-align: right;">{{ ((record.average*10)|round)/10 }}</td>
             <td><a href="{{ url_for('dashboard.show_graph', end=record.endpoint) }}">Show graph</a></td>
         </tr>
     {% endfor %}

@@ -41,6 +41,7 @@ setup(
                       'sqlalchemy>=1.1.9',
                       'wtforms>=2.1',
                       'flask_wtf',
-                      'pygal>=2.3.1', 'configparser'],
+                      'pygal>=2.3.1',
+                      'configparser'],
     zip_safe=False
 )
