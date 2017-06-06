@@ -23,16 +23,15 @@ except IOError:
     README = ''
 
 # Copy all data_files from the 'static'- and 'templates'-folder into their destination
-data_files_list = tuple_list('static')
-data_files_list.extend(tuple_list('templates'))
-# TODO: also add config-file to data_files_list
+data_files_list = tuple_list('flask-dashboard/static')
+data_files_list.extend(tuple_list('flask-dashboard/templates'))
 
 setup(
     name='flask_dashboard',
-    version='1.0',
+    version='1.3',
     packages=find_packages(),
     data_files=data_files_list,
-    url='https://github.com/FlyingBird95/flask-dashboard',
+    url='https://github.com/mircealungu/automatic-monitoring-dasboard',
     author='Patrick Vogel & Thijs Klooster',
     author_email='p.p.vogel@student.rug.nl',
     description='A dashboard for automatic monitoring of python web services',
