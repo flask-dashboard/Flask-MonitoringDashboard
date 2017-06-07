@@ -1,4 +1,8 @@
 {% extends "default.html" %}
+{% block head %}
+    <!-- files for bokey -->
+{% endblock %}
+
 {% block content %}
     <header>
         <h1>{{ rule.endpoint }}</h1>
@@ -51,4 +55,12 @@
     <div class="container" align="left">
         <embed type="image/svg+xml" src={{ dot_chart_ip|safe }} style='max-width:1000px'></embed>
     </div> <br/>
+
+    <h2>Execution time (in ms) per version</h2>
+    <div class="container" align="left">{{ div_versions|indent(4)|safe }}</div>
+
+    <h2>Execution time (in ms) per user</h2>
+    <div class="container" align="left">{{ div_users|indent(4)|safe }}</div>
+
+
 {% endblock %}
