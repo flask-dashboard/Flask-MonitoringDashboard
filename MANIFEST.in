@@ -1,0 +1,2 @@
+recursive-include flask-dashboard/static *
+recursive-include flask-dashboard/templates *

@@ -1,46 +1,20 @@
-import os
-from setuptools import setup, find_packages
+import setuptools
 
-here = os.path.abspath(os.path.dirname(__file__))
-
-
-# Returns a recursive-list with tuples (directory, [file-list]) from a given directory
-def tuple_list(directory):
-    l = [(directory,
-          [directory + '/' + f for f in os.listdir(directory)
-           if os.path.isfile(directory + '/' + f)])]
-    files = os.listdir(directory)
-    for f in files:
-        name = directory + '/' + f
-        if not os.path.isfile(name):
-            l.extend(tuple_list(name))
-    return l
-
-
-try:
-    README = open(os.path.join(here, 'README.md')).read()
-except IOError:
-    README = ''
-
-# Copy all data_files from the 'static'- and 'templates'-folder into their destination
-data_files_list = tuple_list('flask-dashboard/static')
-data_files_list.extend(tuple_list('flask-dashboard/templates'))
-
-setup(
-    name='flask_dashboard',
-    version='1.3',
-    packages=find_packages(),
-    data_files=data_files_list,
+setuptools.setup(
+    name="flask_dashboard",
+    version="1.3",
+    packages=setuptools.find_packages(),
+    include_package_data=True,
+    zip_safe=False,
     url='https://github.com/mircealungu/automatic-monitoring-dasboard',
-    author='Patrick Vogel & Thijs Klooster',
-    author_email='p.p.vogel@student.rug.nl',
-    description='A dashboard for automatic monitoring of python web services',
-    long_description=README,
+    author="Patrick Vogel & Thijs Klooster",
+    author_email="p.p.vogel@student.rug.nl",
+    description="A dashboard for automatic monitoring of python web services",
     install_requires=['flask>=0.9',
                       'sqlalchemy>=1.1.9',
                       'wtforms>=2.1',
                       'flask_wtf',
                       'pygal>=2.3.1',
-                      'configparser'],
-    zip_safe=False
+                      'plotly',
+                      'configparser']
 )

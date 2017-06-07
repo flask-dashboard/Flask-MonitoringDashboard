@@ -74,9 +74,18 @@ def update_monitor_rule(endpoint, value):
 
 
 def get_all_measurement(endpoint):
-    """Return all entries with measurements from a given endpoint. Uses for creating a histogram. """
+    """Return all entries with measurements from a given endpoint. Used for creating a histogram. """
     with session_scope() as db_session:
         result = db_session.query(FunctionCall).filter(FunctionCall.endpoint == endpoint).all()
+        db_session.expunge_all()
+        return result
+
+
+def get_all_measurement_per_column(endpoint, column, value):
+    """Return all entries with measurements from a given endpoint for which the column has a specific value.
+    Used for creating a box plot. """
+    with session_scope() as db_session:
+        result = db_session.query(FunctionCall).filter(FunctionCall.endpoint == endpoint, column == value).all()
         db_session.expunge_all()
         return result
 

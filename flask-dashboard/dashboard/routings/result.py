@@ -5,10 +5,13 @@ from werkzeug.routing import BuildError
 
 from dashboard import blueprint, config
 from dashboard.database import FunctionCall
-from dashboard.database.endpoint import get_endpoint_column, get_endpoint_results, get_monitor_rule
-from dashboard.database.endpoint import get_last_accessed_times, get_line_results
+from dashboard.database.endpoint import get_endpoint_column, get_endpoint_results, get_monitor_rule, \
+    get_last_accessed_times, get_line_results, get_all_measurement_per_column
 from dashboard.database.function_calls import get_times
 from dashboard.security import secure
+
+import plotly
+import plotly.graph_objs as go
 
 
 @blueprint.route('/measurements')
@@ -17,6 +20,19 @@ def measurements():
     t = get_times()
     la = get_last_accessed_times()
     return render_template('measurements.html', link=config.link, curr=2, times=t, access=la, session=session)
+
+
+def formatter(ms):
+    """
+    formats the ms into seconds and ms
+    :param ms: the number of ms
+    :return: a string representing the same amount, but now represented in seconds and ms.
+    """
+    sec = math.floor(ms/1000)
+    ms = round(ms % 1000, 2)
+    if sec == 0:
+        return '{0}ms'.format(ms)
+    return '{0}s and {1}ms'.format(sec, ms)
 
 
 @blueprint.route('/show-graph/<end>')
@@ -37,12 +53,9 @@ def show_graph(end):
         list_avg.append(d.avg)
         list_max.append(d.max)
         list_count.append(d.count)
-    times_chart.add('Minimum', list_min, formatter=lambda x: '{0}s and {1}ms'.format(math.floor(x/1000),
-                                                                                     round(x % 1000, 2)))
-    times_chart.add('Average', list_avg, formatter=lambda x: '{0}s and {1}ms'.format(math.floor(x/1000),
-                                                                                     round(x % 1000, 2)))
-    times_chart.add('Maximum', list_max, formatter=lambda x: '{0}s and {1}ms'.format(math.floor(x/1000),
-                                                                                     round(x % 1000, 2)))
+    times_chart.add('Minimum', list_min, formatter=formatter)
+    times_chart.add('Average', list_avg, formatter=formatter)
+    times_chart.add('Maximum', list_max, formatter=formatter)
     times_data = times_chart.render_data_uri()
 
     hits_chart = pygal.HorizontalBar(height=100+len(data)*30, show_legend=False)
@@ -94,15 +107,49 @@ def show_graph(end):
         data = []
         for v in versions:
             data.append(user_data[d][v])
-        dot_chart_user.add(d, data, formatter=lambda x: '{0}s and {1}ms'.format(math.floor(x/1000),
-                                                                                round(x % 1000, 2)))
+        dot_chart_user.add(d, data, formatter=formatter)
     for d in [str(c.ip) for c in get_endpoint_column(end, FunctionCall.ip)]:
         data = []
         for v in versions:
             data.append(ip_data[d][v])
-        dot_chart_ip.add(d, data, formatter=lambda x: '{0}s and {1}ms'.format(math.floor(x/1000),
-                                                                              round(x % 1000, 2)))
+        dot_chart_ip.add(d, data, formatter=formatter)
+
+    # boxplot: execution time per versions
+    versions = [str(c.version) for c in get_endpoint_column(endpoint=end, column=FunctionCall.version)]
+
+    data = []
+    for v in versions:
+        values = [str(c.execution_time) for c in
+                  get_all_measurement_per_column(endpoint=end, column=FunctionCall.version, value=v)]
+        data.append(go.Box(x=values, name=v))
+
+    layout = go.Layout(
+        autosize=False,
+        width=1000,
+        height=350+40*len(versions),
+        plot_bgcolor='rgba(249,249,249,1)',
+        showlegend=False
+    )
+    div_versions = plotly.offline.plot(go.Figure(data=data, layout=layout), output_type='div', show_link=False)
+
+    # boxplot: execution time per versions
+    users = [str(c.group_by) for c in get_endpoint_column(endpoint=end, column=FunctionCall.group_by)]
+
+    data = []
+    for u in users:
+        values = [str(c.execution_time) for c in
+                  get_all_measurement_per_column(endpoint=end, column=FunctionCall.group_by, value=u)]
+        data.append(go.Box(x=values, name=u))
+
+    layout = go.Layout(
+        autosize=False,
+        width=1000,
+        height=350 + 40 * len(users),
+        plot_bgcolor='rgba(249,249,249,1)',
+        showlegend=False
+    )
+    div_users = plotly.offline.plot(go.Figure(data=data, layout=layout), output_type='div', show_link=False)
 
     return render_template('show-graph.html', link=config.link, session=session, rule=rule, url=url,
                            times_data=times_data, hits_data=hits_data, dot_chart_user=dot_chart_user.render_data_uri(),
-                           dot_chart_ip=dot_chart_ip.render_data_uri())
+                           dot_chart_ip=dot_chart_ip.render_data_uri(), div_versions=div_versions, div_users=div_users)
