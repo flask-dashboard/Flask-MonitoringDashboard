@@ -32,3 +32,16 @@ def get_times():
                                   ).group_by(FunctionCall.endpoint).order_by(desc('count')).all()
         db_session.expunge_all()
         return result
+
+
+def get_data():
+    """ Returns all data in the FunctionCall table, for the export data option. """
+    with session_scope() as db_session:
+        result = db_session.query(FunctionCall.endpoint,
+                                  FunctionCall.execution_time,
+                                  FunctionCall.time,
+                                  FunctionCall.version,
+                                  FunctionCall.group_by,
+                                  FunctionCall.ip).all()
+        db_session.expunge_all()
+        return result
