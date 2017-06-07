@@ -15,5 +15,6 @@ setuptools.setup(
                       'wtforms>=2.1',
                       'flask_wtf',
                       'pygal>=2.3.1',
+                      'plotly',
                       'configparser']
 )

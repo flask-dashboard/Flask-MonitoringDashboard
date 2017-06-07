@@ -5,10 +5,13 @@ from werkzeug.routing import BuildError
 
 from dashboard import blueprint, config
 from dashboard.database import FunctionCall
-from dashboard.database.endpoint import get_endpoint_column, get_endpoint_results, get_monitor_rule
-from dashboard.database.endpoint import get_last_accessed_times, get_line_results
+from dashboard.database.endpoint import get_endpoint_column, get_endpoint_results, get_monitor_rule, \
+    get_last_accessed_times, get_line_results, get_all_measurement_per_column
 from dashboard.database.function_calls import get_times
 from dashboard.security import secure
+
+import plotly
+import plotly.graph_objs as go
 
 
 @blueprint.route('/measurements')
@@ -111,6 +114,42 @@ def show_graph(end):
             data.append(ip_data[d][v])
         dot_chart_ip.add(d, data, formatter=formatter)
 
+    # boxplot: execution time per versions
+    versions = [str(c.version) for c in get_endpoint_column(endpoint=end, column=FunctionCall.version)]
+
+    data = []
+    for v in versions:
+        values = [str(c.execution_time) for c in
+                  get_all_measurement_per_column(endpoint=end, column=FunctionCall.version, value=v)]
+        data.append(go.Box(x=values, name=v))
+
+    layout = go.Layout(
+        autosize=False,
+        width=1000,
+        height=350+40*len(versions),
+        plot_bgcolor='rgba(249,249,249,1)',
+        showlegend=False
+    )
+    div_versions = plotly.offline.plot(go.Figure(data=data, layout=layout), output_type='div', show_link=False)
+
+    # boxplot: execution time per versions
+    users = [str(c.group_by) for c in get_endpoint_column(endpoint=end, column=FunctionCall.group_by)]
+
+    data = []
+    for u in users:
+        values = [str(c.execution_time) for c in
+                  get_all_measurement_per_column(endpoint=end, column=FunctionCall.group_by, value=u)]
+        data.append(go.Box(x=values, name=u))
+
+    layout = go.Layout(
+        autosize=False,
+        width=1000,
+        height=350 + 40 * len(users),
+        plot_bgcolor='rgba(249,249,249,1)',
+        showlegend=False
+    )
+    div_users = plotly.offline.plot(go.Figure(data=data, layout=layout), output_type='div', show_link=False)
+
     return render_template('show-graph.html', link=config.link, session=session, rule=rule, url=url,
                            times_data=times_data, hits_data=hits_data, dot_chart_user=dot_chart_user.render_data_uri(),
-                           dot_chart_ip=dot_chart_ip.render_data_uri())
+                           dot_chart_ip=dot_chart_ip.render_data_uri(), div_versions=div_versions, div_users=div_users)
