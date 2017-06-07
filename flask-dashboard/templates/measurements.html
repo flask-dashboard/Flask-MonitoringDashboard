@@ -6,7 +6,9 @@
     </header>
 
     <h2>Execution times of endpoints</h2>
-    Export execution time data to: <a href="{{ url_for('dashboard.export_data') }}">csv</a><br><br>
+    Export execution time data: <a href="{{ url_for('dashboard.export_data') }}">Show</a>
+    <a href="{{ url_for('dashboard.download_csv') }}">Download</a>
+    <br><br>
     <table class="sortable">
         <tr>
             <th class="clickable">Endpoint</th>
