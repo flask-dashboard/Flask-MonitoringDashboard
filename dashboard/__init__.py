@@ -23,8 +23,7 @@ user_app = None
 
 # get current location of the project
 def loc():
-    s = os.path.abspath(os.path.dirname(__file__))
-    return str(s.rsplit('/', 1)[0]) + '/'
+    return os.path.abspath(os.path.dirname(__file__)) + '/'
 
 # define the blueprint
 blueprint = Blueprint('dashboard', __name__, template_folder=loc() + 'templates')
