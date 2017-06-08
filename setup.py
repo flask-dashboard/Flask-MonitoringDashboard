@@ -1,9 +1,12 @@
 import setuptools
 
+packages = ['flask_dashboard.' + p for p in setuptools.find_packages('./flask_dashboard')] + \
+           ['flask_dashboard']
+
 setuptools.setup(
     name="flask_dashboard",
     version="1.3",
-    packages=setuptools.find_packages(),
+    packages=packages,
     include_package_data=True,
     zip_safe=False,
     url='https://github.com/mircealungu/automatic-monitoring-dasboard',
