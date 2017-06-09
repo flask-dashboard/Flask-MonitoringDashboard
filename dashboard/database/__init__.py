@@ -69,14 +69,6 @@ class FunctionCall(Base):
     ip = Column(String(25), nullable=False)
 
 
-class Setting(Base):
-    """ Table for storing the values of certain variables """
-    __tablename__ = 'settings'
-    # the name of the variable must be unique
-    variable = Column(String(100), primary_key=True)
-    # the corresponding value
-    value = Column(String(100))
-
 # define the database
 engine = create_engine(config.database_name)
 
