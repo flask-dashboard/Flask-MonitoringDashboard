@@ -5,7 +5,6 @@ from dashboard.database.endpoint import get_monitor_rule, update_monitor_rule, g
 from dashboard.database.monitor_rules import reset_monitor_endpoints
 from dashboard.database.tests import get_tests, reset_run, update_test, add_test_result, get_results
 from dashboard.database.tests import get_line_results, get_res_current
-from dashboard.database.settings import get_setting, set_setting
 from dashboard.forms import MonitorDashboard, ChangeSetting, RunTests
 from dashboard.measurement import track_performance
 from dashboard.security import secure
@@ -21,14 +20,15 @@ import math
 @secure
 def settings():
     form = ChangeSetting()
-    form.username.data = get_setting('username', 'admin')
-    old_password = get_setting('password', 'admin')
-    old_password = 'x' * len(old_password)
 
     if request.method == 'POST' and form.validate():
-        set_setting('username', form.username.data)
+        config.username = form.username.data
         if form.password.data:
-            set_setting('password', form.password.data)
+            config.password = form.password.data
+
+    form.username.data = config.username
+    old_password = config.password
+    old_password = 'x' * len(old_password)
 
     return render_template('settings.html', link=config.link, session=session, curr=4, version=config.version,
                            database_name=config.database_name, group=config.get_group_by(), form=form,

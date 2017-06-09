@@ -16,6 +16,8 @@ class Config(object):
         self.link = 'dashboard'
         self.database_name = 'sqlite:///flask-dashboard.db'
         self.test_dir = './'
+        self.username = 'admin'
+        self.password = 'admin'
 
         # define a custom function to retrieve the session_id or username
         self.get_group_by = None
@@ -35,7 +37,10 @@ class Config(object):
             version automatically retrieved by reading the commit-id (hashed value):
             GIT = If you're using git, then it is easier to set the location to the .git-folder, 
                 The location is relative to the config-file.
-            
+
+            USERNAME: for logging into the dashboard, a username and password is required. The
+                username can be set using this variable.
+            PASSWORD: same as for the username, but this is the password variable.
             
             :param config_file: a string pointing to the location of the config-file
         """
@@ -51,6 +56,7 @@ class Config(object):
                 self.database_name = parser.get('dashboard', 'DATABASE')
             if parser.has_option('dashboard', 'TEST_DIR'):
                 self.test_dir = parser.get('dashboard', 'TEST_DIR')
+
             # When the option git is selected, it overrides the given version
             if parser.has_option('dashboard', 'GIT'):
                 git = parser.get('dashboard', 'GIT')
@@ -65,5 +71,11 @@ class Config(object):
                 except IOError:
                     print("Error reading one of the files to retrieve the current git-version.")
                     raise
+
+            # provide username and/or password
+            if parser.has_option('dashboard', 'USERNAME'):
+                self.username = parser.get('dashboard', 'USERNAME')
+            if parser.has_option('dashboard', 'PASSWORD'):
+                self.password = parser.get('dashboard', 'PASSWORD')
         except configparser.Error:
             raise

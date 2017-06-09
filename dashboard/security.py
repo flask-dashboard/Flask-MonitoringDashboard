@@ -1,6 +1,5 @@
 from functools import wraps
 from dashboard import user_app, config
-from dashboard.database.settings import get_setting
 from flask import session, redirect, url_for
 
 
@@ -14,7 +13,7 @@ def secure(func):
     """
     @wraps(func)
     def wrapper(*args, **kwargs):
-        if user_app.debug or (session and session.get(config.link + '_logged_in')):
+        if session and session.get(config.link + '_logged_in'):
             return func(*args, **kwargs)
         else:
             return redirect(url_for('dashboard.login'))
@@ -22,7 +21,7 @@ def secure(func):
 
 
 def check_login(name, password):
-    if name == get_setting('username', 'admin') and password == get_setting('password', 'admin'):
+    if name == config.username and password == config.password:
         on_login()
         return True
     return False

@@ -33,6 +33,8 @@ The following things should be set for best performance:
     GIT=/<path to your project>/flask-dashboard/.git/
     TEST_DIR=/<path to your project>/flask-dashboard/tests/
 
+For more information: [see this file](dashboard/config.py)
+
 When running your app, the dashboard van be viewed by default in the route:
 
     /dashboard
