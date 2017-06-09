@@ -2,46 +2,44 @@
 {% block content %}
 
     <div class="row">
-        <div class="col-md-12">
-            <!-- Advanced Tables -->
-            <div class="panel panel-default">
-                <div class="panel-heading">
-                    Settings from config file
-                </div>
-                <br/>
-                <div class="panel-body">
-                    <div class="table-responsive">
-                        <table class="table table-striped table-bordered table-hover">
-                            <tr>
-                                <td>Dashboard link</td>
-                                <td>/{{ link }}</td>
-                            </tr>
-                            <tr>
-                                <td>Version of monitored app</td>
-                                <td>{{ version }}</td>
-                            </tr>
-                            <tr>
-                                <td>Group by variable</td>
-                                <td>{{ group if group != None else "Unspecified" }}</td>
-                            </tr>
-                            <tr>
-                                <td>Measurements database</td>
-                                <td>{{ database_name }}</td>
-                            </tr>
-                            <tr>
-                                <td>Location of tests of monitored app</td>
-                                <td>{{ testDir if testDir != None else "Unspecified" }}</td>
-                            </tr>
-                            <tr>
-                                <td>Username</td>
-                                <td>{{ user }}</td>
-                            </tr>
-                            <tr>
-                                <td>Password</td>
-                                <td>{{ pw }}</td>
-                            </tr>
-                        </table>
-                    </div>
+        <!-- Advanced Tables -->
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                Settings from config file
+            </div>
+            <br/>
+            <div class="panel-body">
+                <div class="table-responsive">
+                    <table class="table table-striped table-bordered table-hover">
+                        <tr>
+                            <td>Dashboard link</td>
+                            <td>/{{ link }}</td>
+                        </tr>
+                        <tr>
+                            <td>Version of monitored app</td>
+                            <td>{{ version }}</td>
+                        </tr>
+                        <tr>
+                            <td>Group by variable</td>
+                            <td>{{ group if group != None else "Unspecified" }}</td>
+                        </tr>
+                        <tr>
+                            <td>Measurements database</td>
+                            <td>{{ database_name }}</td>
+                        </tr>
+                        <tr>
+                            <td>Location of tests of monitored app</td>
+                            <td>{{ testDir if testDir != None else "Unspecified" }}</td>
+                        </tr>
+                        <tr>
+                            <td>Username</td>
+                            <td>{{ user }}</td>
+                        </tr>
+                        <tr>
+                            <td>Password</td>
+                            <td>{{ pw }}</td>
+                        </tr>
+                    </table>
                 </div>
             </div>
         </div>

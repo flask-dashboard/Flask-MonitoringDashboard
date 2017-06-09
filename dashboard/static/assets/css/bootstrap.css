@@ -5846,10 +5846,15 @@ a.list-group-item-danger.active:focus {
 }
 
 .panel-heading {
+    font-size: 18px;
     padding: 20px 15px;
     border-bottom: 1px solid transparent;
     border-top-left-radius: 3px;
     border-top-right-radius: 3px;
+}
+
+.panel-heading-custom {
+    font-size: 24px;
 }
 
 .panel-heading > .dropdown .dropdown-toggle {
