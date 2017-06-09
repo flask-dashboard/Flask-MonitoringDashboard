@@ -57,29 +57,27 @@ def get_graphs_per_hour(end):
     :return: graph1, graph2
     """
     data = get_line_results(end)
-    times_chart = pygal.HorizontalBar(height=100 + len(data) * 30)
-    times_chart.x_labels = []
+    graph1 = pygal.HorizontalBar(height=100 + len(data) * 30)
+    graph1.x_labels = []
     list_avg = []
     list_min = []
     list_max = []
     list_count = []
     for d in data:
-        times_chart.x_labels.append(d.newTime)
+        graph1.x_labels.append(d.newTime)
         list_min.append(d.min)
         list_avg.append(d.avg)
         list_max.append(d.max)
         list_count.append(d.count)
-    times_chart.add('Minimum', list_min, formatter=formatter)
-    times_chart.add('Average', list_avg, formatter=formatter)
-    times_chart.add('Maximum', list_max, formatter=formatter)
-    graph1 = times_chart.render_data_uri()
+    graph1.add('Minimum', list_min, formatter=formatter)
+    graph1.add('Average', list_avg, formatter=formatter)
+    graph1.add('Maximum', list_max, formatter=formatter)
 
-    hits_chart = pygal.HorizontalBar(height=100 + len(data) * 30, show_legend=False)
-    hits_chart.x_labels = []
+    graph2 = pygal.HorizontalBar(height=100 + len(data) * 30, show_legend=False)
+    graph2.x_labels = []
     for d in data:
-        hits_chart.x_labels.append(d.newTime)
-    hits_chart.add('Hits', list_count)
-    graph2 = hits_chart.render_data_uri()
+        graph2.x_labels.append(d.newTime)
+    graph2.add('Hits', list_count)
     return graph1.render_data_uri(), graph2.render_data_uri()
 
 
@@ -127,7 +125,7 @@ def get_dot_charts(end, versions):
         for v in versions:
             data.append(ip_data[d][v])
         graph2.add(d, data, formatter=formatter)
-    return graph1, graph2
+    return graph1.render_data_uri(), graph2.render_data_uri()
 
 
 def get_boxplots(end, versions):
