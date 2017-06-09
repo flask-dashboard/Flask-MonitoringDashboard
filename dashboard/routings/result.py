@@ -35,13 +35,29 @@ def formatter(ms):
     return '{0}s and {1}ms'.format(sec, ms)
 
 
-@blueprint.route('/show-graph/<end>')
-@secure
-def show_graph(end):
+def get_url(end):
+    """
+    Returns the URL if possible.
+    URL's that require additional arguments, like /static/<file> cannot be retrieved.
+    :param end: the endpoint for the url.
+    :return: the url_for(end) or None,
+    """
+    try:
+        return url_for(end)
+    except BuildError:
+        return None
 
-    # bar chart
+
+def get_graphs_per_hour(end):
+    """
+    Function that builds two graphs:
+    1. Execution time (in ms) grouped by hour
+    2. Number of hits grouped by hour.
+    :param end: the endpoint
+    :return: graph1, graph2
+    """
     data = get_line_results(end)
-    times_chart = pygal.HorizontalBar(height=100+len(data)*30)
+    times_chart = pygal.HorizontalBar(height=100 + len(data) * 30)
     times_chart.x_labels = []
     list_avg = []
     list_min = []
@@ -56,28 +72,26 @@ def show_graph(end):
     times_chart.add('Minimum', list_min, formatter=formatter)
     times_chart.add('Average', list_avg, formatter=formatter)
     times_chart.add('Maximum', list_max, formatter=formatter)
-    times_data = times_chart.render_data_uri()
+    graph1 = times_chart.render_data_uri()
 
-    hits_chart = pygal.HorizontalBar(height=100+len(data)*30, show_legend=False)
+    hits_chart = pygal.HorizontalBar(height=100 + len(data) * 30, show_legend=False)
     hits_chart.x_labels = []
     for d in data:
         hits_chart.x_labels.append(d.newTime)
     hits_chart.add('Hits', list_count)
-    hits_data = hits_chart.render_data_uri()
+    graph2 = hits_chart.render_data_uri()
+    return graph1.render_data_uri(), graph2.render_data_uri()
 
-    # get measurements from database
-    rule = get_monitor_rule(end)
 
-    versions = [str(c.version) for c in get_endpoint_column(end, FunctionCall.version)]
-
-    # urls that require additional arguments, like /static/<file> cannot be retrieved.
-    # This raises a BuildError
-    try:
-        url = url_for(end)
-    except BuildError:
-        url = None
-
-    # define the rows
+def get_dot_charts(end, versions):
+    """
+    Function that builds two dot charts:
+    1. Execution time per version per user
+    2. Execution time per version per ip
+    :param end: the endpoint
+    :param versions: A list with the versions
+    :return: graph1, graph2
+    """
     user_data = {}
     ip_data = {}
     for d in [str(c.group_by) for c in get_endpoint_column(end, FunctionCall.group_by)]:
@@ -96,27 +110,35 @@ def show_graph(end):
         ip_data[str(d.ip)][d.version] = d.average
 
     # dot charts
-    dot_chart_user = pygal.Dot(x_label_rotation=30, show_legend=False, height=200+len(user_data)*40)
-    dot_chart_user.x_labels = versions
+    graph1 = pygal.Dot(x_label_rotation=30, show_legend=False, height=200 + len(user_data) * 40)
+    graph1.x_labels = versions
 
-    dot_chart_ip = pygal.Dot(x_label_rotation=30, show_legend=False, height=200+len(ip_data)*40)
-    dot_chart_ip.x_labels = versions
+    graph2 = pygal.Dot(x_label_rotation=30, show_legend=False, height=200 + len(ip_data) * 40)
+    graph2.x_labels = versions
 
     # add rows to the charts
     for d in [str(c.group_by) for c in get_endpoint_column(end, FunctionCall.group_by)]:
         data = []
         for v in versions:
             data.append(user_data[d][v])
-        dot_chart_user.add(d, data, formatter=formatter)
+        graph1.add(d, data, formatter=formatter)
     for d in [str(c.ip) for c in get_endpoint_column(end, FunctionCall.ip)]:
         data = []
         for v in versions:
             data.append(ip_data[d][v])
-        dot_chart_ip.add(d, data, formatter=formatter)
+        graph2.add(d, data, formatter=formatter)
+    return graph1, graph2
 
-    # boxplot: execution time per versions
-    versions = [str(c.version) for c in get_endpoint_column(endpoint=end, column=FunctionCall.version)]
 
+def get_boxplots(end, versions):
+    """
+        Function that builds two dot charts:
+        1. Execution time per version
+        2. Execution time per user
+        :param end: the endpoint
+        :param versions: A list with the versions
+        :return: graph1, graph2
+        """
     data = []
     for v in versions:
         values = [str(c.execution_time) for c in
@@ -126,11 +148,11 @@ def show_graph(end):
     layout = go.Layout(
         autosize=False,
         width=1000,
-        height=350+40*len(versions),
+        height=350 + 40 * len(versions),
         plot_bgcolor='rgba(249,249,249,1)',
         showlegend=False
     )
-    div_versions = plotly.offline.plot(go.Figure(data=data, layout=layout), output_type='div', show_link=False)
+    graph1 = plotly.offline.plot(go.Figure(data=data, layout=layout), output_type='div', show_link=False)
 
     # boxplot: execution time per versions
     users = [str(c.group_by) for c in get_endpoint_column(endpoint=end, column=FunctionCall.group_by)]
@@ -148,8 +170,26 @@ def show_graph(end):
         plot_bgcolor='rgba(249,249,249,1)',
         showlegend=False
     )
-    div_users = plotly.offline.plot(go.Figure(data=data, layout=layout), output_type='div', show_link=False)
+    graph2 = plotly.offline.plot(go.Figure(data=data, layout=layout), output_type='div', show_link=False)
+    return graph1, graph2
+
+
+@blueprint.route('/show-graph/<end>')
+@secure
+def show_graph(end):
+    rule = get_monitor_rule(end)
+    url = get_url(end)
+    versions = [str(c.version) for c in get_endpoint_column(end, FunctionCall.version)]
+
+    # (1) Execution time per hour and (2) Hits per hour
+    graph1, graph2 = get_graphs_per_hour(end)
+
+    # (3) Execution time per version per user and (4) Execution time per version per ip
+    graph3, graph4 = get_dot_charts(end, versions)
+
+    # (5) Execution time per version and (6) Execution time per user
+    graph5, graph6 = get_boxplots(end, versions)
 
     return render_template('show-graph.html', link=config.link, session=session, rule=rule, url=url,
-                           times_data=times_data, hits_data=hits_data, dot_chart_user=dot_chart_user.render_data_uri(),
-                           dot_chart_ip=dot_chart_ip.render_data_uri(), div_versions=div_versions, div_users=div_users)
+                           times_data=graph1, hits_data=graph2, dot_chart_user=graph3,
+                           dot_chart_ip=graph4, div_versions=graph5, div_users=graph6)

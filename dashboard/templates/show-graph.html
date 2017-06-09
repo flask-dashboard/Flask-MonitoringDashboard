@@ -1,7 +1,4 @@
 {% extends "default.html" %}
-{% block head %}
-    <!-- files for bokey -->
-{% endblock %}
 
 {% block content %}
     <header>
@@ -36,31 +33,71 @@
     </table>
     <br/>
 
-    <h2>Execution time (in ms) per hour</h2>
-    <div class="container" align="left">
-        <embed type="image/svg+xml" src={{ times_data|safe }} style='max-width:1000px'></embed>
-    </div> <br/>
+    <div class="tab">
+        <button class="tablinks" onclick="openTab(event, 'tph')">Time per hour</button>
+        <button class="tablinks" onclick="openTab(event, 'hph')">Hits per hour</button>
+        <button class="tablinks" onclick="openTab(event, 'tpvpu')">Time per version per user</button>
+        <button class="tablinks" onclick="openTab(event, 'tpvpi')">Time per version per ip</button>
+        <button class="tablinks" onclick="openTab(event, 'tpv')">Time per version</button>
+        <button class="tablinks" onclick="openTab(event, 'tpu')">Time per user</button>
+    </div>
 
-    <h2>Number of hits per hour</h2>
-    <div class="container" align="left">
-        <embed type="image/svg+xml" src={{ hits_data|safe }} style='max-width:1000px'></embed>
-    </div> <br/>
 
-    <h2>Execution time (in ms) per version per user</h2>
-    <div class="container" align="left">
-        <embed type="image/svg+xml" src={{ dot_chart_user|safe }} style='max-width:1000px'></embed>
-    </div> <br/>
+    <div id="tph" class="tabcontent">
+        <h2>Execution time (in ms) per hour</h2>
+        <div class="container" align="left">
+            <embed type="image/svg+xml" src={{ times_data|safe }} style='max-width:1000px'></embed>
+        </div>
+        </div>
 
-    <h2>Execution time (in ms) per version per ip</h2>
-    <div class="container" align="left">
-        <embed type="image/svg+xml" src={{ dot_chart_ip|safe }} style='max-width:1000px'></embed>
-    </div> <br/>
+    <div id="hph" class="tabcontent">
+        <h2>Number of hits per hour</h2>
+        <div class="container" align="left">
+            <embed type="image/svg+xml" src={{ hits_data|safe }} style='max-width:1000px'></embed>
+        </div>
+    </div>
 
-    <h2>Execution time (in ms) per version</h2>
-    <div class="container" align="left">{{ div_versions|indent(4)|safe }}</div>
+    <div id="tpvpu" class="tabcontent">
+        <h2>Execution time (in ms) per version per user</h2>
+        <div class="container" align="left">
+            <embed type="image/svg+xml" src={{ dot_chart_user|safe }} style='max-width:1000px'></embed>
+        </div>
+    </div>
 
-    <h2>Execution time (in ms) per user</h2>
-    <div class="container" align="left">{{ div_users|indent(4)|safe }}</div>
+    <div id="tpvpi" class="tabcontent">
+        <h2>Execution time (in ms) per version per ip</h2>
+        <div class="container" align="left">
+            <embed type="image/svg+xml" src={{ dot_chart_ip|safe }} style='max-width:1000px'></embed>
+        </div>
+    </div>
 
+    <div id="tpv" class="tabcontent">
+        <h2>Execution time (in ms) per version</h2>
+        <div class="container" align="left">{{ div_versions|indent(4)|safe }}</div>
+    </div>
+
+    <div id="tpu" class="tabcontent">
+        <h2>Execution time (in ms) per user</h2>
+        <div class="container" align="left">{{ div_users|indent(4)|safe }}</div>
+    </div>
+
+    <div id="tpi" class="tabcontent"></div>
+
+
+    <script>
+        function openTab(evt, tabName) {
+            var i, tabcontent, tablinks;
+            tabcontent = document.getElementsByClassName("tabcontent");
+            for (i = 0; i < tabcontent.length; i++) {
+                tabcontent[i].style.display = "none";
+            }
+            tablinks = document.getElementsByClassName("tablinks");
+            for (i = 0; i < tablinks.length; i++) {
+                tablinks[i].className = tablinks[i].className.replace(" active", "");
+            }
+            document.getElementById(tabName).style.display = "block";
+            evt.currentTarget.className += " active";
+        }
+    </script>
 
 {% endblock %}
