@@ -25,27 +25,30 @@
 </head>
 <body>
 <div>
+    <br><br>
+    <div class="panel panel-primary panel-custom-login">
+        <div class="panel-heading">
+            Login
+        </div>
+        <div class="panel-body">
 
-    <header>
-        <h1>Login</h1>
-        <p>Monitoring Dashboard - Automated monitoring of your Flask web apps</p>
-    </header>
+            {% for error in form.errors %}
+                <div class="alert alert-danger">
+                    {{ form.errors[error][0] }}
+                </div>
+            {% endfor %}
 
-    <ul>
-        {% for error in form.errors %}
-            <div class="alert alert-danger">
-                <strong>Oh snap!</strong> {{ form.errors[error][0] }}
-            </div>
-        {% endfor %}
-    </ul>
-
-    <form action="" method="POST">
-        {{ form.hidden_tag() }}
-        {{ form.name.label }} {{ form.name }} <br/>
-        {{ form.password.label }} {{ form.password }}<br/>
-        {{ form.submit }}
-    </form>
-
+            <form action="" method="POST">
+                {{ form.hidden_tag() }}
+                {{ form.name.label }} <br/> {{ form.name }} <br/><br/>
+                {{ form.password.label }} <br/> {{ form.password }} <br/><br/>
+                {{ form.submit }}
+            </form>
+        </div>
+        <div class="panel-footer">
+            <b>Monitoring Dashboard</b> - <i>Automated monitoring of your Flask web apps</i>
+        </div>
+    </div>
 </div>
 
 
