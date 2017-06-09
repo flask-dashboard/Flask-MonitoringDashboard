@@ -15,7 +15,7 @@ class Config(object):
         self.version = '1.0'
         self.link = 'dashboard'
         self.database_name = 'sqlite:///flask-dashboard.db'
-        self.test_dir = './'
+        self.test_dir = None
         self.username = 'admin'
         self.password = 'admin'
 

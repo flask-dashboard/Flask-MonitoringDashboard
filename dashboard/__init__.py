@@ -25,6 +25,7 @@ user_app = None
 def loc():
     return os.path.abspath(os.path.dirname(__file__)) + '/'
 
+
 # define the blueprint
 blueprint = Blueprint('dashboard', __name__, template_folder=loc() + 'templates')
 
@@ -49,15 +50,16 @@ def bind(app):
     # register the blueprint to the app
     app.register_blueprint(blueprint, url_prefix='/' + config.link)
 
-    # search for tests
-    from dashboard.database.tests import add_test, get_tests
-    suites = TestLoader().discover(config.test_dir, pattern="*test*.py")
-    existing_tests = get_tests()
-    tests = []
-    for t in existing_tests:
-        tests.append(t.name)
-    for suite in suites:
-        for case in suite:
-            for test in case:
-                if str(test) not in tests:
-                    add_test(str(test))
+    # search for tests if test dir specified
+    if config.test_dir:
+        from dashboard.database.tests import add_test, get_tests
+        suites = TestLoader().discover(config.test_dir, pattern="*test*.py")
+        existing_tests = get_tests()
+        tests = []
+        for t in existing_tests:
+            tests.append(t.name)
+        for suite in suites:
+            for case in suite:
+                for test in case:
+                    if str(test) not in tests:
+                        add_test(str(test))

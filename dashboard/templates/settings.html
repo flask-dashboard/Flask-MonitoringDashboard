@@ -1,69 +1,50 @@
 {% extends "main.html" %}
 {% block content %}
-    <header>
-        <h1>Settings</h1>
-        <p>A dashboard for automatic monitoring of python web services</p>
-    </header>
 
-    <h2>Current values</h2>
-    <table>
-        <tr>
-            <th>Variable</th>
-            <th>Value</th>
-        </tr>
+    <div class="row">
+        <div class="col-md-12">
+            <!-- Advanced Tables -->
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    Settings from config file
+                </div>
+                <br/>
+                <div class="panel-body">
+                    <div class="table-responsive">
+                        <table class="table table-striped table-bordered table-hover">
+                            <tr>
+                                <td>Dashboard link</td>
+                                <td>/{{ link }}</td>
+                            </tr>
+                            <tr>
+                                <td>Version of monitored app</td>
+                                <td>{{ version }}</td>
+                            </tr>
+                            <tr>
+                                <td>Group by variable</td>
+                                <td>{{ group if group != None else "Unspecified" }}</td>
+                            </tr>
+                            <tr>
+                                <td>Measurements database</td>
+                                <td>{{ database_name }}</td>
+                            </tr>
+                            <tr>
+                                <td>Location of tests of monitored app</td>
+                                <td>{{ testDir if testDir != None else "Unspecified" }}</td>
+                            </tr>
+                            <tr>
+                                <td>Username</td>
+                                <td>{{ user }}</td>
+                            </tr>
+                            <tr>
+                                <td>Password</td>
+                                <td>{{ pw }}</td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 
-        <tr>
-            <td>Link</td>
-            <td>/{{ link }}</td>
-        </tr>
-        <tr>
-            <td>Version</td>
-            <td>{{ version }}</td>
-        </tr>
-        <tr>
-            <td>User variable</td>
-            <td>{{ group if group != None else "N/A" }}</td>
-        </tr>
-        <tr>
-            <td>Database name</td>
-            <td>{{ database_name }}</td>
-        </tr>
-        <tr>
-            <td>Test directory</td>
-            <td>{{ testDir }}</td>
-        </tr>
-        <tr>
-            <td>Logged in</td>
-            <td>{{ "Yes" if session.get(link + '_logged_in') else "No" }}</td>
-        </tr>
-    </table>
-
-    <h2>Change username or password</h2>
-    <ul>
-        {% for error in form.errors %}
-            <li style="color: red;">{{ form.errors[error][0] }}</li>
-        {% endfor %}
-    </ul>
-    <form action="" method="POST">
-        {{ form.hidden_tag() }}
-        <table>
-            <tr>
-                <td>{{ form.username.label }}</td>
-                <td>{{ form.username }}</td>
-            </tr>
-            <tr>
-                <td><label>Old password: </label></td>
-                <td>{{ old_password }}</td>
-            </tr>
-            <tr>
-                <td>{{ form.password.label }}</td>
-                <td>{{ form.password }}</td>
-            </tr>
-            <tr>
-                <td>{{ form.confirm.label }}</td>
-                <td>{{ form.confirm }}</td>
-            </tr>
-        </table>
-        {{ form.submit }}
-    </form>
 {% endblock %}
