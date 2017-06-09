@@ -30,7 +30,7 @@ def settings():
     old_password = config.password
     old_password = 'x' * len(old_password)
 
-    return render_template('settings.html', link=config.link, session=session, curr=4, version=config.version,
+    return render_template('settings.html', link=config.link, session=session, version=config.version,
                            database_name=config.database_name, group=config.get_group_by(), form=form,
                            testDir=config.test_dir, old_password=old_password)
 

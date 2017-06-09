@@ -17,9 +17,10 @@ def init_measurement():
     This function is used in the config-method in __init__ of this folder
     It adds wrappers to the endpoints for tracking their performance and last access times.
     """
-    for rule in get_monitor_rules():
-        user_app.view_functions[rule.endpoint] = track_performance(user_app.view_functions[rule.endpoint],
-                                                                   endpoint=rule.endpoint)
+    # TODO: Uncomment this. Was commented for testing using zeeguu collected data.
+    # for rule in get_monitor_rules():
+    #     user_app.view_functions[rule.endpoint] = track_performance(user_app.view_functions[rule.endpoint],
+    #                                                                endpoint=rule.endpoint)
 
     # filter dashboard rules
     rules = user_app.url_map.iter_rules()
