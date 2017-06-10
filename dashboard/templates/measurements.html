@@ -1,36 +1,54 @@
-{% extends "default.html" %}
+{% extends "main.html" %}
 {% block content %}
-    <header>
-        <h1>Dashboard</h1>
-        <p>A dashboard for automatic monitoring of python web services</p>
-    </header>
 
-    <h2>Execution times of endpoints</h2>
-    Export execution time data: <a href="{{ url_for('dashboard.export_data') }}">Show</a>
-    <a href="{{ url_for('dashboard.download_csv') }}">Download</a>
-    <br><br>
-    <table class="sortable">
-        <tr>
-            <th class="clickable">Endpoint</th>
-            <th class="clickable">Hits</th>
-            <th class="clickable">Last accessed</th>
-            <th class="clickable">Average execution time (in ms)</th>
-            <th>Graph</th>
-        </tr>
-        {% for record in times %}
+    <div class="row">
+        <!-- Advanced Tables -->
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                Execution times of endpoints
+                <a href="{{ url_for('dashboard.download_csv') }}" class="btn btn-primary btn-sm right-align-custom">Download
+                    CSV</a>
+                <a href="{{ url_for('dashboard.export_data') }}" class="btn btn-primary btn-sm right-align-custom">View
+                    CSV</a>
+            </div>
+            <br/>
+            <div class="panel-body">
+                <div class="table-responsive">
+                    <table class="table table-striped table-bordered table-hover sortable">
+                        <thead>
+                        <tr>
+                            <th class="clickable">Endpoint</th>
+                            <th class="clickable">Hits</th>
+                            <th class="clickable">Last accessed</th>
+                            <th class="clickable">Average execution time (in ms)</th>
+                            <th></th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {% for record in times %}
+                            <tr>
+                                <td style="max-width: 200px; overflow: hidden; white-space: nowrap; text-overflow: ellipsis;">{{ record.endpoint }}</td>
+                                <td style="text-align: right;">{{ record.count }}</td>
+                                {% for a in access %}
+                                    {% if record.endpoint == a.endpoint %}
+                                        <td style="text-align: center;">{{ "{:%Y-%m-%d %H:%M:%S }".format(a.last_accessed) if a.last_accessed }}</td>
+                                    {% endif %}
+                                {% endfor %}
+                                <td style="text-align: right;">{{ ((record.average*10)|round)/10 }}</td>
+                                <td>
+                                    <a href="{{ url_for('dashboard.show_graph', end=record.endpoint) }}"
+                                       class="btn btn-default btn-sm right-align-custom">
+                                        Details
+                                    </a>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
 
-            <tr>
-                <td style="max-width: 200px; overflow: hidden; white-space: nowrap; text-overflow: ellipsis;">{{ record.endpoint }}</td>
-                <td style="text-align: right;">{{ record.count }}</td>
-                {% for a in access %}
-                    {% if record.endpoint == a.endpoint %}
-                        <td>{{ "{:%Y-%m-%d %H:%M:%S }".format(a.last_accessed) if a.last_accessed }}</td>
-                    {% endif %}
-                {% endfor %}
-                <td style="text-align: right;">{{ ((record.average*10)|round)/10 }}</td>
-                <td><a href="{{ url_for('dashboard.show_graph', end=record.endpoint) }}">Show graph</a></td>
-            </tr>
-        {% endfor %}
-    </table>
 
 {% endblock %}
