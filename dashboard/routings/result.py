@@ -130,7 +130,7 @@ def get_dot_charts(end, versions):
 
 def get_boxplots(end, versions):
     """
-        Function that builds two dot charts:
+        Function that builds two boxplots:
         1. Execution time per version
         2. Execution time per user
         :param end: the endpoint

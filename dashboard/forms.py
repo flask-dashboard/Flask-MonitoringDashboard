@@ -10,7 +10,7 @@ class MonitorDashboard(FlaskForm):
 
 
 class Login(FlaskForm):
-    """ Used for serving a login form on /{{ link }}/login. """
+    """ Used for serving a login form. """
     name = StringField('Username', [validators.required()])
     password = PasswordField('Password', [validators.required()])
     submit = SubmitField('Login')

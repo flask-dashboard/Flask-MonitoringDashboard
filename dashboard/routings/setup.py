@@ -19,20 +19,16 @@ import math
 @blueprint.route('/settings', methods=['GET', 'POST'])
 @secure
 def settings():
-    form = ChangeSetting()
+    password = 'x' * len(config.password)
+    return render_template('settings.html', link=config.link, session=session, config=config, pw=password)
 
-    if request.method == 'POST' and form.validate():
-        config.username = form.username.data
-        if form.password.data:
-            config.password = form.password.data
 
-    form.username.data = config.username
-    old_password = config.password
-    old_password = 'x' * len(old_password)
-
-    return render_template('settings.html', link=config.link, session=session, version=config.version,
-                           database_name=config.database_name, group=config.get_group_by(), form=form,
-                           testDir=config.test_dir, user=config.username, pw=config.password)
+def formatter(x):
+    sec = x // 1000
+    ms = round(x % 1000, 2)
+    if sec == 0:
+        return '{0}ms'.format(ms)
+    return '{0}s and {1}ms'.format(sec, ms)
 
 
 @blueprint.route('/rules', methods=['GET', 'POST'])
@@ -119,15 +115,11 @@ def testmonitor():
             list_avg.append(d.avg)
             list_max.append(d.max)
             list_count.append(d.count)
-        times_chart.add('Minimum', list_min, formatter=lambda x: '{0}s and {1}ms'.format(math.floor(x / 1000),
-                                                                                         round(x % 1000, 2)))
-        times_chart.add('Average', list_avg, formatter=lambda x: '{0}s and {1}ms'.format(math.floor(x / 1000),
-                                                                                         round(x % 1000, 2)))
-        times_chart.add('Maximum', list_max, formatter=lambda x: '{0}s and {1}ms'.format(math.floor(x / 1000),
-                                                                                         round(x % 1000, 2)))
+        times_chart.add('Minimum', list_min, formatter=formatter)
+        times_chart.add('Average', list_avg, formatter=formatter)
+        times_chart.add('Maximum', list_max, formatter=formatter)
         times_data = times_chart.render_data_uri()
 
     return render_template('testmonitor.html', link=config.link, session=session, curr=3, form=form,
-                           tests=get_tests(),
-                           results=get_results(), res_current_version=get_res_current(config.version),
-                           times_data=times_data)
+                           tests=get_tests(), results=get_results(),
+                           res_current_version=get_res_current(config.version), times_data=times_data)

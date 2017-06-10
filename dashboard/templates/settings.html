@@ -17,23 +17,23 @@
                         </tr>
                         <tr>
                             <td><b>Version of monitored app</b></td>
-                            <td>{{ version }}</td>
+                            <td>{{ config.version }}</td>
                         </tr>
                         <tr>
                             <td><b>Group by variable</b></td>
-                            <td>{{ group if group != None else "Unspecified" }}</td>
+                            <td>{{ config.get_group_by() if config.get_group_by() != None else "Unspecified" }}</td>
                         </tr>
                         <tr>
                             <td><b>Measurements database</b></td>
-                            <td>{{ database_name }}</td>
+                            <td>{{ config.database_name }}</td>
                         </tr>
                         <tr>
                             <td><b>Location of tests of monitored app</b></td>
-                            <td>{{ testDir if testDir != None else "Unspecified" }}</td>
+                            <td>{{ config.test_dir if config.test_dir != None else "Unspecified" }}</td>
                         </tr>
                         <tr>
                             <td><b>Username</b></td>
-                            <td>{{ user }}</td>
+                            <td>{{ config.username }}</td>
                         </tr>
                         <tr>
                             <td><b>Password</b></td>
