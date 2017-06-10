@@ -145,7 +145,7 @@ def get_boxplots(end, versions):
 
     layout = go.Layout(
         autosize=False,
-        width=1000,
+        width=900,
         height=350 + 40 * len(versions),
         plot_bgcolor='rgba(249,249,249,1)',
         showlegend=False
@@ -163,7 +163,7 @@ def get_boxplots(end, versions):
 
     layout = go.Layout(
         autosize=False,
-        width=1000,
+        width=900,
         height=350 + 40 * len(users),
         plot_bgcolor='rgba(249,249,249,1)',
         showlegend=False

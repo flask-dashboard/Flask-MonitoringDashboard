@@ -1,103 +1,98 @@
-{% extends "default.html" %}
-
+{% extends "main.html" %}
 {% block content %}
-    <header>
-        <h1>{{ rule.endpoint }}</h1>
-        <p>A dashboard for automatic monitoring of python web services</p>
-    </header>
 
-    <h2>Summary</h2>
-    <table>
-        <tr>
-            <td><b>Endpoint</b></td>
-            <td>{{ rule.endpoint }}</td>
-        </tr>
-        <tr>
-            <td><b>Added since version: </b></td>
-            <td>{{ rule.version_added }}</td>
-        </tr>
-        <tr>
-            <td><b>Date added: </b></td>
-            <td>{{ "{:%Y-%m-%d %H:%M:%S }".format(rule.time_added) }}</td>
-        </tr>
-        {% if url %}
-            <tr>
-                <td><b>Url: </b></td>
-                <td><a href="{{ url }}">{{ url }}</a></td>
-            </tr>
-        {% endif %}
-        <tr>
-            <td><b>Last accessed: </b></td>
-            <td>{{ "{:%Y-%m-%d %H:%M:%S }".format(rule.last_accessed) }}</td>
-        </tr>
-    </table>
-    <br/>
-
-    <div class="tab">
-        <button class="tablinks" onclick="openTab(event, 'tph')">Time per hour</button>
-        <button class="tablinks" onclick="openTab(event, 'hph')">Hits per hour</button>
-        <button class="tablinks" onclick="openTab(event, 'tpvpu')">Time per version per user</button>
-        <button class="tablinks" onclick="openTab(event, 'tpvpi')">Time per version per ip</button>
-        <button class="tablinks" onclick="openTab(event, 'tpv')">Time per version</button>
-        <button class="tablinks" onclick="openTab(event, 'tpu')">Time per user</button>
-    </div>
-
-
-    <div id="tph" class="tabcontent">
-        <h2>Execution time (in ms) per hour</h2>
-        <div class="container" align="left">
-            <embed type="image/svg+xml" src={{ times_data|safe }} style='max-width:1000px'></embed>
-        </div>
-        </div>
-
-    <div id="hph" class="tabcontent">
-        <h2>Number of hits per hour</h2>
-        <div class="container" align="left">
-            <embed type="image/svg+xml" src={{ hits_data|safe }} style='max-width:1000px'></embed>
+    <div class="row">
+        <!-- Advanced Tables -->
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                Summary of endpoint
+            </div>
+            <br/>
+            <div class="panel-body">
+                <div class="table-responsive">
+                    <table class="table table-striped table-bordered table-hover">
+                        <tr>
+                            <td><b>Endpoint</b></td>
+                            <td>{{ rule.endpoint }}</td>
+                        </tr>
+                        <tr>
+                            <td><b>Added since app version</b></td>
+                            <td>{{ rule.version_added }}</td>
+                        </tr>
+                        <tr>
+                            <td><b>Date added to app</b></td>
+                            <td>{{ "{:%Y-%m-%d %H:%M:%S }".format(rule.time_added) }}</td>
+                        </tr>
+                        {% if url %}
+                            <tr>
+                                <td><b>Link to endpoint</b></td>
+                                <td><a href="{{ url }}">{{ url }}</a></td>
+                            </tr>
+                        {% endif %}
+                        <tr>
+                            <td><b>Last accessed</b></td>
+                            <td>{{ "{:%Y-%m-%d %H:%M:%S }".format(rule.last_accessed) }}</td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
         </div>
     </div>
 
-    <div id="tpvpu" class="tabcontent">
-        <h2>Execution time (in ms) per version per user</h2>
-        <div class="container" align="left">
-            <embed type="image/svg+xml" src={{ dot_chart_user|safe }} style='max-width:1000px'></embed>
+    <div class="row">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                Graphs
+            </div>
+            <div class="panel-body">
+                <ul class="nav nav-tabs">
+                    <li><a href="#tph" data-toggle="tab">Time per hour</a></li>
+                    <li><a href="#hph" data-toggle="tab">Hits per hour</a></li>
+                    <li><a href="#tpvpu" data-toggle="tab">Time per version per user</a></li>
+                    <li><a href="#tpvpi" data-toggle="tab">Time per version per ip</a></li>
+                    <li><a href="#tpv" data-toggle="tab">Time per version</a></li>
+                    <li><a href="#tpu" data-toggle="tab">Time per user</a></li>
+                </ul>
+                <div class="tab-content">
+                    <div class="tab-pane fade" id="tph">
+                            <br/>
+                            <div class="col-md-12 col-sm-12">
+                                <embed type="image/svg+xml" src={{ times_data|safe }}></embed>
+                            </div>
+                    </div>
+                    <div class="tab-pane fade" id="hph">
+                            <br/>
+                            <div class="col-md-12 col-sm-12">
+                                <embed type="image/svg+xml" src={{ hits_data|safe }}></embed>
+                            </div>
+                    </div>
+                    <div class="tab-pane fade" id="tpvpu">
+                            <br/>
+                            <div class="col-md-12 col-sm-12">
+                                <embed type="image/svg+xml" src={{ dot_chart_user|safe }}></embed>
+                            </div>
+                    </div>
+                    <div class="tab-pane fade" id="tpvpi">
+                            <br/>
+                            <div class="col-md-12 col-sm-12">
+                                <embed type="image/svg+xml" src={{ dot_chart_ip|safe }}></embed>
+                            </div>
+                    </div>
+                    <div class="tab-pane fade" id="tpv">
+                            <br/>
+                            <div class="col-md-12 col-sm-12">
+                                {{ div_versions|safe }}
+                            </div>
+                    </div>
+                    <div class="tab-pane fade" id="tpu">
+                            <br/>
+                            <div class="col-md-12 col-sm-12">
+                                {{ div_users|safe }}
+                            </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
-
-    <div id="tpvpi" class="tabcontent">
-        <h2>Execution time (in ms) per version per ip</h2>
-        <div class="container" align="left">
-            <embed type="image/svg+xml" src={{ dot_chart_ip|safe }} style='max-width:1000px'></embed>
-        </div>
-    </div>
-
-    <div id="tpv" class="tabcontent">
-        <h2>Execution time (in ms) per version</h2>
-        <div class="container" align="left">{{ div_versions|indent(4)|safe }}</div>
-    </div>
-
-    <div id="tpu" class="tabcontent">
-        <h2>Execution time (in ms) per user</h2>
-        <div class="container" align="left">{{ div_users|indent(4)|safe }}</div>
-    </div>
-
-    <div id="tpi" class="tabcontent"></div>
-
-
-    <script>
-        function openTab(evt, tabName) {
-            var i, tabcontent, tablinks;
-            tabcontent = document.getElementsByClassName("tabcontent");
-            for (i = 0; i < tabcontent.length; i++) {
-                tabcontent[i].style.display = "none";
-            }
-            tablinks = document.getElementsByClassName("tablinks");
-            for (i = 0; i < tablinks.length; i++) {
-                tablinks[i].className = tablinks[i].className.replace(" active", "");
-            }
-            document.getElementById(tabName).style.display = "block";
-            evt.currentTarget.className += " active";
-        }
-    </script>
 
 {% endblock %}
