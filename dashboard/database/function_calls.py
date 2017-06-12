@@ -3,7 +3,7 @@ Contains all functions that access any functionCall-object
 """
 
 from flask import request
-from sqlalchemy import func, desc, text
+from sqlalchemy import func, desc, text, asc
 from dashboard import config
 import datetime
 from dashboard.database import session_scope, FunctionCall
@@ -72,6 +72,8 @@ def get_data_per_version(version):
 def get_versions():
     """ Returns all data in the FuctionCall table, grouped by their version. """
     with session_scope() as db_session:
-        result = db_session.query(FunctionCall.version).group_by(FunctionCall.version).all()
+        result = db_session.query(FunctionCall.version,
+                                  func.min(FunctionCall.time).label('startedUsingOn')). \
+            group_by(FunctionCall.version).order_by(asc('startedUsingOn')).all()
         db_session.expunge_all()
         return result
