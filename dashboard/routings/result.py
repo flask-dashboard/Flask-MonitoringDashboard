@@ -172,9 +172,9 @@ def get_boxplots(end, versions):
     return graph1, graph2
 
 
-@blueprint.route('/show-graph/<end>')
+@blueprint.route('/result/<end>')
 @secure
-def show_graph(end):
+def result(end):
     rule = get_monitor_rule(end)
     url = get_url(end)
     versions = [str(c.version) for c in get_endpoint_column(end, FunctionCall.version)]
@@ -188,6 +188,6 @@ def show_graph(end):
     # (5) Execution time per version and (6) Execution time per user
     graph5, graph6 = get_boxplots(end, versions)
 
-    return render_template('show-graph.html', link=config.link, session=session, rule=rule, url=url,
+    return render_template('endpoint.html', link=config.link, session=session, rule=rule, url=url,
                            times_data=graph1, hits_data=graph2, dot_chart_user=graph3,
                            dot_chart_ip=graph4, div_versions=graph5, div_users=graph6)

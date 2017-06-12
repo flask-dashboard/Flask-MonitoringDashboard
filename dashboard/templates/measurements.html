@@ -36,7 +36,7 @@
                                 {% endfor %}
                                 <td style="text-align: right;">{{ ((record.average*10)|round)/10 }}</td>
                                 <td>
-                                    <a href="{{ url_for('dashboard.show_graph', end=record.endpoint) }}"
+                                    <a href="{{ url_for('dashboard.result', end=record.endpoint) }}"
                                        class="btn btn-default btn-sm right-align-custom">
                                         Details
                                     </a>
