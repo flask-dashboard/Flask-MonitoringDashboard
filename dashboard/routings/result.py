@@ -8,7 +8,7 @@ from dashboard.database import FunctionCall
 from dashboard.database.endpoint import get_endpoint_column, get_endpoint_results, get_monitor_rule, \
     get_last_accessed_times, get_line_results, get_all_measurement_per_column, get_num_requests, \
     get_endpoint_column_user_sorted
-from dashboard.database.function_calls import get_times
+from dashboard.database.function_calls import get_times, get_reqs_endpoint_day
 from dashboard.security import secure
 
 import plotly
@@ -21,8 +21,9 @@ def measurements():
     t = get_times()
     la = get_last_accessed_times()
     heatmap = get_heatmap(end=None)
+    stacked_bar = get_stacked_bar()
     return render_template('measurements.html', link=config.link, curr=2, times=t, access=la, session=session,
-                           heatmap=heatmap)
+                           heatmap=heatmap, rpepd=stacked_bar)
 
 
 def formatter(ms):
@@ -82,6 +83,33 @@ def get_graphs_per_hour(end):
         graph2.x_labels.append(d.newTime)
     graph2.add('Hits', list_count)
     return graph1.render_data_uri(), graph2.render_data_uri()
+
+
+def get_stacked_bar():
+    data = get_reqs_endpoint_day()
+    graph = pygal.graph.horizontalstackedbar.HorizontalStackedBar(legend_at_bottom=True, height=100 + len(data) * 7)
+    graph.title = 'Number of requests per endpoint per day'
+    graph.x_labels = []
+    endpoints = []
+    for d in data:
+        if d.newTime not in graph.x_labels:
+            graph.x_labels.append(d.newTime)
+        if d.endpoint not in endpoints:
+            endpoints.append(d.endpoint)
+
+    for e in endpoints:
+        lst = []
+        for t in graph.x_labels:
+            found = False
+            for d in data:
+                if e == d.endpoint and t == d.newTime:
+                    found = True
+                    lst.append(d.cnt)
+            if not found:
+                lst.append(0)
+        graph.add(e, lst)
+
+    return graph.render_data_uri()
 
 
 def get_dot_charts(end, versions):

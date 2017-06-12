@@ -3,10 +3,23 @@ Contains all functions that access any functionCall-object
 """
 
 from flask import request
-from sqlalchemy import func, desc
+from sqlalchemy import func, desc, text
 from dashboard import config
 import datetime
 from dashboard.database import session_scope, FunctionCall
+
+
+def get_reqs_endpoint_day():
+    """ Retrieves the number of requests per endpoint per day. """
+    with session_scope() as db_session:
+        query = text("""select strftime('%Y-%m-%d', time) AS newTime,
+                               count(endpoint) AS cnt,
+                               endpoint
+                        from functioncalls 
+                        group by newTime, endpoint""")
+        result = db_session.execute(query)
+        data = result.fetchall()
+        return data
 
 
 def add_function_call(time, endpoint):
