@@ -203,9 +203,9 @@ def get_heatmap(end):
 
     # create a 2D-list out of the dictionary
     requests_list = []
-    for hour in requests.itervalues():
+    for hour in requests.values():
         day_list = []
-        for value in hour.itervalues():
+        for value in hour.values():
             day_list.append(value)
         requests_list.append(day_list)
 
