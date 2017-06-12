@@ -148,13 +148,13 @@ def get_boxplots(end, versions):
         width=900,
         height=350 + 40 * len(versions),
         plot_bgcolor='rgba(249,249,249,1)',
-        showlegend=False
+        showlegend=False,
+        xaxis=dict(title='Execution time (ms)'),
+        yaxis=dict(title='Version')
     )
     graph1 = plotly.offline.plot(go.Figure(data=data, layout=layout), output_type='div', show_link=False)
 
-    # boxplot: execution time per versions
     users = [str(c.group_by) for c in get_endpoint_column(endpoint=end, column=FunctionCall.group_by)]
-
     data = []
     for u in users:
         values = [str(c.execution_time) for c in
@@ -166,7 +166,9 @@ def get_boxplots(end, versions):
         width=900,
         height=350 + 40 * len(users),
         plot_bgcolor='rgba(249,249,249,1)',
-        showlegend=False
+        showlegend=False,
+        xaxis=dict(title='Execution time (ms)'),
+        yaxis=dict(title='User')
     )
     graph2 = plotly.offline.plot(go.Figure(data=data, layout=layout), output_type='div', show_link=False)
     return graph1, graph2

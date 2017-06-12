@@ -1,7 +1,7 @@
 """
 Contains all functions that access a single endpoint
 """
-from sqlalchemy import func, text
+from sqlalchemy import func, text, asc
 from sqlalchemy.orm.exc import NoResultFound
 import datetime
 
@@ -40,9 +40,10 @@ def get_num_requests(endpoint):
 def get_endpoint_column(endpoint, column):
     """ Returns a list of entries from column in which the endpoint is involved. """
     with session_scope() as db_session:
-        result = db_session.query(column). \
+        result = db_session.query(column,
+                                  func.min(FunctionCall.time).label('startedUsingOn')). \
             filter(FunctionCall.endpoint == endpoint). \
-            group_by(column).all()
+            group_by(column).order_by(asc('startedUsingOn')).all()
         db_session.expunge_all()
         return result
 
