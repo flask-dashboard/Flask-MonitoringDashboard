@@ -8,7 +8,7 @@ from dashboard.database import FunctionCall
 from dashboard.database.endpoint import get_endpoint_column, get_endpoint_results, get_monitor_rule, \
     get_last_accessed_times, get_line_results, get_all_measurement_per_column, get_num_requests, \
     get_endpoint_column_user_sorted
-from dashboard.database.function_calls import get_times, get_reqs_endpoint_day
+from dashboard.database.function_calls import get_times, get_data_per_version, get_versions, get_reqs_endpoint_day
 from dashboard.security import secure
 
 import plotly
@@ -18,12 +18,34 @@ import plotly.graph_objs as go
 @blueprint.route('/measurements')
 @secure
 def measurements():
-    t = get_times()
-    la = get_last_accessed_times()
-    heatmap = get_heatmap(end=None)
-    stacked_bar = get_stacked_bar()
-    return render_template('measurements.html', link=config.link, curr=2, times=t, access=la, session=session,
-                           heatmap=heatmap, rpepd=stacked_bar)
+    return render_template('measurements.html', link=config.link, curr=2, times=get_times(),
+                           access=get_last_accessed_times(), session=session,
+                           heatmap=get_heatmap(end=None), etpv=get_boxplot_per_version(), rpepd=get_stacked_bar())
+
+
+def get_boxplot_per_version():
+    """
+    Creates a graph with the execution times per version
+    :return:
+    """
+    versions = [str(v.version) for v in get_versions()]
+
+    data = []
+    for v in versions:
+        values = [c.execution_time for c in get_data_per_version(v)]
+        data.append(go.Box(x=values, name=v))
+
+    layout = go.Layout(
+        autosize=False,
+        width=900,
+        height=350 + 40 * len(versions),
+        plot_bgcolor='rgba(249,249,249,1)',
+        showlegend=False,
+        title='Execution time for every version',
+        xaxis=dict(title='Execution time (ms)'),
+        yaxis=dict(title='Version')
+    )
+    return plotly.offline.plot(go.Figure(data=data, layout=layout), output_type='div', show_link=False)
 
 
 def formatter(ms):

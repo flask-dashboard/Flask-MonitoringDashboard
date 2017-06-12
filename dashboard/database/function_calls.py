@@ -58,3 +58,20 @@ def get_data():
                                   FunctionCall.ip).all()
         db_session.expunge_all()
         return result
+
+
+def get_data_per_version(version):
+    """ Returns all data in the FuctionCall table, grouped by their version. """
+    with session_scope() as db_session:
+        result = db_session.query(FunctionCall.execution_time, FunctionCall.version).\
+                 filter(FunctionCall.version == version).all()
+        db_session.expunge_all()
+        return result
+
+
+def get_versions():
+    """ Returns all data in the FuctionCall table, grouped by their version. """
+    with session_scope() as db_session:
+        result = db_session.query(FunctionCall.version).group_by(FunctionCall.version).all()
+        db_session.expunge_all()
+        return result
