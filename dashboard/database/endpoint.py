@@ -24,6 +24,19 @@ def get_line_results(endpoint):
         return data
 
 
+def get_num_requests(endpoint):
+    """ Returns a list with all dates on which an endpoint is accessed. """
+    with session_scope() as db_session:
+        query = text("""select
+                datetime(CAST(strftime('%s', time)/3600 AS INT)*3600, 'unixepoch') AS newTime,
+                count(execution_time) as count
+                from functioncalls
+                where endpoint=:val group by newTime""")
+        result = db_session.execute(query, {'val': endpoint})
+        data = result.fetchall()
+        return data
+
+
 def get_endpoint_column(endpoint, column):
     """ Returns a list of entries from column in which the endpoint is involved. """
     with session_scope() as db_session:

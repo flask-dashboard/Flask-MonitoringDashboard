@@ -6,7 +6,7 @@ from werkzeug.routing import BuildError
 from dashboard import blueprint, config
 from dashboard.database import FunctionCall
 from dashboard.database.endpoint import get_endpoint_column, get_endpoint_results, get_monitor_rule, \
-    get_last_accessed_times, get_line_results, get_all_measurement_per_column
+    get_last_accessed_times, get_line_results, get_all_measurement_per_column, get_num_requests
 from dashboard.database.function_calls import get_times
 from dashboard.security import secure
 
@@ -172,6 +172,51 @@ def get_boxplots(end, versions):
     return graph1, graph2
 
 
+def get_heatmap(end):
+    # list of hours: 1:00 - 23:00
+    hours = ['0'+str(hour)+':00' for hour in range(1, 10)] + \
+            [ str(hour) + ':00' for hour in range(10, 24)]
+
+    # list of days (format: year-month-day)
+    data = get_num_requests(end)
+    days = [str(d.newTime[:10]) for d in data]
+    # remove duplicates and sort the result
+    days = sorted(list(set(days)))
+
+    # create empty 2D-dictionary with the keys: [hour][day]
+    requests = {}
+    for hour in hours:
+        requests_day = {}
+        for day in days:
+            requests_day[day] = 0
+        requests[hour] = requests_day
+
+    # add data to the dictionary
+    for d in data:
+        day = str(d.newTime[:10])
+        hour = str(d.newTime[11:16])
+        requests[hour][day] = d.count
+
+    # create a 2D-list out of the dictionary
+    requests_list = []
+    for hour in requests.itervalues():
+        day_list = []
+        for value in hour.itervalues():
+            day_list.append(value)
+        requests_list.append(day_list)
+
+    layout = go.Layout(
+        autosize=False,
+        width=900,
+        height=800,
+        plot_bgcolor='rgba(249,249,249,1)',
+        showlegend=False
+    )
+
+    trace = go.Heatmap(z=requests_list, x=days, y=hours)
+    return plotly.offline.plot(go.Figure(data=[trace], layout=layout), output_type='div', show_link=False)
+
+
 @blueprint.route('/result/<end>')
 @secure
 def result(end):
@@ -188,6 +233,9 @@ def result(end):
     # (5) Execution time per version and (6) Execution time per user
     graph5, graph6 = get_boxplots(end, versions)
 
+    # (7) Number of requests per hour
+    graph7 = get_heatmap(end)
+
     return render_template('endpoint.html', link=config.link, session=session, rule=rule, url=url,
                            times_data=graph1, hits_data=graph2, dot_chart_user=graph3,
-                           dot_chart_ip=graph4, div_versions=graph5, div_users=graph6)
+                           dot_chart_ip=graph4, div_versions=graph5, div_users=graph6, div_heatmap=graph7)

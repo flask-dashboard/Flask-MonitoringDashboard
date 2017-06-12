@@ -52,6 +52,7 @@
                     <li><a href="#tpvpi" data-toggle="tab">Time per version per ip</a></li>
                     <li><a href="#tpv" data-toggle="tab">Time per version</a></li>
                     <li><a href="#tpu" data-toggle="tab">Time per user</a></li>
+                    <li><a href="#nph" data-toggle="tab">Heatmap</a></li>
                 </ul>
                 <div class="tab-content">
                     <div class="tab-pane fade" id="tph">
@@ -88,6 +89,14 @@
                             <br/>
                             <div class="col-md-12 col-sm-12">
                                 {{ div_users|safe }}
+                            </div>
+                    </div>
+                    <div class="tab-pane fade" id="nph">
+                            <br/>
+                            <h2>Number of requests per hour</h2>
+                            <br />
+                            <div class="col-md-12 col-sm-12">
+                                {{ div_heatmap|safe }}
                             </div>
                     </div>
                 </div>
