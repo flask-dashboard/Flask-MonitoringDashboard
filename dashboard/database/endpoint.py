@@ -1,7 +1,7 @@
 """
 Contains all functions that access a single endpoint
 """
-from sqlalchemy import func, text
+from sqlalchemy import func, text, asc
 from sqlalchemy.orm.exc import NoResultFound
 import datetime
 
@@ -24,12 +24,38 @@ def get_line_results(endpoint):
         return data
 
 
+def get_num_requests(endpoint):
+    """ Returns a list with all dates on which an endpoint is accessed.
+        :param endpoint: if None, the result is the sum of all endpoints
+    """
+    with session_scope() as db_session:
+        query = text("""select
+                datetime(CAST(strftime('%s', time)/3600 AS INT)*3600, 'unixepoch') AS newTime,
+                count(execution_time) as count
+                from functioncalls
+                where (endpoint=:val OR :val='None') group by newTime""")
+        result = db_session.execute(query, {'val': str(endpoint)})
+        data = result.fetchall()
+        return data
+
+
 def get_endpoint_column(endpoint, column):
+    """ Returns a list of entries from column in which the endpoint is involved. """
+    with session_scope() as db_session:
+        result = db_session.query(column,
+                                  func.min(FunctionCall.time).label('startedUsingOn')). \
+            filter(FunctionCall.endpoint == endpoint). \
+            group_by(column).order_by(asc('startedUsingOn')).all()
+        db_session.expunge_all()
+        return result
+
+
+def get_endpoint_column_user_sorted(endpoint, column):
     """ Returns a list of entries from column in which the endpoint is involved. """
     with session_scope() as db_session:
         result = db_session.query(column). \
             filter(FunctionCall.endpoint == endpoint). \
-            group_by(column).all()
+            group_by(column).order_by(asc(column)).all()
         db_session.expunge_all()
         return result
 
