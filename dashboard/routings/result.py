@@ -184,8 +184,8 @@ def get_heatmap(end):
     hours = ['0' + str(hour) + ':00' for hour in range(0, 10)] + \
             [str(hour) + ':00' for hour in range(10, 24)]
 
-    # list of days (format: year-month-day)
     data = get_num_requests(end)
+    # list of days (format: year-month-day)
     days = [str(d.newTime[:10]) for d in data]
     # remove duplicates and sort the result
     days = sorted(list(set(days)))
@@ -206,11 +206,12 @@ def get_heatmap(end):
 
     # create a 2D-list out of the dictionary
     requests_list = []
-    for hour in requests.values():
+    for hour in hours:
         day_list = []
-        for value in hour.values():
-            day_list.append(value)
+        for day in days:
+            day_list.append(requests[hour][day])
         requests_list.append(day_list)
+    print(requests_list)
 
     layout = go.Layout(
         autosize=False,
