@@ -178,7 +178,7 @@ def get_boxplots(end, versions):
 
 def get_heatmap(end):
     # list of hours: 1:00 - 23:00
-    hours = ['0'+str(hour)+':00' for hour in range(1, 10)] + \
+    hours = ['0'+str(hour)+':00' for hour in range(0, 10)] + \
             [ str(hour) + ':00' for hour in range(10, 24)]
 
     # list of days (format: year-month-day)
