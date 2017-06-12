@@ -211,7 +211,6 @@ def get_heatmap(end):
         for day in days:
             day_list.append(requests[hour][day])
         requests_list.append(day_list)
-    print(requests_list)
 
     layout = go.Layout(
         autosize=False,
