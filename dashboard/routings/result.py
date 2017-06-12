@@ -6,7 +6,8 @@ from werkzeug.routing import BuildError
 from dashboard import blueprint, config
 from dashboard.database import FunctionCall
 from dashboard.database.endpoint import get_endpoint_column, get_endpoint_results, get_monitor_rule, \
-    get_last_accessed_times, get_line_results, get_all_measurement_per_column, get_num_requests
+    get_last_accessed_times, get_line_results, get_all_measurement_per_column, get_num_requests, \
+    get_endpoint_column_user_sorted
 from dashboard.database.function_calls import get_times
 from dashboard.security import secure
 
@@ -157,12 +158,12 @@ def get_boxplots(end, versions):
     )
     graph1 = plotly.offline.plot(go.Figure(data=data, layout=layout), output_type='div', show_link=False)
 
-    users = [str(c.group_by) for c in get_endpoint_column(endpoint=end, column=FunctionCall.group_by)]
+    users = [str(c.group_by) for c in get_endpoint_column_user_sorted(endpoint=end, column=FunctionCall.group_by)]
     data = []
     for u in users:
         values = [str(c.execution_time) for c in
                   get_all_measurement_per_column(endpoint=end, column=FunctionCall.group_by, value=u)]
-        data.append(go.Box(x=values, name=u))
+        data.append(go.Box(x=values, name='{0}  -'.format(u)))
 
     layout = go.Layout(
         autosize=False,

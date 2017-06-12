@@ -50,6 +50,16 @@ def get_endpoint_column(endpoint, column):
         return result
 
 
+def get_endpoint_column_user_sorted(endpoint, column):
+    """ Returns a list of entries from column in which the endpoint is involved. """
+    with session_scope() as db_session:
+        result = db_session.query(column). \
+            filter(FunctionCall.endpoint == endpoint). \
+            group_by(column).order_by(asc(column)).all()
+        db_session.expunge_all()
+        return result
+
+
 def get_endpoint_results(endpoint, column):
     """ Returns a list of entries with measurements in which the endpoint is involved.
     The entries are grouped by their version and the given column. """
