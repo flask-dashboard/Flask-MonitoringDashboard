@@ -30,7 +30,7 @@ def formatter(ms):
     :param ms: the number of ms
     :return: a string representing the same amount, but now represented in seconds and ms.
     """
-    sec = math.floor(ms/1000)
+    sec = math.floor(ms / 1000)
     ms = round(ms % 1000, 2)
     if sec == 0:
         return '{0}ms'.format(ms)
@@ -151,6 +151,7 @@ def get_boxplots(end, versions):
         height=350 + 40 * len(versions),
         plot_bgcolor='rgba(249,249,249,1)',
         showlegend=False,
+        title='Execution time for every version',
         xaxis=dict(title='Execution time (ms)'),
         yaxis=dict(title='Version')
     )
@@ -169,6 +170,7 @@ def get_boxplots(end, versions):
         height=350 + 40 * len(users),
         plot_bgcolor='rgba(249,249,249,1)',
         showlegend=False,
+        title='Execution time for every user',
         xaxis=dict(title='Execution time (ms)'),
         yaxis=dict(title='User')
     )
@@ -178,7 +180,7 @@ def get_boxplots(end, versions):
 
 def get_heatmap(end):
     # list of hours: 1:00 - 23:00
-    hours = ['0'+str(hour)+':00' for hour in range(0, 10)] + \
+    hours = ['0' + str(hour) + ':00' for hour in range(0, 10)] + \
             [str(hour) + ':00' for hour in range(10, 24)]
 
     data = get_num_requests(end)
@@ -199,7 +201,6 @@ def get_heatmap(end):
     for d in data:
         day = str(d.newTime[:10])
         hour = str(d.newTime[11:16])
-        print(day + "\t" + hour + "\t" + str(d.count))
         requests[hour][day] = d.count
 
     # create a 2D-list out of the dictionary
@@ -216,7 +217,10 @@ def get_heatmap(end):
         width=900,
         height=800,
         plot_bgcolor='rgba(249,249,249,1)',
-        showlegend=False
+        showlegend=False,
+        title='Heatmap of number of requests',
+        xaxis=dict(title='Date'),
+        yaxis=dict(title='Time')
     )
 
     trace = go.Heatmap(z=requests_list, x=days, y=hours)
