@@ -8,7 +8,8 @@ from dashboard.database import FunctionCall
 from dashboard.database.endpoint import get_endpoint_column, get_endpoint_results, get_monitor_rule, \
     get_last_accessed_times, get_line_results, get_all_measurement_per_column, get_num_requests, \
     get_endpoint_column_user_sorted
-from dashboard.database.function_calls import get_times, get_data_per_version, get_versions, get_reqs_endpoint_day
+from dashboard.database.function_calls import get_times, get_data_per_version, get_versions, get_reqs_endpoint_day, \
+    get_endpoints, get_data_per_endpoint
 from dashboard.security import secure
 
 import plotly
@@ -20,7 +21,8 @@ import plotly.graph_objs as go
 def measurements():
     return render_template('measurements.html', link=config.link, curr=2, times=get_times(),
                            access=get_last_accessed_times(), session=session,
-                           heatmap=get_heatmap(end=None), etpv=get_boxplot_per_version(), rpepd=get_stacked_bar())
+                           heatmap=get_heatmap(end=None), etpv=get_boxplot_per_version(), rpepd=get_stacked_bar(),
+                           etpe=get_boxplot_per_endpoint())
 
 
 def get_boxplot_per_version():
@@ -44,6 +46,33 @@ def get_boxplot_per_version():
         title='Execution time for every version',
         xaxis=dict(title='Execution time (ms)'),
         yaxis=dict(title='Version')
+    )
+    return plotly.offline.plot(go.Figure(data=data, layout=layout), output_type='div', show_link=False)
+
+
+def get_boxplot_per_endpoint():
+    """
+    Creates a graph with the execution times per endpoint
+    :return:
+    """
+    endpoints = [str(e.endpoint) for e in get_endpoints()]
+
+    data = []
+    for e in endpoints:
+        values = [c.execution_time for c in get_data_per_endpoint(e)]
+        if len(e) > 16:
+            e = '...' + e[-14:]
+        data.append(go.Box(x=values, name=e))
+
+    layout = go.Layout(
+        autosize=False,
+        width=900,
+        height=350 + 40 * len(endpoints),
+        plot_bgcolor='rgba(249,249,249,1)',
+        showlegend=False,
+        title='Execution time for every endpoint',
+        xaxis=dict(title='Execution time (ms)'),
+        yaxis=dict(tickangle=-45)
     )
     return plotly.offline.plot(go.Figure(data=data, layout=layout), output_type='div', show_link=False)
 

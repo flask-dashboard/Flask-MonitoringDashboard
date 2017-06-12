@@ -63,17 +63,33 @@ def get_data():
 def get_data_per_version(version):
     """ Returns all data in the FuctionCall table, grouped by their version. """
     with session_scope() as db_session:
-        result = db_session.query(FunctionCall.execution_time, FunctionCall.version).\
-                 filter(FunctionCall.version == version).all()
+        result = db_session.query(FunctionCall.execution_time, FunctionCall.version). \
+            filter(FunctionCall.version == version).all()
         db_session.expunge_all()
         return result
 
 
 def get_versions():
-    """ Returns all data in the FuctionCall table, grouped by their version. """
     with session_scope() as db_session:
         result = db_session.query(FunctionCall.version,
                                   func.min(FunctionCall.time).label('startedUsingOn')). \
             group_by(FunctionCall.version).order_by(asc('startedUsingOn')).all()
+        db_session.expunge_all()
+        return result
+
+
+def get_data_per_endpoint(end):
+    with session_scope() as db_session:
+        result = db_session.query(FunctionCall.execution_time, FunctionCall.endpoint). \
+            filter(FunctionCall.endpoint == end).all()
+        db_session.expunge_all()
+        return result
+
+
+def get_endpoints():
+    with session_scope() as db_session:
+        result = db_session.query(FunctionCall.endpoint,
+                                  func.count(FunctionCall.endpoint).label('cnt')). \
+            group_by(FunctionCall.endpoint).order_by(asc('cnt')).all()
         db_session.expunge_all()
         return result
