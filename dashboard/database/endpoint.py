@@ -25,14 +25,16 @@ def get_line_results(endpoint):
 
 
 def get_num_requests(endpoint):
-    """ Returns a list with all dates on which an endpoint is accessed. """
+    """ Returns a list with all dates on which an endpoint is accessed.
+        :param endpoint: if None, the result is the sum of all endpoints
+    """
     with session_scope() as db_session:
         query = text("""select
                 datetime(CAST(strftime('%s', time)/3600 AS INT)*3600, 'unixepoch') AS newTime,
                 count(execution_time) as count
                 from functioncalls
-                where endpoint=:val group by newTime""")
-        result = db_session.execute(query, {'val': endpoint})
+                where (endpoint=:val OR :val='None') group by newTime""")
+        result = db_session.execute(query, {'val': str(endpoint)})
         data = result.fetchall()
         return data
 

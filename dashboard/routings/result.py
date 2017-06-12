@@ -19,7 +19,9 @@ import plotly.graph_objs as go
 def measurements():
     t = get_times()
     la = get_last_accessed_times()
-    return render_template('measurements.html', link=config.link, curr=2, times=t, access=la, session=session)
+    heatmap = get_heatmap(end=None)
+    return render_template('measurements.html', link=config.link, curr=2, times=t, access=la, session=session,
+                           heatmap=heatmap)
 
 
 def formatter(ms):
