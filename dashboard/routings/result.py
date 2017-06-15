@@ -15,6 +15,8 @@ from dashboard.security import secure
 import plotly
 import plotly.graph_objs as go
 
+import datetime
+
 
 @blueprint.route('/measurements')
 @secure
@@ -30,12 +32,12 @@ def get_boxplot_per_version():
     Creates a graph with the execution times per version
     :return:
     """
-    versions = [str(v.version) for v in get_versions()]
+    versions = get_versions()
 
     data = []
     for v in versions:
-        values = [c.execution_time for c in get_data_per_version(v)]
-        data.append(go.Box(x=values, name=v))
+        values = [c.execution_time for c in get_data_per_version(v.version)]
+        data.append(go.Box(x=values, name="{0} {1}".format(v.version, v.startedUsingOn.strftime("%b %d %H:%M"))))
 
     layout = go.Layout(
         autosize=False,
@@ -45,7 +47,7 @@ def get_boxplot_per_version():
         showlegend=False,
         title='Execution time for every version',
         xaxis=dict(title='Execution time (ms)'),
-        yaxis=dict(title='Version')
+        yaxis=dict(tickangle=-50, autorange='reversed')
     )
     return plotly.offline.plot(go.Figure(data=data, layout=layout), output_type='div', show_link=False)
 
@@ -112,33 +114,59 @@ def get_graphs_per_hour(end):
     :return: graph1, graph2
     """
     data = get_line_results(end)
-    graph1 = pygal.HorizontalBar(height=100 + len(data) * 30)
-    graph1.x_labels = []
-    list_avg = []
-    list_min = []
-    list_max = []
-    list_count = []
-    for d in data:
-        graph1.x_labels.append(d.newTime)
-        list_min.append(d.min)
-        list_avg.append(d.avg)
-        list_max.append(d.max)
-        list_count.append(d.count)
-    graph1.add('Minimum', list_min, formatter=formatter)
-    graph1.add('Average', list_avg, formatter=formatter)
-    graph1.add('Maximum', list_max, formatter=formatter)
 
-    graph2 = pygal.HorizontalBar(height=100 + len(data) * 30, show_legend=False)
-    graph2.x_labels = []
-    for d in data:
-        graph2.x_labels.append(d.newTime)
-    graph2.add('Hits', list_count)
-    return graph1.render_data_uri(), graph2.render_data_uri()
+    trace1 = go.Bar(
+        x=[d.newTime for d in data],
+        y=[d.min for d in data],
+        name='Minimum'
+    )
+
+    trace2 = go.Bar(
+        x=[d.newTime for d in data],
+        y=[d.avg for d in data],
+        name='Average'
+    )
+
+    trace3 = go.Bar(
+        x=[d.newTime for d in data],
+        y=[d.max for d in data],
+        name='Maximum'
+    )
+
+    data1 = [trace1, trace2, trace3]
+
+    layout = go.Layout(
+        autosize=False,
+        width=900,
+        height=600,
+        plot_bgcolor='rgba(249,249,249,1)',
+        showlegend=True,
+        barmode='group',
+        xaxis=go.XAxis(range=[datetime.datetime.now() - datetime.timedelta(days=2), datetime.datetime.now()])
+    )
+    graph1 = plotly.offline.plot(go.Figure(data=data1, layout=layout), output_type='div', show_link=False)
+
+    data2 = [go.Bar(
+        x=[d.newTime for d in data],
+        y=[d.count for d in data]
+    )]
+
+    layout = go.Layout(
+        autosize=False,
+        width=900,
+        height=600,
+        plot_bgcolor='rgba(249,249,249,1)',
+        showlegend=False,
+        xaxis=go.XAxis(range=[datetime.datetime.now() - datetime.timedelta(days=7), datetime.datetime.now()])
+    )
+    graph2 = plotly.offline.plot(go.Figure(data=data2, layout=layout), output_type='div', show_link=False)
+
+    return graph1, graph2
 
 
 def get_stacked_bar():
     data = get_reqs_endpoint_day()
-    graph = pygal.graph.horizontalstackedbar.HorizontalStackedBar(legend_at_bottom=True, height=100 + len(data) * 7)
+    graph = pygal.graph.horizontalstackedbar.HorizontalStackedBar(height=100 + len(data) * 7)
     graph.title = 'Number of requests per endpoint per day'
     graph.x_labels = []
     endpoints = []
@@ -148,6 +176,7 @@ def get_stacked_bar():
         if d.endpoint not in endpoints:
             endpoints.append(d.endpoint)
 
+    graph.x_labels.sort(reverse=True)
     for e in endpoints:
         lst = []
         for t in graph.x_labels:
@@ -177,11 +206,11 @@ def get_dot_charts(end, versions):
     for d in [str(c.group_by) for c in get_endpoint_column(end, FunctionCall.group_by)]:
         user_data[d] = {}
         for v in versions:
-            user_data[d][v] = 0
+            user_data[d][v.version] = 0
     for d in [str(c.ip) for c in get_endpoint_column(end, FunctionCall.ip)]:
         ip_data[d] = {}
         for v in versions:
-            ip_data[d][v] = 0
+            ip_data[d][v.version] = 0
 
     # fill the rows with data
     for d in get_endpoint_results(end, FunctionCall.group_by):
@@ -191,21 +220,21 @@ def get_dot_charts(end, versions):
 
     # dot charts
     graph1 = pygal.Dot(x_label_rotation=30, show_legend=False, height=200 + len(user_data) * 40)
-    graph1.x_labels = versions
+    graph1.x_labels = ["{0} {1}".format(v.version, v.startedUsingOn.strftime("%b %d %H:%M")) for v in versions]
 
     graph2 = pygal.Dot(x_label_rotation=30, show_legend=False, height=200 + len(ip_data) * 40)
-    graph2.x_labels = versions
+    graph2.x_labels = ["{0} {1}".format(v.version, v.startedUsingOn.strftime("%b %d %H:%M")) for v in versions]
 
     # add rows to the charts
     for d in [str(c.group_by) for c in get_endpoint_column(end, FunctionCall.group_by)]:
         data = []
         for v in versions:
-            data.append(user_data[d][v])
+            data.append(user_data[d][v.version])
         graph1.add(d, data, formatter=formatter)
     for d in [str(c.ip) for c in get_endpoint_column(end, FunctionCall.ip)]:
         data = []
         for v in versions:
-            data.append(ip_data[d][v])
+            data.append(ip_data[d][v.version])
         graph2.add(d, data, formatter=formatter)
     return graph1.render_data_uri(), graph2.render_data_uri()
 
@@ -222,8 +251,9 @@ def get_boxplots(end, versions):
     data = []
     for v in versions:
         values = [str(c.execution_time) for c in
-                  get_all_measurement_per_column(endpoint=end, column=FunctionCall.version, value=v)]
-        data.append(go.Box(x=values, name=v))
+                  get_all_measurement_per_column(endpoint=end, column=FunctionCall.version, value=v.version)]
+
+        data.append(go.Box(x=values, name="{0} {1}".format(v.version, v.startedUsingOn.strftime("%b %d %H:%M"))))
 
     layout = go.Layout(
         autosize=False,
@@ -233,7 +263,7 @@ def get_boxplots(end, versions):
         showlegend=False,
         title='Execution time for every version',
         xaxis=dict(title='Execution time (ms)'),
-        yaxis=dict(title='Version')
+        yaxis=dict(tickangle=-50, autorange='reversed')
     )
     graph1 = plotly.offline.plot(go.Figure(data=data, layout=layout), output_type='div', show_link=False)
 
@@ -268,6 +298,13 @@ def get_heatmap(end):
     days = [str(d.newTime[:10]) for d in data]
     # remove duplicates and sort the result
     days = sorted(list(set(days)))
+    if len(days) > 0:
+        first_day = max(datetime.datetime.strptime(days[0], '%Y-%m-%d'),
+                        datetime.datetime.now() - datetime.timedelta(days=30))
+        last_day = datetime.datetime.strptime(days[len(days)-1], '%Y-%m-%d')
+    else:
+        first_day = datetime.datetime.now() - datetime.timedelta(days=30)
+        last_day = datetime.datetime.now()
 
     # create empty 2D-dictionary with the keys: [hour][day]
     requests = {}
@@ -298,8 +335,9 @@ def get_heatmap(end):
         plot_bgcolor='rgba(249,249,249,1)',
         showlegend=False,
         title='Heatmap of number of requests',
-        xaxis=dict(title='Date'),
-        yaxis=dict(title='Time')
+        xaxis=go.XAxis(range=[first_day, last_day],
+                       title='Date'),
+        yaxis=dict(title='Time', autorange='reversed')
     )
 
     trace = go.Heatmap(z=requests_list, x=days, y=hours)
@@ -311,7 +349,7 @@ def get_heatmap(end):
 def result(end):
     rule = get_monitor_rule(end)
     url = get_url(end)
-    versions = [str(c.version) for c in get_endpoint_column(end, FunctionCall.version)]
+    versions = get_versions(end)
 
     # (1) Execution time per hour and (2) Hits per hour
     graph1, graph2 = get_graphs_per_hour(end)

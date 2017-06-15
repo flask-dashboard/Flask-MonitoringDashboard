@@ -69,13 +69,14 @@ def get_data_per_version(version):
         return result
 
 
-def get_versions():
+def get_versions(end=None):
     with session_scope() as db_session:
         result = db_session.query(FunctionCall.version,
                                   func.min(FunctionCall.time).label('startedUsingOn')). \
-            group_by(FunctionCall.version).order_by(asc('startedUsingOn')).all()
-        db_session.expunge_all()
-        return result
+            filter((FunctionCall.endpoint == end) | (end is None)).group_by(FunctionCall.version).order_by(
+            asc('startedUsingOn')).all()
+    db_session.expunge_all()
+    return result
 
 
 def get_data_per_endpoint(end):
