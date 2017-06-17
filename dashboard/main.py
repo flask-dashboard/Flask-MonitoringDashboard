@@ -17,6 +17,8 @@ dashboard.bind(app=user_app)
 
 @user_app.route('/')
 def main():
+    import time
+    time.sleep(1)
     return redirect(url_for('dashboard.index'))
 
 

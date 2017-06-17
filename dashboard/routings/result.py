@@ -4,7 +4,7 @@ import math
 import plotly
 import plotly.graph_objs as go
 import pygal
-from flask import session, url_for, render_template, request
+from flask import session, url_for, render_template, request, json
 from flask_wtf import FlaskForm
 from werkzeug.routing import BuildError
 from wtforms import SelectMultipleField, SubmitField
@@ -16,6 +16,7 @@ from dashboard.database.endpoint import get_endpoint_column, get_endpoint_result
 from dashboard.database.function_calls import get_versions
 from dashboard.security import secure
 from dashboard.routings.measurements import get_heatmap
+from dashboard.database.outlier import get_outliers
 
 
 @blueprint.route('/result/<end>/<int:index>', methods=['GET', 'POST'])
@@ -55,6 +56,11 @@ def result(end, index=0):
     elif index == 6:
         page = 'endpoint/endpoint_plotly.html'
         graph = get_time_per_user(end)
+
+    # returns a page with a table containing the outliers.
+    elif index == 7:
+        return render_template('endpoint/endpoint_outliers.html', link=config.link, session=session, rule=rule, url=url,
+                               end=end, index=index, table=get_outliers(end))
 
     # default: return a page with the heatmap
     else:

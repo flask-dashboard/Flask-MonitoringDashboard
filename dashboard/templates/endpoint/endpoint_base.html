@@ -47,25 +47,28 @@
             <div class="panel-body">
                 <ul class="nav nav-tabs">
                     {% if index != 0 %}
-                    <li><a href="{{ url_for('dashboard.result', end=end, index=0) }}">Heatmap</a></li>
+                        <li><a href="{{ url_for('dashboard.result', end=end, index=0) }}">Heatmap</a></li>
                     {% endif %}
                     {% if index != 1 %}
-                    <li><a href="{{ url_for('dashboard.result', end=end, index=1) }}">Time per hour</a></li>
+                        <li><a href="{{ url_for('dashboard.result', end=end, index=1) }}">Time per hour</a></li>
                     {% endif %}
                     {% if index != 2 %}
-                    <li><a href="{{ url_for('dashboard.result', end=end, index=2) }}">Hits per hour</a></li>
+                        <li><a href="{{ url_for('dashboard.result', end=end, index=2) }}">Hits per hour</a></li>
                     {% endif %}
                     {% if index != 3 %}
-                    <li><a href="{{ url_for('dashboard.result', end=end, index=3) }}">Time per version per user</a></li>
+                        <li><a href="{{ url_for('dashboard.result', end=end, index=3) }}">Time per version per user</a></li>
                     {% endif %}
                     {% if index != 4 %}
-                    <li><a href="{{ url_for('dashboard.result', end=end, index=4) }}">Time per version per ip</a></li>
+                        <li><a href="{{ url_for('dashboard.result', end=end, index=4) }}">Time per version per ip</a></li>
                     {% endif %}
                     {% if index != 5 %}
-                    <li><a href="{{ url_for('dashboard.result', end=end, index=5) }}">Time per version</a></li>
+                        <li><a href="{{ url_for('dashboard.result', end=end, index=5) }}">Time per version</a></li>
                     {% endif %}
                     {% if index != 6 %}
-                    <li><a href="{{ url_for('dashboard.result', end=end, index=6) }}">Time per user</a></li>
+                        <li><a href="{{ url_for('dashboard.result', end=end, index=6) }}">Time per user</a></li>
+                    {% endif %}
+                    {% if index != 7 %}
+                        <li><a href="{{ url_for('dashboard.result', end=end, index=7) }}">Outliers</a></li>
                     {% endif %}
                 </ul>
 

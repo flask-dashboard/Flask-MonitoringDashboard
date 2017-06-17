@@ -9,6 +9,11 @@ from dashboard import user_app, config
 from dashboard.database.monitor_rules import get_monitor_rules
 from dashboard.database.endpoint import update_last_accessed
 from dashboard.database.function_calls import add_function_call
+from dashboard.database.outlier import add_outlier
+
+# count and sum are dicts and used for calculating the averages
+endpoint_count = {}
+endpoint_sum = {}
 
 
 def init_measurement():
@@ -18,6 +23,10 @@ def init_measurement():
     It adds wrappers to the endpoints for tracking their performance and last access times.
     """
     for rule in get_monitor_rules():
+        # init dictionary for every endpoint
+        endpoint_count[rule.endpoint] = 0
+        endpoint_sum[rule.endpoint] = 0
+        # add a wrapper for every endpoint
         user_app.view_functions[rule.endpoint] = track_performance(user_app.view_functions[rule.endpoint],
                                                                    endpoint=rule.endpoint)
 
@@ -43,6 +52,14 @@ def track_performance(func, endpoint):
         time2 = time.time()
         t = (time2-time1)*1000
         add_function_call(time=t, endpoint=endpoint)
+
+        endpoint_count[endpoint] += 1
+        endpoint_sum[endpoint] += t
+        # check for being an outlier
+        if float(t) > 2.5 * get_average(endpoint):
+            # TODO: update 2.5 with variable
+            add_outlier(endpoint)
+
         return result
     wrapper.original = func
     return wrapper
@@ -59,3 +76,7 @@ def track_last_accessed(func, endpoint):
         update_last_accessed(endpoint=endpoint, value=datetime.datetime.now())
         return func(*args, **kwargs)
     return wrapper
+
+
+def get_average(endpoint):
+    return endpoint_sum[endpoint] / endpoint_count[endpoint]

@@ -69,6 +69,27 @@ class FunctionCall(Base):
     ip = Column(String(25), nullable=False)
 
 
+class Outlier(Base):
+    """ Table for storing information about outliers. """
+    __tablename__ = 'outliers'
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    endpoint = Column(String(250), nullable=False)
+    # request-values, GET, POST, PUT
+    request_values = Column(String(10000))
+    # request headers
+    request_headers = Column(String(10000))
+    # request environment
+    request_environment = Column(String(10000))
+    # request url
+    request_url = Column(String(1000))
+    # cpu_percent in use
+    cpu_percent = Column(String(100))
+    # memory
+    memory = Column(String(10000))
+    # stacktrace
+    stacktrace = Column(String(100000))
+
+
 # define the database
 engine = create_engine(config.database_name)
 
