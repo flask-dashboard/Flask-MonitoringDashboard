@@ -1,6 +1,5 @@
 from flask_wtf import FlaskForm
-from wtforms import validators
-from wtforms import SubmitField, PasswordField, StringField
+from wtforms import validators, SubmitField, PasswordField, StringField, SelectMultipleField
 
 
 class MonitorDashboard(FlaskForm):

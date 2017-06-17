@@ -1,0 +1,6 @@
+{% extends "endpoint/endpoint_base.html" %}
+{% block graph_content %}
+    <div class="col-md-12 col-sm-12">
+        <embed type="image/svg+xml" src={{ graph|safe }}></embed>
+    </div>
+{% endblock %}

@@ -69,10 +69,10 @@
                 </li>
                 <li>
                     {% if curr == 2 %}
-                        <a class="active-menu" href="{{ url_for('dashboard.measurements') }}"><i
+                        <a class="active-menu" href="{{ url_for('dashboard.measurements', index=0) }}"><i
                                 class="fa fa-dashboard"></i> Measurements</a>
                     {% else %}
-                        <a href="{{ url_for('dashboard.measurements') }}"><i class="fa fa-dashboard"></i>
+                        <a href="{{ url_for('dashboard.measurements', index=0) }}"><i class="fa fa-dashboard"></i>
                             Measurements</a>
                     {% endif %}
                 </li>
