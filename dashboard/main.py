@@ -9,7 +9,7 @@ dashboard.config.from_file(here + '/config.cfg')
 
 def get_session_id():
     # implement here your own custom function
-    return "1234"
+    return "12345"
 
 dashboard.config.get_group_by = get_session_id
 dashboard.bind(app=user_app)
@@ -17,8 +17,6 @@ dashboard.bind(app=user_app)
 
 @user_app.route('/')
 def main():
-    import time
-    time.sleep(1)
     return redirect(url_for('dashboard.index'))
 
 
