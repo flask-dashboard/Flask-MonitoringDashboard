@@ -11,6 +11,7 @@ import dashboard.routings.login
 import dashboard.routings.setup
 import dashboard.routings.result
 import dashboard.routings.export_data
+import dashboard.routings.measurements
 
 # Provide a secret-key for using WTF-forms
 if user_app.secret_key is None:
@@ -26,4 +27,4 @@ def static(filename):
 # All rules below are for viewing the dashboard-pages
 @blueprint.route('/')
 def index():
-    return redirect(url_for('dashboard.measurements'))
+    return redirect(url_for('dashboard.measurements', index=0))
