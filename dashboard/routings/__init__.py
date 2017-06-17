@@ -27,4 +27,4 @@ def static(filename):
 # All rules below are for viewing the dashboard-pages
 @blueprint.route('/')
 def index():
-    return redirect(url_for('dashboard.measurements'))
+    return redirect(url_for('dashboard.measurements', index=0))

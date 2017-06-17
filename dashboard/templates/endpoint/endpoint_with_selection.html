@@ -1,5 +1,11 @@
 {% extends "endpoint/endpoint_base.html" %}
 {% block graph_content %}
+    <br />
+    <form action="#" method="post">
+        {{ form.selection(style="width: 200px; height: 300px;") }}
+        <br />
+        {{ form.submit }}
+    </form>
     <div class="col-md-12 col-sm-12">
         <embed type="image/svg+xml" src={{ graph|safe }}></embed>
     </div>

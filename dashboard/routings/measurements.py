@@ -24,23 +24,23 @@ def measurements(index):
 
     # returns a page with the number of requests per endpoint
     if index == 1:
-        page = 'measurements/endpoint_pygal.html'
+        page = 'measurements/measurements_pygal.html'
         graph = get_stacked_bar()
 
     # returns a page with the execution times per version
     elif index == 2:
-        page = 'measurements/endpoint_plotly.html'
+        page = 'measurements/measurements_plotly.html'
         graph = get_boxplot_per_version()
 
     # returns a page with the execution time per endpoint
     elif index == 3:
-        page = 'measurements/endpoint_plotly.html'
+        page = 'measurements/measurements_plotly.html'
         graph = get_boxplot_per_endpoint()
 
     # default: return a page with a heatmap of number of requests
     else:
         index = 0
-        page = 'measurements/endpoint_plotly.html'
+        page = 'measurements/measurements_plotly.html'
         graph = get_heatmap(end=None)
 
     return render_template(page, link=config.link, curr=2, times=get_times(),

@@ -4,7 +4,7 @@ import math
 import plotly
 import plotly.graph_objs as go
 import pygal
-from flask import session, url_for, render_template
+from flask import session, url_for, render_template, request
 from flask_wtf import FlaskForm
 from werkzeug.routing import BuildError
 from wtforms import SelectMultipleField, SubmitField
@@ -18,7 +18,7 @@ from dashboard.security import secure
 from dashboard.routings.measurements import get_heatmap
 
 
-@blueprint.route('/result/<end>/<int:index>')
+@blueprint.route('/result/<end>/<int:index>', methods=['GET', 'POST'])
 @secure
 def result(end, index=0):
     rule = get_monitor_rule(end)
@@ -36,13 +36,15 @@ def result(end, index=0):
 
     # returns a page with the time per version per user
     elif index == 3:
-        page = 'endpoint/endpoint_pygal.html'
-        graph, _ = get_time_per_version_per_user(end, get_versions(end))
+        graph, form = get_time_per_version_per_user(end, get_versions(end))
+        return render_template('endpoint/endpoint_with_selection.html', link=config.link, session=session, rule=rule,
+                               url=url, graph=graph, end=end, index=index, form=form)
 
     # returns a page with the time per version per ip
     elif index == 4:
-        page = 'endpoint/endpoint_pygal.html'
-        graph, _ = get_time_per_version_per_ip(end, get_versions(end))
+        graph, form = get_time_per_version_per_ip(end, get_versions(end))
+        return render_template('endpoint/endpoint_with_selection.html', link=config.link, session=session, rule=rule,
+                               url=url, graph=graph, end=end, index=index, form=form)
 
     # returns a page with the time per version
     elif index == 5:
@@ -150,20 +152,22 @@ def get_time_per_version_per_user(end, versions):
         for v in versions:
             user_data[d][v.version] = 0
 
-    # create a form to select several users
+    # create a form to select users
     choices = []
     for d in list(user_data):
         choices.append((d, d))
-    print(choices)
 
-    class UserForm(FlaskForm):
-        users = SelectMultipleField(
+    class SelectionForm(FlaskForm):
+        selection = SelectMultipleField(
             'Pick Things!',
             choices=choices,
         )
         submit = SubmitField('Render graph')
 
-    user_form = UserForm()
+    form = SelectionForm(request.form)
+    selection = []
+    if request.method == 'POST':
+        selection = [str(item) for item in form.data['selection']]
 
     # fill the rows with data
     for d in get_endpoint_results(end, FunctionCall.group_by):
@@ -176,10 +180,12 @@ def get_time_per_version_per_user(end, versions):
     # add rows to the charts
     for d in [str(c.group_by) for c in get_endpoint_column(end, FunctionCall.group_by)]:
         data = []
-        for v in versions:
-            data.append(user_data[d][v.version])
-        graph.add(d, data, formatter=formatter)
-    return graph.render_data_uri(), user_form
+        # render full graph if no selection is made, else render only the users that are selected
+        if selection == [] or d in selection:
+            for v in versions:
+                data.append(user_data[d][v.version])
+            graph.add(d, data, formatter=formatter)
+    return graph.render_data_uri(), form
 
 
 def get_time_per_version_per_ip(end, versions):
@@ -189,20 +195,22 @@ def get_time_per_version_per_ip(end, versions):
         for v in versions:
             ip_data[d][v.version] = 0
 
-    # create a form to select several ips
+    # create a form to select users
     choices = []
     for d in list(ip_data):
         choices.append((d, d))
-    print(choices)
 
-    class UserForm(FlaskForm):
-        users = SelectMultipleField(
+    class SelectionForm(FlaskForm):
+        selection = SelectMultipleField(
             'Pick Things!',
             choices=choices,
         )
         submit = SubmitField('Render graph')
 
-    user_form = UserForm()
+    form = SelectionForm(request.form)
+    selection = []
+    if request.method == 'POST':
+        selection = [str(item) for item in form.data['selection']]
 
     # fill the rows with data
     for d in get_endpoint_results(end, FunctionCall.ip):
@@ -215,10 +223,12 @@ def get_time_per_version_per_ip(end, versions):
     # add rows to the charts
     for d in [str(c.ip) for c in get_endpoint_column(end, FunctionCall.ip)]:
         data = []
-        for v in versions:
-            data.append(ip_data[d][v.version])
-        graph.add(d, data, formatter=formatter)
-    return graph.render_data_uri(), user_form
+        # render full graph if no selection is made, else render only the users that are selected
+        if selection == [] or d in selection:
+            for v in versions:
+                data.append(ip_data[d][v.version])
+            graph.add(d, data, formatter=formatter)
+    return graph.render_data_uri(), form
 
 
 def get_time_per_version(end, versions):
