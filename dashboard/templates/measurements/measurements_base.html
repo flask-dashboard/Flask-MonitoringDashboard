@@ -1,0 +1,82 @@
+{% extends "main.html" %}
+{% block content %}
+
+    <div class="row">
+        <!-- Advanced Tables -->
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                Execution times of endpoints
+                <a href="{{ url_for('dashboard.download_csv') }}" class="btn btn-primary btn-sm right-align-custom">Download
+                    CSV</a>
+                <a href="{{ url_for('dashboard.export_data') }}" class="btn btn-primary btn-sm right-align-custom">View
+                    CSV</a>
+            </div>
+            <br/>
+            <div class="panel-body">
+                <div class="table-responsive">
+                    <table class="table table-striped table-bordered table-hover sortable">
+                        <thead>
+                        <tr>
+                            <th class="clickable">Endpoint</th>
+                            <th class="clickable">Hits</th>
+                            <th class="clickable">Last accessed</th>
+                            <th class="clickable">Average execution time (in ms)</th>
+                            <th></th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {% for record in times %}
+                            <tr>
+                                <td style="max-width: 200px; overflow: hidden; white-space: nowrap; text-overflow: ellipsis;">{{ record.endpoint }}</td>
+                                <td style="text-align: right;">{{ record.count }}</td>
+                                {% for a in access %}
+                                    {% if record.endpoint == a.endpoint %}
+                                        <td style="text-align: center;">{{ "{:%Y-%m-%d %H:%M:%S }".format(a.last_accessed) if a.last_accessed }}</td>
+                                    {% endif %}
+                                {% endfor %}
+                                <td style="text-align: right;">{{ ((record.average*10)|round)/10 }}</td>
+                                <td>
+                                    <a href="{{ url_for('dashboard.result', end=record.endpoint, index=0) }}"
+                                       class="btn btn-default btn-sm right-align-custom">
+                                        Details
+                                    </a>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="row">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                Graphs
+            </div>
+            <div class="panel-body">
+                <ul class="nav nav-tabs">
+                    {% if index != 0 %}
+                        <li><a href="{{ url_for('dashboard.measurements', index=0) }}">Heatmap of number of requests</a></li>
+                    {% endif %}
+                    {% if index != 1 %}
+                        <li><a href="{{ url_for('dashboard.measurements', index=1) }}">Requests per endpoint</a></li>
+                    {% endif %}
+                    {% if index != 2 %}
+                        <li><a href="{{ url_for('dashboard.measurements', index=2) }}">Time per version</a></li>
+                    {% endif %}
+                    {% if index != 3 %}
+                        <li><a href="{{ url_for('dashboard.measurements', index=3) }}">Time per endpoint</a></li>
+                    {% endif %}
+                </ul>
+
+                {% block graph_content %}
+                
+                {% endblock %}
+            </div>
+        </div>
+    </div>
+
+{% endblock %}

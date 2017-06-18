@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Monitoring Dashboard</title>
+    <link rel="shortcut icon" href="{{ url_for('static', filename='assets/favicon.ico') }}">
+    {#    <link rel="stylesheet" href="{{ url_for('dashboard.static', filename='assets/css/main.css') }}"/>#}
+    <!-- Bootstrap Styles-->
+    <link rel="stylesheet" href="{{ url_for('dashboard.static', filename='assets/css/bootstrap.css') }}"/>
+    <!-- FontAwesome Styles-->
+    <link rel="stylesheet" href="{{ url_for('dashboard.static', filename='assets/css/font-awesome.css') }}"/>
+    <!-- Custom Styles-->
+    <link rel="stylesheet" href="{{ url_for('dashboard.static', filename='assets/css/custom-styles.css') }}"/>
+    <!-- Google Fonts-->
+    <link href='http://fonts.googleapis.com/css?family=Open+Sans' rel='stylesheet' type='text/css'/>
+    <!-- Other-->
+    <!--[if lte IE 8]><script src="{{ url_for('dashboard.static', filename='assets/js/ie/html5shiv.js') }}"></script>
+    <![endif]-->
+    <!--[if lte IE 9]><link rel="stylesheet" href="{{ url_for('dashboard.static', filename='assets/css/ie9.css') }}" />
+    <![endif]-->
+    <!--[if lte IE 8]><link rel="stylesheet" href="{{ url_for('dashboard.static', filename='assets/css/ie8.css') }}" />
+    <![endif]-->
+    <script src="{{ url_for('dashboard.static', filename='assets/js/sort.js') }}"></script>
+    <script src="{{ url_for('dashboard.static', filename='assets/js/jquery.min.js') }}"></script>
+</head>
+<body>
+<div>
+    <br><br>
+    <div class="panel panel-primary panel-custom-login">
+        <div class="panel-heading panel-heading-custom">
+            Login
+        </div>
+        <div class="panel-body">
+
+            {% for error in form.errors %}
+                <div class="alert alert-danger">
+                    {{ form.errors[error][0] }}
+                </div>
+            {% endfor %}
+
+            <form action="" method="POST">
+                {{ form.hidden_tag() }}
+                {{ form.name.label }} <br/> {{ form.name }} <br/><br/>
+                {{ form.password.label }} <br/> {{ form.password }} <br/><br/>
+                {{ form.submit }}
+            </form>
+        </div>
+        <div class="panel-footer">
+            <b>Monitoring Dashboard</b> <br/> <i>Automated monitoring of your Flask web apps</i>
+        </div>
+    </div>
+</div>
+
+
+<!-- JS Scripts-->
+<!-- jQuery Js -->
+<script src="{{ url_for('dashboard.static', filename='assets/js/jquery-1.10.2.js') }}"></script>
+<!-- Bootstrap Js -->
+<script src="{{ url_for('dashboard.static', filename='assets/js/bootstrap.min.js') }}"></script>
+<!-- Metis Menu Js -->
+<script src="{{ url_for('dashboard.static', filename='assets/js/jquery.metisMenu.js') }}"></script>
+<!-- Custom Js -->
+<script src="{{ url_for('dashboard.static', filename='assets/js/custom-scripts.js') }}"></script>
+<script src="{{ url_for('dashboard.static', filename='assets/js/skel.min.js') }}"></script>
+<script src="{{ url_for('dashboard.static', filename='assets/js/util.js') }}"></script>
+<!--[if lte IE 8]><script src="{{ url_for('dashboard.static', filename='assets/js/ie/respond.min.js') }}"></script>
+<![endif]-->
+<script src="{{ url_for('dashboard.static', filename='assets/js/main.js') }}"></script>
+
+</body>
+</html>

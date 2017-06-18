@@ -20,18 +20,31 @@ Adding the extension to your flask app is simple:
     from flask import Flask
     import dashboard
 
-    app = Flask(__name__)
-    dashboard.bind(app)
+    user_app = Flask(__name__)
+    dashboard.config.from_file('/<path to your config file>/config.cfg')
+
+    def get_session_id():
+        # Implement your own function for obtaining the user variable here.
+        return "12345"
+
+    dashboard.config.get_group_by = get_session_id
+    dashboard.bind(app=user_app)
     
 Usage
 =====
 Once the setup is done, a config file ('config.cfg') should be set next to the python file that contains the entry point of the app.
-The following things should be set for best performance:
+The following things can be configured:
 
     [dashboard]
-    DATABASE=sqlite:////<path to your project>/flask-dashboard.db
-    GIT=/<path to your project>/flask-dashboard/.git/
-    TEST_DIR=/<path to your project>/flask-dashboard/tests/
+    APP_VERSION=1.0
+    CUSTOM_LINK=dashboard
+    USERNAME=admin
+    PASSWORD=admin
+    DATABASE=sqlite:////<path to your project>/dashboard.db
+    GIT=/<path to your project>/dashboard/.git/
+    TEST_DIR=/<path to your project>/dashboard/tests/
+
+For more information: [see this file](dashboard/config.py)
 
 When running your app, the dashboard van be viewed by default in the route:
 
