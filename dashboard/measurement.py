@@ -53,11 +53,11 @@ def track_performance(func, endpoint):
         t = (time2-time1)*1000
         add_function_call(time=t, endpoint=endpoint)
 
+        # outlier detection
         endpoint_count[endpoint] += 1
         endpoint_sum[endpoint] += t
         # check for being an outlier
-        if float(t) > 2.5 * get_average(endpoint):
-            # TODO: update 2.5 with variable
+        if float(t) > config.outlier_detection_constant * get_average(endpoint):
             add_outlier(endpoint, t)
 
         return result
