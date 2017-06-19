@@ -43,9 +43,9 @@ class Config(object):
                 username can be set using this variable.
             PASSWORD: same as for the username, but this is the password variable.
 
-            OUTLIER_DETECTION_CONSTANT: When the execution time is more than this constant above
+            OUTLIER_DETECTION_CONSTANT: When the execution time is more than: this constant *
                 average, extra information is logged into the database. A default value for this
-                variable is 2.5, but can be changed to a different value.
+                variable is 2.5, but can be changed in the config-file.
 
             :param config_file: a string pointing to the location of the config-file
         """
