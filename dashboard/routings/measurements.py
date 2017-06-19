@@ -12,39 +12,32 @@ from dashboard.database.function_calls import get_times, get_reqs_endpoint_day, 
 from dashboard.security import secure
 
 
-@blueprint.route('/measurements/<int:index>')
+@blueprint.route('/measurements/0')
 @secure
-def measurements(index):
-    """
-    Returns a page with one of the 4 graphs below:
-    TODO: rewrite graph at index==1 to plotly, such that function can be simplified
-    :param index:
-    :return:
-    """
+def page_heatmap():
+    return render_template('measurements/plotly.html', link=config.link, curr=2, times=get_times(),
+                           access=get_last_accessed_times(), session=session, index=0, graph=get_heatmap(end=None))
 
-    # returns a page with the number of requests per endpoint
-    if index == 1:
-        page = 'measurements/measurements_pygal.html'
-        graph = get_stacked_bar()
 
-    # returns a page with the execution times per version
-    elif index == 2:
-        page = 'measurements/measurements_plotly.html'
-        graph = get_boxplot_per_version()
+@blueprint.route('/measurements/1')
+@secure
+def page_number_of_requests_per_endpoint():
+    return render_template('measurements/pygal.html', link=config.link, curr=2, times=get_times(),
+                           access=get_last_accessed_times(), session=session, index=1, graph=get_stacked_bar())
 
-    # returns a page with the execution time per endpoint
-    elif index == 3:
-        page = 'measurements/measurements_plotly.html'
-        graph = get_boxplot_per_endpoint()
 
-    # default: return a page with a heatmap of number of requests
-    else:
-        index = 0
-        page = 'measurements/measurements_plotly.html'
-        graph = get_heatmap(end=None)
+@blueprint.route('/measurements/2')
+@secure
+def page_boxplot_per_version():
+    return render_template('measurements/plotly.html', link=config.link, curr=2, times=get_times(),
+                           access=get_last_accessed_times(), session=session, index=2, graph=get_boxplot_per_version())
 
-    return render_template(page, link=config.link, curr=2, times=get_times(),
-                           access=get_last_accessed_times(), session=session, index=index, graph=graph)
+
+@blueprint.route('/measurements/3')
+@secure
+def page_boxplot_per_endpoint():
+    return render_template('measurements/plotly.html', link=config.link, curr=2, times=get_times(),
+                           access=get_last_accessed_times(), session=session, index=3, graph=get_boxplot_per_endpoint())
 
 
 def get_stacked_bar():

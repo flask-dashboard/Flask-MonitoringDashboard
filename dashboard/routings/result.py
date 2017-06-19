@@ -19,57 +19,78 @@ from dashboard.routings.measurements import get_heatmap
 from dashboard.database.outlier import get_outliers
 
 
-@blueprint.route('/result/<end>/<int:index>', methods=['GET', 'POST'])
+@blueprint.route('/result/<end>/heatmap')
 @secure
-def result(end, index=0):
+def result_heatmap(end):
     rule = get_monitor_rule(end)
     url = get_url(end)
+    return render_template('endpoint/plotly.html', link=config.link, session=session, rule=rule, url=url,
+                           graph=get_heatmap(end), end=end, index=0)
 
-    # returns a page with the time per hour
-    if index == 1:
-        page = 'endpoint/endpoint_plotly.html'
-        graph = get_time_per_hour(end)
 
-    # returns a page with the number of hits per hour
-    elif index == 2:
-        page = 'endpoint/endpoint_plotly.html'
-        graph = get_hits_per_hour(end)
+@blueprint.route('/result/<end>/time_per_hour')
+@secure
+def result_time_per_hour(end):
+    rule = get_monitor_rule(end)
+    url = get_url(end)
+    return render_template('endpoint/plotly.html', link=config.link, session=session, rule=rule, url=url,
+                           graph=get_time_per_hour(end), end=end, index=1)
 
-    # returns a page with the time per version per user
-    elif index == 3:
-        graph, form = get_time_per_version_per_user(end, get_versions(end))
-        return render_template('endpoint/endpoint_with_selection.html', link=config.link, session=session, rule=rule,
-                               url=url, graph=graph, end=end, index=index, form=form)
 
-    # returns a page with the time per version per ip
-    elif index == 4:
-        graph, form = get_time_per_version_per_ip(end, get_versions(end))
-        return render_template('endpoint/endpoint_with_selection.html', link=config.link, session=session, rule=rule,
-                               url=url, graph=graph, end=end, index=index, form=form)
+@blueprint.route('/result/<end>/hits_per_hour')
+@secure
+def result_hits_per_hour(end):
+    rule = get_monitor_rule(end)
+    url = get_url(end)
+    return render_template('endpoint/plotly.html', link=config.link, session=session, rule=rule, url=url,
+                           graph=get_hits_per_hour(end), end=end, index=2)
 
-    # returns a page with the time per version
-    elif index == 5:
-        page = 'endpoint/endpoint_plotly.html'
-        graph = get_time_per_version(end, get_versions(end))
 
-    # returns a page with the time per user
-    elif index == 6:
-        page = 'endpoint/endpoint_plotly.html'
-        graph = get_time_per_user(end)
+@blueprint.route('/result/<end>/time_per_version_per_user')
+@secure
+def result_time_per_version_per_user(end):
+    rule = get_monitor_rule(end)
+    url = get_url(end)
+    graph, form = get_time_per_version_per_user(end, get_versions(end))
+    return render_template('endpoint/pygal.html', link=config.link, session=session, rule=rule, url=url,
+                           graph=graph, form=form, end=end, index=3)
 
-    # returns a page with a table containing the outliers.
-    elif index == 7:
-        return render_template('endpoint/endpoint_outliers.html', link=config.link, session=session, rule=rule, url=url,
-                               end=end, index=index, table=get_outliers(end))
 
-    # default: return a page with the heatmap
-    else:
-        index = 0
-        page = 'endpoint/endpoint_plotly.html'
-        graph = get_heatmap(end)
+@blueprint.route('/result/<end>/time_per_version_per_ip')
+@secure
+def result_time_per_version_per_ip(end):
+    rule = get_monitor_rule(end)
+    url = get_url(end)
+    graph, form = get_time_per_version_per_ip(end, get_versions(end))
+    return render_template('endpoint/pygal.html', link=config.link, session=session, rule=rule, url=url,
+                           graph=graph, form=form, end=end, index=4)
 
-    return render_template(page, link=config.link, session=session, rule=rule, url=url, graph=graph, end=end,
-                           index=index)
+
+@blueprint.route('/result/<end>/time_per_version')
+@secure
+def result_time_per_version(end):
+    rule = get_monitor_rule(end)
+    url = get_url(end)
+    return render_template('endpoint/plotly.html', link=config.link, session=session, rule=rule, url=url,
+                           graph=get_time_per_version(end, get_versions(end)), end=end, index=5)
+
+
+@blueprint.route('/result/<end>/time_per_user')
+@secure
+def result_time_per_user(end):
+    rule = get_monitor_rule(end)
+    url = get_url(end)
+    return render_template('endpoint/plotly.html', link=config.link, session=session, rule=rule, url=url,
+                           graph=get_time_per_user(end), end=end, index=6)
+
+
+@blueprint.route('/result/<end>/outliers')
+@secure
+def result_outliers(end):
+    rule = get_monitor_rule(end)
+    url = get_url(end)
+    return render_template('endpoint/outliers.html', link=config.link, session=session, rule=rule, url=url,
+                           end=end, index=7, table=get_outliers(end))
 
 
 def formatter(ms):

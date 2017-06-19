@@ -36,7 +36,7 @@
                                 {% endfor %}
                                 <td style="text-align: right;">{{ ((record.average*10)|round)/10 }}</td>
                                 <td>
-                                    <a href="{{ url_for('dashboard.result', end=record.endpoint, index=0) }}"
+                                    <a href="{{ url_for('dashboard.result_heatmap', end=record.endpoint) }}"
                                        class="btn btn-default btn-sm right-align-custom">
                                         Details
                                     </a>
@@ -59,16 +59,16 @@
             <div class="panel-body">
                 <ul class="nav nav-tabs">
                     {% if index != 0 %}
-                        <li><a href="{{ url_for('dashboard.measurements', index=0) }}">Heatmap of number of requests</a></li>
+                        <li><a href="{{ url_for('dashboard.page_heatmap') }}">Heatmap of number of requests</a></li>
                     {% endif %}
                     {% if index != 1 %}
-                        <li><a href="{{ url_for('dashboard.measurements', index=1) }}">Requests per endpoint</a></li>
+                        <li><a href="{{ url_for('dashboard.page_number_of_requests_per_endpoint') }}">Requests per endpoint</a></li>
                     {% endif %}
                     {% if index != 2 %}
-                        <li><a href="{{ url_for('dashboard.measurements', index=2) }}">Time per version</a></li>
+                        <li><a href="{{ url_for('dashboard.page_boxplot_per_version') }}">Time per version</a></li>
                     {% endif %}
                     {% if index != 3 %}
-                        <li><a href="{{ url_for('dashboard.measurements', index=3) }}">Time per endpoint</a></li>
+                        <li><a href="{{ url_for('dashboard.page_boxplot_per_endpoint') }}">Time per endpoint</a></li>
                     {% endif %}
                 </ul>
 
