@@ -10,6 +10,7 @@ from dashboard.database.monitor_rules import get_monitor_rules
 from dashboard.database.endpoint import update_last_accessed
 from dashboard.database.function_calls import add_function_call
 from dashboard.database.outlier import add_outlier
+from dashboard.outlier import StackInfo
 
 # count and sum are dicts and used for calculating the averages
 endpoint_count = {}
@@ -47,6 +48,12 @@ def track_performance(func, endpoint):
     """
     @wraps(func)
     def wrapper(*args, **kwargs):
+        # compute average
+        average = config.outlier_detection_constant * get_average(endpoint)
+
+        # start a thread to log the stacktrace after 'average' ms
+        stack_info = StackInfo(average)
+
         time1 = time.time()
         result = func(*args, **kwargs)
         time2 = time.time()
@@ -57,8 +64,8 @@ def track_performance(func, endpoint):
         endpoint_count[endpoint] += 1
         endpoint_sum[endpoint] += t
         # check for being an outlier
-        if float(t) > config.outlier_detection_constant * get_average(endpoint):
-            add_outlier(endpoint, t)
+        if float(t) > average:
+            add_outlier(endpoint, t, stack_info)
 
         return result
     wrapper.original = func
@@ -79,4 +86,6 @@ def track_last_accessed(func, endpoint):
 
 
 def get_average(endpoint):
+    if endpoint_count[endpoint] == 0:
+        return 0
     return endpoint_sum[endpoint] / endpoint_count[endpoint]

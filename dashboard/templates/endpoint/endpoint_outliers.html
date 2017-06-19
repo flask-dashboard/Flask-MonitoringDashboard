@@ -25,7 +25,7 @@
                     <td style="max-width: 200px; word-wrap: break-word;">{{ row.request_url }}</td>
                     <td style="max-width: 100px; word-wrap: break-word;">{{ row.cpu_percent }}</td>
                     <td style="max-width: 300px; word-wrap: break-word;">{{ row.memory }}</td>
-                    <td style="max-width: 600px; word-wrap: break-word;">{{ row.stacktrace }}</td>
+                    <td style="max-width: 600px; word-wrap: break-word;">{{ row.stacktrace|safe }}</td>
                     </tr>
                 {% endfor %}
             </table>
