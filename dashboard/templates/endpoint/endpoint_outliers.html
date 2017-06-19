@@ -1,0 +1,36 @@
+{% extends "endpoint/endpoint_base.html" %}
+{% block graph_content %}
+    <br />
+    <div class="panel panel-default">
+        <div class="table-responsive" style="overflow-x: scroll;">
+            <table class="table table-striped table-bordered table-hover">
+                <tr>
+                    <th>Date</th>
+                    <th>Execution time (in ms)</th>
+                    <th>Request values</th>
+                    <th>Request headers</th>
+                    <th>Request environment</th>
+                    <th>Request url</th>
+                    <th>Cpu percent</th>
+                    <th>Memory</th>
+                    <th>Stacktrace</th>
+                </tr>
+                {% for row in table %}
+                    <tr>
+                    <td style="max-width: 200px; word-wrap: break-word;">{{ row.time }}</td>
+                    <td style="max-width: 200px; word-wrap: break-word;">{{ row.execution_time }}</td>
+                    <td style="max-width: 300px; word-wrap: break-word;">{{ row.request_values }}</td>
+                    <td style="max-width: 300px; word-wrap: break-word;">{{ row.request_headers }}</td>
+                    <td style="max-width: 300px; word-wrap: break-word;">{{ row.request_environment }}</td>
+                    <td style="max-width: 200px; word-wrap: break-word;">{{ row.request_url }}</td>
+                    <td style="max-width: 100px; word-wrap: break-word;">{{ row.cpu_percent }}</td>
+                    <td style="max-width: 300px; word-wrap: break-word;">{{ row.memory }}</td>
+                    <td style="max-width: 600px; word-wrap: break-word;">{{ row.stacktrace }}</td>
+                    </tr>
+                {% endfor %}
+            </table>
+        </div>
+    </div>
+
+
+{% endblock %}

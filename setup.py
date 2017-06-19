@@ -2,7 +2,7 @@ import setuptools
 
 setuptools.setup(
     name="dashboard",
-    version="1.4",
+    version="1.5",
     packages=setuptools.find_packages(),
     include_package_data=True,
     zip_safe=False,
@@ -16,5 +16,7 @@ setuptools.setup(
                       'flask_wtf',
                       'pygal>=2.3.1',
                       'plotly',
-                      'configparser']
+                      'configparser',
+                      'psutil',
+                      'traceback']
 )

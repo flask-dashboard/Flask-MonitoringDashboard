@@ -18,6 +18,7 @@ class Config(object):
         self.test_dir = None
         self.username = 'admin'
         self.password = 'admin'
+        self.outlier_detection_constant = 2.5
 
         # define a custom function to retrieve the session_id or username
         self.get_group_by = None
@@ -41,7 +42,11 @@ class Config(object):
             USERNAME: for logging into the dashboard, a username and password is required. The
                 username can be set using this variable.
             PASSWORD: same as for the username, but this is the password variable.
-            
+
+            OUTLIER_DETECTION_CONSTANT: When the execution time is more than this constant above
+                average, extra information is logged into the database. A default value for this
+                variable is 2.5, but can be changed to a different value.
+
             :param config_file: a string pointing to the location of the config-file
         """
 
@@ -77,5 +82,9 @@ class Config(object):
                 self.username = parser.get('dashboard', 'USERNAME')
             if parser.has_option('dashboard', 'PASSWORD'):
                 self.password = parser.get('dashboard', 'PASSWORD')
+
+            # when an outlier detection constant has been set up:
+            if parser.has_option('dashboard', 'OUTLIER_DETECTION_CONSTANT'):
+                self.outlier_detection_constant = parser.get('dashboard', 'OUTLIER_DETECTION_CONSTANT')
         except configparser.Error:
             raise
