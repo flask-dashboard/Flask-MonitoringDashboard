@@ -58,7 +58,7 @@ def track_performance(func, endpoint):
         # check for being an outlier
         if float(t) > 2.5 * get_average(endpoint):
             # TODO: update 2.5 with variable
-            add_outlier(endpoint)
+            add_outlier(endpoint, t)
 
         return result
     wrapper.original = func

@@ -74,6 +74,7 @@ class Outlier(Base):
     __tablename__ = 'outliers'
     id = Column(Integer, primary_key=True, autoincrement=True)
     endpoint = Column(String(250), nullable=False)
+
     # request-values, GET, POST, PUT
     request_values = Column(String(10000))
     # request headers
@@ -82,12 +83,19 @@ class Outlier(Base):
     request_environment = Column(String(10000))
     # request url
     request_url = Column(String(1000))
+
     # cpu_percent in use
     cpu_percent = Column(String(100))
     # memory
     memory = Column(String(10000))
+
     # stacktrace
     stacktrace = Column(String(100000))
+
+    # execution_time in ms
+    execution_time = Column(Float, nullable=False)
+    # time of adding the result to the database
+    time = Column(DateTime)
 
 
 # define the database

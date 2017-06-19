@@ -1,4 +1,4 @@
-# Flask Dashboard
+# Automatic monitoring dashboard
 Dashboard for automatic monitoring of python web services
 
 This is a flask extension that can be added to your existing flask application.
@@ -43,6 +43,7 @@ The following things can be configured:
     DATABASE=sqlite:////<path to your project>/dashboard.db
     GIT=/<path to your project>/dashboard/.git/
     TEST_DIR=/<path to your project>/dashboard/tests/
+    OUTLIER_DETECTION_CONSTANT=2.5
 
 For more information: [see this file](dashboard/config.py)
 
