@@ -46,7 +46,7 @@ def result_hits_per_hour(end):
                            graph=get_hits_per_hour(end), end=end, index=2)
 
 
-@blueprint.route('/result/<end>/time_per_version_per_user')
+@blueprint.route('/result/<end>/time_per_version_per_user', methods=['GET', 'POST'])
 @secure
 def result_time_per_version_per_user(end):
     rule = get_monitor_rule(end)
@@ -56,7 +56,7 @@ def result_time_per_version_per_user(end):
                            graph=graph, form=form, end=end, index=3)
 
 
-@blueprint.route('/result/<end>/time_per_version_per_ip')
+@blueprint.route('/result/<end>/time_per_version_per_ip', methods=['GET', 'POST'])
 @secure
 def result_time_per_version_per_ip(end):
     rule = get_monitor_rule(end)
