@@ -5,7 +5,7 @@
     Moreover, it logs cpu- and memory-info.
 """
 
-import thread
+import _thread
 import time
 import traceback
 import threading
@@ -22,7 +22,7 @@ class StackInfo(object):
         self.memory = ''
 
         try:
-            thread.start_new_thread(log_stack_trace, (self, ))
+            _thread.start_new_thread(log_stack_trace, (self, ))
         except:
             print("Can't log traceback information")
 
