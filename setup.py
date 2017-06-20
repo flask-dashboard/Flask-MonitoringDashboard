@@ -6,7 +6,7 @@ setuptools.setup(
     packages=setuptools.find_packages(),
     include_package_data=True,
     zip_safe=False,
-    url='https://github.com/mircealungu/automatic-monitoring-dasboard',
+    url='https://github.com/mircealungu/automatic-monitoring-dashboard',
     author="Patrick Vogel & Thijs Klooster",
     author_email="p.p.vogel@student.rug.nl",
     description="A dashboard for automatic monitoring of python web services",
