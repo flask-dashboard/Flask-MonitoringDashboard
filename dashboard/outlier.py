@@ -5,10 +5,9 @@
     Moreover, it logs cpu- and memory-info.
 """
 
-import thread
 import time
 import traceback
-import threading
+from threading import Thread, enumerate
 import sys
 import psutil
 
@@ -22,7 +21,8 @@ class StackInfo(object):
         self.memory = ''
 
         try:
-            thread.start_new_thread(log_stack_trace, (self, ))
+            thread = Thread(target=log_stack_trace, args=(self, ))
+            thread.start()
         except:
             print("Can't log traceback information")
 
@@ -33,7 +33,7 @@ def log_stack_trace(stack_info):
 
     # iterate through every active thread and get the stack-trace
     stack_list = []
-    for th in threading.enumerate():
+    for th in enumerate():
         f = open('stacktrace.log', 'w+')
         stack_list.extend(['', str(th)])
         traceback.print_stack(sys._current_frames()[th.ident], file=f)
