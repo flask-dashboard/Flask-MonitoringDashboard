@@ -17,6 +17,5 @@ setuptools.setup(
                       'pygal>=2.3.1',
                       'plotly',
                       'configparser',
-                      'psutil',
-                      'traceback']
+                      'psutil']
 )
