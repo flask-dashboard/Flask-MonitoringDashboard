@@ -40,10 +40,21 @@ def reset_run():
         db_session.query(Tests).update({Tests.run: False})
 
 
-def add_test_result(name, exec_time, time, version):
+def add_test_result(name, exec_time, time, version, suite, run):
     """ Add a test result to the database. """
     with session_scope() as db_session:
-        db_session.add(TestRun(name=name, execution_time=exec_time, time=time, version=version))
+        db_session.add(TestRun(name=name, execution_time=exec_time, time=time, version=version, suite=suite, run=run))
+
+
+def get_suite_nr():
+    """ Retrieves the number of the next suite to run. """
+    with session_scope() as db_session:
+        result = db_session.query(func.max(TestRun.suite).label('nr')).one()
+        if result.nr is None:
+            next_nr = 1
+        else:
+            next_nr = result.nr + 1
+        return next_nr
 
 
 def get_results():
