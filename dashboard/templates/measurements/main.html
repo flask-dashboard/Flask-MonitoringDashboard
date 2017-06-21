@@ -58,18 +58,14 @@
             </div>
             <div class="panel-body">
                 <ul class="nav nav-tabs">
-                    {% if index != 0 %}
-                        <li><a href="{{ url_for('dashboard.page_heatmap') }}">Heatmap of number of requests</a></li>
-                    {% endif %}
-                    {% if index != 1 %}
-                        <li><a href="{{ url_for('dashboard.page_number_of_requests_per_endpoint') }}">Requests per endpoint</a></li>
-                    {% endif %}
-                    {% if index != 2 %}
-                        <li><a href="{{ url_for('dashboard.page_boxplot_per_version') }}">Time per version</a></li>
-                    {% endif %}
-                    {% if index != 3 %}
-                        <li><a href="{{ url_for('dashboard.page_boxplot_per_endpoint') }}">Time per endpoint</a></li>
-                    {% endif %}
+                    <li><a {{ 'class="active-menu" style="color: white;"'|safe if index == 0 }}
+                            href="{{ url_for('dashboard.page_heatmap') }}">Heatmap of number of requests</a></li>
+                    <li><a {{ 'class="active-menu" style="color: white;"'|safe if index == 1 }}
+                            href="{{ url_for('dashboard.page_number_of_requests_per_endpoint') }}">Requests per endpoint</a></li>
+                    <li><a {{ 'class="active-menu" style="color: white;"'|safe if index == 2 }}
+                            href="{{ url_for('dashboard.page_boxplot_per_version') }}">Time per version</a></li>
+                    <li><a {{ 'class="active-menu" style="color: white;"'|safe if index == 3 }}
+                            href="{{ url_for('dashboard.page_boxplot_per_endpoint') }}">Time per endpoint</a></li>
                 </ul>
 
                 {% block graph_content %}

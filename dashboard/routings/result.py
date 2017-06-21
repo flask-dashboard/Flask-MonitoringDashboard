@@ -143,9 +143,9 @@ def get_time_per_hour(end):
     graph = [trace1, trace2, trace3]
 
     layout = go.Layout(
-        autosize=False,
-        width=900,
+        autosize=True,
         height=600,
+        title='Execution time (minimum, average and maximum) per hour',
         plot_bgcolor='rgba(249,249,249,1)',
         showlegend=True,
         barmode='group',
@@ -162,9 +162,9 @@ def get_hits_per_hour(end):
     )]
 
     layout = go.Layout(
-        autosize=False,
-        width=900,
+        autosize=True,
         height=600,
+        title='Number of hits per hour',
         plot_bgcolor='rgba(249,249,249,1)',
         showlegend=False,
         xaxis=go.XAxis(range=[datetime.datetime.now() - datetime.timedelta(days=7), datetime.datetime.now()])
@@ -200,12 +200,20 @@ def get_time_per_version_per_user(end, versions):
     for d in get_endpoint_results(end, FunctionCall.group_by):
         user_data[str(d.group_by)][d.version] = d.average
 
+    # compute height of the graph
+    height = 0
+    db_data = [str(c.group_by) for c in get_endpoint_column(end, FunctionCall.group_by)]
+    for d in db_data:
+        if selection == [] or d in selection:
+            height += 1
+
     # dot chart
-    graph = pygal.Dot(x_label_rotation=30, show_legend=False, height=200 + len(user_data) * 40)
+    graph = pygal.Dot(x_label_rotation=30, show_legend=False, height=200 + height * 30)
     graph.x_labels = ["{0} {1}".format(v.version, v.startedUsingOn.strftime("%b %d %H:%M")) for v in versions]
+    graph.title = 'Average execution time per user per version'
 
     # add rows to the charts
-    for d in [str(c.group_by) for c in get_endpoint_column(end, FunctionCall.group_by)]:
+    for d in db_data:
         data = []
         # render full graph if no selection is made, else render only the users that are selected
         if selection == [] or d in selection:
@@ -243,12 +251,20 @@ def get_time_per_version_per_ip(end, versions):
     for d in get_endpoint_results(end, FunctionCall.ip):
         ip_data[str(d.ip)][d.version] = d.average
 
+    # compute height of the graph
+    height = 0
+    db_data = [str(c.ip) for c in get_endpoint_column(end, FunctionCall.ip)]
+    for d in db_data:
+        if selection == [] or d in selection:
+            height += 1
+
     # dot chart
-    graph = pygal.Dot(x_label_rotation=30, show_legend=False, height=200 + len(ip_data) * 40)
+    graph = pygal.Dot(x_label_rotation=30, show_legend=False, height=200 + height * 30)
     graph.x_labels = ["{0} {1}".format(v.version, v.startedUsingOn.strftime("%b %d %H:%M")) for v in versions]
+    graph.title = 'Average execution time per ip per version'
 
     # add rows to the charts
-    for d in [str(c.ip) for c in get_endpoint_column(end, FunctionCall.ip)]:
+    for d in db_data:
         data = []
         # render full graph if no selection is made, else render only the users that are selected
         if selection == [] or d in selection:
@@ -267,8 +283,7 @@ def get_time_per_version(end, versions):
         data.append(go.Box(x=values, name="{0} {1}".format(v.version, v.startedUsingOn.strftime("%b %d %H:%M"))))
 
     layout = go.Layout(
-        autosize=False,
-        width=900,
+        autosize=True,
         height=350 + 40 * len(versions),
         plot_bgcolor='rgba(249,249,249,1)',
         showlegend=False,
@@ -288,8 +303,7 @@ def get_time_per_user(end):
         data.append(go.Box(x=values, name='{0}  -'.format(u)))
 
     layout = go.Layout(
-        autosize=False,
-        width=900,
+        autosize=True,
         height=350 + 40 * len(users),
         plot_bgcolor='rgba(249,249,249,1)',
         showlegend=False,

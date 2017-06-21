@@ -42,28 +42,38 @@ def page_boxplot_per_endpoint():
 
 def get_stacked_bar():
     data = get_reqs_endpoint_day()
-    graph = pygal.graph.horizontalstackedbar.HorizontalStackedBar(height=100 + len(data) * 7)
-    graph.title = 'Number of requests per endpoint per day'
-    graph.x_labels = []
+    labels = []
     endpoints = []
+    # find labels and endpoints
     for d in data:
-        if d.newTime not in graph.x_labels:
-            graph.x_labels.append(d.newTime)
+        if d.newTime not in labels:
+            labels.append(d.newTime)
         if d.endpoint not in endpoints:
             endpoints.append(d.endpoint)
+    labels.sort(reverse=True)
 
-    graph.x_labels.sort(reverse=True)
-    for e in endpoints:
+    # create dictionary. graph_data is in the form of: graph_data[label][endpoint]
+    graph_data = {}
+    for label in labels:
+        graph_data[label] = {}
+        for endpoint in endpoints:
+            graph_data[label][endpoint] = 0
+
+    # put data in dictionary
+    for d in data:
+        graph_data[d.newTime][d.endpoint] = d.cnt
+
+    # create graph
+    graph = pygal.graph.horizontalstackedbar.HorizontalStackedBar(height=100 + len(labels) * 15)
+    graph.title = 'Number of requests per endpoint per day'
+    graph.x_labels = labels
+
+    # put data (from dictionary) in graph
+    for endpoint in endpoints:
         lst = []
-        for t in graph.x_labels:
-            found = False
-            for d in data:
-                if e == d.endpoint and t == d.newTime:
-                    found = True
-                    lst.append(d.cnt)
-            if not found:
-                lst.append(0)
-        graph.add(e, lst)
+        for label in labels:
+            lst.append(graph_data[label][endpoint])
+        graph.add(endpoint, lst)
 
     return graph.render_data_uri()
 
@@ -81,8 +91,7 @@ def get_boxplot_per_version():
         data.append(go.Box(x=values, name="{0} {1}".format(v.version, v.startedUsingOn.strftime("%b %d %H:%M"))))
 
     layout = go.Layout(
-        autosize=False,
-        width=900,
+        autosize=True,
         height=350 + 40 * len(versions),
         plot_bgcolor='rgba(249,249,249,1)',
         showlegend=False,
@@ -108,8 +117,7 @@ def get_boxplot_per_endpoint():
         data.append(go.Box(x=values, name=e))
 
     layout = go.Layout(
-        autosize=False,
-        width=900,
+        autosize=True,
         height=350 + 40 * len(endpoints),
         plot_bgcolor='rgba(249,249,249,1)',
         showlegend=False,
@@ -161,8 +169,7 @@ def get_heatmap(end):
         requests_list.append(day_list)
 
     layout = go.Layout(
-        autosize=False,
-        width=900,
+        autosize=True,
         height=800,
         plot_bgcolor='rgba(249,249,249,1)',
         showlegend=False,
