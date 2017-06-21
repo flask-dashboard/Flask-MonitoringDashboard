@@ -13,7 +13,6 @@ from unittest import TestLoader
 import datetime
 import time
 import pygal
-import math
 
 
 @blueprint.route('/settings', methods=['GET', 'POST'])
