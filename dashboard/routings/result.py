@@ -140,7 +140,7 @@ def get_time_per_hour(end):
         name='Maximum'
     )
 
-    graph = [trace1, trace2, trace3]
+    graph = [trace3, trace2, trace1]
 
     layout = go.Layout(
         autosize=True,
@@ -148,7 +148,7 @@ def get_time_per_hour(end):
         title='Execution time (minimum, average and maximum) per hour',
         plot_bgcolor='rgba(249,249,249,1)',
         showlegend=True,
-        barmode='group',
+        barmode='overlay',
         xaxis=go.XAxis(range=[datetime.datetime.now() - datetime.timedelta(days=2), datetime.datetime.now()])
     )
     return plotly.offline.plot(go.Figure(data=graph, layout=layout), output_type='div', show_link=False)
