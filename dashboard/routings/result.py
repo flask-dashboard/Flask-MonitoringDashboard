@@ -103,7 +103,7 @@ def formatter(ms):
     ms = round(ms % 1000, 2)
     if sec == 0:
         return '{0}ms'.format(ms)
-    return '{0}s and {1}ms'.format(sec, ms)
+    return '{0}.{1}s'.format(sec, ms)
 
 
 def get_url(end):
