@@ -75,13 +75,14 @@ def result_time_per_version(end):
                            graph=get_time_per_version(end, get_versions(end)), end=end, index=5)
 
 
-@blueprint.route('/result/<end>/time_per_user')
+@blueprint.route('/result/<end>/time_per_user', methods=['GET', 'POST'])
 @secure
 def result_time_per_user(end):
     rule = get_monitor_rule(end)
     url = get_url(end)
-    return render_template('endpoint/plotly.html', link=config.link, session=session, rule=rule, url=url,
-                           graph=get_time_per_user(end), end=end, index=6)
+    graph, form = get_time_per_user(end)
+    return render_template('endpoint/time_per_user.html', link=config.link, session=session, rule=rule, url=url,
+                           graph=graph, form=form, end=end, index=6)
 
 
 @blueprint.route('/result/<end>/outliers')
@@ -179,23 +180,7 @@ def get_time_per_version_per_user(end, versions):
         for v in versions:
             user_data[d][v.version] = 0
 
-    # create a form to select users
-    choices = []
-    for d in list(user_data):
-        choices.append((d, d))
-
-    class SelectionForm(FlaskForm):
-        selection = SelectMultipleField(
-            'Pick Things!',
-            choices=choices,
-        )
-        submit = SubmitField('Render graph')
-
-    form = SelectionForm(request.form)
-    selection = []
-    if request.method == 'POST':
-        selection = [str(item) for item in form.data['selection']]
-
+    form, selection = get_form(user_data)
     # fill the rows with data
     for d in get_endpoint_results(end, FunctionCall.group_by):
         user_data[str(d.group_by)][d.version] = d.average
@@ -223,16 +208,10 @@ def get_time_per_version_per_user(end, versions):
     return graph.render_data_uri(), form
 
 
-def get_time_per_version_per_ip(end, versions):
-    ip_data = {}
-    for d in [str(c.ip) for c in get_endpoint_column(end, FunctionCall.ip)]:
-        ip_data[d] = {}
-        for v in versions:
-            ip_data[d][v.version] = 0
-
-    # create a form to select users
+def get_form(data):
+    # create a form to make a selection
     choices = []
-    for d in list(ip_data):
+    for d in list(data):
         choices.append((d, d))
 
     class SelectionForm(FlaskForm):
@@ -246,6 +225,18 @@ def get_time_per_version_per_ip(end, versions):
     selection = []
     if request.method == 'POST':
         selection = [str(item) for item in form.data['selection']]
+
+    return form, selection
+
+
+def get_time_per_version_per_ip(end, versions):
+    ip_data = {}
+    for d in [str(c.ip) for c in get_endpoint_column(end, FunctionCall.ip)]:
+        ip_data[d] = {}
+        for v in versions:
+            ip_data[d][v.version] = 0
+
+    form, selection = get_form(ip_data)
 
     # fill the rows with data
     for d in get_endpoint_results(end, FunctionCall.ip):
@@ -296,19 +287,22 @@ def get_time_per_version(end, versions):
 
 def get_time_per_user(end):
     users = [str(c.group_by) for c in get_endpoint_column_user_sorted(endpoint=end, column=FunctionCall.group_by)]
+    form, selection = get_form(users)
     data = []
     for u in users:
-        values = [str(c.execution_time) for c in
-                  get_all_measurement_per_column(endpoint=end, column=FunctionCall.group_by, value=u)]
-        data.append(go.Box(x=values, name='{0}  -'.format(u)))
-
+        if selection == [] or u in selection:
+            values = [str(c.execution_time) for c in
+                      get_all_measurement_per_column(endpoint=end, column=FunctionCall.group_by, value=u)]
+            data.append(go.Box(x=values, name='{0}  -'.format(u)))
+    data.reverse()
     layout = go.Layout(
         autosize=True,
-        height=350 + 40 * len(users),
+        height=350 + 40 * len(data),
         plot_bgcolor='rgba(249,249,249,1)',
         showlegend=False,
         title='Execution time for every user',
         xaxis=dict(title='Execution time (ms)'),
         yaxis=dict(title='User')
     )
-    return plotly.offline.plot(go.Figure(data=data, layout=layout), output_type='div', show_link=False)
+    graph = plotly.offline.plot(go.Figure(data=data, layout=layout), output_type='div', show_link=False)
+    return graph, form
