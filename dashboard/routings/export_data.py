@@ -1,4 +1,4 @@
-from flask import make_response, render_template, session
+from flask import make_response, render_template, session, request, redirect, url_for
 from dashboard.security import secure
 from dashboard.database.function_calls import get_data
 from dashboard import blueprint, config
@@ -32,3 +32,10 @@ def export_data():
                                                                         entry.ip))
 
     return render_template('export-data.html', link=config.link, session=session, data=csv)
+
+
+@blueprint.route('/submit-test-results', methods=['POST'])
+def submit_test_results():
+    content = request.get_json()
+    print(content)
+    return '', 204

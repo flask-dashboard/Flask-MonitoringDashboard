@@ -3,15 +3,12 @@ from flask import session, request, render_template
 from dashboard import blueprint, config, user_app
 from dashboard.database.endpoint import get_monitor_rule, update_monitor_rule, get_last_accessed_times
 from dashboard.database.monitor_rules import reset_monitor_endpoints
-from dashboard.database.tests import get_tests, reset_run, update_test, add_test_result, get_results
-from dashboard.database.tests import get_line_results, get_res_current, get_suite_nr
-from dashboard.forms import MonitorDashboard, RunTests
+from dashboard.database.tests import get_tests, get_results
+from dashboard.database.tests import get_line_results, get_res_current
+from dashboard.forms import MonitorDashboard
 from dashboard.measurement import track_performance
 from dashboard.security import secure
-from unittest import TestLoader
 
-import datetime
-import time
 import pygal
 
 
@@ -72,39 +69,9 @@ def rules():
                            values=values)
 
 
-@blueprint.route('/testmonitor', methods=['GET', 'POST'])
+@blueprint.route('/testmonitor')
 @secure
 def testmonitor():
-    form = RunTests()
-    if request.method == 'POST' and form.validate():
-        test_names = []
-        reset_run()
-        n = 1
-        if request.form['N'] is not '':
-            n = int(request.form['N'])
-
-        for data in request.form:
-            if data.startswith('checkbox-'):
-                name = data.rsplit('-', 1)[1]
-                test_names.append(name)
-                update_test(name, True, datetime.datetime.now(), None)
-
-        suites = TestLoader().discover(config.test_dir, pattern="*test*.py")
-        suite_nr = get_suite_nr()
-        for i in range(n):
-            for suite in suites:
-                for case in suite:
-                    for test in case:
-                        if str(test) in test_names:
-                            result = None
-                            time1 = time.time()
-                            result = test.run(result)
-                            time2 = time.time()
-                            update_test(str(test), True, datetime.datetime.now(), result.wasSuccessful())
-                            t = (time2 - time1) * 1000
-                            add_test_result(str(test), t, datetime.datetime.now(), config.version, suite_nr, i + 1)
-
-    # Let's render a bar chart, if there is data:
     data = get_line_results()
     times_data = None
     if data:
@@ -125,6 +92,6 @@ def testmonitor():
         times_chart.add('Maximum', list_max, formatter=formatter)
         times_data = times_chart.render_data_uri()
 
-    return render_template('testmonitor.html', link=config.link, session=session, curr=3, form=form,
+    return render_template('testmonitor.html', link=config.link, session=session, curr=3,
                            tests=get_tests(), results=get_results(),
                            res_current_version=get_res_current(config.version), times_data=times_data)
