@@ -138,10 +138,12 @@ def get_heatmap(end):
     days = [str(d.newTime[:10]) for d in data]
     # remove duplicates and sort the result
     days = sorted(list(set(days)))
-    if len(days) > 0:
+    if len(days) > 0:  # check if heatmap contains data
         first_day = max(datetime.datetime.strptime(days[0], '%Y-%m-%d'),
                         datetime.datetime.now() - datetime.timedelta(days=30))
-        last_day = datetime.datetime.strptime(days[len(days)-1], '%Y-%m-%d')
+        first_day -= datetime.timedelta(hours=12)
+        last_day = datetime.datetime.strptime(days[len(days) - 1], '%Y-%m-%d') + \
+                   datetime.timedelta(hours=12)
     else:
         first_day = datetime.datetime.now() - datetime.timedelta(days=30)
         last_day = datetime.datetime.now()

@@ -123,6 +123,11 @@ def get_url(end):
 def get_time_per_hour(end):
     data = get_line_results(end)
 
+    # Find the last date which contains data
+    max_time = max([d.newTime for d in data])
+    max_date = datetime.datetime.strptime(max_time, '%Y-%m-%d %H:%M:%S')
+    max_date += datetime.timedelta(minutes=30)
+
     trace1 = go.Bar(
         x=[d.newTime for d in data],
         y=[d.min for d in data],
@@ -150,13 +155,19 @@ def get_time_per_hour(end):
         plot_bgcolor='rgba(249,249,249,1)',
         showlegend=True,
         barmode='overlay',
-        xaxis=go.XAxis(range=[datetime.datetime.now() - datetime.timedelta(days=2), datetime.datetime.now()])
+        xaxis=go.XAxis(range=[max_date - datetime.timedelta(days=2), max_date])
     )
     return plotly.offline.plot(go.Figure(data=graph, layout=layout), output_type='div', show_link=False)
 
 
 def get_hits_per_hour(end):
     data = get_line_results(end)
+
+    # Find the last date which contains data
+    max_time = max([d.newTime for d in data])
+    max_date = datetime.datetime.strptime(max_time, '%Y-%m-%d %H:%M:%S')
+    max_date += datetime.timedelta(minutes=30)
+
     graph = [go.Bar(
         x=[d.newTime for d in data],
         y=[d.count for d in data]
@@ -168,7 +179,7 @@ def get_hits_per_hour(end):
         title='Number of hits per hour',
         plot_bgcolor='rgba(249,249,249,1)',
         showlegend=False,
-        xaxis=go.XAxis(range=[datetime.datetime.now() - datetime.timedelta(days=7), datetime.datetime.now()])
+        xaxis=go.XAxis(range=[max_date - datetime.timedelta(days=2), max_date])
     )
     return plotly.offline.plot(go.Figure(data=graph, layout=layout), output_type='div', show_link=False)
 
