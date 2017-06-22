@@ -1,7 +1,7 @@
 import setuptools
 
 setuptools.setup(
-    name="dashboard",
+    name="flask_monitoring_dashboard",
     version="1.5",
     packages=setuptools.find_packages(),
     include_package_data=True,
