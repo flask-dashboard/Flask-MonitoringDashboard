@@ -19,7 +19,7 @@ import pygal
 @secure
 def settings():
     password = 'x' * len(config.password)
-    return render_template('settings.html', link=config.link, session=session, config=config, pw=password)
+    return render_template('dashboard/settings.html', link=config.link, session=session, config=config, pw=password)
 
 
 def formatter(x):
@@ -67,7 +67,7 @@ def rules():
     all_rules = [r for r in all_rules if not r.rule.startswith('/' + config.link)
                  and not r.rule.startswith('/static-' + config.link)]
 
-    return render_template('rules.html', link=config.link, curr=1, rules=all_rules, access=la, form=form,
+    return render_template('dashboard/rules.html', link=config.link, curr=1, rules=all_rules, access=la, form=form,
                            session=session,
                            values=values)
 

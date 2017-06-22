@@ -23,7 +23,6 @@ user_app = None
 
 # get current location of the project
 def loc():
-    print(os.path.abspath(os.path.dirname(__file__)) + '/')
     return os.path.abspath(os.path.dirname(__file__)) + '/'
 
 

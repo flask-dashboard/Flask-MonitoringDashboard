@@ -14,7 +14,7 @@ app.secret_key = 'my-secret-key'  # secret key is used for session-variables
 
 @app.route('/')
 def index():
-    return render_template('index.html')
+    return render_template('dashboard/index.html')
 
 
 @app.route('/login', methods=['GET', 'POST'])
@@ -32,7 +32,7 @@ def login():
                 return redirect('/logged_in')
         else:
             form.email.errors.append("Email has not been found in the database. Try another one!")
-    return render_template('login.html', form=form)
+    return render_template('dashboard/login.html', form=form)
 
 
 @app.route('/about')

@@ -31,4 +31,4 @@ def export_data():
                                                                         entry.time, entry.version, entry.group_by,
                                                                         entry.ip))
 
-    return render_template('export-data.html', link=config.link, session=session, data=csv)
+    return render_template('dashboard/export-data.html', link=config.link, session=session, data=csv)
