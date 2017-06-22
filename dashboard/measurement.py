@@ -51,8 +51,8 @@ def track_performance(func, endpoint):
         if average:
             average *= config.outlier_detection_constant
 
-        # start a thread to log the stacktrace after 'average' ms
-        stack_info = StackInfo(average)
+            # start a thread to log the stacktrace after 'average' ms
+            stack_info = StackInfo(average)
 
         time1 = time.time()
         result = func(*args, **kwargs)
