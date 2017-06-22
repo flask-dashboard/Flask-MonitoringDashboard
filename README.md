@@ -12,6 +12,10 @@ Installation
 To install from source, download the source code, then run this:
 
     python setup.py install
+
+Or install with pip:
+    
+    pip install flask_monitoring_dashboard
     
 Setup
 =====
