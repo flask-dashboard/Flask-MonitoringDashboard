@@ -25,8 +25,9 @@ def init_measurement():
     """
     for rule in get_monitor_rules():
         # add a wrapper for every endpoint
-        user_app.view_functions[rule.endpoint] = track_performance(user_app.view_functions[rule.endpoint],
-                                                                   endpoint=rule.endpoint)
+        if rule.endpoint in user_app.view_functions:
+            user_app.view_functions[rule.endpoint] = track_performance(user_app.view_functions[rule.endpoint],
+                                                                       endpoint=rule.endpoint)
 
     # filter dashboard rules
     rules = user_app.url_map.iter_rules()
@@ -85,10 +86,10 @@ def track_last_accessed(func, endpoint):
 
 
 def get_average(endpoint):
-    try:
+    if endpoint in endpoint_count:
         if endpoint_count[endpoint] < 10:
             return None
-    except:
+    else:
         # initialize endpoint
         endpoint_count[endpoint] = 0
         endpoint_sum[endpoint] = 0
