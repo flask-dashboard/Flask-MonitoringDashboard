@@ -24,9 +24,6 @@ def init_measurement():
     It adds wrappers to the endpoints for tracking their performance and last access times.
     """
     for rule in get_monitor_rules():
-        # init dictionary for every endpoint
-        endpoint_count[rule.endpoint] = 0
-        endpoint_sum[rule.endpoint] = 0
         # add a wrapper for every endpoint
         user_app.view_functions[rule.endpoint] = track_performance(user_app.view_functions[rule.endpoint],
                                                                    endpoint=rule.endpoint)
@@ -49,7 +46,9 @@ def track_performance(func, endpoint):
     @wraps(func)
     def wrapper(*args, **kwargs):
         # compute average
-        average = config.outlier_detection_constant * get_average(endpoint)
+        average = get_average(endpoint)
+        if average:
+            average *= config.outlier_detection_constant
 
         # start a thread to log the stacktrace after 'average' ms
         stack_info = StackInfo(average)
@@ -64,7 +63,7 @@ def track_performance(func, endpoint):
         endpoint_count[endpoint] += 1
         endpoint_sum[endpoint] += t
         # check for being an outlier
-        if float(t) > average:
+        if average and float(t) > average:
             add_outlier(endpoint, t, stack_info)
 
         return result
@@ -86,6 +85,12 @@ def track_last_accessed(func, endpoint):
 
 
 def get_average(endpoint):
-    if endpoint_count[endpoint] == 0:
-        return 0
+    try:
+        if endpoint_count[endpoint] < 10:
+            return None
+    except:
+        # initialize endpoint
+        endpoint_count[endpoint] = 0
+        endpoint_sum[endpoint] = 0
+        return None
     return endpoint_sum[endpoint] / endpoint_count[endpoint]

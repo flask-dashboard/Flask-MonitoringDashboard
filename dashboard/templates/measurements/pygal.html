@@ -1,6 +1,10 @@
 {% extends "measurements/main.html" %}
 {% block graph_content %}
-    <div class="col-md-12 col-sm-12">
-        <embed type="image/svg+xml" src={{ graph|safe }}></embed>
-    </div>
+    {% if data %}
+        <div class="col-md-12 col-sm-12">
+            <embed type="image/svg+xml" src={{ graph|safe }}></embed>
+        </div>
+    {%  else %}
+        <p>No data available.</p>
+    {% endif %}
 {% endblock %}

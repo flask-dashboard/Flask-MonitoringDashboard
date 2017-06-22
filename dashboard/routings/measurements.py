@@ -42,6 +42,10 @@ def page_boxplot_per_endpoint():
 
 def get_stacked_bar():
     data = get_reqs_endpoint_day()
+
+    if len(data) == 0:
+        return None
+
     labels = []
     endpoints = []
     # find labels and endpoints
@@ -85,6 +89,9 @@ def get_boxplot_per_version():
     """
     versions = get_versions()
 
+    if len(versions) == 0:
+        return None
+
     data = []
     for v in versions:
         values = [c.execution_time for c in get_data_per_version(v.version)]
@@ -112,9 +119,15 @@ def get_boxplot_per_endpoint():
     data = []
     for e in endpoints:
         values = [c.execution_time for c in get_data_per_endpoint(e)]
+        if len(values) == 0:
+            continue
+
         if len(e) > 16:
             e = '...' + e[-14:]
         data.append(go.Box(x=values, name=e))
+
+    if len(data) == 0:
+        return None
 
     layout = go.Layout(
         autosize=True,
@@ -138,15 +151,14 @@ def get_heatmap(end):
     days = [str(d.newTime[:10]) for d in data]
     # remove duplicates and sort the result
     days = sorted(list(set(days)))
-    if len(days) > 0:  # check if heatmap contains data
-        first_day = max(datetime.datetime.strptime(days[0], '%Y-%m-%d'),
-                        datetime.datetime.now() - datetime.timedelta(days=30))
-        first_day -= datetime.timedelta(hours=12)
-        last_day = datetime.datetime.strptime(days[len(days) - 1], '%Y-%m-%d') + \
-                   datetime.timedelta(hours=12)
-    else:
-        first_day = datetime.datetime.now() - datetime.timedelta(days=30)
-        last_day = datetime.datetime.now()
+
+    if len(data) == 0:
+        return None
+
+    first_day = max(datetime.datetime.strptime(days[0], '%Y-%m-%d'),
+                    datetime.datetime.now() - datetime.timedelta(days=30))
+    first_day -= datetime.timedelta(hours=12)
+    last_day = datetime.datetime.strptime(days[len(days) - 1], '%Y-%m-%d') + datetime.timedelta(hours=12)
 
     # create empty 2D-dictionary with the keys: [hour][day]
     requests = {}

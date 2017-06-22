@@ -6,7 +6,7 @@ from dashboard.database.monitor_rules import reset_monitor_endpoints
 from dashboard.database.tests import get_tests, reset_run, update_test, add_test_result, get_results
 from dashboard.database.tests import get_line_results, get_res_current
 from dashboard.forms import MonitorDashboard, ChangeSetting, RunTests
-from dashboard.measurement import track_performance
+from dashboard.measurement import track_performance, endpoint_count, endpoint_sum
 from dashboard.security import secure
 from unittest import TestLoader
 

@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, session, url_for
+from flask import Flask, render_template, request, redirect, session
 
 import database
 from forms import LoginForm, RegisterForm, QuoteForm
@@ -9,7 +9,7 @@ database.create_tables()
 
 # Create Flask module
 app = Flask(__name__)
-app.secret_key = 'my-secret-key' # secret key is used for session-variables
+app.secret_key = 'my-secret-key'  # secret key is used for session-variables
 
 
 @app.route('/')
