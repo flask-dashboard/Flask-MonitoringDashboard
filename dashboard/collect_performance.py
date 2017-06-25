@@ -48,5 +48,24 @@ if test_dir:
                     data['test_runs'].append({'name': str(test), 'exec_time': t, 'time': str(datetime.datetime.now()),
                                               'successful': result.wasSuccessful(), 'iter': i + 1})
 
-# Send test results to the dashboard
-requests.post(url, json=data)
+print(data)
+
+# Try to send test results to the dashboard
+try:
+    requests.post(url, json=data)
+except:
+    print('Sending unit test results to the dashboard failed.')
+
+# Try and see if there is data in the functionCall table of the database.
+try:
+    import sqlite3
+
+    conn = sqlite3.connect('dashboard/flask-dashboard.db')
+    print('Let\'s take a look inside the db.')
+    cursor = conn.execute("SELECT endpoint  FROM functionCalls GROUP BY endpoint")
+    for row in cursor:
+        print('endpoint = {0}'.format(row[0]))
+
+    conn.close()
+except:
+    print('Connection to sqlite db failed. No data found.')
