@@ -1,11 +1,14 @@
-from dashboard import blueprint
+from dashboard import blueprint, config
 from flask import redirect, request, session, render_template, url_for
 from dashboard.forms import Login
-from dashboard.security import secure, check_login, on_logout
+from dashboard.security import check_login, on_logout
 
 
 @blueprint.route('/login', methods=['GET', 'POST'])
 def login():
+    if session.get(config.link + '_logged_in'):
+        return redirect(url_for('dashboard.index'))
+
     form = Login()
     if request.method == 'POST' and form.validate():
         if not check_login(name=form.name.data, password=form.password.data):
@@ -16,6 +19,5 @@ def login():
 
 
 @blueprint.route('/logout')
-@secure
 def logout():
     return on_logout()

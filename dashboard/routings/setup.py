@@ -7,7 +7,7 @@ from dashboard.database.tests import get_tests, reset_run, update_test, add_test
 from dashboard.database.tests import get_line_results, get_res_current
 from dashboard.forms import MonitorDashboard, ChangeSetting, RunTests
 from dashboard.measurement import track_performance, endpoint_count, endpoint_sum
-from dashboard.security import secure
+from dashboard.security import admin_secure
 from unittest import TestLoader
 
 import datetime
@@ -16,7 +16,7 @@ import pygal
 
 
 @blueprint.route('/settings', methods=['GET', 'POST'])
-@secure
+@admin_secure
 def settings():
     password = 'x' * len(config.password)
     return render_template('dashboard/settings.html', link=config.link, session=session, config=config, pw=password)
@@ -31,7 +31,7 @@ def formatter(x):
 
 
 @blueprint.route('/rules', methods=['GET', 'POST'])
-@secure
+@admin_secure
 def rules():
     form = MonitorDashboard()
     values = {}
@@ -73,7 +73,7 @@ def rules():
 
 
 @blueprint.route('/testmonitor', methods=['GET', 'POST'])
-@secure
+@admin_secure
 def testmonitor():
     form = RunTests()
     if request.method == 'POST' and form.validate():

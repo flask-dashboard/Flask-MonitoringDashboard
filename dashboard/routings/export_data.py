@@ -1,5 +1,5 @@
 from flask import make_response, render_template, session
-from dashboard.security import secure
+from dashboard.security import admin_secure
 from dashboard.database.function_calls import get_data
 from dashboard import blueprint, config
 
@@ -7,7 +7,7 @@ import datetime
 
 
 @blueprint.route('/download-csv')
-@secure
+@admin_secure
 def download_csv():
     csv = "\"ENDPOINT\",\"EXECUTION_TIME\",\"TIME_OF_EXECUTION\",\"VERSION\",\"GROUP_BY\",\"IP_ADDRESS\"\n"
     data = get_data()
@@ -22,7 +22,7 @@ def download_csv():
 
 
 @blueprint.route('/export-data')
-@secure
+@admin_secure
 def export_data():
     csv = ["\"ENDPOINT\",\"EXECUTION_TIME\",\"TIME_OF_EXECUTION\",\"VERSION\",\"GROUP_BY\",\"IP_ADDRESS\""]
     data = get_data()
