@@ -2,7 +2,6 @@ import datetime
 
 import plotly
 import plotly.graph_objs as go
-import pygal
 from flask import session, render_template
 
 from dashboard import blueprint, config
@@ -10,33 +9,34 @@ from dashboard.database.endpoint import get_last_accessed_times, get_num_request
 from dashboard.database.function_calls import get_times, get_reqs_endpoint_day, get_versions, get_data_per_version, \
     get_endpoints, get_data_per_endpoint
 from dashboard.security import secure
+from dashboard.colors import get_color
 
 
 @blueprint.route('/measurements/0')
 @secure
 def page_heatmap():
-    return render_template('measurements/plotly.html', link=config.link, curr=2, times=get_times(),
+    return render_template('dashboard/measurement.html', link=config.link, curr=2, times=get_times(),
                            access=get_last_accessed_times(), session=session, index=0, graph=get_heatmap(end=None))
 
 
 @blueprint.route('/measurements/1')
 @secure
 def page_number_of_requests_per_endpoint():
-    return render_template('measurements/pygal.html', link=config.link, curr=2, times=get_times(),
+    return render_template('dashboard/measurement.html', link=config.link, curr=2, times=get_times(),
                            access=get_last_accessed_times(), session=session, index=1, graph=get_stacked_bar())
 
 
 @blueprint.route('/measurements/2')
 @secure
 def page_boxplot_per_version():
-    return render_template('measurements/plotly.html', link=config.link, curr=2, times=get_times(),
+    return render_template('dashboard/measurement.html', link=config.link, curr=2, times=get_times(),
                            access=get_last_accessed_times(), session=session, index=2, graph=get_boxplot_per_version())
 
 
 @blueprint.route('/measurements/3')
 @secure
 def page_boxplot_per_endpoint():
-    return render_template('measurements/plotly.html', link=config.link, curr=2, times=get_times(),
+    return render_template('dashboard/measurement.html', link=config.link, curr=2, times=get_times(),
                            access=get_last_accessed_times(), session=session, index=3, graph=get_boxplot_per_endpoint())
 
 
@@ -68,18 +68,35 @@ def get_stacked_bar():
         graph_data[d.newTime][d.endpoint] = d.cnt
 
     # create graph
-    graph = pygal.graph.horizontalstackedbar.HorizontalStackedBar(height=100 + len(labels) * 15)
-    graph.title = 'Number of requests per endpoint per day'
-    graph.x_labels = labels
-
-    # put data (from dictionary) in graph
+    trace = []
     for endpoint in endpoints:
+
         lst = []
         for label in labels:
             lst.append(graph_data[label][endpoint])
-        graph.add(endpoint, lst)
 
-    return graph.render_data_uri()
+        trace.append(go.Bar(
+            y=labels,
+            x=lst,
+            name=endpoint,
+            orientation='h',
+            marker=dict(
+                color=get_color(endpoint)
+            )
+        ))
+
+    layout = go.Layout(
+        barmode='stack',
+        autosize=True,
+        height=350 + 40 * len(labels),
+        plot_bgcolor='rgba(249,249,249,1)',
+        showlegend=True,
+        title='Number of requests per endpoint per day',
+        xaxis=dict(title='Number of requests'),
+        yaxis=dict(autorange='reversed')
+    )
+
+    return plotly.offline.plot(go.Figure(data=trace, layout=layout), output_type='div', show_link=False)
 
 
 def get_boxplot_per_version():
@@ -95,7 +112,12 @@ def get_boxplot_per_version():
     data = []
     for v in versions:
         values = [c.execution_time for c in get_data_per_version(v.version)]
-        data.append(go.Box(x=values, name="{0} {1}".format(v.version, v.startedUsingOn.strftime("%b %d %H:%M"))))
+        data.append(go.Box(
+            x=values,
+            marker=dict(
+                color=get_color(v.version)
+            ),
+            name="{0} {1}".format(v.version, v.startedUsingOn.strftime("%b %d %H:%M"))))
 
     layout = go.Layout(
         autosize=True,
@@ -104,7 +126,10 @@ def get_boxplot_per_version():
         showlegend=False,
         title='Execution time for every version',
         xaxis=dict(title='Execution time (ms)'),
-        yaxis=dict(tickangle=-50, autorange='reversed')
+        yaxis=dict(autorange='reversed'),
+        margin=go.Margin(
+            l=200
+        )
     )
     return plotly.offline.plot(go.Figure(data=data, layout=layout), output_type='div', show_link=False)
 
@@ -117,14 +142,17 @@ def get_boxplot_per_endpoint():
     endpoints = [str(e.endpoint) for e in get_endpoints()]
 
     data = []
-    for e in endpoints:
-        values = [c.execution_time for c in get_data_per_endpoint(e)]
+    for endpoint in endpoints:
+        values = [c.execution_time for c in get_data_per_endpoint(endpoint)]
         if len(values) == 0:
             continue
-
-        if len(e) > 16:
-            e = '...' + e[-14:]
-        data.append(go.Box(x=values, name=e))
+        data.append(go.Box(
+            x=values,
+            name=endpoint,
+            marker=dict(
+                color=get_color(endpoint)
+            )
+        ))
 
     if len(data) == 0:
         return None
@@ -136,7 +164,9 @@ def get_boxplot_per_endpoint():
         showlegend=False,
         title='Execution time for every endpoint',
         xaxis=dict(title='Execution time (ms)'),
-        yaxis=dict(tickangle=-45)
+        margin=go.Margin(
+            l=200
+        )
     )
     return plotly.offline.plot(go.Figure(data=data, layout=layout), output_type='div', show_link=False)
 
