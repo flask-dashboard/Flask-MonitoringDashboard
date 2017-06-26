@@ -13,14 +13,6 @@ def get_tests():
         return result
 
 
-def get_test(name):
-    """ Return all existing tests. """
-    with session_scope() as db_session:
-        result = db_session.query(Tests).filter(Tests.name == name).one()
-        db_session.expunge_all()
-        return result
-
-
 def add_or_update_test(name, last_run, succeeded):
     """ Updates values of a test. """
     with session_scope() as db_session:
@@ -29,12 +21,6 @@ def add_or_update_test(name, last_run, succeeded):
                 update({Tests.lastRun: last_run, Tests.succeeded: succeeded})
         else:
             db_session.add(Tests(name=name, lastRun=last_run, succeeded=succeeded))
-
-
-def reset_run():
-    """ Sets all run values to False. """
-    with session_scope() as db_session:
-        db_session.query(Tests).update({Tests.run: False})
 
 
 def add_test_result(name, exec_time, time, version, suite, iter):

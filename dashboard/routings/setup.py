@@ -4,12 +4,11 @@ from dashboard import blueprint, config, user_app
 from dashboard.database.endpoint import get_monitor_rule, update_monitor_rule, get_last_accessed_times
 from dashboard.database.monitor_rules import reset_monitor_endpoints
 from dashboard.database.tests import get_tests, get_results, get_suites, get_test_measurements
-from dashboard.database.tests import get_line_results, get_res_current, get_measurements
+from dashboard.database.tests import get_res_current, get_measurements
 from dashboard.forms import MonitorDashboard
 from dashboard.measurement import track_performance
 from dashboard.security import secure
 
-import pygal
 import plotly
 import plotly.graph_objs as go
 
@@ -108,7 +107,7 @@ def get_boxplot(test):
         title='Execution times for every Travis build',
         xaxis=dict(title='Execution time (ms)'),
         yaxis=dict(
-            title='Build',
+            title='Build (measurements)',
             autorange='reversed'
         )
     )
