@@ -88,7 +88,7 @@ def testmonitor():
 def get_boxplot(test):
     data = []
     suites = get_suites()
-    if suites is None:
+    if not suites:
         return None
     for s in suites:
         if test:
@@ -101,7 +101,7 @@ def get_boxplot(test):
             name="{0}  -".format(s.suite)))
 
     layout = go.Layout(
-        autosize=True,
+        autosize=False,
         height=350 + 40 * len(suites),
         plot_bgcolor='rgba(249,249,249,1)',
         showlegend=False,
