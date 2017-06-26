@@ -3,7 +3,7 @@ from flask import session, request, render_template
 from dashboard import blueprint, config, user_app
 from dashboard.database.endpoint import get_monitor_rule, update_monitor_rule, get_last_accessed_times
 from dashboard.database.monitor_rules import reset_monitor_endpoints
-from dashboard.database.tests import get_tests, get_results, get_suites
+from dashboard.database.tests import get_tests, get_results, get_suites, get_test_measurements
 from dashboard.database.tests import get_line_results, get_res_current, get_measurements
 from dashboard.forms import MonitorDashboard
 from dashboard.measurement import track_performance
@@ -71,44 +71,34 @@ def rules():
                            values=values)
 
 
+@blueprint.route('/testmonitor/<test>')
+@secure
+def test_result(test):
+    return render_template('testresult.html', link=config.link, session=session, name=test, boxplot=get_boxplot(test))
+
+
 @blueprint.route('/testmonitor')
 @secure
 def testmonitor():
-    data = get_line_results()
-    times_data = None
-    if data:
-        times_chart = pygal.HorizontalBar(height=100 + len(data) * 30)
-        times_chart.x_labels = []
-        list_avg = []
-        list_min = []
-        list_max = []
-        list_count = []
-        for d in data:
-            times_chart.x_labels.append(d.version)
-            list_min.append(d.min)
-            list_avg.append(d.avg)
-            list_max.append(d.max)
-            list_count.append(d.count)
-        times_chart.add('Minimum', list_min, formatter=formatter)
-        times_chart.add('Average', list_avg, formatter=formatter)
-        times_chart.add('Maximum', list_max, formatter=formatter)
-        times_data = times_chart.render_data_uri()
-
     return render_template('testmonitor.html', link=config.link, session=session, curr=3,
                            tests=get_tests(), results=get_results(),
-                           res_current_version=get_res_current(config.version), times_data=times_data,
-                           boxplot=get_boxplot())
+                           res_current_version=get_res_current(config.version), boxplot=get_boxplot(None))
 
 
-def get_boxplot():
+def get_boxplot(test):
     data = []
     suites = get_suites()
+    if suites.count() == 0:
+        return None
     for s in suites:
-        values = [str(c.execution_time) for c in get_measurements(suite=s.suite)]
+        if test:
+            values = [str(c.execution_time) for c in get_test_measurements(name=test, suite=s.suite)]
+        else:
+            values = [str(c.execution_time) for c in get_measurements(suite=s.suite)]
 
         data.append(go.Box(
             x=values,
-            name="{0}".format(s.suite)))
+            name="{0}  -".format(s.suite)))
 
     layout = go.Layout(
         autosize=True,
@@ -120,9 +110,6 @@ def get_boxplot():
         yaxis=dict(
             title='Build',
             autorange='reversed'
-        ),
-        margin=go.Margin(
-            l=200
         )
     )
 

@@ -104,3 +104,11 @@ def get_measurements(suite):
         result = db_session.query(TestRun).filter(suite == suite).all()
         db_session.expunge_all()
         return result
+
+
+def get_test_measurements(name, suite):
+    """Return all measurements for some test of some Travis build. Used for creating a box plot. """
+    with session_scope() as db_session:
+        result = db_session.query(TestRun).filter(name == name, suite == suite).all()
+        db_session.expunge_all()
+        return result

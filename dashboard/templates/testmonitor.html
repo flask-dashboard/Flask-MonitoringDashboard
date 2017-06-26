@@ -21,7 +21,7 @@
                         </tr>
                         {% for test in tests %}
                             <tr>
-                                <td>{{ test.name }} <br> <b
+                                <td><a href="{{ url_for('dashboard.test_result', test=test.name) }}">{{ test.name }}</a> <br> <b
                                         style="color:green;">{{ "   Succeeded" if test.succeeded }}</b>
                                     <b style="color:red;">{{ "   Failed" if test.succeeded == False }}</b>
                                     <b style="color:black;">{{ "   Never run" if test.succeeded == None }}</b>
@@ -65,23 +65,13 @@
             </div>
             <div class="panel-body">
                 <ul class="nav nav-tabs">
-                    <li><a href="#tpv" data-toggle="tab">Execution time per version</a>
-                    </li>
                     <li><a href="#tpb" data-toggle="tab">Execution time per build</a>
                     </li>
                 </ul>
 
                 <div class="tab-content">
-                    <div class="tab-pane fade" id="tpv">
-                        {% if times_data %}
-                            <br/>
-                            <div class="col-md-12 col-sm-12">
-                                <embed type="image/svg+xml" src={{ times_data|safe }}></embed>
-                            </div>
-                        {% endif %}
-                    </div>
                     <div class="tab-pane fade" id="tpb">
-                        {% if times_data %}
+                        {% if boxplot %}
                             <br/>
                             <div class="col-md-12 col-sm-12">
                                 {{ boxplot|safe }}
