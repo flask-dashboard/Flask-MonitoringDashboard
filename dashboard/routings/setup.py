@@ -88,7 +88,7 @@ def testmonitor():
 def get_boxplot(test):
     data = []
     suites = get_suites()
-    if suites.count() == 0:
+    if suites is None:
         return None
     for s in suites:
         if test:

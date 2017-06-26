@@ -37,9 +37,8 @@ def reset_run():
         db_session.query(Tests).update({Tests.run: False})
 
 
-def add_test_result(name, exec_time, time, version, iter):
+def add_test_result(name, exec_time, time, version, suite, iter):
     """ Add a test result to the database. """
-    suite = get_suite_nr()
     with session_scope() as db_session:
         db_session.add(
             TestRun(name=name, execution_time=exec_time, time=time, version=version, suite=suite, run=iter))
