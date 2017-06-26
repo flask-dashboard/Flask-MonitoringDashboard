@@ -45,7 +45,7 @@ if test_dir:
                     result = test.run(result)
                     time2 = time.time()
                     t = (time2 - time1) * 1000
-                    data['test_runs'].append({'name': str(test), 'exec_time': t, 'time': datetime.datetime.now(),
+                    data['test_runs'].append({'name': str(test), 'exec_time': t, 'time': str(datetime.datetime.now()),
                                               'successful': result.wasSuccessful(), 'iter': i + 1})
 
 # Try to send test results to the dashboard
@@ -54,3 +54,4 @@ try:
     print('Sent unit test results to the dashboard.')
 except:
     print('Sending unit test results to the dashboard failed.')
+    raise
