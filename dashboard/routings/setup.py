@@ -7,17 +7,17 @@ from dashboard.database.tests import get_tests, get_results, get_suites, get_tes
 from dashboard.database.tests import get_res_current, get_measurements
 from dashboard.forms import MonitorDashboard
 from dashboard.measurement import track_performance
-from dashboard.security import secure
+from dashboard.security import secure, admin_secure
 
 import plotly
 import plotly.graph_objs as go
 
 
 @blueprint.route('/settings', methods=['GET', 'POST'])
-@secure
+@admin_secure
 def settings():
     password = 'x' * len(config.password)
-    return render_template('settings.html', link=config.link, session=session, config=config, pw=password)
+    return render_template('dashboard/settings.html', link=config.link, session=session, config=config, pw=password)
 
 
 def formatter(x):
@@ -29,7 +29,7 @@ def formatter(x):
 
 
 @blueprint.route('/rules', methods=['GET', 'POST'])
-@secure
+@admin_secure
 def rules():
     form = MonitorDashboard()
     values = {}
@@ -65,9 +65,10 @@ def rules():
     all_rules = [r for r in all_rules if not r.rule.startswith('/' + config.link)
                  and not r.rule.startswith('/static-' + config.link)]
 
-    return render_template('rules.html', link=config.link, curr=1, rules=all_rules, access=la, form=form,
+    return render_template('dashboard/rules.html', link=config.link, curr=1, rules=all_rules, access=la, form=form,
                            session=session,
                            values=values)
+
 
 
 @blueprint.route('/testmonitor/<test>')

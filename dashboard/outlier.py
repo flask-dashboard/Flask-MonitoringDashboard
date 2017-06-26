@@ -24,8 +24,8 @@ class StackInfo(object):
         try:
             thread = Thread(target=log_stack_trace, args=(self, ))
             thread.start()
-        except:
-            print("Can't log traceback information")
+        except Exception as e:
+            print('Can\'t log traceback information: ' + str(e))
 
 
 def log_stack_trace(stack_info):
@@ -34,13 +34,19 @@ def log_stack_trace(stack_info):
 
     # iterate through every active thread and get the stack-trace
     stack_list = []
-    for th in enumerate():
-        f = open('stacktrace.log', 'w+')
-        stack_list.extend(['', str(th)])
-        traceback.print_stack(sys._current_frames()[th.ident], file=f)
-        f.close()
-        f = open('stacktrace.log', 'r')
-        stack_list.extend(f.readlines())
+    try:
+        for th in enumerate():
+            try:
+                f = open('stacktrace.log', 'w+')
+                stack_list.extend(['', str(th)])
+                traceback.print_stack(sys._current_frames()[th.ident], file=f)
+                f.close()
+                f = open('stacktrace.log', 'r')
+                stack_list.extend(f.readlines())
+            except Exception as e:
+                print('Exception occurred: ' + str(e))
+    except Exception as e:
+        print('Exception occurred: ' + str(e))
 
     # Set the values in the object
     stack_info.stacktrace = '<br />'.join(stack_list)

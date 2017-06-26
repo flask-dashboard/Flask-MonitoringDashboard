@@ -1,10 +1,8 @@
 import datetime
-import math
-
 import plotly
 import plotly.graph_objs as go
-import pygal
-from flask import session, url_for, render_template, request, json
+
+from flask import session, url_for, render_template, request
 from flask_wtf import FlaskForm
 from werkzeug.routing import BuildError
 from wtforms import SelectMultipleField, SubmitField
@@ -12,11 +10,12 @@ from wtforms import SelectMultipleField, SubmitField
 from dashboard import blueprint, config
 from dashboard.database import FunctionCall
 from dashboard.database.endpoint import get_endpoint_column, get_endpoint_results, get_monitor_rule, \
-    get_line_results, get_all_measurement_per_column, get_endpoint_column_user_sorted
+    get_line_results, get_all_measurement_per_column, get_endpoint_column_user_sorted, get_all_measurement
 from dashboard.database.function_calls import get_versions
 from dashboard.security import secure
 from dashboard.routings.measurements import get_heatmap
 from dashboard.database.outlier import get_outliers
+from dashboard.colors import get_color
 
 
 @blueprint.route('/result/<end>/heatmap')
@@ -52,7 +51,7 @@ def result_time_per_version_per_user(end):
     rule = get_monitor_rule(end)
     url = get_url(end)
     graph, form = get_time_per_version_per_user(end, get_versions(end))
-    return render_template('endpoint/pygal.html', link=config.link, session=session, rule=rule, url=url,
+    return render_template('endpoint/time_per_user.html', link=config.link, session=session, rule=rule, url=url,
                            graph=graph, form=form, end=end, index=3)
 
 
@@ -62,7 +61,7 @@ def result_time_per_version_per_ip(end):
     rule = get_monitor_rule(end)
     url = get_url(end)
     graph, form = get_time_per_version_per_ip(end, get_versions(end))
-    return render_template('endpoint/pygal.html', link=config.link, session=session, rule=rule, url=url,
+    return render_template('endpoint/time_per_user.html', link=config.link, session=session, rule=rule, url=url,
                            graph=graph, form=form, end=end, index=4)
 
 
@@ -75,13 +74,14 @@ def result_time_per_version(end):
                            graph=get_time_per_version(end, get_versions(end)), end=end, index=5)
 
 
-@blueprint.route('/result/<end>/time_per_user')
+@blueprint.route('/result/<end>/time_per_user', methods=['GET', 'POST'])
 @secure
 def result_time_per_user(end):
     rule = get_monitor_rule(end)
     url = get_url(end)
-    return render_template('endpoint/plotly.html', link=config.link, session=session, rule=rule, url=url,
-                           graph=get_time_per_user(end), end=end, index=6)
+    graph, form = get_time_per_user(end)
+    return render_template('endpoint/time_per_user.html', link=config.link, session=session, rule=rule, url=url,
+                           graph=graph, form=form, end=end, index=6)
 
 
 @blueprint.route('/result/<end>/outliers')
@@ -99,11 +99,11 @@ def formatter(ms):
     :param ms: the number of ms
     :return: a string representing the same amount, but now represented in seconds and ms.
     """
-    sec = math.floor(ms / 1000)
-    ms = round(ms % 1000, 2)
+    sec = int(ms) // 1000
+    ms = int(ms) % 1000
     if sec == 0:
         return '{0}ms'.format(ms)
-    return '{0}s and {1}ms'.format(sec, ms)
+    return '{0}.{1}s'.format(sec, ms)
 
 
 def get_url(end):
@@ -121,6 +121,11 @@ def get_url(end):
 
 def get_time_per_hour(end):
     data = get_line_results(end)
+
+    # Find the last date which contains data
+    max_time = max([d.newTime for d in data])
+    max_date = datetime.datetime.strptime(max_time, '%Y-%m-%d %H:%M:%S')
+    max_date += datetime.timedelta(minutes=30)
 
     trace1 = go.Bar(
         x=[d.newTime for d in data],
@@ -140,48 +145,124 @@ def get_time_per_hour(end):
         name='Maximum'
     )
 
-    graph = [trace1, trace2, trace3]
+    graph = [trace3, trace2, trace1]
 
     layout = go.Layout(
-        autosize=False,
-        width=900,
+        autosize=True,
         height=600,
+        title='Execution time (minimum, average and maximum) per hour',
         plot_bgcolor='rgba(249,249,249,1)',
         showlegend=True,
-        barmode='group',
-        xaxis=go.XAxis(range=[datetime.datetime.now() - datetime.timedelta(days=2), datetime.datetime.now()])
+        barmode='overlay',
+        xaxis=go.XAxis(
+            title='Date',
+            range=[max_date - datetime.timedelta(days=2), max_date]
+        ),
+        yaxis=go.YAxis(
+            title='Execution time (ms)'
+        )
     )
     return plotly.offline.plot(go.Figure(data=graph, layout=layout), output_type='div', show_link=False)
 
 
 def get_hits_per_hour(end):
     data = get_line_results(end)
+
+    # Find the last date which contains data
+    max_time = max([d.newTime for d in data])
+    max_date = datetime.datetime.strptime(max_time, '%Y-%m-%d %H:%M:%S')
+    max_date += datetime.timedelta(minutes=30)
+
     graph = [go.Bar(
         x=[d.newTime for d in data],
-        y=[d.count for d in data]
+        y=[d.count for d in data],
+        marker=dict(color=get_color(end))
     )]
 
     layout = go.Layout(
-        autosize=False,
-        width=900,
+        autosize=True,
         height=600,
+        title='Number of hits per hour',
         plot_bgcolor='rgba(249,249,249,1)',
         showlegend=False,
-        xaxis=go.XAxis(range=[datetime.datetime.now() - datetime.timedelta(days=7), datetime.datetime.now()])
+        xaxis=go.XAxis(
+            title='Date',
+            range=[max_date - datetime.timedelta(days=2), max_date]
+        ),
+        yaxis=go.YAxis(title='Hits')
     )
     return plotly.offline.plot(go.Figure(data=graph, layout=layout), output_type='div', show_link=False)
 
 
 def get_time_per_version_per_user(end, versions):
     user_data = {}
+    data = [t.execution_time for t in get_all_measurement(end)]
+    average = sum(data) / len(data)
+
     for d in [str(c.group_by) for c in get_endpoint_column(end, FunctionCall.group_by)]:
         user_data[d] = {}
         for v in versions:
             user_data[d][v.version] = 0
 
-    # create a form to select users
+    form, selection = get_form(user_data)
+    # fill the rows with data
+    for d in get_endpoint_results(end, FunctionCall.group_by):
+        user_data[str(d.group_by)][d.version] = d.average
+
+    db_data = [str(c.group_by) for c in get_endpoint_column(end, FunctionCall.group_by)]
+    trace = []
+    for d in db_data:  # iterate through all (unique) ip addresses
+        if selection == [] or d in selection:
+            data = []
+            for version in versions:
+                data.append(user_data[d][version.version])
+
+            hover_text = []
+            for i in range(len(data)):
+                hover_text.append('Version: ' + versions[i].version + '<br>Time: ' + formatter(data[i]))
+
+            trace.append(go.Scatter(
+                x=["{0}<br>{1}".format(v.version, v.startedUsingOn.strftime("%b %d %H:%M")) for v in versions],
+                hovertext=hover_text,
+                y=[d] * len(versions),
+                name=d,
+                mode='markers',
+                marker=dict(
+                    color=[get_color(h) for h in versions],
+                    size=data,
+                    sizeref=average/1250,  # larger sizeref decreases size of the dot
+                    sizemode='area'
+                )
+            ))
+
+    layout = go.Layout(
+        autosize=True,
+        height=350 + 40 * len(trace),
+        plot_bgcolor='rgba(249,249,249,1)',
+        showlegend=False,
+        title='Average execution time for every user per version',
+        xaxis=dict(
+            title='Versions',
+            type='category'
+        ),
+        yaxis=dict(
+            type='category',
+            title='IP-addresses',
+            autorange='reversed'
+        ),
+        margin=go.Margin(
+            l=200,
+            b=200
+        )
+    )
+
+    return plotly.offline.plot(go.Figure(data=trace, layout=layout), output_type='div', show_link=False), form
+
+
+def get_form(data):
+    # create a form to make a selection
     choices = []
-    for d in list(user_data):
+    for d in list(data):
         choices.append((d, d))
 
     class SelectionForm(FlaskForm):
@@ -196,66 +277,72 @@ def get_time_per_version_per_user(end, versions):
     if request.method == 'POST':
         selection = [str(item) for item in form.data['selection']]
 
-    # fill the rows with data
-    for d in get_endpoint_results(end, FunctionCall.group_by):
-        user_data[str(d.group_by)][d.version] = d.average
-
-    # dot chart
-    graph = pygal.Dot(x_label_rotation=30, show_legend=False, height=200 + len(user_data) * 40)
-    graph.x_labels = ["{0} {1}".format(v.version, v.startedUsingOn.strftime("%b %d %H:%M")) for v in versions]
-
-    # add rows to the charts
-    for d in [str(c.group_by) for c in get_endpoint_column(end, FunctionCall.group_by)]:
-        data = []
-        # render full graph if no selection is made, else render only the users that are selected
-        if selection == [] or d in selection:
-            for v in versions:
-                data.append(user_data[d][v.version])
-            graph.add(d, data, formatter=formatter)
-    return graph.render_data_uri(), form
+    return form, selection
 
 
 def get_time_per_version_per_ip(end, versions):
     ip_data = {}
+    data = [t.execution_time for t in get_all_measurement(end)]
+    average = sum(data) / len(data)
     for d in [str(c.ip) for c in get_endpoint_column(end, FunctionCall.ip)]:
         ip_data[d] = {}
         for v in versions:
             ip_data[d][v.version] = 0
 
-    # create a form to select users
-    choices = []
-    for d in list(ip_data):
-        choices.append((d, d))
-
-    class SelectionForm(FlaskForm):
-        selection = SelectMultipleField(
-            'Pick Things!',
-            choices=choices,
-        )
-        submit = SubmitField('Render graph')
-
-    form = SelectionForm(request.form)
-    selection = []
-    if request.method == 'POST':
-        selection = [str(item) for item in form.data['selection']]
+    form, selection = get_form(ip_data)
 
     # fill the rows with data
     for d in get_endpoint_results(end, FunctionCall.ip):
         ip_data[str(d.ip)][d.version] = d.average
 
-    # dot chart
-    graph = pygal.Dot(x_label_rotation=30, show_legend=False, height=200 + len(ip_data) * 40)
-    graph.x_labels = ["{0} {1}".format(v.version, v.startedUsingOn.strftime("%b %d %H:%M")) for v in versions]
-
-    # add rows to the charts
-    for d in [str(c.ip) for c in get_endpoint_column(end, FunctionCall.ip)]:
-        data = []
-        # render full graph if no selection is made, else render only the users that are selected
+    db_data = [str(c.ip) for c in get_endpoint_column(end, FunctionCall.ip)]
+    trace = []
+    for d in db_data:  # iterate through all (unique) ip addresses
         if selection == [] or d in selection:
-            for v in versions:
-                data.append(ip_data[d][v.version])
-            graph.add(d, data, formatter=formatter)
-    return graph.render_data_uri(), form
+            data = []
+            for version in versions:
+                data.append(ip_data[d][version.version])
+
+            hover_text = []
+            for i in range(len(data)):
+                hover_text.append('Version: ' + versions[i].version + '<br>Time: ' + formatter(data[i]))
+
+            trace.append(go.Scatter(
+                x=["{0}<br>{1}".format(v.version, v.startedUsingOn.strftime("%b %d %H:%M")) for v in versions],
+                hovertext=hover_text,
+                y=[d] * len(versions),
+                name=d,
+                mode='markers',
+                marker=dict(
+                    color=[get_color(h) for h in versions],
+                    size=data,
+                    sizeref=average / 1250,  # larger sizeref decreases size of the dot
+                    sizemode='area'
+                )
+            ))
+
+    layout = go.Layout(
+        autosize=True,
+        height=350 + 40 * len(trace),
+        plot_bgcolor='rgba(249,249,249,1)',
+        showlegend=False,
+        title='Average execution time for every IP-address per version',
+        xaxis=dict(
+            title='Versions',
+            type='category'
+        ),
+        yaxis=dict(
+            type='category',
+            title='IP-addresses',
+            autorange='reversed'
+        ),
+        margin=go.Margin(
+            l=200,
+            b=200
+        )
+    )
+
+    return plotly.offline.plot(go.Figure(data=trace, layout=layout), output_type='div', show_link=False), form
 
 
 def get_time_per_version(end, versions):
@@ -264,37 +351,54 @@ def get_time_per_version(end, versions):
         values = [str(c.execution_time) for c in
                   get_all_measurement_per_column(endpoint=end, column=FunctionCall.version, value=v.version)]
 
-        data.append(go.Box(x=values, name="{0} {1}".format(v.version, v.startedUsingOn.strftime("%b %d %H:%M"))))
+        data.append(go.Box(
+            x=values,
+            marker=dict(
+                color=get_color(v.version)
+            ),
+            name="{0} {1}".format(v.version, v.startedUsingOn.strftime("%b %d %H:%M"))))
 
     layout = go.Layout(
-        autosize=False,
-        width=900,
+        autosize=True,
         height=350 + 40 * len(versions),
         plot_bgcolor='rgba(249,249,249,1)',
         showlegend=False,
         title='Execution time for every version',
         xaxis=dict(title='Execution time (ms)'),
-        yaxis=dict(tickangle=-50, autorange='reversed')
+        yaxis=dict(
+            title='Version',
+            autorange='reversed'
+        ),
+        margin=go.Margin(
+            l=200
+        )
     )
     return plotly.offline.plot(go.Figure(data=data, layout=layout), output_type='div', show_link=False)
 
 
 def get_time_per_user(end):
     users = [str(c.group_by) for c in get_endpoint_column_user_sorted(endpoint=end, column=FunctionCall.group_by)]
+    form, selection = get_form(users)
     data = []
-    for u in users:
-        values = [str(c.execution_time) for c in
-                  get_all_measurement_per_column(endpoint=end, column=FunctionCall.group_by, value=u)]
-        data.append(go.Box(x=values, name='{0}  -'.format(u)))
-
+    for user in users:
+        if selection == [] or user in selection:
+            values = [str(c.execution_time) for c in
+                      get_all_measurement_per_column(endpoint=end, column=FunctionCall.group_by, value=user)]
+            data.append(go.Box(
+                x=values,
+                marker=dict(
+                    color=get_color(user)
+                ),
+                name='{0}  -'.format(user)))
+    data.reverse()
     layout = go.Layout(
-        autosize=False,
-        width=900,
-        height=350 + 40 * len(users),
+        autosize=True,
+        height=350 + 40 * len(data),
         plot_bgcolor='rgba(249,249,249,1)',
         showlegend=False,
         title='Execution time for every user',
         xaxis=dict(title='Execution time (ms)'),
         yaxis=dict(title='User')
     )
-    return plotly.offline.plot(go.Figure(data=data, layout=layout), output_type='div', show_link=False)
+    graph = plotly.offline.plot(go.Figure(data=data, layout=layout), output_type='div', show_link=False)
+    return graph, form

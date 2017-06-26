@@ -1,5 +1,5 @@
-from flask import make_response, render_template, session, request, redirect, url_for
-from dashboard.security import secure
+from flask import make_response, render_template, session
+from dashboard.security import admin_secure
 from dashboard.database.function_calls import get_data
 from dashboard.database.tests import add_or_update_test, add_test_result, get_suite_nr
 from dashboard import blueprint, config
@@ -8,7 +8,7 @@ import datetime
 
 
 @blueprint.route('/download-csv')
-@secure
+@admin_secure
 def download_csv():
     csv = "\"ENDPOINT\",\"EXECUTION_TIME\",\"TIME_OF_EXECUTION\",\"VERSION\",\"GROUP_BY\",\"IP_ADDRESS\"\n"
     data = get_data()
@@ -23,7 +23,7 @@ def download_csv():
 
 
 @blueprint.route('/export-data')
-@secure
+@admin_secure
 def export_data():
     csv = ["\"ENDPOINT\",\"EXECUTION_TIME\",\"TIME_OF_EXECUTION\",\"VERSION\",\"GROUP_BY\",\"IP_ADDRESS\""]
     data = get_data()
@@ -31,8 +31,7 @@ def export_data():
         csv.append("\"{0}\",{1},\"{2}\",\"{3}\",\"{4}\",\"{5}\"".format(entry.endpoint, entry.execution_time,
                                                                         entry.time, entry.version, entry.group_by,
                                                                         entry.ip))
-
-    return render_template('export-data.html', link=config.link, session=session, data=csv)
+    return render_template('dashboard/export-data.html', link=config.link, session=session, data=csv)
 
 
 @blueprint.route('/submit-test-results', methods=['POST'])
