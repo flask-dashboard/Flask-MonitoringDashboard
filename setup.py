@@ -17,5 +17,6 @@ setuptools.setup(
                       'plotly',             # for generating graphs
                       'configparser',       # for parsing the config-file
                       'psutil',             # for logging extra CPU-info
-                      'colorhash']          # for hashing a string into a color
+                      'colorhash',          # for hashing a string into a color
+                      'requests']           # for submitting unit test results
 )
