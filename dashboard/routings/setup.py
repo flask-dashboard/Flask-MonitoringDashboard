@@ -10,6 +10,8 @@ from dashboard.measurement import track_performance
 from dashboard.security import secure
 
 import pygal
+import plotly
+import plotly.graph_objs as go
 
 
 @blueprint.route('/settings', methods=['GET', 'POST'])
@@ -95,3 +97,32 @@ def testmonitor():
     return render_template('testmonitor.html', link=config.link, session=session, curr=3,
                            tests=get_tests(), results=get_results(),
                            res_current_version=get_res_current(config.version), times_data=times_data)
+                           # boxplot=get_boxplot())
+
+# def get_boxplot():
+#     data = []
+#     for v in versions:
+#         values = [str(c.execution_time) for c in
+#                   get_all_measurement_per_column(endpoint=end, column=FunctionCall.version, value=v.version)]
+#
+#         data.append(go.Box(
+#             x=values,
+#             name="{0} {1}".format(v.version, v.startedUsingOn.strftime("%b %d %H:%M"))))
+#
+#     layout = go.Layout(
+#         autosize=True,
+#         height=350 + 40 * len(versions),
+#         plot_bgcolor='rgba(249,249,249,1)',
+#         showlegend=False,
+#         title='Execution time for every version',
+#         xaxis=dict(title='Execution time (ms)'),
+#         yaxis=dict(
+#             title='Version',
+#             autorange='reversed'
+#         ),
+#         margin=go.Margin(
+#             l=200
+#         )
+#     )
+#
+#     return plotly.offline.plot(go.Figure(data=data, layout=layout), output_type='div', show_link=False)

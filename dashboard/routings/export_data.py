@@ -40,6 +40,7 @@ def submit_test_results():
     content = request.get_json()['test_runs']
     print(content)
     for result in content:
-        add_or_update_test(result['name'], result['time'], result['successful'])
-        add_test_result(result['name'], result['exec_time'], result['time'], config.version, result['iter'])
+        time = datetime.strptime(result['time'], '%Y-%m-%d %H:%M:%S.%f')
+        add_or_update_test(result['name'], time, result['successful'])
+        add_test_result(result['name'], result['exec_time'], time, config.version, result['iter'])
     return '', 204
