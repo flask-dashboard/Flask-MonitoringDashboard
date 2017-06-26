@@ -4,8 +4,10 @@ Dashboard for automatic monitoring of python web services
 This is a flask extension that can be added to your existing flask application.
 
 It measures which python functions are heavily used and which are not. 
+
 You can see the execution time and last access time per endpoint.
-Also, unit tests can be run and monitored.
+
+Also, unit tests can be run by TravisCI and monitored.
 
 Installation
 ============
@@ -58,3 +60,24 @@ For more information: [see this file](dashboard/config.py)
 When running your app, the dashboard van be viewed by default in the route:
 
     /dashboard
+
+TravisCI unit testing
+=====================
+To enable Travis to run your unit tests and send the results to the dashboard, four steps have to be taken.
+
+First off, the file 'collect_performance.py' (which comes with the dashboard) should be copied to the directory where your '.travis.yml' file resides.
+
+Secondly, your config file for the dashboard ('config.cfg') should be updated to include three additional values, TEST_DIR, SUBMIT_RESULTS_URL and N.
+The first specifies where your unit tests reside, the second where Travis should upload the test results to, and the third specifies the number of times Travis should run each unit test.
+See the sample config file in the section above for more details.
+
+Then, a dependency link to the dashboard has to be added to the 'setup.py' file of your app:
+
+    dependency_links=["git+https://github.com/mircealungu/automatic-monitoring-dashboard.git#egg=flask_monitoring_dashboard"],
+    install_requires=('flask_monitoring_dashboard')
+
+Lastly, in your '.travis.yml' file, two script commands should be added:
+
+    script:
+      - export DASHBOARD_CONFIG=config.cfg
+      - python ./collect_performance.py
