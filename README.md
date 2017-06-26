@@ -44,6 +44,8 @@ The following things can be configured:
     CUSTOM_LINK=dashboard
     USERNAME=admin
     PASSWORD=admin
+    GUEST_USERNAME=guest
+    GUEST_PASSWORD=dashboardguest!
     DATABASE=sqlite:////<path to your project>/dashboard.db
     GIT=/<path to your project>/dashboard/.git/
     TEST_DIR=/<path to your project>/dashboard/tests/
