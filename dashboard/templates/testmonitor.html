@@ -67,6 +67,8 @@
                 <ul class="nav nav-tabs">
                     <li><a href="#tpv" data-toggle="tab">Execution time per version</a>
                     </li>
+                    <li><a href="#tpb" data-toggle="tab">Execution time per build</a>
+                    </li>
                 </ul>
 
                 <div class="tab-content">
@@ -75,6 +77,14 @@
                             <br/>
                             <div class="col-md-12 col-sm-12">
                                 <embed type="image/svg+xml" src={{ times_data|safe }}></embed>
+                            </div>
+                        {% endif %}
+                    </div>
+                    <div class="tab-pane fade" id="tpb">
+                        {% if times_data %}
+                            <br/>
+                            <div class="col-md-12 col-sm-12">
+                                {{ boxplot|safe }}
                             </div>
                         {% endif %}
                     </div>

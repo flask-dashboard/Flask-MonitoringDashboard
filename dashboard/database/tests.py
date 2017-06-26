@@ -89,3 +89,18 @@ def get_line_results():
                                   ).group_by(TestRun.version).order_by(desc('count')).all()
         db_session.expunge_all()
         return result
+
+
+def get_suites():
+    with session_scope() as db_session:
+        result = db_session.query(TestRun.suite).all()
+        db_session.expunge_all()
+        return result
+
+
+def get_measurements(suite):
+    """Return all measurements for some Travis build. Used for creating a box plot. """
+    with session_scope() as db_session:
+        result = db_session.query(TestRun).filter(suite == suite).all()
+        db_session.expunge_all()
+        return result

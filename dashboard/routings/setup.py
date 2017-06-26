@@ -3,8 +3,8 @@ from flask import session, request, render_template
 from dashboard import blueprint, config, user_app
 from dashboard.database.endpoint import get_monitor_rule, update_monitor_rule, get_last_accessed_times
 from dashboard.database.monitor_rules import reset_monitor_endpoints
-from dashboard.database.tests import get_tests, get_results
-from dashboard.database.tests import get_line_results, get_res_current
+from dashboard.database.tests import get_tests, get_results, get_suites
+from dashboard.database.tests import get_line_results, get_res_current, get_measurements
 from dashboard.forms import MonitorDashboard
 from dashboard.measurement import track_performance
 from dashboard.security import secure
@@ -96,33 +96,34 @@ def testmonitor():
 
     return render_template('testmonitor.html', link=config.link, session=session, curr=3,
                            tests=get_tests(), results=get_results(),
-                           res_current_version=get_res_current(config.version), times_data=times_data)
-                           # boxplot=get_boxplot())
+                           res_current_version=get_res_current(config.version), times_data=times_data,
+                           boxplot=get_boxplot())
 
-# def get_boxplot():
-#     data = []
-#     for v in versions:
-#         values = [str(c.execution_time) for c in
-#                   get_all_measurement_per_column(endpoint=end, column=FunctionCall.version, value=v.version)]
-#
-#         data.append(go.Box(
-#             x=values,
-#             name="{0} {1}".format(v.version, v.startedUsingOn.strftime("%b %d %H:%M"))))
-#
-#     layout = go.Layout(
-#         autosize=True,
-#         height=350 + 40 * len(versions),
-#         plot_bgcolor='rgba(249,249,249,1)',
-#         showlegend=False,
-#         title='Execution time for every version',
-#         xaxis=dict(title='Execution time (ms)'),
-#         yaxis=dict(
-#             title='Version',
-#             autorange='reversed'
-#         ),
-#         margin=go.Margin(
-#             l=200
-#         )
-#     )
-#
-#     return plotly.offline.plot(go.Figure(data=data, layout=layout), output_type='div', show_link=False)
+
+def get_boxplot():
+    data = []
+    suites = get_suites()
+    for s in suites:
+        values = [str(c.execution_time) for c in get_measurements(suite=s.suite)]
+
+        data.append(go.Box(
+            x=values,
+            name="{0}".format(s.suite)))
+
+    layout = go.Layout(
+        autosize=True,
+        height=350 + 40 * len(suites),
+        plot_bgcolor='rgba(249,249,249,1)',
+        showlegend=False,
+        title='Execution times for every Travis build',
+        xaxis=dict(title='Execution time (ms)'),
+        yaxis=dict(
+            title='Build',
+            autorange='reversed'
+        ),
+        margin=go.Margin(
+            l=200
+        )
+    )
+
+    return plotly.offline.plot(go.Figure(data=data, layout=layout), output_type='div', show_link=False)
