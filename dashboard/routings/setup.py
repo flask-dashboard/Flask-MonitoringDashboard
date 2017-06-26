@@ -98,7 +98,7 @@ def get_boxplot(test):
 
         data.append(go.Box(
             x=values,
-            name="{0}  -".format(s.suite)))
+            name="{0} ({1})".format(s.suite, len(values))))
 
     layout = go.Layout(
         autosize=False,
