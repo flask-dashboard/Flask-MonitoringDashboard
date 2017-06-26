@@ -70,17 +70,16 @@ def rules():
                            values=values)
 
 
-
 @blueprint.route('/testmonitor/<test>')
 @secure
 def test_result(test):
-    return render_template('testresult.html', link=config.link, session=session, name=test, boxplot=get_boxplot(test))
+    return render_template('dashboard/testresult.html', link=config.link, session=session, name=test, boxplot=get_boxplot(test))
 
 
 @blueprint.route('/testmonitor')
 @secure
 def testmonitor():
-    return render_template('testmonitor.html', link=config.link, session=session, curr=3,
+    return render_template('dashboard/testmonitor.html', link=config.link, session=session, curr=3,
                            tests=get_tests(), results=get_results(),
                            res_current_version=get_res_current(config.version), boxplot=get_boxplot(None))
 
