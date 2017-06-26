@@ -93,7 +93,7 @@ def get_line_results():
 
 def get_suites():
     with session_scope() as db_session:
-        result = db_session.query(TestRun.suite).all()
+        result = db_session.query(TestRun.suite).group_by(TestRun.suite).all()
         db_session.expunge_all()
         return result
 
