@@ -50,6 +50,10 @@ class TestRun(Base):
     time = Column(DateTime, primary_key=True)
     # version of the website at the moment of adding the result to the database
     version = Column(String(100), nullable=False)
+    # number of the test suite execution
+    suite = Column(Integer)
+    # number describing the i-th run of the test within the suite
+    run = Column(Integer)
 
 
 class FunctionCall(Base):

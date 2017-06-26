@@ -1,6 +1,7 @@
-from flask import make_response, render_template, session
+from flask import make_response, render_template, session, request
 from dashboard.security import admin_secure
 from dashboard.database.function_calls import get_data
+from dashboard.database.tests import add_or_update_test, add_test_result, get_suite_nr
 from dashboard import blueprint, config
 
 import datetime
@@ -30,5 +31,15 @@ def export_data():
         csv.append("\"{0}\",{1},\"{2}\",\"{3}\",\"{4}\",\"{5}\"".format(entry.endpoint, entry.execution_time,
                                                                         entry.time, entry.version, entry.group_by,
                                                                         entry.ip))
-
     return render_template('dashboard/export-data.html', link=config.link, session=session, data=csv)
+
+
+@blueprint.route('/submit-test-results', methods=['POST'])
+def submit_test_results():
+    content = request.get_json()['test_runs']
+    suite = get_suite_nr()
+    for result in content:
+        time = datetime.datetime.strptime(result['time'], '%Y-%m-%d %H:%M:%S.%f')
+        add_or_update_test(result['name'], time, result['successful'])
+        add_test_result(result['name'], result['exec_time'], time, config.version, suite, result['iter'])
+    return '', 204

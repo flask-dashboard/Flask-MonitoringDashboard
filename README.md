@@ -47,6 +47,8 @@ The following things can be configured:
     DATABASE=sqlite:////<path to your project>/dashboard.db
     GIT=/<path to your project>/dashboard/.git/
     TEST_DIR=/<path to your project>/dashboard/tests/
+    N=5
+    SUBMIT_RESULTS_URL=http://0.0.0.0:5000/dashboard/submit-test-results
     OUTLIER_DETECTION_CONSTANT=2.5
 
 For more information: [see this file](dashboard/config.py)
