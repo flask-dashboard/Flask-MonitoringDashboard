@@ -73,7 +73,8 @@ def rules():
 @blueprint.route('/testmonitor/<test>')
 @secure
 def test_result(test):
-    return render_template('dashboard/testresult.html', link=config.link, session=session, name=test, boxplot=get_boxplot(test))
+    return render_template('dashboard/testresult.html', link=config.link, session=session, name=test,
+                           boxplot=get_boxplot(test))
 
 
 @blueprint.route('/testmonitor')

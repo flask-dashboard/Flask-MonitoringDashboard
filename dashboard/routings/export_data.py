@@ -1,4 +1,4 @@
-from flask import make_response, render_template, session
+from flask import make_response, render_template, session, request
 from dashboard.security import admin_secure
 from dashboard.database.function_calls import get_data
 from dashboard.database.tests import add_or_update_test, add_test_result, get_suite_nr
