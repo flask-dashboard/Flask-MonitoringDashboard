@@ -2,7 +2,7 @@
 Contains all functions that returns results of all tests
 """
 from dashboard.database import session_scope, Tests, TestRun
-from sqlalchemy import func, desc, text
+from sqlalchemy import func, desc
 
 
 def get_tests():
@@ -21,17 +21,14 @@ def get_test(name):
         return result
 
 
-def add_test(name):
-    """ Add a test to the database. """
-    with session_scope() as db_session:
-        db_session.add(Tests(name=name))
-
-
-def update_test(name, run, last_run, succeeded):
+def add_or_update_test(name, last_run, succeeded):
     """ Updates values of a test. """
     with session_scope() as db_session:
-        db_session.query(Tests).filter(Tests.name == name). \
-            update({Tests.run: run, Tests.lastRun: last_run, Tests.succeeded: succeeded})
+        if db_session.query(Tests).filter(Tests.name == name).count():
+            db_session.query(Tests).filter(Tests.name == name). \
+                update({Tests.lastRun: last_run, Tests.succeeded: succeeded})
+        else:
+            db_session.add(Tests(name=name, lastRun=last_run, succeeded=succeeded))
 
 
 def reset_run():
@@ -40,10 +37,12 @@ def reset_run():
         db_session.query(Tests).update({Tests.run: False})
 
 
-def add_test_result(name, exec_time, time, version, suite, run):
+def add_test_result(name, exec_time, time, version, iter):
     """ Add a test result to the database. """
+    suite = get_suite_nr()
     with session_scope() as db_session:
-        db_session.add(TestRun(name=name, execution_time=exec_time, time=time, version=version, suite=suite, run=run))
+        db_session.add(
+            TestRun(name=name, execution_time=exec_time, time=time, version=version, suite=suite, run=iter))
 
 
 def get_suite_nr():
@@ -73,9 +72,9 @@ def get_res_current(version):
     with session_scope() as db_session:
         result = db_session.query(TestRun.name,
                                   func.count(TestRun.execution_time).label('count'),
-                                  func.avg(TestRun.execution_time).label('average'))\
-                                  .filter(TestRun.version == version)\
-                                  .group_by(TestRun.name).order_by(desc('count')).all()
+                                  func.avg(TestRun.execution_time).label('average')) \
+            .filter(TestRun.version == version) \
+            .group_by(TestRun.name).order_by(desc('count')).all()
         db_session.expunge_all()
         return result
 

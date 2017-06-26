@@ -1,6 +1,7 @@
 from flask import make_response, render_template, session, request, redirect, url_for
 from dashboard.security import secure
 from dashboard.database.function_calls import get_data
+from dashboard.database.tests import add_or_update_test, add_test_result
 from dashboard import blueprint, config
 
 import datetime
@@ -36,6 +37,9 @@ def export_data():
 
 @blueprint.route('/submit-test-results', methods=['POST'])
 def submit_test_results():
-    content = request.get_json()
+    content = request.get_json()['test_runs']
     print(content)
+    for result in content:
+        add_or_update_test(result['name'], result['time'], result['successful'])
+        add_test_result(result['name'], result['exec_time'], result['time'], config.version, result['iter'])
     return '', 204

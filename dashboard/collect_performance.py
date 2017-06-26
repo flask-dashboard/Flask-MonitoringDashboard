@@ -53,6 +53,7 @@ print(data)
 # Try to send test results to the dashboard
 try:
     requests.post(url, json=data)
+    print('Sent unit test results to the dashboard.')
 except:
     print('Sending unit test results to the dashboard failed.')
 
@@ -60,11 +61,21 @@ except:
 try:
     import sqlite3
 
-    conn = sqlite3.connect('dashboard/flask-dashboard.db')
-    print('Let\'s take a look inside the db.')
+    conn = sqlite3.connect('flask-dashboard.db')
+    print('Let\'s take a look inside the db: functionCalls')
     cursor = conn.execute("SELECT endpoint  FROM functionCalls GROUP BY endpoint")
     for row in cursor:
         print('endpoint = {0}'.format(row[0]))
+
+    print('Let\'s take a look inside the db: monitorRule')
+    cursor = conn.execute("SELECT endpoint  FROM rules GROUP BY endpoint")
+    for row in cursor:
+        print('endpoint = {0}'.format(row[0]))
+
+    print('Let\'s take a look inside the db: tests')
+    cursor = conn.execute("SELECT name  FROM tests GROUP BY name")
+    for row in cursor:
+        print('name = {0}'.format(row[0]))
 
     conn.close()
 except:
