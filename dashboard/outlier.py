@@ -24,8 +24,9 @@ class StackInfo(object):
         try:
             thread = Thread(target=log_stack_trace, args=(self, ))
             thread.start()
-        except Exception as e:
-            print('Can\'t log traceback information: ' + str(e))
+        except Exception:
+            print('Can\'t log traceback information')
+            traceback.print_exc()
 
 
 def log_stack_trace(stack_info):
@@ -43,10 +44,12 @@ def log_stack_trace(stack_info):
                 f.close()
                 f = open('stacktrace.log', 'r')
                 stack_list.extend(f.readlines())
-            except Exception as e:
-                print('Exception occurred: ' + str(e))
-    except Exception as e:
-        print('Exception occurred: ' + str(e))
+            except Exception:
+                print('Exception occurred:')
+                traceback.print_exc()
+    except Exception:
+        print('Exception occurred: ')
+        traceback.print_exc()
 
     # Set the values in the object
     stack_info.stacktrace = '<br />'.join(stack_list)
