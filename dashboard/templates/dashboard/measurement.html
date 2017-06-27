@@ -29,11 +29,14 @@
                         {% for record in times %}
                             <tr>
                                 <td style="background-color: {{ colors[record.endpoint] }}"></td>
-                                <td style="max-width: 200px; overflow: hidden; white-space: nowrap; text-overflow: ellipsis;">{{ record.endpoint }}</td>
+                                <td style="max-width: 200px; overflow: hidden; white-space: nowrap; text-overflow: ellipsis;">{{ record.endpoint }}
+                                </td>
                                 <td style="text-align: right;">{{ record.count }}</td>
                                 {% for a in access %}
                                     {% if record.endpoint == a.endpoint %}
-                                        <td style="text-align: center;">{{ "{:%Y-%m-%d %H:%M:%S }".format(a.last_accessed) if a.last_accessed }}</td>
+                                        <td style="text-align: center;">{{ "{:%Y-%m-%d %H:%M:%S }".format(a.last_accessed) if
+                            a.last_accessed }}
+                                        </td>
                                     {% endif %}
                                 {% endfor %}
                                 <td style="text-align: right;">{{ ((record.average*10)|round)/10 }}</td>
@@ -51,7 +54,6 @@
             </div>
         </div>
     </div>
-
 
     <div class="row">
         <div class="panel panel-default">
@@ -71,7 +73,15 @@
                             href="{{ url_for('dashboard.page_boxplot_per_endpoint') }}">Time per endpoint</a></li>
                 </ul>
 
-                <div id="loading"></div>
+                <div id="loading">
+                    <div class="col-md-12 col-sm-12">
+                        <br>
+                        <center>
+                            <img src="{{ url_for('dashboard.static', filename='assets/loading.gif') }}"
+                                 alt="Be patient..." align="center"/>
+                        </center>
+                    </div>
+                </div>
 
                 {% if graph %}
                     <div class="col-md-12 col-sm-12">
@@ -83,6 +93,8 @@
             </div>
         </div>
     </div>
+
+
     <script>
         $(window).ready(function () {
             $('#loading').hide();
