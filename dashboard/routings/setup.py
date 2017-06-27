@@ -104,7 +104,7 @@ def get_boxplot(test):
             name="{0} ({1})".format(s.suite, len(values))))
 
     layout = go.Layout(
-        autosize=False,
+        autosize=True,
         height=350 + 40 * len(suites),
         plot_bgcolor='rgba(249,249,249,1)',
         showlegend=False,
