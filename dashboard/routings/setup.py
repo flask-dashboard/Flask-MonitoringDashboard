@@ -8,6 +8,7 @@ from dashboard.database.tests import get_res_current, get_measurements
 from dashboard.forms import MonitorDashboard
 from dashboard.measurement import track_performance
 from dashboard.security import secure, admin_secure
+from dashboard.colors import get_color
 
 import plotly
 import plotly.graph_objs as go
@@ -64,10 +65,12 @@ def rules():
     # filter dashboard rules
     all_rules = [r for r in all_rules if not r.rule.startswith('/' + config.link)
                  and not r.rule.startswith('/static-' + config.link)]
+    colors = {}
+    for rule in all_rules:
+        colors[rule.endpoint] = get_color(rule.endpoint)
 
     return render_template('dashboard/rules.html', link=config.link, curr=1, rules=all_rules, access=la, form=form,
-                           session=session,
-                           values=values)
+                           session=session, values=values, colors=colors)
 
 
 @blueprint.route('/testmonitor/<test>')

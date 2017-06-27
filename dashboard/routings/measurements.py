@@ -15,28 +15,40 @@ from dashboard.colors import get_color
 @blueprint.route('/measurements/0')
 @secure
 def page_heatmap():
-    return render_template('dashboard/measurement.html', link=config.link, curr=2, times=get_times(),
+    colors = {}
+    for result in get_times():
+        colors[result.endpoint] = get_color(result.endpoint)
+    return render_template('dashboard/measurement.html', link=config.link, curr=2, times=get_times(), colors=colors,
                            access=get_last_accessed_times(), session=session, index=0, graph=get_heatmap(end=None))
 
 
 @blueprint.route('/measurements/1')
 @secure
 def page_number_of_requests_per_endpoint():
-    return render_template('dashboard/measurement.html', link=config.link, curr=2, times=get_times(),
+    colors = {}
+    for result in get_times():
+        colors[result.endpoint] = get_color(result.endpoint)
+    return render_template('dashboard/measurement.html', link=config.link, curr=2, times=get_times(), colors=colors,
                            access=get_last_accessed_times(), session=session, index=1, graph=get_stacked_bar())
 
 
 @blueprint.route('/measurements/2')
 @secure
 def page_boxplot_per_version():
-    return render_template('dashboard/measurement.html', link=config.link, curr=2, times=get_times(),
+    colors = {}
+    for result in get_times():
+        colors[result.endpoint] = get_color(result.endpoint)
+    return render_template('dashboard/measurement.html', link=config.link, curr=2, times=get_times(), colors=colors,
                            access=get_last_accessed_times(), session=session, index=2, graph=get_boxplot_per_version())
 
 
 @blueprint.route('/measurements/3')
 @secure
 def page_boxplot_per_endpoint():
-    return render_template('dashboard/measurement.html', link=config.link, curr=2, times=get_times(),
+    colors = {}
+    for result in get_times():
+        colors[result.endpoint] = get_color(result.endpoint)
+    return render_template('dashboard/measurement.html', link=config.link, curr=2, times=get_times(), colors=colors,
                            access=get_last_accessed_times(), session=session, index=3, graph=get_boxplot_per_endpoint())
 
 

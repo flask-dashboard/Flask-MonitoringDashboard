@@ -17,6 +17,7 @@
                     <table class="table table-striped table-bordered table-hover sortable">
                         <thead>
                         <tr>
+                            <th>Color</th>
                             <th class="clickable">Endpoint</th>
                             <th class="clickable">Hits</th>
                             <th class="clickable">Last accessed</th>
@@ -27,6 +28,7 @@
                         <tbody>
                         {% for record in times %}
                             <tr>
+                                <td style="background-color: {{ colors[record.endpoint] }}"></td>
                                 <td style="max-width: 200px; overflow: hidden; white-space: nowrap; text-overflow: ellipsis;">{{ record.endpoint }}</td>
                                 <td style="text-align: right;">{{ record.count }}</td>
                                 {% for a in access %}
