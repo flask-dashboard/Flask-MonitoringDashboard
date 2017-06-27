@@ -13,6 +13,12 @@ def get_tests():
         return result
 
 
+def add_test(name):
+    """ Add a newly found test to the database. """
+    with session_scope() as db_session:
+        db_session.add(Tests(name=name))
+
+
 def add_or_update_test(name, last_run, succeeded):
     """ Updates values of a test. """
     with session_scope() as db_session:
