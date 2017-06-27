@@ -29,11 +29,14 @@
                         {% for record in times %}
                             <tr>
                                 <td style="background-color: {{ colors[record.endpoint] }}"></td>
-                                <td style="max-width: 200px; overflow: hidden; white-space: nowrap; text-overflow: ellipsis;">{{ record.endpoint }}</td>
+                                <td style="max-width: 200px; overflow: hidden; white-space: nowrap; text-overflow: ellipsis;">{{ record.endpoint }}
+                                </td>
                                 <td style="text-align: right;">{{ record.count }}</td>
                                 {% for a in access %}
                                     {% if record.endpoint == a.endpoint %}
-                                        <td style="text-align: center;">{{ "{:%Y-%m-%d %H:%M:%S }".format(a.last_accessed) if a.last_accessed }}</td>
+                                        <td style="text-align: center;">{{ "{:%Y-%m-%d %H:%M:%S }".format(a.last_accessed) if
+                            a.last_accessed }}
+                                        </td>
                                     {% endif %}
                                 {% endfor %}
                                 <td style="text-align: right;">{{ ((record.average*10)|round)/10 }}</td>
@@ -52,7 +55,6 @@
         </div>
     </div>
 
-
     <div class="row">
         <div class="panel panel-default">
             <div class="panel-heading">
@@ -63,22 +65,40 @@
                     <li><a {{ 'class="active-menu" style="color: white;"'|safe if index == 0 }}
                             href="{{ url_for('dashboard.page_heatmap') }}">Heatmap of number of requests</a></li>
                     <li><a {{ 'class="active-menu" style="color: white;"'|safe if index == 1 }}
-                            href="{{ url_for('dashboard.page_number_of_requests_per_endpoint') }}">Requests per endpoint</a></li>
+                            href="{{ url_for('dashboard.page_number_of_requests_per_endpoint') }}">Requests per
+                        endpoint</a></li>
                     <li><a {{ 'class="active-menu" style="color: white;"'|safe if index == 2 }}
                             href="{{ url_for('dashboard.page_boxplot_per_version') }}">Time per version</a></li>
                     <li><a {{ 'class="active-menu" style="color: white;"'|safe if index == 3 }}
                             href="{{ url_for('dashboard.page_boxplot_per_endpoint') }}">Time per endpoint</a></li>
                 </ul>
 
+                <div id="loading">
+                    <div class="col-md-12 col-sm-12">
+                        <br>
+                        <center>
+                            <img src="{{ url_for('dashboard.static', filename='assets/loading.gif') }}"
+                                 alt="Be patient..." align="center"/>
+                        </center>
+                    </div>
+                </div>
+
                 {% if graph %}
                     <div class="col-md-12 col-sm-12">
                         {{ graph|safe }}
                     </div>
-                {%  else %}
+                {% else %}
                     <p>No data available.</p>
                 {% endif %}
             </div>
         </div>
     </div>
+
+
+    <script>
+        $(window).ready(function () {
+            $('#loading').hide();
+        });
+    </script>
 
 {% endblock %}
