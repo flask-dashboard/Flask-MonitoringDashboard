@@ -17,15 +17,32 @@
                             href="{{ url_for('dashboard.page_boxplot_per_endpoint') }}">Time per endpoint</a></li>
                 </ul>
 
+                <div id="loading">
+                    <div class="col-md-12 col-sm-12">
+                        <br>
+                        <center>
+                            <img src="{{ url_for('dashboard.static', filename='assets/loading.gif') }}"
+                                 alt="Be patient..." align="center"/>
+                        </center>
+                    </div>
+                </div>
+
                 {% if graph %}
                     <div class="col-md-12 col-sm-12">
                         {{ graph|safe }}
                     </div>
-                {%  else %}
+                {% else %}
                     <p>No data available.</p>
                 {% endif %}
             </div>
         </div>
     </div>
+
+
+    <script>
+        $(window).ready(function () {
+            $('#loading').hide();
+        });
+    </script>
 
 {% endblock %}

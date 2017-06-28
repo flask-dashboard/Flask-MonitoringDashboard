@@ -247,7 +247,7 @@ def get_time_per_version_per_user(end, versions):
         ),
         yaxis=dict(
             type='category',
-            title='IP-addresses',
+            title='Users',
             autorange='reversed'
         ),
         margin=go.Margin(
