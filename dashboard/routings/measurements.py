@@ -12,44 +12,54 @@ from dashboard.security import secure
 from dashboard.colors import get_color
 
 
-@blueprint.route('/measurements/0')
+@blueprint.route('/measurements/overview')
 @secure
-def page_heatmap():
+def overview():
     colors = {}
     for result in get_times():
         colors[result.endpoint] = get_color(result.endpoint)
-    return render_template('dashboard/measurement.html', link=config.link, curr=2, times=get_times(), colors=colors,
-                           access=get_last_accessed_times(), session=session, index=0, graph=get_heatmap(end=None))
+    return render_template('dashboard/measurement-overview.html', link=config.link, curr=2, times=get_times(), colors=colors,
+                           access=get_last_accessed_times(), session=session, index=0)
 
 
-@blueprint.route('/measurements/1')
+@blueprint.route('/measurements/heatmap')
+@secure
+def heatmap():
+    colors = {}
+    for result in get_times():
+        colors[result.endpoint] = get_color(result.endpoint)
+    return render_template('dashboard/measurement.html', link=config.link, curr=2, session=session, index=1,
+                           graph=get_heatmap(end=None))
+
+
+@blueprint.route('/measurements/requests')
 @secure
 def page_number_of_requests_per_endpoint():
     colors = {}
     for result in get_times():
         colors[result.endpoint] = get_color(result.endpoint)
-    return render_template('dashboard/measurement.html', link=config.link, curr=2, times=get_times(), colors=colors,
-                           access=get_last_accessed_times(), session=session, index=1, graph=get_stacked_bar())
+    return render_template('dashboard/measurement.html', link=config.link, curr=2,  session=session, index=2,
+                           graph=get_stacked_bar())
 
 
-@blueprint.route('/measurements/2')
+@blueprint.route('/measurements/versions')
 @secure
 def page_boxplot_per_version():
     colors = {}
     for result in get_times():
         colors[result.endpoint] = get_color(result.endpoint)
-    return render_template('dashboard/measurement.html', link=config.link, curr=2, times=get_times(), colors=colors,
-                           access=get_last_accessed_times(), session=session, index=2, graph=get_boxplot_per_version())
+    return render_template('dashboard/measurement.html', link=config.link, curr=2, session=session, index=3,
+                           graph=get_boxplot_per_version())
 
 
-@blueprint.route('/measurements/3')
+@blueprint.route('/measurements/endpoints')
 @secure
 def page_boxplot_per_endpoint():
     colors = {}
     for result in get_times():
         colors[result.endpoint] = get_color(result.endpoint)
-    return render_template('dashboard/measurement.html', link=config.link, curr=2, times=get_times(), colors=colors,
-                           access=get_last_accessed_times(), session=session, index=3, graph=get_boxplot_per_endpoint())
+    return render_template('dashboard/measurement.html', link=config.link, curr=2, session=session, index=4,
+                           graph=get_boxplot_per_endpoint())
 
 
 def get_stacked_bar():

@@ -1,0 +1,69 @@
+{% extends "dashboard/main.html" %}
+{% block content %}
+
+    <div class="row">
+        <div class="panel panel-default">
+            <div class="panel-body">
+                <ul class="nav nav-tabs">
+                    <li><a {{ 'class="active-menu" style="color: white;"'|safe if index == 0 }}
+                            href="{{ url_for('dashboard.overview') }}">Overview</a></li>
+                    <li><a {{ 'class="active-menu" style="color: white;"'|safe if index == 1 }}
+                            href="{{ url_for('dashboard.heatmap') }}">Heatmap of number of requests</a></li>
+                    <li><a {{ 'class="active-menu" style="color: white;"'|safe if index == 2 }}
+                            href="{{ url_for('dashboard.page_number_of_requests_per_endpoint') }}">Requests per endpoint</a></li>
+                    <li><a {{ 'class="active-menu" style="color: white;"'|safe if index == 3 }}
+                            href="{{ url_for('dashboard.page_boxplot_per_version') }}">Time per version</a></li>
+                    <li><a {{ 'class="active-menu" style="color: white;"'|safe if index == 4 }}
+                            href="{{ url_for('dashboard.page_boxplot_per_endpoint') }}">Time per endpoint</a></li>
+                </ul>
+
+                <div class="panel-heading">
+                    Overview
+                    <a href="{{ url_for('dashboard.download_csv') }}" class="btn btn-primary btn-sm right-align-custom">Download
+                        CSV</a>
+                    <a href="{{ url_for('dashboard.export_data') }}" class="btn btn-primary btn-sm right-align-custom">View
+                        CSV</a>
+                </div>
+                <br/>
+                <div class="panel-body">
+                    <div class="table-responsive">
+                        <table class="table table-striped table-bordered table-hover sortable">
+                            <thead>
+                            <tr>
+                                <th>Color</th>
+                                <th class="clickable">Endpoint</th>
+                                <th class="clickable">Hits</th>
+                                <th class="clickable">Last accessed</th>
+                                <th class="clickable">Average execution time (in ms)</th>
+                                <th></th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {% for record in times %}
+                                <tr>
+                                    <td style="background-color: {{ colors[record.endpoint] }}"></td>
+                                    <td style="max-width: 200px; overflow: hidden; white-space: nowrap; text-overflow: ellipsis;">{{ record.endpoint }}</td>
+                                    <td style="text-align: right;">{{ record.count }}</td>
+                                    {% for a in access %}
+                                        {% if record.endpoint == a.endpoint %}
+                                            <td style="text-align: center;">{{ "{:%Y-%m-%d %H:%M:%S }".format(a.last_accessed) if a.last_accessed }}</td>
+                                        {% endif %}
+                                    {% endfor %}
+                                    <td style="text-align: right;">{{ ((record.average*10)|round)/10 }}</td>
+                                    <td>
+                                        <a href="{{ url_for('dashboard.result_heatmap', end=record.endpoint) }}"
+                                           class="btn btn-default btn-sm right-align-custom">
+                                            Details
+                                        </a>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}
