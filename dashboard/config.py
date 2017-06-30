@@ -1,5 +1,6 @@
 import configparser
 import os
+import ast
 
 
 class Config(object):
@@ -21,6 +22,7 @@ class Config(object):
         self.guest_username = 'guest'
         self.guest_password = 'guest_password'
         self.outlier_detection_constant = 2.5
+        self.colors = {}
 
         # define a custom function to retrieve the session_id or username
         self.get_group_by = None
@@ -65,6 +67,10 @@ class Config(object):
                 self.database_name = parser.get('dashboard', 'DATABASE')
             if parser.has_option('dashboard', 'TEST_DIR'):
                 self.test_dir = parser.get('dashboard', 'TEST_DIR')
+
+            # For manually defining colors of specific endpoints
+            if parser.has_option('dashboard', 'COLORS'):
+                self.colors = ast.literal_eval(parser.get('dashboard', 'COLORS'))
 
             # When the option git is selected, it overrides the given version
             if parser.has_option('dashboard', 'GIT'):
