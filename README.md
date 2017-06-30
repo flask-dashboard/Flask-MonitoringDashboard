@@ -54,6 +54,7 @@ The following things can be configured:
     N=5
     SUBMIT_RESULTS_URL=http://0.0.0.0:5000/dashboard/submit-test-results
     OUTLIER_DETECTION_CONSTANT=2.5
+    COLORS={'main': '[0,97,255]', 'static': '[255,153,0]'}
 
 For more information: [see this file](dashboard/config.py)
 
