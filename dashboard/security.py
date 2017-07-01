@@ -36,13 +36,6 @@ def secure(func):
     return wrapper
 
 
-def security(admin_only=False):
-    def decorator(f):
-        print(admin_only)
-        return f
-    return decorator
-
-
 def check_login(name, password):
     if name == config.username and password == config.password:
         on_login(admin=True)
