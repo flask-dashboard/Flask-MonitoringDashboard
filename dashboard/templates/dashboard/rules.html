@@ -1,0 +1,70 @@
+{% extends "dashboard/main.html" %}
+{% block content %}
+
+    <div class="row">
+        <!-- Advanced Tables -->
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                All rules
+            </div>
+            <br/>
+            <div class="panel-body">
+                <div class="table-responsive">
+
+                    <form id="myForm" action="" method="post">
+                        {{ form.hidden_tag() }}
+                        <table class="table table-striped table-bordered table-hover sortable">
+                            <tr>
+                                <th>Color</th>
+                                <th class="clickable">Rule</th>
+                                <th class="clickable">HTTP Method</th>
+                                <th class="clickable">Endpoint</th>
+                                <th class="clickable">Last accessed</th>
+                                <th>Monitor</th>
+                            </tr>
+                            {% for rule in rules %}
+                                <tr>
+                                    <td style="background-color: {{ colors[rule.endpoint] }}"></td>
+                                    <td style="max-width: 200px; overflow: hidden; white-space: nowrap; text-overflow: ellipsis;">{{ rule.rule }}</td>
+                                    <td>{{ ", ".join(rule.methods) }}</td>
+                                    <td style="max-width: 200px; overflow: hidden; white-space: nowrap; text-overflow: ellipsis;">{{ rule.endpoint }}</td>
+                                    {% if access[0] %}
+                                        {% for a in access %}
+                                            {% if rule.endpoint == a.endpoint %}
+                                                <td style="text-align: center;">{{ "{:%Y-%m-%d %H:%M:%S }".format(a.last_accessed) if a.last_accessed }}</td>
+                                            {% endif %}
+                                        {% endfor %}
+                                    {% else %}
+                                        <td></td>
+                                    {% endif %}
+                                    <td>
+                                        <input id="checkbox-{{ rule.endpoint }}"
+                                               name="checkbox-{{ rule.endpoint }}"
+                                               type="checkbox" {{ 'checked' if values[rule.endpoint] }}
+                                               class="checkbox right-align-custom">
+                                        <label for="checkbox-{{ rule.endpoint }}"></label>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </table>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        $(document).ready(function () {
+            $('.checkbox').click(function () {
+                var formData = $('#myForm').serialize();
+
+                $.ajax({
+                    url: '',
+                    data: formData,
+                    type: 'post',
+                    dataType: 'json'
+                });
+            });
+        });
+    </script>
+{% endblock %}

@@ -1,0 +1,48 @@
+{% extends "dashboard/main.html" %}
+{% block content %}
+
+    <div class="row">
+        <div class="panel panel-default">
+            <div class="panel-body">
+                <ul class="nav nav-tabs">
+                    <li><a {{ 'class="active-menu" style="color: white;"'|safe if index == 0 }}
+                            href="{{ url_for('dashboard.overview') }}">Overview</a></li>
+                    <li><a {{ 'class="active-menu" style="color: white;"'|safe if index == 1 }}
+                            href="{{ url_for('dashboard.heatmap') }}">Heatmap of number of requests</a></li>
+                    <li><a {{ 'class="active-menu" style="color: white;"'|safe if index == 2 }}
+                            href="{{ url_for('dashboard.page_number_of_requests_per_endpoint') }}">Requests per endpoint</a></li>
+                    <li><a {{ 'class="active-menu" style="color: white;"'|safe if index == 3 }}
+                            href="{{ url_for('dashboard.page_boxplot_per_version') }}">Time per version</a></li>
+                    <li><a {{ 'class="active-menu" style="color: white;"'|safe if index == 4 }}
+                            href="{{ url_for('dashboard.page_boxplot_per_endpoint') }}">Time per endpoint</a></li>
+                </ul>
+
+                <div id="loading">
+                    <div class="col-md-12 col-sm-12">
+                        <br>
+                        <center>
+                            <img src="{{ url_for('dashboard.static', filename='assets/loading.gif') }}"
+                                 alt="Be patient..." align="center"/>
+                        </center>
+                    </div>
+                </div>
+
+                {% if graph %}
+                    <div class="col-md-12 col-sm-12">
+                        {{ graph|safe }}
+                    </div>
+                {% else %}
+                    <p>No data available.</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+
+    <script>
+        $(window).ready(function () {
+            $('#loading').hide();
+        });
+    </script>
+
+{% endblock %}

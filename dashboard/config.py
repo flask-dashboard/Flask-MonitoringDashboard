@@ -1,5 +1,6 @@
 import configparser
 import os
+import ast
 
 
 class Config(object):
@@ -18,6 +19,10 @@ class Config(object):
         self.test_dir = None
         self.username = 'admin'
         self.password = 'admin'
+        self.guest_username = 'guest'
+        self.guest_password = 'guest_password'
+        self.outlier_detection_constant = 2.5
+        self.colors = {}
 
         # define a custom function to retrieve the session_id or username
         self.get_group_by = None
@@ -41,7 +46,13 @@ class Config(object):
             USERNAME: for logging into the dashboard, a username and password is required. The
                 username can be set using this variable.
             PASSWORD: same as for the username, but this is the password variable.
-            
+            GUEST_USERNAME: A guest can only see the results, but cannot configure/download data.
+            GUEST_PASSWORD: A guest can only see the results, but cannot configure/download data.
+
+            OUTLIER_DETECTION_CONSTANT: When the execution time is more than this constant *
+                average, extra information is logged into the database. A default value for this
+                variable is 2.5, but can be changed in the config-file.
+
             :param config_file: a string pointing to the location of the config-file
         """
 
@@ -56,6 +67,10 @@ class Config(object):
                 self.database_name = parser.get('dashboard', 'DATABASE')
             if parser.has_option('dashboard', 'TEST_DIR'):
                 self.test_dir = parser.get('dashboard', 'TEST_DIR')
+
+            # For manually defining colors of specific endpoints
+            if parser.has_option('dashboard', 'COLORS'):
+                self.colors = ast.literal_eval(parser.get('dashboard', 'COLORS'))
 
             # When the option git is selected, it overrides the given version
             if parser.has_option('dashboard', 'GIT'):
@@ -72,10 +87,20 @@ class Config(object):
                     print("Error reading one of the files to retrieve the current git-version.")
                     raise
 
-            # provide username and/or password
+            # provide username and/or password ..
+            # .. for admin
             if parser.has_option('dashboard', 'USERNAME'):
                 self.username = parser.get('dashboard', 'USERNAME')
             if parser.has_option('dashboard', 'PASSWORD'):
                 self.password = parser.get('dashboard', 'PASSWORD')
+            # .. for guest (a guest can only see the results, but cannot configure or download any data)
+            if parser.has_option('dashboard', 'GUEST_USERNAME'):
+                self.guest_username = parser.get('dashboard', 'GUEST_USERNAME')
+            if parser.has_option('dashboard', 'GUEST_PASSWORD'):
+                self.guest_password = parser.get('dashboard', 'GUEST_PASSWORD')
+
+            # when an outlier detection constant has been set up:
+            if parser.has_option('dashboard', 'OUTLIER_DETECTION_CONSTANT'):
+                self.outlier_detection_constant = parser.get('dashboard', 'OUTLIER_DETECTION_CONSTANT')
         except configparser.Error:
             raise

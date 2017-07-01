@@ -3,24 +3,22 @@ from flask import session, request, render_template
 from dashboard import blueprint, config, user_app
 from dashboard.database.endpoint import get_monitor_rule, update_monitor_rule, get_last_accessed_times
 from dashboard.database.monitor_rules import reset_monitor_endpoints
-from dashboard.database.tests import get_tests, reset_run, update_test, add_test_result, get_results
-from dashboard.database.tests import get_line_results, get_res_current
-from dashboard.forms import MonitorDashboard, ChangeSetting, RunTests
+from dashboard.database.tests import get_tests, get_results, get_suites, get_test_measurements
+from dashboard.database.tests import get_res_current, get_measurements
+from dashboard.forms import MonitorDashboard
 from dashboard.measurement import track_performance
-from dashboard.security import secure
-from unittest import TestLoader
+from dashboard.security import secure, admin_secure
+from dashboard.colors import get_color
 
-import datetime
-import time
-import pygal
-import math
+import plotly
+import plotly.graph_objs as go
 
 
 @blueprint.route('/settings', methods=['GET', 'POST'])
-@secure
+@admin_secure
 def settings():
     password = 'x' * len(config.password)
-    return render_template('settings.html', link=config.link, session=session, config=config, pw=password)
+    return render_template('dashboard/settings.html', link=config.link, session=session, config=config, pw=password)
 
 
 def formatter(x):
@@ -32,7 +30,7 @@ def formatter(x):
 
 
 @blueprint.route('/rules', methods=['GET', 'POST'])
-@secure
+@admin_secure
 def rules():
     form = MonitorDashboard()
     values = {}
@@ -67,59 +65,55 @@ def rules():
     # filter dashboard rules
     all_rules = [r for r in all_rules if not r.rule.startswith('/' + config.link)
                  and not r.rule.startswith('/static-' + config.link)]
+    colors = {}
+    for rule in all_rules:
+        colors[rule.endpoint] = get_color(rule.endpoint)
 
-    return render_template('rules.html', link=config.link, curr=1, rules=all_rules, access=la, form=form,
-                           session=session,
-                           values=values)
+    return render_template('dashboard/rules.html', link=config.link, curr=1, rules=all_rules, access=la, form=form,
+                           session=session, values=values, colors=colors)
 
 
-@blueprint.route('/testmonitor', methods=['GET', 'POST'])
+@blueprint.route('/testmonitor/<test>')
+@secure
+def test_result(test):
+    return render_template('dashboard/testresult.html', link=config.link, session=session, name=test,
+                           boxplot=get_boxplot(test))
+
+
+@blueprint.route('/testmonitor')
 @secure
 def testmonitor():
-    form = RunTests()
-    if request.method == 'POST' and form.validate():
-        test_names = []
-        reset_run()
-        for data in request.form:
-            if data.startswith('checkbox-'):
-                name = data.rsplit('-', 1)[1]
-                test_names.append(name)
-                update_test(name, True, datetime.datetime.now(), None)
-
-        suites = TestLoader().discover(config.test_dir, pattern="*test*.py")
-        for suite in suites:
-            for case in suite:
-                for test in case:
-                    if str(test) in test_names:
-                        result = None
-                        time1 = time.time()
-                        result = test.run(result)
-                        time2 = time.time()
-                        update_test(str(test), True, datetime.datetime.now(), result.wasSuccessful())
-                        t = (time2 - time1) * 1000
-                        add_test_result(str(test), t, datetime.datetime.now(), config.version)
-
-    # Let's render a bar chart, if there is data:
-    data = get_line_results()
-    times_data = None
-    if data:
-        times_chart = pygal.HorizontalBar(height=100 + len(data) * 30)
-        times_chart.x_labels = []
-        list_avg = []
-        list_min = []
-        list_max = []
-        list_count = []
-        for d in data:
-            times_chart.x_labels.append(d.version)
-            list_min.append(d.min)
-            list_avg.append(d.avg)
-            list_max.append(d.max)
-            list_count.append(d.count)
-        times_chart.add('Minimum', list_min, formatter=formatter)
-        times_chart.add('Average', list_avg, formatter=formatter)
-        times_chart.add('Maximum', list_max, formatter=formatter)
-        times_data = times_chart.render_data_uri()
-
-    return render_template('testmonitor.html', link=config.link, session=session, curr=3, form=form,
+    return render_template('dashboard/testmonitor.html', link=config.link, session=session, curr=3,
                            tests=get_tests(), results=get_results(),
-                           res_current_version=get_res_current(config.version), times_data=times_data)
+                           res_current_version=get_res_current(config.version), boxplot=get_boxplot(None))
+
+
+def get_boxplot(test):
+    data = []
+    suites = get_suites()
+    if not suites:
+        return None
+    for s in suites:
+        if test:
+            values = [str(c.execution_time) for c in get_test_measurements(name=test, suite=s.suite)]
+        else:
+            values = [str(c.execution_time) for c in get_measurements(suite=s.suite)]
+
+        data.append(go.Box(
+            x=values,
+            name="{0} ({1})".format(s.suite, len(values))))
+
+    layout = go.Layout(
+        autosize=True,
+        height=350 + 40 * len(suites),
+        plot_bgcolor='rgba(249,249,249,1)',
+        showlegend=False,
+        title='Execution times for every Travis build',
+        xaxis=dict(title='Execution time (ms)'),
+        yaxis=dict(
+            title='Build (measurements)',
+            autorange='reversed'
+        )
+    )
+
+    return plotly.offline.plot(go.Figure(data=data, layout=layout), output_type='div', show_link=False)

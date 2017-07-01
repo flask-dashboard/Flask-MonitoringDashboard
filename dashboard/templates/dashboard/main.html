@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Monitoring Dashboard</title>
+    <link rel="shortcut icon" href="{{ url_for('static', filename='assets/favicon.ico') }}">
+    {#    <link rel="stylesheet" href="{{ url_for('dashboard.static', filename='assets/css/main.css') }}"/>#}
+    <!-- Bootstrap Styles-->
+    <link rel="stylesheet" href="{{ url_for('dashboard.static', filename='assets/css/bootstrap.css') }}"/>
+    <!-- FontAwesome Styles-->
+    <link rel="stylesheet" href="{{ url_for('dashboard.static', filename='assets/css/font-awesome.css') }}"/>
+    <!-- Custom Styles-->
+    <link rel="stylesheet" href="{{ url_for('dashboard.static', filename='assets/css/custom-styles.css') }}"/>
+    <!-- Google Fonts-->
+    <link href='http://fonts.googleapis.com/css?family=Open+Sans' rel='stylesheet' type='text/css'/>
+    <!-- Other-->
+    <!--[if lte IE 8]><script src="{{ url_for('dashboard.static', filename='assets/js/ie/html5shiv.js') }}"></script>
+    <![endif]-->
+    <!--[if lte IE 9]><link rel="stylesheet" href="{{ url_for('dashboard.static', filename='assets/css/ie9.css') }}" />
+    <![endif]-->
+    <!--[if lte IE 8]><link rel="stylesheet" href="{{ url_for('dashboard.static', filename='assets/css/ie8.css') }}" />
+    <![endif]-->
+    <script src="{{ url_for('dashboard.static', filename='assets/js/sort.js') }}"></script>
+    <script src="{{ url_for('dashboard.static', filename='assets/js/jquery.min.js') }}"></script>
+</head>
+<body>
+<div id="wrapper">
+    <nav class="navbar navbar-default top-navbar" role="navigation">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".sidebar-collapse">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="{{ url_for('dashboard.index') }}">Dashboard</a>
+        </div>
+        <h4 class="navbar-text">Automated monitoring of your Flask web apps</h4>
+        <ul class="nav navbar-top-links navbar-right">
+            <!-- /.dropdown -->
+            <li class="dropdown">
+                <a class="dropdown-toggle" data-toggle="dropdown" href="" aria-expanded="false">
+                    <i class="fa fa-user fa-fw"></i> <i class="fa fa-caret-down"></i>
+                </a>
+                <ul class="dropdown-menu dropdown-user">
+                    <li><a href="{{ url_for('dashboard.settings') }}"><i class="fa fa-gear fa-fw"></i> Settings</a>
+                    </li>
+                    <li class="divider"></li>
+                    <li><a href="{{ url_for('dashboard.logout') }}"><i class="fa fa-sign-out fa-fw"></i> Logout</a>
+                    </li>
+                </ul>
+                <!-- /.dropdown-user -->
+            </li>
+            <!-- /.dropdown -->
+        </ul>
+    </nav>
+    <!--/. NAV TOP  -->
+    <nav class="navbar-default navbar-side" role="navigation">
+        <div class="sidebar-collapse">
+            <ul class="nav" id="main-menu">
+
+                <li>
+                    {% if curr == 1 %}
+                        <a class="active-menu" href="{{ url_for('dashboard.rules') }}"><i class="fa fa-edit"></i> Rules</a>
+                    {% else %}
+                        <a href="{{ url_for('dashboard.rules') }}"><i class="fa fa-edit"></i> Rules</a>
+                    {% endif %}
+                </li>
+                <li>
+                    {% if curr == 2 %}
+                        <a class="active-menu" href="{{ url_for('dashboard.overview') }}"><i
+                                class="fa fa-dashboard"></i> Measurements</a>
+                    {% else %}
+                        <a href="{{ url_for('dashboard.overview') }}"><i class="fa fa-dashboard"></i>
+                            Measurements</a>
+                    {% endif %}
+                </li>
+                <li>
+                    {% if curr == 3 %}
+                        <a class="active-menu" href="{{ url_for('dashboard.testmonitor') }}"><i
+                                class="fa fa-desktop"></i> Test Monitor</a>
+                    {% else %}
+                        <a href="{{ url_for('dashboard.testmonitor') }}"><i class="fa fa-desktop"></i> Test Monitor</a>
+                    {% endif %}
+                </li>
+
+            </ul>
+        </div>
+    </nav>
+    <!-- /. NAV SIDE  -->
+    <div id="page-wrapper">
+        <div id="page-inner">
+            {% block content %}{% endblock %}
+        </div>
+        <!-- /. PAGE INNER  -->
+    </div>
+    <!-- /. PAGE WRAPPER  -->
+</div>
+<!-- /. WRAPPER  -->
+<!-- JS Scripts-->
+<!-- jQuery Js -->
+<script src="{{ url_for('dashboard.static', filename='assets/js/jquery-1.10.2.js') }}"></script>
+<!-- Bootstrap Js -->
+<script src="{{ url_for('dashboard.static', filename='assets/js/bootstrap.min.js') }}"></script>
+<!-- Metis Menu Js -->
+<script src="{{ url_for('dashboard.static', filename='assets/js/jquery.metisMenu.js') }}"></script>
+<!-- Custom Js -->
+<script src="{{ url_for('dashboard.static', filename='assets/js/custom-scripts.js') }}"></script>
+<script src="{{ url_for('dashboard.static', filename='assets/js/skel.min.js') }}"></script>
+<script src="{{ url_for('dashboard.static', filename='assets/js/util.js') }}"></script>
+<!--[if lte IE 8]><script src="{{ url_for('dashboard.static', filename='assets/js/ie/respond.min.js') }}"></script>
+<![endif]-->
+<script src="{{ url_for('dashboard.static', filename='assets/js/main.js') }}"></script>
+
+</body>
+</html>

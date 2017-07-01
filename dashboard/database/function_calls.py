@@ -7,6 +7,7 @@ from sqlalchemy import func, desc, text, asc
 from dashboard import config
 import datetime
 from dashboard.database import session_scope, FunctionCall
+from dashboard.colors import get_color
 
 
 def get_reqs_endpoint_day():

@@ -1,0 +1,94 @@
+{% extends "dashboard/main.html" %}
+{% block content %}
+
+    <div class="row">
+        <!-- Advanced Tables -->
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                Summary of endpoint
+            </div>
+            <br/>
+            <div class="panel-body">
+                <div class="table-responsive">
+                    <table class="table table-striped table-bordered table-hover">
+                        <tr>
+                            <td><b>Endpoint</b></td>
+                            <td>{{ rule.endpoint }}</td>
+                        </tr>
+                        <tr>
+                            <td><b>Added since app version</b></td>
+                            <td>{{ rule.version_added }}</td>
+                        </tr>
+                        <tr>
+                            <td><b>Date added to app</b></td>
+                            <td>{{ "{:%Y-%m-%d %H:%M:%S }".format(rule.time_added) }}</td>
+                        </tr>
+                        {% if url %}
+                            <tr>
+                                <td><b>Link to endpoint</b></td>
+                                <td><a href="{{ url }}">{{ url }}</a></td>
+                            </tr>
+                        {% endif %}
+                        <tr>
+                            <td><b>Last accessed</b></td>
+                            <td>{{ "{:%Y-%m-%d %H:%M:%S }".format(rule.last_accessed) }}</td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                Graphs
+            </div>
+            <div class="panel-body">
+                <ul class="nav nav-tabs">
+                    <li><a {{ 'class="active-menu" style="color: white;"'|safe if index == 0 }}
+                            href="{{ url_for('dashboard.result_heatmap', end=end) }}">Heatmap</a></li>
+                    <li><a {{ 'class="active-menu" style="color: white;"'|safe if index == 1 }}
+                            href="{{ url_for('dashboard.result_time_per_hour', end=end) }}">Time per hour</a></li>
+                    <li><a {{ 'class="active-menu" style="color: white;"'|safe if index == 2 }}
+                            href="{{ url_for('dashboard.result_hits_per_hour', end=end) }}">Hits per hour</a></li>
+                    <li><a {{ 'class="active-menu" style="color: white;"'|safe if index == 3 }}
+                            href="{{ url_for('dashboard.result_time_per_version_per_user', end=end) }}">Time per version
+                        per
+                        user</a></li>
+                    <li><a {{ 'class="active-menu" style="color: white;"'|safe if index == 4 }}
+                            href="{{ url_for('dashboard.result_time_per_version_per_ip', end=end) }}">Time per version
+                        per
+                        ip</a></li>
+                    <li><a {{ 'class="active-menu" style="color: white;"'|safe if index == 5 }}
+                            href="{{ url_for('dashboard.result_time_per_version', end=end) }}">Time per version</a></li>
+                    <li><a {{ 'class="active-menu" style="color: white;"'|safe if index == 6 }}
+                            href="{{ url_for('dashboard.result_time_per_user', end=end) }}">Time per user</a></li>
+                    <li><a {{ 'class="active-menu" style="color: white;"'|safe if index == 7 }}
+                            href="{{ url_for('dashboard.result_outliers', end=end) }}">Outliers</a></li>
+                </ul>
+
+                <div id="loading">
+                    <div class="col-md-12 col-sm-12">
+                        <br>
+                        <center>
+                            <img src="{{ url_for('dashboard.static', filename='assets/loading.gif') }}"
+                                 alt="Be patient..." align="center"/>
+                        </center>
+                    </div>
+                </div>
+
+                {% block graph_content %}
+                {% endblock %}
+
+            </div>
+        </div>
+    </div>
+
+    <script>
+        $(window).ready(function () {
+            $('#loading').hide();
+        });
+    </script>
+
+{% endblock %}

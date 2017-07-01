@@ -50,6 +50,10 @@ class TestRun(Base):
     time = Column(DateTime, primary_key=True)
     # version of the website at the moment of adding the result to the database
     version = Column(String(100), nullable=False)
+    # number of the test suite execution
+    suite = Column(Integer)
+    # number describing the i-th run of the test within the suite
+    run = Column(Integer)
 
 
 class FunctionCall(Base):
@@ -67,6 +71,35 @@ class FunctionCall(Base):
     group_by = Column(String(100), nullable=False)
     # ip address of remote user
     ip = Column(String(25), nullable=False)
+
+
+class Outlier(Base):
+    """ Table for storing information about outliers. """
+    __tablename__ = 'outliers'
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    endpoint = Column(String(250), nullable=False)
+
+    # request-values, GET, POST, PUT
+    request_values = Column(String(10000))
+    # request headers
+    request_headers = Column(String(10000))
+    # request environment
+    request_environment = Column(String(10000))
+    # request url
+    request_url = Column(String(1000))
+
+    # cpu_percent in use
+    cpu_percent = Column(String(100))
+    # memory
+    memory = Column(String(10000))
+
+    # stacktrace
+    stacktrace = Column(String(100000))
+
+    # execution_time in ms
+    execution_time = Column(Float, nullable=False)
+    # time of adding the result to the database
+    time = Column(DateTime)
 
 
 # define the database
