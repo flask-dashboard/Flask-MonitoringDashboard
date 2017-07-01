@@ -8,7 +8,7 @@ from dashboard import blueprint, config
 from dashboard.database.endpoint import get_last_accessed_times, get_num_requests
 from dashboard.database.function_calls import get_times, get_reqs_endpoint_day, get_versions, get_data_per_version, \
     get_endpoints, get_data_per_endpoint
-from dashboard.security import secure
+from dashboard.security import secure, is_admin
 from dashboard.colors import get_color
 
 
@@ -18,8 +18,9 @@ def overview():
     colors = {}
     for result in get_times():
         colors[result.endpoint] = get_color(result.endpoint)
-    return render_template('dashboard/measurement-overview.html', link=config.link, curr=2, times=get_times(), colors=colors,
-                           access=get_last_accessed_times(), session=session, index=0)
+    return render_template('dashboard/measurement-overview.html', link=config.link, curr=2, times=get_times(),
+                           colors=colors, access=get_last_accessed_times(), session=session, index=0,
+                           is_admin=is_admin())
 
 
 @blueprint.route('/measurements/heatmap')

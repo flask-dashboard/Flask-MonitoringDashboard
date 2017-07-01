@@ -36,6 +36,10 @@ def secure(func):
     return wrapper
 
 
+def is_admin():
+    return session and session.pop(config.link + '_admin', False)
+
+
 def check_login(name, password):
     if name == config.username and password == config.password:
         on_login(admin=True)
