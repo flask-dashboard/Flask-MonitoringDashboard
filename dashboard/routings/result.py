@@ -354,7 +354,7 @@ def get_time_per_version(end, versions):
         data.append(go.Box(
             x=values,
             marker=dict(
-                color=get_color(v.version)
+                color=get_color(end)
             ),
             name="{0} {1}".format(v.version, v.startedUsingOn.strftime("%b %d %H:%M"))))
 
