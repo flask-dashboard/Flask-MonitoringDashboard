@@ -1,4 +1,5 @@
 import datetime
+import math
 import plotly
 import plotly.graph_objs as go
 
@@ -197,7 +198,8 @@ def get_hits_per_hour(end):
 def get_time_per_version_per_user(end, versions):
     user_data = {}
     data = [t.execution_time for t in get_all_measurement(end)]
-    average = sum(data) / len(data)
+    # compute the average for determining the default size
+    average = math.sqrt(sum(data) / len(data))/1250
 
     for d in [str(c.group_by) for c in get_endpoint_column(end, FunctionCall.group_by)]:
         user_data[d] = {}
@@ -228,9 +230,9 @@ def get_time_per_version_per_user(end, versions):
                 name=d,
                 mode='markers',
                 marker=dict(
-                    color=[get_color(h) for h in versions],
-                    size=data,
-                    sizeref=average/1250,  # larger sizeref decreases size of the dot
+                    color=[get_color(d)] * len(versions),
+                    size=[math.sqrt(d) for d in data],
+                    sizeref=average,
                     sizemode='area'
                 )
             ))
@@ -283,7 +285,8 @@ def get_form(data):
 def get_time_per_version_per_ip(end, versions):
     ip_data = {}
     data = [t.execution_time for t in get_all_measurement(end)]
-    average = sum(data) / len(data)
+    # compute the average for determining the default size
+    average = math.sqrt(sum(data) / len(data)) / 1250
     for d in [str(c.ip) for c in get_endpoint_column(end, FunctionCall.ip)]:
         ip_data[d] = {}
         for v in versions:
@@ -314,9 +317,9 @@ def get_time_per_version_per_ip(end, versions):
                 name=d,
                 mode='markers',
                 marker=dict(
-                    color=[get_color(h) for h in versions],
-                    size=data,
-                    sizeref=average / 1250,  # larger sizeref decreases size of the dot
+                    color=[get_color(d)] * len(versions),
+                    size=[math.sqrt(d) for d in data],
+                    sizeref=average,
                     sizemode='area'
                 )
             ))
