@@ -82,3 +82,8 @@ Lastly, in your '.travis.yml' file, two script commands should be added:
     script:
       - export DASHBOARD_CONFIG=config.cfg
       - python ./collect_performance.py
+
+Screenshots
+===========
+![Screenshot 1](/images/screenshot1.png)
+![Screenshot 2](/images/screenshot2.png)
