@@ -47,7 +47,7 @@ The following things can be configured:
     USERNAME=admin
     PASSWORD=admin
     GUEST_USERNAME=guest
-    GUEST_PASSWORD=dashboardguest!
+    GUEST_PASSWORD=['dashboardguest!', 'second_pw!']
     DATABASE=sqlite:////<path to your project>/dashboard.db
     GIT=/<path to your project>/dashboard/.git/
     TEST_DIR=/<path to your project>/dashboard/tests/

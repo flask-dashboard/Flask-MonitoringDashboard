@@ -20,7 +20,7 @@ class Config(object):
         self.username = 'admin'
         self.password = 'admin'
         self.guest_username = 'guest'
-        self.guest_password = 'guest_password'
+        self.guest_password = ['guest_password']
         self.outlier_detection_constant = 2.5
         self.colors = {}
 
@@ -97,7 +97,7 @@ class Config(object):
             if parser.has_option('dashboard', 'GUEST_USERNAME'):
                 self.guest_username = parser.get('dashboard', 'GUEST_USERNAME')
             if parser.has_option('dashboard', 'GUEST_PASSWORD'):
-                self.guest_password = parser.get('dashboard', 'GUEST_PASSWORD')
+                self.guest_password = ast.literal_eval(parser.get('dashboard', 'GUEST_PASSWORD'))
 
             # when an outlier detection constant has been set up:
             if parser.has_option('dashboard', 'OUTLIER_DETECTION_CONSTANT'):

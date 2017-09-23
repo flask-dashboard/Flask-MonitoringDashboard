@@ -44,7 +44,7 @@ def check_login(name, password):
     if name == config.username and password == config.password:
         on_login(admin=True)
         return True
-    elif name == config.guest_username and password == config.guest_password:
+    elif name == config.guest_username and password in config.guest_password:
         on_login(admin=False)
         return True
     return False
