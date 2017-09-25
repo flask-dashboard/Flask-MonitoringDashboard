@@ -19,6 +19,10 @@ from dashboard.database.outlier import get_outliers
 from dashboard.colors import get_color
 
 
+# Constants
+BUBBLE_SIZE_RATIO = 1250
+
+
 @blueprint.route('/result/<end>/heatmap')
 @secure
 def result_heatmap(end):
@@ -198,8 +202,8 @@ def get_hits_per_hour(end):
 def get_time_per_version_per_user(end, versions):
     user_data = {}
     data = [t.execution_time for t in get_all_measurement(end)]
-    # compute the average for determining the default size
-    average = math.sqrt(sum(data) / len(data))/1250
+    # compute the average for determining the size of the bubbles in the plot
+    average = math.sqrt(sum(data) / len(data)) / BUBBLE_SIZE_RATIO
 
     for d in [str(c.group_by) for c in get_endpoint_column(end, FunctionCall.group_by)]:
         user_data[d] = {}

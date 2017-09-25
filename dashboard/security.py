@@ -37,7 +37,7 @@ def secure(func):
 
 
 def is_admin():
-    return session and session.pop(config.link + '_admin', False)
+    return session and session.get(config.link + '_admin')
 
 
 def check_login(name, password):
