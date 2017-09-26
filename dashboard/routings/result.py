@@ -1,4 +1,5 @@
 import datetime
+import math
 import plotly
 import plotly.graph_objs as go
 
@@ -16,6 +17,10 @@ from dashboard.security import secure
 from dashboard.routings.measurements import get_heatmap
 from dashboard.database.outlier import get_outliers
 from dashboard.colors import get_color
+
+
+# Constants
+BUBBLE_SIZE_RATIO = 1250
 
 
 @blueprint.route('/result/<end>/heatmap')
@@ -197,7 +202,8 @@ def get_hits_per_hour(end):
 def get_time_per_version_per_user(end, versions):
     user_data = {}
     data = [t.execution_time for t in get_all_measurement(end)]
-    average = sum(data) / len(data)
+    # compute the average for determining the size of the bubbles in the plot
+    average = math.sqrt(sum(data) / len(data)) / BUBBLE_SIZE_RATIO
 
     for d in [str(c.group_by) for c in get_endpoint_column(end, FunctionCall.group_by)]:
         user_data[d] = {}
@@ -228,9 +234,9 @@ def get_time_per_version_per_user(end, versions):
                 name=d,
                 mode='markers',
                 marker=dict(
-                    color=[get_color(h) for h in versions],
-                    size=data,
-                    sizeref=average/1250,  # larger sizeref decreases size of the dot
+                    color=[get_color(d)] * len(versions),
+                    size=[math.sqrt(d) for d in data],
+                    sizeref=average,
                     sizemode='area'
                 )
             ))
@@ -283,7 +289,8 @@ def get_form(data):
 def get_time_per_version_per_ip(end, versions):
     ip_data = {}
     data = [t.execution_time for t in get_all_measurement(end)]
-    average = sum(data) / len(data)
+    # compute the average for determining the default size
+    average = math.sqrt(sum(data) / len(data)) / 1250
     for d in [str(c.ip) for c in get_endpoint_column(end, FunctionCall.ip)]:
         ip_data[d] = {}
         for v in versions:
@@ -314,9 +321,9 @@ def get_time_per_version_per_ip(end, versions):
                 name=d,
                 mode='markers',
                 marker=dict(
-                    color=[get_color(h) for h in versions],
-                    size=data,
-                    sizeref=average / 1250,  # larger sizeref decreases size of the dot
+                    color=[get_color(d)] * len(versions),
+                    size=[math.sqrt(d) for d in data],
+                    sizeref=average,
                     sizemode='area'
                 )
             ))
@@ -354,7 +361,7 @@ def get_time_per_version(end, versions):
         data.append(go.Box(
             x=values,
             marker=dict(
-                color=get_color(v.version)
+                color=get_color(end)
             ),
             name="{0} {1}".format(v.version, v.startedUsingOn.strftime("%b %d %H:%M"))))
 

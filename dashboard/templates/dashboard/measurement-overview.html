@@ -17,13 +17,16 @@
                             href="{{ url_for('dashboard.page_boxplot_per_endpoint') }}">Time per endpoint</a></li>
                 </ul>
 
-                <div class="panel-heading">
-                    Overview
-                    <a href="{{ url_for('dashboard.download_csv') }}" class="btn btn-primary btn-sm right-align-custom">Download
-                        CSV</a>
-                    <a href="{{ url_for('dashboard.export_data') }}" class="btn btn-primary btn-sm right-align-custom">View
-                        CSV</a>
-                </div>
+                {%  if is_admin %}
+                    <div class="panel-heading">
+                        Overview
+                        <a href="{{ url_for('dashboard.download_csv') }}" class="btn btn-primary btn-sm right-align-custom">Download
+                            CSV</a>
+                        <a href="{{ url_for('dashboard.export_data') }}" class="btn btn-primary btn-sm right-align-custom">View
+                            CSV</a>
+                    </div>
+                {% endif %}
+
                 <br/>
                 <div class="panel-body">
                     <div class="table-responsive">

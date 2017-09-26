@@ -36,18 +36,15 @@ def secure(func):
     return wrapper
 
 
-def security(admin_only=False):
-    def decorator(f):
-        print(admin_only)
-        return f
-    return decorator
+def is_admin():
+    return session and session.get(config.link + '_admin')
 
 
 def check_login(name, password):
     if name == config.username and password == config.password:
         on_login(admin=True)
         return True
-    elif name == config.guest_username and password == config.guest_password:
+    elif name == config.guest_username and password in config.guest_password:
         on_login(admin=False)
         return True
     return False
