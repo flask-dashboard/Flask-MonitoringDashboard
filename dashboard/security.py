@@ -11,12 +11,14 @@ def admin_secure(func):
         - guest: Cannot be visited with this wrapper.
     :param func: the endpoint to be wrapped.
     """
+
     @wraps(func)
     def wrapper(*args, **kwargs):
         if session and session.get(config.link + '_logged_in'):
             if session.get(config.link + '_admin'):
                 return func(*args, **kwargs)
         return redirect(url_for('dashboard.login'))
+
     return wrapper
 
 
@@ -28,11 +30,13 @@ def secure(func):
         - guest: Can be visited with this wrapper.
     :param func: the endpoint to be wrapped.
     """
+
     @wraps(func)
     def wrapper(*args, **kwargs):
         if session and session.get(config.link + '_logged_in'):
             return func(*args, **kwargs)
         return redirect(url_for('dashboard.login'))
+
     return wrapper
 
 

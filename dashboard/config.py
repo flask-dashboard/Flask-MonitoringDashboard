@@ -23,6 +23,7 @@ class Config(object):
         self.guest_password = ['guest_password']
         self.outlier_detection_constant = 2.5
         self.colors = {}
+        self.log_dir = None
 
         # define a custom function to retrieve the session_id or username
         self.get_group_by = None
@@ -67,6 +68,11 @@ class Config(object):
                 self.database_name = parser.get('dashboard', 'DATABASE')
             if parser.has_option('dashboard', 'TEST_DIR'):
                 self.test_dir = parser.get('dashboard', 'TEST_DIR')
+            if parser.has_option('dashboard', 'LOG_DIR'):
+                self.log_dir = parser.get('dashboard', 'LOG_DIR')
+                log = open(self.log_dir + "endpoint_hits.log", "w")
+                log.write("\"time\",\"endpoint\"\n")
+                log.close()
 
             # For manually defining colors of specific endpoints
             if parser.has_option('dashboard', 'COLORS'):
@@ -101,6 +107,7 @@ class Config(object):
 
             # when an outlier detection constant has been set up:
             if parser.has_option('dashboard', 'OUTLIER_DETECTION_CONSTANT'):
-                self.outlier_detection_constant = parser.get('dashboard', 'OUTLIER_DETECTION_CONSTANT')
+                self.outlier_detection_constant = ast.literal_eval(
+                    parser.get('dashboard', 'OUTLIER_DETECTION_CONSTANT'))
         except configparser.Error:
             raise

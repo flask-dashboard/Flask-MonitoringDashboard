@@ -5,6 +5,7 @@ from dashboard.database.endpoint import get_monitor_rule, update_monitor_rule, g
 from dashboard.database.monitor_rules import reset_monitor_endpoints
 from dashboard.database.tests import get_tests, get_results, get_suites, get_test_measurements
 from dashboard.database.tests import get_res_current, get_measurements
+from dashboard.database.tests_grouped import get_tests_grouped
 from dashboard.forms import MonitorDashboard
 from dashboard.measurement import track_performance
 from dashboard.security import secure, admin_secure
@@ -83,8 +84,18 @@ def test_result(test):
 @blueprint.route('/testmonitor')
 @secure
 def testmonitor():
+    tests = get_tests_grouped()
+    grouped = {}
+    cols = {}
+    for t in tests:
+        if t.endpoint not in grouped:
+            grouped[t.endpoint] = []
+            cols[t.endpoint] = get_color(t.endpoint)
+        if t.test_name not in grouped[t.endpoint]:
+            grouped[t.endpoint].append(t.test_name)
+
     return render_template('dashboard/testmonitor.html', link=config.link, session=session, curr=3,
-                           tests=get_tests(), results=get_results(),
+                           tests=get_tests(), results=get_results(), groups=grouped, colors=cols,
                            res_current_version=get_res_current(config.version), boxplot=get_boxplot(None))
 
 

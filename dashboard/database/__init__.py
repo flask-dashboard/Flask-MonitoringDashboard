@@ -102,6 +102,15 @@ class Outlier(Base):
     time = Column(DateTime)
 
 
+class TestsGrouped(Base):
+    """ Table for storing grouped tests on endpoints. """
+    __tablename__ = 'testsGrouped'
+    # Name of the endpoint
+    endpoint = Column(String(250), primary_key=True)
+    # Name of the unit test
+    test_name = Column(String(250), primary_key=True)
+
+
 # define the database
 engine = create_engine(config.database_name)
 
