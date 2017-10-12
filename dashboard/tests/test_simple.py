@@ -3,18 +3,19 @@ import requests
 
 
 class MyTestCase(unittest.TestCase):
+
     def test_something(self):
-        r = requests.get('http://0.0.0.0:5000/')
+        r = requests.get('http://127.0.0.1:5000/')
         self.assertEqual(200, r.status_code)
 
     def test_somethingElse(self):
-        r = requests.get('http://0.0.0.0:5000/')
+        r = requests.get('http://127.0.0.1:5000/')
         self.assertEqual(200, r.status_code)
 
     def test_indexHit(self):
-        r = requests.get('http://0.0.0.0:5000/')
+        r = requests.get('http://127.0.0.1:5000/')
         self.assertEqual(200, r.status_code)
-        r = requests.get('http://0.0.0.0:5000/static/assets/js/custom.js')
+        r = requests.get('http://127.0.0.1:5000/static/assets/js/custom.js')
         self.assertEqual(200, r.status_code)
 
 

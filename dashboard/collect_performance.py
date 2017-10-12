@@ -15,6 +15,7 @@ if config is None:
     sys.exit(0)
 
 n = 1
+url = None
 parser = configparser.RawConfigParser()
 try:
     parser.read(config)
@@ -25,13 +26,15 @@ try:
     else:
         print('No test directory specified in your config file. Please do so.')
         sys.exit(0)
+    if not parser.has_option('dashboard', 'LOG_DIR'):
+        print('No log directory specified in your config file. Please do so.')
+        sys.exit(0)
     if parser.has_option('dashboard', 'SUBMIT_RESULTS_URL'):
         url = parser.get('dashboard', 'SUBMIT_RESULTS_URL')
     else:
         print('No url specified in your config file for submitting test results. Please do so.')
-        sys.exit(0)
-except configparser.Error:
-    raise
+except configparser.Error as e:
+    print("Something went wrong while parsing the configuration file:\n{}".format(e))
 
 data = {'test_runs': [], 'grouped_tests': []}
 log = open("test_runs.log", "w")
@@ -81,10 +84,10 @@ for h in hits:
                 data['grouped_tests'].append({'endpoint': h[1], 'test_name': r[2]})
             break
 
-# Try to send test results and endpoint and unit tests to the dashboard
-try:
-    requests.post(url, json=data)
-    print('Sent unit test results to the dashboard.')
-except:
-    print('Sending unit test results to the dashboard failed.')
-    raise
+# Try to send test results and endpoint-grouped unit tests to the dashboard
+if url:
+    try:
+        requests.post(url, json=data)
+        print('Sent unit test results to the dashboard.')
+    except Exception as e:
+        print('Sending unit test results to the dashboard failed:\n{}'.format(e))
