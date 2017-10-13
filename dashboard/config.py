@@ -57,6 +57,10 @@ class Config(object):
             :param config_file: a string pointing to the location of the config-file
         """
 
+        config = os.getenv('DASHBOARD_CONFIG')
+        if config:
+            config_file = config
+
         parser = configparser.RawConfigParser()
         try:
             parser.read(config_file)
