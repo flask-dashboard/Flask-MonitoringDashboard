@@ -14,4 +14,3 @@ def get_color(hash):
     else:
         rgb = ColorHash(hash).rgb
     return 'rgb({0}, {1}, {2})'.format(rgb[0], rgb[1], rgb[2])
-

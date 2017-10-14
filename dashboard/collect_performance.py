@@ -4,6 +4,7 @@ import time
 import datetime
 import os
 import sys
+import csv
 from unittest import TestLoader
 
 # Abort if config file is not specified.
@@ -14,6 +15,7 @@ if config is None:
     sys.exit(0)
 
 n = 1
+url = None
 parser = configparser.RawConfigParser()
 try:
     parser.read(config)
@@ -24,15 +26,19 @@ try:
     else:
         print('No test directory specified in your config file. Please do so.')
         sys.exit(0)
+    if not parser.has_option('dashboard', 'LOG_DIR'):
+        print('No log directory specified in your config file. Please do so.')
+        sys.exit(0)
     if parser.has_option('dashboard', 'SUBMIT_RESULTS_URL'):
         url = parser.get('dashboard', 'SUBMIT_RESULTS_URL')
     else:
         print('No url specified in your config file for submitting test results. Please do so.')
-        sys.exit(0)
-except configparser.Error:
-    raise
+except configparser.Error as e:
+    print("Something went wrong while parsing the configuration file:\n{}".format(e))
 
-data = {'test_runs': []}
+data = {'test_runs': [], 'grouped_tests': []}
+log = open("test_runs.log", "w")
+log.write("\"start_time\",\"stop_time\",\"test_name\"\n")
 
 if test_dir:
     suites = TestLoader().discover(test_dir, pattern="*test*.py")
@@ -41,17 +47,47 @@ if test_dir:
             for case in suite:
                 for test in case:
                     result = None
+                    t1 = str(datetime.datetime.now())
                     time1 = time.time()
                     result = test.run(result)
                     time2 = time.time()
+                    t2 = str(datetime.datetime.now())
+                    log.write("\"{}\",\"{}\",\"{}\"\n".format(t1, t2, str(test)))
                     t = (time2 - time1) * 1000
                     data['test_runs'].append({'name': str(test), 'exec_time': t, 'time': str(datetime.datetime.now()),
                                               'successful': result.wasSuccessful(), 'iter': i + 1})
 
-# Try to send test results to the dashboard
-try:
-    requests.post(url, json=data)
-    print('Sent unit test results to the dashboard.')
-except:
-    print('Sending unit test results to the dashboard failed.')
-    raise
+log.close()
+
+# Read and parse the log containing the test runs
+runs = []
+with open('test_runs.log') as log:
+    reader = csv.DictReader(log)
+    for row in reader:
+        runs.append([datetime.datetime.strptime(row["start_time"], "%Y-%m-%d %H:%M:%S.%f"),
+                     datetime.datetime.strptime(row["stop_time"], "%Y-%m-%d %H:%M:%S.%f"),
+                     row['test_name']])
+
+# Read and parse the log containing the endpoint hits
+hits = []
+with open('endpoint_hits.log') as log:
+    reader = csv.DictReader(log)
+    for row in reader:
+        hits.append([datetime.datetime.strptime(row["time"], "%Y-%m-%d %H:%M:%S.%f"),
+                     row['endpoint']])
+
+# Analyze logs to find out which endpoints are hit by which unit tests
+for h in hits:
+    for r in runs:
+        if r[0] <= h[0] <= r[1]:
+            if {'endpoint': h[1], 'test_name': r[2]} not in data['grouped_tests']:
+                data['grouped_tests'].append({'endpoint': h[1], 'test_name': r[2]})
+            break
+
+# Try to send test results and endpoint-grouped unit tests to the dashboard
+if url:
+    try:
+        requests.post(url, json=data)
+        print('Sent unit test results to the dashboard.')
+    except Exception as e:
+        print('Sending unit test results to the dashboard failed:\n{}'.format(e))

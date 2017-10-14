@@ -10,19 +10,22 @@
                     <li><a {{ 'class="active-menu" style="color: white;"'|safe if index == 1 }}
                             href="{{ url_for('dashboard.heatmap') }}">Heatmap of number of requests</a></li>
                     <li><a {{ 'class="active-menu" style="color: white;"'|safe if index == 2 }}
-                            href="{{ url_for('dashboard.page_number_of_requests_per_endpoint') }}">Requests per endpoint</a></li>
+                            href="{{ url_for('dashboard.page_number_of_requests_per_endpoint') }}">Requests per
+                        endpoint</a></li>
                     <li><a {{ 'class="active-menu" style="color: white;"'|safe if index == 3 }}
                             href="{{ url_for('dashboard.page_boxplot_per_version') }}">Time per version</a></li>
                     <li><a {{ 'class="active-menu" style="color: white;"'|safe if index == 4 }}
                             href="{{ url_for('dashboard.page_boxplot_per_endpoint') }}">Time per endpoint</a></li>
                 </ul>
 
-                {%  if is_admin %}
+                {% if is_admin %}
                     <div class="panel-heading">
                         Overview
-                        <a href="{{ url_for('dashboard.download_csv') }}" class="btn btn-primary btn-sm right-align-custom">Download
+                        <a href="{{ url_for('dashboard.download_csv') }}"
+                           class="btn btn-primary btn-sm right-align-custom">Download
                             CSV</a>
-                        <a href="{{ url_for('dashboard.export_data') }}" class="btn btn-primary btn-sm right-align-custom">View
+                        <a href="{{ url_for('dashboard.export_data') }}"
+                           class="btn btn-primary btn-sm right-align-custom">View
                             CSV</a>
                     </div>
                 {% endif %}

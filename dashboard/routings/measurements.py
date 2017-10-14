@@ -39,7 +39,7 @@ def page_number_of_requests_per_endpoint():
     colors = {}
     for result in get_times():
         colors[result.endpoint] = get_color(result.endpoint)
-    return render_template('dashboard/measurement.html', link=config.link, curr=2,  session=session, index=2,
+    return render_template('dashboard/measurement.html', link=config.link, curr=2, session=session, index=2,
                            graph=get_stacked_bar())
 
 

@@ -5,7 +5,6 @@
     Moreover, it logs cpu- and memory-info.
 """
 
-
 import time
 import traceback
 from threading import Thread, enumerate
@@ -14,7 +13,6 @@ import psutil
 
 
 class StackInfo(object):
-
     def __init__(self, average):
         self.average = average
         self.stacktrace = ''
@@ -22,7 +20,7 @@ class StackInfo(object):
         self.memory = ''
 
         try:
-            thread = Thread(target=log_stack_trace, args=(self, ))
+            thread = Thread(target=log_stack_trace, args=(self,))
             thread.start()
         except Exception:
             print('Can\'t log traceback information')
@@ -31,7 +29,7 @@ class StackInfo(object):
 
 def log_stack_trace(stack_info):
     # average is in ms, sleep requires seconds
-    time.sleep(stack_info.average/1000.0)
+    time.sleep(stack_info.average / 1000.0)
 
     # iterate through every active thread and get the stack-trace
     stack_list = []

@@ -2,6 +2,7 @@ from flask import make_response, render_template, session, request
 from dashboard.security import admin_secure
 from dashboard.database.function_calls import get_data
 from dashboard.database.tests import add_or_update_test, add_test_result, get_suite_nr
+from dashboard.database.tests_grouped import reset_tests_grouped, add_tests_grouped
 from dashboard import blueprint, config
 
 import datetime
@@ -42,4 +43,8 @@ def submit_test_results():
         time = datetime.datetime.strptime(result['time'], '%Y-%m-%d %H:%M:%S.%f')
         add_or_update_test(result['name'], time, result['successful'])
         add_test_result(result['name'], result['exec_time'], time, config.version, suite, result['iter'])
+
+    reset_tests_grouped()
+    add_tests_grouped(request.get_json()['grouped_tests'])
+
     return '', 204

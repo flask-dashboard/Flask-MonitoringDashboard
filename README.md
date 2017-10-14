@@ -49,14 +49,15 @@ The following things can be configured:
     GUEST_USERNAME=guest
     GUEST_PASSWORD=['dashboardguest!', 'second_pw!']
     DATABASE=sqlite:////<path to your project>/dashboard.db
-    GIT=/<path to your project>/dashboard/.git/
-    TEST_DIR=/<path to your project>/dashboard/tests/
+    GIT=/<path to your project>/.git/
+    TEST_DIR=/<path to your project>/tests/
+    LOG_DIR=/<path to your project>/
     N=5
     SUBMIT_RESULTS_URL=http://0.0.0.0:5000/dashboard/submit-test-results
     OUTLIER_DETECTION_CONSTANT=2.5
     COLORS={'main':[0,97,255], 'static':[255,153,0]}
 
-For more information: [see this file](dashboard/config.py)
+For more information, please refer to [this file](dashboard/config.py)
 
 When running your app, the dashboard van be viewed by default in the route:
 
@@ -68,13 +69,12 @@ To enable Travis to run your unit tests and send the results to the dashboard, f
 
 First off, the file 'collect_performance.py' (which comes with the dashboard) should be copied to the directory where your '.travis.yml' file resides.
 
-Secondly, your config file for the dashboard ('config.cfg') should be updated to include three additional values, TEST_DIR, SUBMIT_RESULTS_URL and N.
-The first specifies where your unit tests reside, the second where Travis should upload the test results to, and the third specifies the number of times Travis should run each unit test.
-See the sample config file in the section above for more details.
+Secondly, your config file for the dashboard ('config.cfg') should be updated to include four additional values, TEST_DIR, LOG_DIR, SUBMIT_RESULTS_URL and N.
+The first specifies where your unit tests reside, the second where the logs should be placed, the third where Travis should upload the test results to, and the last specifies the number of times Travis should run each unit test.
+See the sample config file in the section above for an example.
 
-Then, a dependency link to the dashboard has to be added to the 'setup.py' file of your app:
+Then, the installation requirement for the dashboard has to be added to the 'setup.py' file of your app:
 
-    dependency_links=["git+https://github.com/mircealungu/automatic-monitoring-dashboard.git#egg=flask_monitoring_dashboard"],
     install_requires=('flask_monitoring_dashboard')
 
 Lastly, in your '.travis.yml' file, two script commands should be added:

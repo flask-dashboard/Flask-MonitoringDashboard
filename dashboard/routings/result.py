@@ -18,7 +18,6 @@ from dashboard.routings.measurements import get_heatmap
 from dashboard.database.outlier import get_outliers
 from dashboard.colors import get_color
 
-
 # Constants
 BUBBLE_SIZE_RATIO = 1250
 
