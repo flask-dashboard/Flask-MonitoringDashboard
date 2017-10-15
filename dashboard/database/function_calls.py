@@ -30,6 +30,8 @@ def add_function_call(time, endpoint):
         if config.get_group_by:
             group_by = config.get_group_by()
 
+        print("Endpoint {} hit. Timestamp: {}. Exec time: {} ".format(endpoint, datetime.datetime.now(), time))
+
         ip = request.environ['REMOTE_ADDR']
         call = FunctionCall(endpoint=endpoint, execution_time=time, version=config.version,
                             time=datetime.datetime.now(), group_by=str(group_by), ip=ip)
