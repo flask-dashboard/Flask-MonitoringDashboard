@@ -36,6 +36,10 @@ Adding the extension to your flask app is simple:
     dashboard.config.get_group_by = get_session_id
     dashboard.bind(app=user_app)
     
+Instead of having a hardcoded string containing the location of the config file in the code above, it is also possible to define an environment variable that specifies the location of this config file.
+The line should then be `dashboard.config.from_file(None)`. This will configure the dashboard based on the file provided in the environment variable `DASHBOARD_CONFIG`.
+When both a hardcoded location string and the environment variable are provided, the latter will override the former.
+    
 Usage
 =====
 Once the setup is done, a config file ('config.cfg') should be set next to the python file that contains the entry point of the app.
