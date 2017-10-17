@@ -26,7 +26,9 @@ try:
     else:
         print('No test directory specified in your config file. Please do so.')
         sys.exit(0)
-    if not parser.has_option('dashboard', 'LOG_DIR'):
+    if parser.has_option('dashboard', 'LOG_DIR'):
+        log_dir = parser.get('dashboard', 'LOG_DIR')
+    else:
         print('No log directory specified in your config file. Please do so.')
         sys.exit(0)
     if parser.has_option('dashboard', 'SUBMIT_RESULTS_URL'):
@@ -37,10 +39,11 @@ except configparser.Error as e:
     print("Something went wrong while parsing the configuration file:\n{}".format(e))
 
 data = {'test_runs': [], 'grouped_tests': []}
-log = open("test_runs.log", "w")
+log = open(log_dir + "test_runs.log", "w")
 log.write("\"start_time\",\"stop_time\",\"test_name\"\n")
 
 if test_dir:
+    sys.path.insert(0, os.getcwd())
     suites = TestLoader().discover(test_dir, pattern="*test*.py")
     for i in range(n):
         for suite in suites:
@@ -61,7 +64,7 @@ log.close()
 
 # Read and parse the log containing the test runs
 runs = []
-with open('test_runs.log') as log:
+with open(log_dir + 'test_runs.log') as log:
     reader = csv.DictReader(log)
     for row in reader:
         runs.append([datetime.datetime.strptime(row["start_time"], "%Y-%m-%d %H:%M:%S.%f"),
@@ -70,7 +73,7 @@ with open('test_runs.log') as log:
 
 # Read and parse the log containing the endpoint hits
 hits = []
-with open('endpoint_hits.log') as log:
+with open(log_dir + 'endpoint_hits.log') as log:
     reader = csv.DictReader(log)
     for row in reader:
         hits.append([datetime.datetime.strptime(row["time"], "%Y-%m-%d %H:%M:%S.%f"),
