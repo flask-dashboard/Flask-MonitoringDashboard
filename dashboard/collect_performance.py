@@ -16,6 +16,7 @@ if config is None:
 
 n = 1
 url = None
+sys.path.insert(0, os.getcwd())
 parser = configparser.RawConfigParser()
 try:
     parser.read(config)
@@ -43,7 +44,6 @@ log = open(log_dir + "test_runs.log", "w")
 log.write("\"start_time\",\"stop_time\",\"test_name\"\n")
 
 if test_dir:
-    sys.path.insert(0, os.getcwd())
     suites = TestLoader().discover(test_dir, pattern="*test*.py")
     for i in range(n):
         for suite in suites:
