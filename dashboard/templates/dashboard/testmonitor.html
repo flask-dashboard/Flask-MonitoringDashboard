@@ -18,12 +18,12 @@
                             <div class="panel panel-default">
                                 <div class="panel-heading" style="background-color: {{ colors[group] }}">
                                     <h4 class="panel-title">
-                                        <a data-toggle="collapse" data-parent="#accordion" href={{ "#" + group }}
+                                        <a data-toggle="collapse" data-parent="#accordion" href={{ "#" + group|replace(".", "-") }}
                                                 class="collapsed"
                                            style="background-color: #ffffff">&#9654; {{ group + " ..." }}</a>
                                     </h4>
                                 </div>
-                                <div id={{ group }} class="panel-collapse collapse
+                                <div id={{ group|replace(".", "-") }} class="panel-collapse collapse
                                 " style="height: auto;">
                                 <div class="panel-body">
 
