@@ -3,7 +3,6 @@ from dashboard.main import user_app
 
 
 class FirstTestCase(unittest.TestCase):
-
     def setUp(self):
         user_app.testing = True
         self.app = user_app.test_client()

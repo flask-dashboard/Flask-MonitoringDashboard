@@ -2,7 +2,7 @@ from flask import session, request, render_template
 
 from dashboard import blueprint, config, user_app
 from dashboard.database.endpoint import get_monitor_rule, update_monitor_rule, get_last_accessed_times
-from dashboard.database.monitor_rules import reset_monitor_endpoints
+from dashboard.database.monitor_rules import reset_monitor_endpoints, get_monitor_names
 from dashboard.database.tests import get_tests, get_results, get_suites, get_test_measurements
 from dashboard.database.tests import get_res_current, get_measurements
 from dashboard.database.tests_grouped import get_tests_grouped
@@ -84,6 +84,9 @@ def test_result(test):
 @blueprint.route('/testmonitor')
 @secure
 def testmonitor():
+    endp_names = []
+    for name in get_monitor_names():
+        endp_names.append(name.endpoint)
     tests = get_tests_grouped()
     grouped = {}
     cols = {}
@@ -95,8 +98,8 @@ def testmonitor():
             grouped[t.endpoint].append(t.test_name)
 
     return render_template('dashboard/testmonitor.html', link=config.link, session=session, curr=3,
-                           tests=get_tests(), results=get_results(), groups=grouped, colors=cols,
-                           res_current_version=get_res_current(config.version), boxplot=get_boxplot(None))
+                           tests=get_tests(), endpoints=endp_names, results=get_results(), groups=grouped,
+                           colors=cols, res_current_version=get_res_current(config.version), boxplot=get_boxplot(None))
 
 
 def get_boxplot(test):

@@ -55,18 +55,11 @@ def track_performance(func, endpoint):
             # start a thread to log the stacktrace after 'average' ms
             stack_info = StackInfo(average)
 
-        t1 = str(datetime.datetime.now())
         time1 = time.time()
         result = func(*args, **kwargs)
         time2 = time.time()
         t = (time2 - time1) * 1000
         add_function_call(time=t, endpoint=endpoint)
-
-        # Logging for grouping unit test results by endpoint
-        if config.log_dir:
-            log = open(config.log_dir + "endpoint_hits.log", "a")
-            log.write("\"{}\",\"{}\"\n".format(t1, endpoint))
-            log.close()
 
         # outlier detection
         endpoint_count[endpoint] += 1
