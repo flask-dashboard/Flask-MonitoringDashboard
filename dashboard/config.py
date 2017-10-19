@@ -23,7 +23,6 @@ class Config(object):
         self.guest_password = ['guest_password']
         self.outlier_detection_constant = 2.5
         self.colors = {}
-        self.log_dir = None
 
         # define a custom function to retrieve the session_id or username
         self.get_group_by = None
@@ -61,6 +60,13 @@ class Config(object):
         if config:
             config_file = config
 
+        # When collecting unit test performance results, create log file
+        log_dir = os.getenv('DASHBOARD_LOG_DIR')
+        if log_dir:
+            log = open(log_dir + "endpoint_hits.log", "w")
+            log.write("\"time\",\"endpoint\"\n")
+            log.close()
+
         parser = configparser.RawConfigParser()
         try:
             parser.read(config_file)
@@ -72,11 +78,6 @@ class Config(object):
                 self.database_name = parser.get('dashboard', 'DATABASE')
             if parser.has_option('dashboard', 'TEST_DIR'):
                 self.test_dir = parser.get('dashboard', 'TEST_DIR')
-            if parser.has_option('dashboard', 'LOG_DIR'):
-                self.log_dir = parser.get('dashboard', 'LOG_DIR')
-                log = open(self.log_dir + "endpoint_hits.log", "w")
-                log.write("\"time\",\"endpoint\"\n")
-                log.close()
 
             # For manually defining colors of specific endpoints
             if parser.has_option('dashboard', 'COLORS'):

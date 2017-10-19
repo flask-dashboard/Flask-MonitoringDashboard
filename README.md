@@ -55,7 +55,6 @@ The following things can be configured:
     DATABASE=sqlite:////<path to your project>/dashboard.db
     GIT=/<path to your project>/.git/
     TEST_DIR=/<path to your project>/tests/
-    LOG_DIR=/<path to your project>/
     N=5
     SUBMIT_RESULTS_URL=http://0.0.0.0:5000/dashboard/submit-test-results
     OUTLIER_DETECTION_CONSTANT=2.5
@@ -71,18 +70,44 @@ TravisCI unit testing
 =====================
 To enable Travis to run your unit tests and send the results to the dashboard, four steps have to be taken.
 
-First off, the file 'collect_performance.py' (which comes with the dashboard) should be copied to the directory where your '.travis.yml' file resides.
-
-Secondly, your config file for the dashboard ('config.cfg') should be updated to include four additional values, TEST_DIR, LOG_DIR, SUBMIT_RESULTS_URL and N.
-The first specifies where your unit tests reside, the second where the logs should be placed, the third where Travis should upload the test results to, and the last specifies the number of times Travis should run each unit test.
+First off, your config file for the dashboard ('config.cfg') should be updated to include three additional values, TEST_DIR, SUBMIT_RESULTS_URL and N.
+The first specifies where your unit tests reside, the second where Travis should upload the test results to, and the last specifies the number of times Travis should run each unit test.
+If the url for submitting test results is not specified, the results will not be sent anywhere, but the performance collection process will still run.
 See the sample config file in the section above for an example.
 
-Then, the installation requirement for the dashboard has to be added to the 'setup.py' file of your app:
+Secondly, the installation requirement for the dashboard has to be added to the 'setup.py' file of your app:
 
+    dependency_links=["https://github.com/flask-dashboard/Flask-Monitoring-Dashboard/tarball/master#egg=flask_monitoring_dashboard"]
     install_requires=('flask_monitoring_dashboard')
 
-Lastly, in your '.travis.yml' file, two script commands should be added:
+Then, in your '.travis.yml' file, three script commands should be added:
 
     script:
-      - export DASHBOARD_CONFIG=config.cfg
-      - python ./collect_performance.py
+      - export DASHBOARD_CONFIG=/home/travis/build/<name>/<project>/config.cfg
+      - export DASHBOARD_LOG_DIR=/home/travis/build/<name>/<project>/
+      - python -m dashboard.collect_performance
+
+Where 'name' is the name under which your project will be built by Travis, and 'project' is the name of your repository.
+The config environment variable specifies where the performance collection process can find the config file.
+The log directory environment variable specifies where the performance collection process should place the logs it uses.
+The third command will start the actual performance collection process.
+
+Lastly, a method that is executed after every request should be added to the blueprint of your app.
+This is needed for the logging, and without it, the unit test results cannot be grouped by endpoint that they test.
+The code for adding this functionality is:
+
+```python
+    import os
+    import datetime
+    from flask import request
+    log_dir = os.getenv('DASHBOARD_LOG_DIR')
+    @api.after_request
+    def after_request(response):
+        t1 = str(datetime.datetime.now())
+        log = open(log_dir + "endpoint_hits.log", "a")
+        log.write("\"{}\",\"{}\"\n".format(t1, request.endpoint))
+        log.close()
+        return response
+```
+
+Where 'api' is the blueprint of the app you want to run the collection of unit test performance on.

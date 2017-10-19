@@ -14,6 +14,13 @@ if config is None:
     print('Please set an environment variable \'DASHBOARD_CONFIG\' specifying the absolute path to your config file.')
     sys.exit(0)
 
+# Abort if log directory is not specified.
+log_dir = os.getenv('DASHBOARD_LOG_DIR')
+if log_dir is None:
+    print('You must specify a log directory for the dashboard to be able to use the unit test monitoring functionality.')
+    print('Please set an environment variable \'DASHBOARD_LOG_DIR\' specifying the absolute path where you want the log files to be placed.')
+    sys.exit(0)
+
 n = 1
 url = None
 sys.path.insert(0, os.getcwd())
@@ -26,11 +33,6 @@ try:
         test_dir = parser.get('dashboard', 'TEST_DIR')
     else:
         print('No test directory specified in your config file. Please do so.')
-        sys.exit(0)
-    if parser.has_option('dashboard', 'LOG_DIR'):
-        log_dir = parser.get('dashboard', 'LOG_DIR')
-    else:
-        print('No log directory specified in your config file. Please do so.')
         sys.exit(0)
     if parser.has_option('dashboard', 'SUBMIT_RESULTS_URL'):
         url = parser.get('dashboard', 'SUBMIT_RESULTS_URL')
