@@ -44,7 +44,9 @@ def submit_test_results():
         add_or_update_test(result['name'], time, result['successful'])
         add_test_result(result['name'], result['exec_time'], time, config.version, suite, result['iter'])
 
-    reset_tests_grouped()
-    add_tests_grouped(request.get_json()['grouped_tests'])
+    groups = request.get_json()['grouped_tests']
+    if groups:
+        reset_tests_grouped()
+        add_tests_grouped(groups)
 
     return '', 204
