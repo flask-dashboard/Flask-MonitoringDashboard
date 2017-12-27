@@ -23,6 +23,7 @@ class Config(object):
         self.guest_password = ['guest_password']
         self.outlier_detection_constant = 2.5
         self.colors = {}
+        self.security_token = 'cc83733cb0af8b884ff6577086b87909'
 
         # define a custom function to retrieve the session_id or username
         self.get_group_by = None
@@ -52,6 +53,8 @@ class Config(object):
             OUTLIER_DETECTION_CONSTANT: When the execution time is more than this constant *
                 average, extra information is logged into the database. A default value for this
                 variable is 2.5, but can be changed in the config-file.
+
+            SECURITY_TOKEN: Used for getting the data in /get_json_data/<security_token>
 
             :param config_file: a string pointing to the location of the config-file
         """
@@ -114,5 +117,10 @@ class Config(object):
             if parser.has_option('dashboard', 'OUTLIER_DETECTION_CONSTANT'):
                 self.outlier_detection_constant = ast.literal_eval(
                     parser.get('dashboard', 'OUTLIER_DETECTION_CONSTANT'))
+
+            # when a security token is provided:
+            if parser.has_option('dashboard', 'security_token'):
+                self.security_token = parser.get('dashboard', 'SECURITY_TOKEN')
+
         except configparser.Error:
             raise
