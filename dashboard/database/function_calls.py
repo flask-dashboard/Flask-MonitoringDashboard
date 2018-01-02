@@ -6,7 +6,7 @@ from flask import request
 from sqlalchemy import func, desc, text, asc, DateTime
 from dashboard import config
 import datetime
-from dashboard.database import session_scope, FunctionCall
+from dashboard.database import session_scope, FunctionCall, MonitorRule
 from dashboard.colors import get_color
 
 
@@ -51,7 +51,7 @@ def get_times():
 def get_data_from(time_from):
     """
         Returns all data in the FunctionCall table, for the export data option.
-        This function doesn't return data before time_from date.
+        This function returns all data after the time_from date.
     """
     with session_scope() as db_session:
         result = db_session.query(FunctionCall.endpoint,
@@ -65,6 +65,10 @@ def get_data_from(time_from):
 
 
 def get_data():
+    """
+    Equivalent function to get_data_from, but returns all data.
+    :return: all data from the database in the Endpoint-table.
+    """
     return get_data_from(datetime.date(1970, 1, 1))
 
 

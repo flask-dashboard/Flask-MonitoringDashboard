@@ -24,3 +24,19 @@ def reset_monitor_endpoints():
     """ Update all monitor rules in the database and set them to false. """
     with session_scope() as db_session:
         db_session.query(MonitorRule).update({MonitorRule.monitor: False})
+
+
+def get_monitor_data():
+    """
+    Returns all data in the rules-table. This table contains which endpoints are being
+    monitored and which are not.
+    :return: all data from the database in the rules-table.
+    """
+    with session_scope() as db_session:
+        result = db_session.query(MonitorRule.endpoint,
+                                  MonitorRule.last_accessed,
+                                  MonitorRule.monitor,
+                                  MonitorRule.time_added,
+                                  MonitorRule.version_added).all()
+        db_session.expunge_all()
+        return result
