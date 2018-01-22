@@ -111,3 +111,8 @@ The code for adding this functionality is:
 ```
 
 Where 'api' is the blueprint of the app you want to run the collection of unit test performance on.
+
+Screenshots
+===========
+![Screenshot 1](/images/screenshot1.png)
+![Screenshot 2](/images/screenshot2.png)
