@@ -1,6 +1,8 @@
-from flask import make_response, render_template, session, request
+from flask import make_response, render_template, session, request, jsonify
+
+from dashboard.database.monitor_rules import get_monitor_data
 from dashboard.security import admin_secure
-from dashboard.database.function_calls import get_data
+from dashboard.database.function_calls import get_data, get_data_from
 from dashboard.database.tests import add_or_update_test, add_test_result, get_suite_nr
 from dashboard.database.tests_grouped import reset_tests_grouped, add_tests_grouped
 from dashboard import blueprint, config
@@ -12,10 +14,9 @@ import datetime
 @admin_secure
 def download_csv():
     csv = "\"ENDPOINT\",\"EXECUTION_TIME\",\"TIME_OF_EXECUTION\",\"VERSION\",\"GROUP_BY\",\"IP_ADDRESS\"\n"
-    data = get_data()
-    for entry in data:
-        csv += "\"{0}\",{1},\"{2}\",\"{3}\",\"{4}\",\"{5}\"\n".format(entry.endpoint, entry.execution_time, entry.time,
-                                                                      entry.version, entry.group_by, entry.ip)
+    for entry in get_data():
+        csv += "\"{0}\",{1},\"{2}\",\"{3}\",\"{4}\",\"{5}\"\n".format(
+            entry.endpoint, entry.execution_time, entry.time, entry.version, entry.group_by, entry.ip)
 
     response = make_response(csv)
     response.headers["Content-Disposition"] = "attachment; filename=measurements_{0}.csv".format(
@@ -50,3 +51,57 @@ def submit_test_results():
         add_tests_grouped(groups)
 
     return '', 204
+
+
+@blueprint.route('/get_json_data/<security_token>', defaults={'time_from': 0})
+@blueprint.route('/get_json_data/<security_token>/<time_from>')
+def get_json_data_from(security_token: str, time_from: int):
+    """
+    Only get the data if the security token with the request is equivalent to the security token in the configuration.
+    :param security_token: security token to be specified.
+    :param time_from: (optional) if specified, only the data-values after this date are returned.
+                      input must be an timestamp value (utc) (= integer)
+    :return: all entries from the database. (endpoint-table)
+    """
+    if security_token == config.security_token:
+        data = []
+        try:
+            for entry in get_data_from(datetime.datetime.utcfromtimestamp(int(time_from))):
+                # nice conversion to json-object
+                data.append({
+                    'endpoint': entry.endpoint,
+                    'execution_time': entry.execution_time,
+                    'time': str(entry.time),
+                    'version': entry.version,
+                    'group_by': entry.group_by,
+                    'ip': entry.ip
+                })
+            return jsonify(data)
+        except ValueError as e:
+            return 'ValueError: {0}'.format(e)
+    return jsonify()
+
+
+@blueprint.route('/get_json_monitor_rules/<security_token>')
+def get_json_monitor_rules(security_token: str):
+    """
+    Only get the data if the security oken with the request is equivalent to the security token in the configuration.
+    :param security_token: security token for accessing the data
+    :return: all entries from the database (rules-table)
+    """
+    if security_token == config.security_token:
+        data = []
+        try:
+            for entry in get_monitor_data():
+                # nice conversion to json-object
+                data.append({
+                    'endpoint': entry.endpoint,
+                    'last_accessed': str(entry.last_accessed),
+                    'monitor': entry.monitor,
+                    'time_added': str(entry.time_added),
+                    'version_added': entry.version_added
+                })
+            return jsonify(data)
+        except ValueError as e:
+            return 'ValueError: {0}'.format(e)
+    return jsonify()
