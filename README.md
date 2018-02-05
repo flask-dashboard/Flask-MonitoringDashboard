@@ -9,6 +9,8 @@ You can see the execution time and last access time per endpoint.
 
 Also, unit tests can be run by TravisCI and monitored.
 
+IMPORTANT: Since the implementation uses string interpolation, the minimum python version is 3.6 [PEP 498](https://www.python.org/dev/peps/pep-0498/).
+
 Installation
 ============
 To install from source, download the source code, then run this:
