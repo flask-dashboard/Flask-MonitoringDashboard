@@ -1,3 +1,8 @@
+"""
+    This file can be executed for developing purposes. It is not used, when the flask_monitoring_dashboard is
+    attached to an existing flask application.
+"""
+
 from flask import Flask, redirect, url_for
 import dashboard
 import os
