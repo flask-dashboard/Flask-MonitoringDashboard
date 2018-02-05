@@ -13,10 +13,10 @@ import datetime
 @blueprint.route('/download-csv')
 @admin_secure
 def download_csv():
-    csv = "\"ENDPOINT\",\"EXECUTION_TIME\",\"TIME_OF_EXECUTION\",\"VERSION\",\"GROUP_BY\",\"IP_ADDRESS\"\n"
+    csv = '"ENDPOINT","EXECUTION_TIME","TIME_OF_EXECUTION","VERSION","GROUP_BY","IP_ADDRESS"\n'
     for entry in get_data():
-        csv += "\"{0}\",{1},\"{2}\",\"{3}\",\"{4}\",\"{5}\"\n".format(
-            entry.endpoint, entry.execution_time, entry.time, entry.version, entry.group_by, entry.ip)
+        csv += f'"{entry.endpoint}",{entry.execution_time},"{entry.time}","{entry.version}","{entry.group_by}",' \
+               f'"{entry.ip}"\n'
 
     response = make_response(csv)
     response.headers["Content-Disposition"] = "attachment; filename=measurements_{0}.csv".format(
@@ -27,12 +27,11 @@ def download_csv():
 @blueprint.route('/export-data')
 @admin_secure
 def export_data():
-    csv = ["\"ENDPOINT\",\"EXECUTION_TIME\",\"TIME_OF_EXECUTION\",\"VERSION\",\"GROUP_BY\",\"IP_ADDRESS\""]
+    csv = ['"ENDPOINT","EXECUTION_TIME","TIME_OF_EXECUTION","VERSION","GROUP_BY","IP_ADDRESS"']
     data = get_data()
     for entry in data:
-        csv.append("\"{0}\",{1},\"{2}\",\"{3}\",\"{4}\",\"{5}\"".format(entry.endpoint, entry.execution_time,
-                                                                        entry.time, entry.version, entry.group_by,
-                                                                        entry.ip))
+        csv.append(f'"{entry.endpoint}","{entry.execution_time}","{entry.time}","{entry.version}","{entry.group_by}",'
+                   f'"{entry.ip}"')
     return render_template('dashboard/export-data.html', link=config.link, session=session, data=csv)
 
 
