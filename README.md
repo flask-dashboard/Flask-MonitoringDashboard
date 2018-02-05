@@ -36,9 +36,12 @@ Adding the extension to your flask app is simple:
     dashboard.config.get_group_by = get_session_id
     dashboard.bind(app=user_app)
     
-Instead of having a hardcoded string containing the location of the config file in the code above, it is also possible to define an environment variable that specifies the location of this config file.
-The line should then be `dashboard.config.from_file(None)`. This will configure the dashboard based on the file provided in the environment variable `DASHBOARD_CONFIG`.
-When both a hardcoded location string and the environment variable are provided, the latter will override the former.
+Instead of having a hardcoded string containing the location of the config file in the code above, it is also possible 
+to define an environment variable that specifies the location of this config file.
+The line should then be `dashboard.config.from_file(None)`. This will configure the dashboard based on the file 
+provided in the environment variable `DASHBOARD_CONFIG`.
+When both a hardcoded location string and the environment variable are provided, the environment variable will override 
+the hardcoded string.
     
 Usage
 =====
@@ -68,31 +71,32 @@ When running your app, the dashboard van be viewed by default in the route:
 
 TravisCI unit testing
 =====================
-To enable Travis to run your unit tests and send the results to the dashboard, four steps have to be taken.
+To enable Travis to run your unit tests and send the results to the dashboard, four steps have to be taken:
 
-First off, your config file for the dashboard ('config.cfg') should be updated to include three additional values, TEST_DIR, SUBMIT_RESULTS_URL and N.
-The first specifies where your unit tests reside, the second where Travis should upload the test results to, and the last specifies the number of times Travis should run each unit test.
-If the url for submitting test results is not specified, the results will not be sent anywhere, but the performance collection process will still run.
-See the sample config file in the section above for an example.
+1. Update the config file ('config.cfg') to include three additional values, TEST_DIR, SUBMIT_RESULTS_URL and N.
+    - TEST_DIR specifies where the unit tests reside.
+    - SUBMIT_RESULTS_URL specifies where Travis should upload the test results to. When left out, the results will not
+    be sent anywhere, but the performance collection process will still run.
+    - N specifies the number of times Travis should run each unit test. 
 
-Secondly, the installation requirement for the dashboard has to be added to the 'setup.py' file of your app:
+2. The installation requirement for the dashboard has to be added to the 'setup.py' file of your app:
 
     dependency_links=["https://github.com/flask-dashboard/Flask-Monitoring-Dashboard/tarball/master#egg=flask_monitoring_dashboard"]
     install_requires=('flask_monitoring_dashboard')
 
-Then, in your '.travis.yml' file, three script commands should be added:
+3. In your '.travis.yml' file, three script commands should be added:
 
     script:
       - export DASHBOARD_CONFIG=/home/travis/build/<name>/<project>/config.cfg
       - export DASHBOARD_LOG_DIR=/home/travis/build/<name>/<project>/
       - python -m dashboard.collect_performance
 
-Where 'name' is the name under which your project will be built by Travis, and 'project' is the name of your repository.
+   Where 'name' is the name under which your project will be built by Travis, and 'project' is the name of your repository.
 The config environment variable specifies where the performance collection process can find the config file.
 The log directory environment variable specifies where the performance collection process should place the logs it uses.
 The third command will start the actual performance collection process.
 
-Lastly, a method that is executed after every request should be added to the blueprint of your app.
+4. A method that is executed after every request should be added to the blueprint of your app.
 This is needed for the logging, and without it, the unit test results cannot be grouped by endpoint that they test.
 The code for adding this functionality is:
 
