@@ -92,31 +92,13 @@ To enable Travis to run your unit tests and send the results to the dashboard, f
       - export DASHBOARD_LOG_DIR=./logs/
       - python -m dashboard.collect_performance
 
-   Where 'name' is the name under which your project will be built by Travis, and 'project' is the name of your repository.
-The config environment variable specifies where the performance collection process can find the config file.
+   The config environment variable specifies where the performance collection process can find the config file.
 The log directory environment variable specifies where the performance collection process should place the logs it uses.
 The third command will start the actual performance collection process.
 
-4. A method that is executed after every request should be added to the blueprint of your app.
-This is needed for the logging, and without it, the unit test results cannot be grouped by endpoint that they test.
-The code for adding this functionality is:
-
-```python
-import os
-import datetime
-from flask import request
-log_dir = os.getenv('DASHBOARD_LOG_DIR')
-@api.after_request
-def after_request(response):
-    if log_dir:
-        t1 = str(datetime.datetime.now())
-        log = open(log_dir + "endpoint_hits.log", "a")
-        log.write("\"{}\",\"{}\"\n".format(t1, request.endpoint))
-        log.close()
-    return response
-```
-
-Where 'api' is the blueprint of the app you want to run the collection of unit test performance on.
+4. A method that is executed after every request should be added to the blueprint of your app. 
+This is done by the dashboard automatically when the blueprint is passed to the binding function like so: `dashboard.bind(app=app, blue_print=api)`.
+This extra method is needed for the logging, and without it, the unit test results cannot be grouped by endpoint that they test.
 
 Screenshots
 ===========
