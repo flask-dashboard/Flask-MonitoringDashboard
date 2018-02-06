@@ -28,7 +28,7 @@ class Config(object):
         # define a custom function to retrieve the session_id or username
         self.get_group_by = None
 
-    def from_file(self, config_file):
+    def init_from(self, file=None, envvar=None):
         """
             The config_file must at least contains the following variables in section 'dashboard':
             APP_VERSION: the version of the app that you use. Updating the version helps in 
@@ -56,12 +56,15 @@ class Config(object):
 
             SECURITY_TOKEN: Used for getting the data in /get_json_data/<security_token>
 
-            :param config_file: a string pointing to the location of the config-file
+            :param file: a string pointing to the location of the config-file
+            :param envvar: a string specifying which environment variable holds the config file location
         """
 
-        config = os.getenv('DASHBOARD_CONFIG')
-        if config:
-            config_file = config
+        if envvar:
+            file = os.getenv(envvar)
+        if not file:
+            print("No configuration file specified. Please do so.")
+
 
         # When collecting unit test performance results, create log file
         log_dir = os.getenv('DASHBOARD_LOG_DIR')
@@ -72,7 +75,7 @@ class Config(object):
 
         parser = configparser.RawConfigParser()
         try:
-            parser.read(config_file)
+            parser.read(file)
             if parser.has_option('dashboard', 'APP_VERSION'):
                 self.version = parser.get('dashboard', 'APP_VERSION')
             if parser.has_option('dashboard', 'CUSTOM_LINK'):

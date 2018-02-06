@@ -29,7 +29,7 @@ Adding the extension to your flask app is simple:
     import dashboard
 
     user_app = Flask(__name__)
-    dashboard.config.from_file('/<path to your config file>/config.cfg')
+    dashboard.config.init_from(file='/<path to your config file>/config.cfg')
 
     def get_session_id():
         # Implement your own function for obtaining the user variable here.
@@ -40,10 +40,8 @@ Adding the extension to your flask app is simple:
     
 Instead of having a hardcoded string containing the location of the config file in the code above, it is also possible 
 to define an environment variable that specifies the location of this config file.
-The line should then be `dashboard.config.from_file(None)`. This will configure the dashboard based on the file 
-provided in the environment variable `DASHBOARD_CONFIG`.
-When both a hardcoded location string and the environment variable are provided, the environment variable will override 
-the hardcoded string.
+The line should then be `dashboard.config.init_from(envvar='DASHBOARD_CONFIG')`. This will configure the dashboard based on the file 
+provided in the environment variable called `DASHBOARD_CONFIG`.
     
 Usage
 =====
@@ -84,13 +82,14 @@ To enable Travis to run your unit tests and send the results to the dashboard, f
 2. The installation requirement for the dashboard has to be added to the 'setup.py' file of your app:
 
     dependency_links=["https://github.com/flask-dashboard/Flask-Monitoring-Dashboard/tarball/master#egg=flask_monitoring_dashboard"]
+    
     install_requires=('flask_monitoring_dashboard')
 
 3. In your '.travis.yml' file, three script commands should be added:
 
     script:
-      - export DASHBOARD_CONFIG=/home/travis/build/<name>/<project>/config.cfg
-      - export DASHBOARD_LOG_DIR=/home/travis/build/<name>/<project>/
+      - export DASHBOARD_CONFIG=./config.cfg
+      - export DASHBOARD_LOG_DIR=./logs/
       - python -m dashboard.collect_performance
 
    Where 'name' is the name under which your project will be built by Travis, and 'project' is the name of your repository.
@@ -103,17 +102,18 @@ This is needed for the logging, and without it, the unit test results cannot be 
 The code for adding this functionality is:
 
 ```python
-    import os
-    import datetime
-    from flask import request
-    log_dir = os.getenv('DASHBOARD_LOG_DIR')
-    @api.after_request
-    def after_request(response):
+import os
+import datetime
+from flask import request
+log_dir = os.getenv('DASHBOARD_LOG_DIR')
+@api.after_request
+def after_request(response):
+    if log_dir:
         t1 = str(datetime.datetime.now())
         log = open(log_dir + "endpoint_hits.log", "a")
         log.write("\"{}\",\"{}\"\n".format(t1, request.endpoint))
         log.close()
-        return response
+    return response
 ```
 
 Where 'api' is the blueprint of the app you want to run the collection of unit test performance on.
