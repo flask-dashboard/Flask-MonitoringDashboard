@@ -42,6 +42,9 @@ except configparser.Error as e:
     print("Something went wrong while parsing the configuration file:\n{}".format(e))
 
 data = {'test_runs': [], 'grouped_tests': []}
+log = open(log_dir + "endpoint_hits.log", "w")
+log.write("\"time\",\"endpoint\"\n")
+log.close()
 log = open(log_dir + "test_runs.log", "w")
 log.write("\"start_time\",\"stop_time\",\"test_name\"\n")
 
