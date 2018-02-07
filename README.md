@@ -9,6 +9,8 @@ You can see the execution time and last access time per endpoint.
 
 Also, unit tests can be run by TravisCI and monitored.
 
+IMPORTANT: Since the implementation uses string interpolation, the minimum python version is 3.6 [PEP 498](https://www.python.org/dev/peps/pep-0498/).
+
 Installation
 ============
 To install from source, download the source code, then run this:
@@ -27,7 +29,7 @@ Adding the extension to your flask app is simple:
     import dashboard
 
     user_app = Flask(__name__)
-    dashboard.config.from_file('/<path to your config file>/config.cfg')
+    dashboard.config.init_from(file='/<path to your config file>/config.cfg')
 
     def get_session_id():
         # Implement your own function for obtaining the user variable here.
@@ -35,6 +37,11 @@ Adding the extension to your flask app is simple:
 
     dashboard.config.get_group_by = get_session_id
     dashboard.bind(app=user_app)
+    
+Instead of having a hardcoded string containing the location of the config file in the code above, it is also possible 
+to define an environment variable that specifies the location of this config file.
+The line should then be `dashboard.config.init_from(envvar='DASHBOARD_CONFIG')`. This will configure the dashboard based on the file 
+provided in the environment variable called `DASHBOARD_CONFIG`.
     
 Usage
 =====
@@ -51,7 +58,6 @@ The following things can be configured:
     DATABASE=sqlite:////<path to your project>/dashboard.db
     GIT=/<path to your project>/.git/
     TEST_DIR=/<path to your project>/tests/
-    LOG_DIR=/<path to your project>/
     N=5
     SUBMIT_RESULTS_URL=http://0.0.0.0:5000/dashboard/submit-test-results
     OUTLIER_DETECTION_CONSTANT=2.5
@@ -65,23 +71,34 @@ When running your app, the dashboard van be viewed by default in the route:
 
 TravisCI unit testing
 =====================
-To enable Travis to run your unit tests and send the results to the dashboard, four steps have to be taken.
+To enable Travis to run your unit tests and send the results to the dashboard, four steps have to be taken:
 
-First off, the file 'collect_performance.py' (which comes with the dashboard) should be copied to the directory where your '.travis.yml' file resides.
+1. Update the config file ('config.cfg') to include three additional values, TEST_DIR, SUBMIT_RESULTS_URL and N.
+    - TEST_DIR specifies where the unit tests reside.
+    - SUBMIT_RESULTS_URL specifies where Travis should upload the test results to. When left out, the results will not
+    be sent anywhere, but the performance collection process will still run.
+    - N specifies the number of times Travis should run each unit test. 
 
-Secondly, your config file for the dashboard ('config.cfg') should be updated to include four additional values, TEST_DIR, LOG_DIR, SUBMIT_RESULTS_URL and N.
-The first specifies where your unit tests reside, the second where the logs should be placed, the third where Travis should upload the test results to, and the last specifies the number of times Travis should run each unit test.
-See the sample config file in the section above for an example.
+2. The installation requirement for the dashboard has to be added to the 'setup.py' file of your app:
 
-Then, the installation requirement for the dashboard has to be added to the 'setup.py' file of your app:
-
+    dependency_links=["https://github.com/flask-dashboard/Flask-Monitoring-Dashboard/tarball/master#egg=flask_monitoring_dashboard"]
+    
     install_requires=('flask_monitoring_dashboard')
 
-Lastly, in your '.travis.yml' file, two script commands should be added:
+3. In your '.travis.yml' file, three script commands should be added:
 
     script:
-      - export DASHBOARD_CONFIG=config.cfg
-      - python ./collect_performance.py
+      - export DASHBOARD_CONFIG=./config.cfg
+      - export DASHBOARD_LOG_DIR=./logs/
+      - python -m dashboard.collect_performance
+
+   The config environment variable specifies where the performance collection process can find the config file.
+The log directory environment variable specifies where the performance collection process should place the logs it uses.
+The third command will start the actual performance collection process.
+
+4. A method that is executed after every request should be added to the blueprint of your app. 
+This is done by the dashboard automatically when the blueprint is passed to the binding function like so: `dashboard.bind(app=app, blue_print=api)`.
+This extra method is needed for the logging, and without it, the unit test results cannot be grouped by endpoint that they test.
 
 Screenshots
 ===========

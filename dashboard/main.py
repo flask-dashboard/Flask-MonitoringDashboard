@@ -1,10 +1,15 @@
+"""
+    This file can be executed for developing purposes. It is not used, when the flask_monitoring_dashboard is
+    attached to an existing flask application.
+"""
+
 from flask import Flask, redirect, url_for
 import dashboard
 import os
 
 user_app = Flask(__name__)
 here = os.path.abspath(os.path.dirname(__file__))
-dashboard.config.from_file(here + '/config.cfg')
+dashboard.config.init_from(file=here + '/config.cfg')
 
 
 def get_session_id():

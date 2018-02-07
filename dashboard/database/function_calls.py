@@ -3,10 +3,10 @@ Contains all functions that access any functionCall-object
 """
 
 from flask import request
-from sqlalchemy import func, desc, text, asc
+from sqlalchemy import func, desc, text, asc, DateTime
 from dashboard import config
 import datetime
-from dashboard.database import session_scope, FunctionCall
+from dashboard.database import session_scope, FunctionCall, MonitorRule
 from dashboard.colors import get_color
 
 
@@ -48,17 +48,28 @@ def get_times():
         return result
 
 
-def get_data():
-    """ Returns all data in the FunctionCall table, for the export data option. """
+def get_data_from(time_from):
+    """
+        Returns all data in the FunctionCall table, for the export data option.
+        This function returns all data after the time_from date.
+    """
     with session_scope() as db_session:
         result = db_session.query(FunctionCall.endpoint,
                                   FunctionCall.execution_time,
                                   FunctionCall.time,
                                   FunctionCall.version,
                                   FunctionCall.group_by,
-                                  FunctionCall.ip).all()
+                                  FunctionCall.ip).filter(FunctionCall.time >= time_from)
         db_session.expunge_all()
         return result
+
+
+def get_data():
+    """
+    Equivalent function to get_data_from, but returns all data.
+    :return: all data from the database in the Endpoint-table.
+    """
+    return get_data_from(datetime.date(1970, 1, 1))
 
 
 def get_data_per_version(version):

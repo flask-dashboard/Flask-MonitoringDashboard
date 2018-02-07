@@ -14,8 +14,16 @@ if config is None:
     print('Please set an environment variable \'DASHBOARD_CONFIG\' specifying the absolute path to your config file.')
     sys.exit(0)
 
+# Abort if log directory is not specified.
+log_dir = os.getenv('DASHBOARD_LOG_DIR')
+if log_dir is None:
+    print('You must specify a log directory for the dashboard to be able to use the unit test monitoring functionality.')
+    print('Please set an environment variable \'DASHBOARD_LOG_DIR\' specifying the absolute path where you want the log files to be placed.')
+    sys.exit(0)
+
 n = 1
 url = None
+sys.path.insert(0, os.getcwd())
 parser = configparser.RawConfigParser()
 try:
     parser.read(config)
@@ -26,9 +34,6 @@ try:
     else:
         print('No test directory specified in your config file. Please do so.')
         sys.exit(0)
-    if not parser.has_option('dashboard', 'LOG_DIR'):
-        print('No log directory specified in your config file. Please do so.')
-        sys.exit(0)
     if parser.has_option('dashboard', 'SUBMIT_RESULTS_URL'):
         url = parser.get('dashboard', 'SUBMIT_RESULTS_URL')
     else:
@@ -37,7 +42,10 @@ except configparser.Error as e:
     print("Something went wrong while parsing the configuration file:\n{}".format(e))
 
 data = {'test_runs': [], 'grouped_tests': []}
-log = open("test_runs.log", "w")
+log = open(log_dir + "endpoint_hits.log", "w")
+log.write("\"time\",\"endpoint\"\n")
+log.close()
+log = open(log_dir + "test_runs.log", "w")
 log.write("\"start_time\",\"stop_time\",\"test_name\"\n")
 
 if test_dir:
@@ -61,7 +69,7 @@ log.close()
 
 # Read and parse the log containing the test runs
 runs = []
-with open('test_runs.log') as log:
+with open(log_dir + 'test_runs.log') as log:
     reader = csv.DictReader(log)
     for row in reader:
         runs.append([datetime.datetime.strptime(row["start_time"], "%Y-%m-%d %H:%M:%S.%f"),
@@ -70,7 +78,7 @@ with open('test_runs.log') as log:
 
 # Read and parse the log containing the endpoint hits
 hits = []
-with open('endpoint_hits.log') as log:
+with open(log_dir + 'endpoint_hits.log') as log:
     reader = csv.DictReader(log)
     for row in reader:
         hits.append([datetime.datetime.strptime(row["time"], "%Y-%m-%d %H:%M:%S.%f"),

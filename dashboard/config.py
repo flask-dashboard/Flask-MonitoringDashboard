@@ -23,12 +23,12 @@ class Config(object):
         self.guest_password = ['guest_password']
         self.outlier_detection_constant = 2.5
         self.colors = {}
-        self.log_dir = None
+        self.security_token = 'cc83733cb0af8b884ff6577086b87909'
 
         # define a custom function to retrieve the session_id or username
         self.get_group_by = None
 
-    def from_file(self, config_file):
+    def init_from(self, file=None, envvar=None):
         """
             The config_file must at least contains the following variables in section 'dashboard':
             APP_VERSION: the version of the app that you use. Updating the version helps in 
@@ -54,16 +54,28 @@ class Config(object):
                 average, extra information is logged into the database. A default value for this
                 variable is 2.5, but can be changed in the config-file.
 
-            :param config_file: a string pointing to the location of the config-file
+            SECURITY_TOKEN: Used for getting the data in /get_json_data/<security_token>
+
+            :param file: a string pointing to the location of the config-file
+            :param envvar: a string specifying which environment variable holds the config file location
         """
 
-        config = os.getenv('DASHBOARD_CONFIG')
-        if config:
-            config_file = config
+        if envvar:
+            file = os.getenv(envvar)
+        if not file:
+            print("No configuration file specified. Please do so.")
+
+
+        # When collecting unit test performance results, create log file
+        log_dir = os.getenv('DASHBOARD_LOG_DIR')
+        if log_dir:
+            log = open(log_dir + "endpoint_hits.log", "w")
+            log.write("\"time\",\"endpoint\"\n")
+            log.close()
 
         parser = configparser.RawConfigParser()
         try:
-            parser.read(config_file)
+            parser.read(file)
             if parser.has_option('dashboard', 'APP_VERSION'):
                 self.version = parser.get('dashboard', 'APP_VERSION')
             if parser.has_option('dashboard', 'CUSTOM_LINK'):
@@ -72,11 +84,6 @@ class Config(object):
                 self.database_name = parser.get('dashboard', 'DATABASE')
             if parser.has_option('dashboard', 'TEST_DIR'):
                 self.test_dir = parser.get('dashboard', 'TEST_DIR')
-            if parser.has_option('dashboard', 'LOG_DIR'):
-                self.log_dir = parser.get('dashboard', 'LOG_DIR')
-                log = open(self.log_dir + "endpoint_hits.log", "w")
-                log.write("\"time\",\"endpoint\"\n")
-                log.close()
 
             # For manually defining colors of specific endpoints
             if parser.has_option('dashboard', 'COLORS'):
@@ -113,5 +120,10 @@ class Config(object):
             if parser.has_option('dashboard', 'OUTLIER_DETECTION_CONSTANT'):
                 self.outlier_detection_constant = ast.literal_eval(
                     parser.get('dashboard', 'OUTLIER_DETECTION_CONSTANT'))
+
+            # when a security token is provided:
+            if parser.has_option('dashboard', 'security_token'):
+                self.security_token = parser.get('dashboard', 'SECURITY_TOKEN')
+
         except configparser.Error:
             raise
