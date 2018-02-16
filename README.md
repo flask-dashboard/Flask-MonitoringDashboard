@@ -9,7 +9,11 @@ You can see the execution time and last access time per endpoint.
 
 Also, unit tests can be run by TravisCI and monitored.
 
-IMPORTANT: Since the implementation uses string interpolation, the minimum python version is 3.6 [PEP 498](https://www.python.org/dev/peps/pep-0498/).
+Python version
+==============
+The minimum Python version that we use for this project is Python 3.5. 
+However, it will also work in Python 3.4, but we do not maintain support for this version.
+
 
 Installation
 ============
