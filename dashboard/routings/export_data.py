@@ -17,8 +17,8 @@ import datetime
 def download_csv():
     csv = '"ENDPOINT","EXECUTION_TIME","TIME_OF_EXECUTION","VERSION","GROUP_BY","IP_ADDRESS"\n'
     for entry in get_data():
-        csv += f'"{entry.endpoint}",{entry.execution_time},"{entry.time}","{entry.version}","{entry.group_by}",' \
-               f'"{entry.ip}"\n'
+        csv += '"{}",{},"{}","{}","{}","{}"\n'.format(entry.endpoint, entry.execution_time, entry.time, entry.version,
+                                                      entry.group_by, entry.ip)
 
     response = make_response(csv)
     response.headers["Content-Disposition"] = "attachment; filename=measurements_{0}.csv".format(
@@ -32,8 +32,8 @@ def export_data():
     csv = ['"ENDPOINT","EXECUTION_TIME","TIME_OF_EXECUTION","VERSION","GROUP_BY","IP_ADDRESS"']
     data = get_data()
     for entry in data:
-        csv.append(f'"{entry.endpoint}","{entry.execution_time}","{entry.time}","{entry.version}","{entry.group_by}",'
-                   f'"{entry.ip}"')
+        csv.append('"{}","{}","{}","{}","{}","{}"'.format(entry.endpoint, entry.execution_time, entry.time,
+                                                          entry.version, entry.group_by, entry.ip))
     return render_template('dashboard/export-data.html', link=config.link, session=session, data=csv)
 
 
@@ -99,7 +99,7 @@ def get_json_data_from(security_token: str, time_from: int):
             })
         return jsonify(data)
     except ValueError as e:
-        return f'ValueError: {e}'
+        return 'ValueError: {}'.format(e)
 
 
 @blueprint.route('/get_json_monitor_rules/<security_token>')
@@ -123,4 +123,4 @@ def get_json_monitor_rules(security_token: str):
             })
         return jsonify(data)
     except ValueError as e:
-        return f'ValueError: {e}'
+        return 'ValueError: {}'.format(e)
