@@ -65,7 +65,6 @@ class Config(object):
         if not file:
             print("No configuration file specified. Please do so.")
 
-
         # When collecting unit test performance results, create log file
         log_dir = os.getenv('DASHBOARD_LOG_DIR')
         if log_dir:

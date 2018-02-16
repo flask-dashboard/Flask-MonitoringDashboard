@@ -10,10 +10,15 @@ from dashboard.database import session_scope, FunctionCall, MonitorRule
 
 
 def get_line_results(endpoint):
+    """
+    Returns simple statistics, such as average, minimum, maximum and count from a given endpoint
+    :param endpoint: the name of the endpoint
+    :return: simple statistics, as described above
+    """
     with session_scope() as db_session:
         query = text("""select
-                datetime(CAST(strftime('%s', time)/3600 AS INT)*3600, 'unixepoch') AS newTime, 
-                avg(execution_time) AS avg,
+                datetime(CAST(strftime('%s', time)/3600 AS INT)*3600, 'unixepoch') as newTime, 
+                avg(execution_time) as avg,
                 min(execution_time) as min,
                 max(execution_time) as max,
                 count(execution_time) as count
