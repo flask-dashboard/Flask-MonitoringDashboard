@@ -8,4 +8,4 @@ install:
   - python3 setup.py install
 
 script:
-  - cd dashboard/test && python3 __init__.py
+  - python3 dashboard/test/__init__.py
