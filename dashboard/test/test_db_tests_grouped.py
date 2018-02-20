@@ -32,8 +32,11 @@ class TestDBTestsGrouped(unittest.TestCase):
         """
             Test whether the function returns the right values.
         """
-        # TODO: Add function
-        pass
+        from dashboard.database.tests_grouped import add_tests_grouped, get_tests_grouped
+        json = [{'endpoint': 'endpoint', 'test_name': 'test_name'}]
+        self.assertEqual(len(get_tests_grouped()), len(TEST_NAMES))
+        add_tests_grouped(json)
+        self.assertEqual(len(get_tests_grouped()), len(TEST_NAMES)+1)
 
     def test_get_tests_grouped(self):
         """
