@@ -9,6 +9,9 @@ You can see the execution time and last access time per endpoint.
 
 Also, unit tests can be run by TravisCI and monitored.
 
+### Status
+[![Build Status](https://travis-ci.org/flask-dashboard/Flask-Monitoring-Dashboard.svg?branch=master)](https://travis-ci.org/flask-dashboard/Flask-Monitoring-Dashboard.svg?branch=master)
+
 Python version
 ==============
 The minimum Python version that we use for this project is Python 3.5. 
