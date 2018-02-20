@@ -55,7 +55,7 @@ def get_data_from(time_from):
                                   FunctionCall.time,
                                   FunctionCall.version,
                                   FunctionCall.group_by,
-                                  FunctionCall.ip).filter(FunctionCall.time >= time_from)
+                                  FunctionCall.ip).filter(FunctionCall.time >= time_from).all()
         db_session.expunge_all()
         return result
 

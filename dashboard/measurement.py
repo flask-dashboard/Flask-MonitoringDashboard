@@ -67,7 +67,7 @@ def track_performance(func, endpoint):
         endpoint_sum[endpoint] += t
         # check for being an outlier
         if average and float(t) > average:
-            add_outlier(endpoint, t, stack_info)
+            add_outlier(endpoint, t, stack_info, request)
 
         return result
 

@@ -76,7 +76,7 @@ class TestEndpoint(unittest.TestCase):
         from dashboard import config
         rule = get_monitor_rule(NAME)
         self.assertEqual(rule.endpoint, NAME)
-        self.assertFalse(rule.monitor)
+        self.assertTrue(rule.monitor)
         self.assertEqual(rule.version_added, config.version)
 
     def test_update_monitor_rule(self):
