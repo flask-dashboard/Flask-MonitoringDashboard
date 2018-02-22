@@ -1,24 +1,24 @@
+import datetime
 from functools import wraps
 
 from flask import make_response, render_template, session, request, jsonify
 
-from dashboard.database.monitor_rules import get_monitor_data
-from dashboard.security import admin_secure
+from dashboard import blueprint, config
 from dashboard.database.function_calls import get_data, get_data_from
+from dashboard.database.monitor_rules import get_monitor_data
 from dashboard.database.tests import add_or_update_test, add_test_result, get_suite_nr
 from dashboard.database.tests_grouped import reset_tests_grouped, add_tests_grouped
-from dashboard import blueprint, config
+from dashboard.security import admin_secure
 
-import datetime
+CSV_COLUMNS = ['endpoint', 'execution_time', 'time', 'version', 'group_by', 'ip']
 
 
 @blueprint.route('/download-csv')
 @admin_secure
 def download_csv():
-    csv = '"ENDPOINT","EXECUTION_TIME","TIME_OF_EXECUTION","VERSION","GROUP_BY","IP_ADDRESS"\n'
+    csv = ','.join(CSV_COLUMNS) + '\n'
     for entry in get_data():
-        csv += '"{}",{},"{}","{}","{}","{}"\n'.format(entry.endpoint, entry.execution_time, entry.time, entry.version,
-                                                      entry.group_by, entry.ip)
+        csv += ','.join([str(entry.__getattribute__(c)) for c in CSV_COLUMNS]) + '\n'
 
     response = make_response(csv)
     response.headers["Content-Disposition"] = "attachment; filename=measurements_{0}.csv".format(
@@ -29,11 +29,10 @@ def download_csv():
 @blueprint.route('/export-data')
 @admin_secure
 def export_data():
-    csv = ['"ENDPOINT","EXECUTION_TIME","TIME_OF_EXECUTION","VERSION","GROUP_BY","IP_ADDRESS"']
+    csv = [','.join(CSV_COLUMNS)]
     data = get_data()
     for entry in data:
-        csv.append('"{}","{}","{}","{}","{}","{}"'.format(entry.endpoint, entry.execution_time, entry.time,
-                                                          entry.version, entry.group_by, entry.ip))
+        csv.append(','.join([str(entry.__getattribute__(c)) for c in CSV_COLUMNS]) + '\n')
     return render_template('dashboard/export-data.html', link=config.link, session=session, data=csv)
 
 

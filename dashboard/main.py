@@ -23,8 +23,6 @@ dashboard.bind(app=user_app)
 
 @user_app.route('/')
 def main():
-    from flask import request
-    print(request.values)
     return redirect(url_for('dashboard.index'))
 
 

@@ -2,9 +2,11 @@
 Contains all functions that access any functionCall-object
 """
 
-from sqlalchemy import func, desc, text, asc
-from dashboard import config
 import datetime
+
+from sqlalchemy import func, desc, text, asc
+
+from dashboard import config
 from dashboard.database import session_scope, FunctionCall
 
 
@@ -50,12 +52,7 @@ def get_data_from(time_from):
         This function returns all data after the time_from date.
     """
     with session_scope() as db_session:
-        result = db_session.query(FunctionCall.endpoint,
-                                  FunctionCall.execution_time,
-                                  FunctionCall.time,
-                                  FunctionCall.version,
-                                  FunctionCall.group_by,
-                                  FunctionCall.ip).filter(FunctionCall.time >= time_from).all()
+        result = db_session.query(FunctionCall).filter(FunctionCall.time >= time_from).all()
         db_session.expunge_all()
         return result
 
@@ -83,7 +80,7 @@ def get_versions(end=None):
                                   func.min(FunctionCall.time).label('startedUsingOn')). \
             filter((FunctionCall.endpoint == end) | (end is None)).group_by(FunctionCall.version).order_by(
             asc('startedUsingOn')).all()
-    db_session.expunge_all()
+        db_session.expunge_all()
     return result
 
 
