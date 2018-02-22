@@ -12,10 +12,6 @@ Also, unit tests can be run by TravisCI and monitored.
 ### Status
 [![Build Status](https://travis-ci.org/flask-dashboard/Flask-Monitoring-Dashboard.svg?branch=master)](https://travis-ci.org/flask-dashboard/Flask-Monitoring-Dashboard.svg?branch=master)
 
-### Python version
-The minimum Python version that we use for this project is Python 3.5. 
-However, it will also work in Python 3.4, but we do not maintain support for this version.
-
 ### Testing
 If you want to run the unit test locally, use the following command
 ```
