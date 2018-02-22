@@ -8,4 +8,4 @@ python:
   - "3.6"
 
 script:
-  - python3 setup.py test
+  - python setup.py test
