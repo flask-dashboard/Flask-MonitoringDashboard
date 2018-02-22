@@ -12,14 +12,17 @@ Also, unit tests can be run by TravisCI and monitored.
 ### Status
 [![Build Status](https://travis-ci.org/flask-dashboard/Flask-Monitoring-Dashboard.svg?branch=master)](https://travis-ci.org/flask-dashboard/Flask-Monitoring-Dashboard.svg?branch=master)
 
-Python version
-==============
+### Python version
 The minimum Python version that we use for this project is Python 3.5. 
 However, it will also work in Python 3.4, but we do not maintain support for this version.
 
+### Testing
+If you want to run the unit test locally, use the following command
+```
+    python setup.py test
+```
 
-Installation
-============
+## Installation
 To install from source, download the source code, then run this:
 
     python setup.py install
@@ -28,8 +31,7 @@ Or install with pip:
     
     pip install flask_monitoring_dashboard
     
-Setup
-=====
+### Setup
 Adding the extension to your flask app is simple:
 
     from flask import Flask
@@ -50,8 +52,7 @@ to define an environment variable that specifies the location of this config fil
 The line should then be `dashboard.config.init_from(envvar='DASHBOARD_CONFIG')`. This will configure the dashboard based on the file 
 provided in the environment variable called `DASHBOARD_CONFIG`.
     
-Usage
-=====
+## Usage
 Once the setup is done, a config file ('config.cfg') should be set next to the python file that contains the entry point of the app.
 The following things can be configured:
 
@@ -76,8 +77,7 @@ When running your app, the dashboard van be viewed by default in the route:
 
     /dashboard
 
-TravisCI unit testing
-=====================
+## TravisCI unit testing
 To enable Travis to run your unit tests and send the results to the dashboard, four steps have to be taken:
 
 1. Update the config file ('config.cfg') to include three additional values, TEST_DIR, SUBMIT_RESULTS_URL and N.
@@ -107,7 +107,6 @@ The third command will start the actual performance collection process.
 This is done by the dashboard automatically when the blueprint is passed to the binding function like so: `dashboard.bind(app=app, blue_print=api)`.
 This extra method is needed for the logging, and without it, the unit test results cannot be grouped by endpoint that they test.
 
-Screenshots
-===========
+## Screenshots
 ![Screenshot 1](/docs/img/screenshot1.png)
 ![Screenshot 2](/docs/img/screenshot2.png)

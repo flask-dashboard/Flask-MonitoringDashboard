@@ -10,6 +10,7 @@ setuptools.setup(
     packages=setuptools.find_packages(),
     include_package_data=True,
     zip_safe=False,
+    test_suite='dashboard.test.start_testing',
     url='https://github.com/mircealungu/automatic-monitoring-dashboard',
     author="Patrick Vogel & Thijs Klooster",
     author_email="p.p.vogel@student.rug.nl",
