@@ -1,7 +1,7 @@
 import datetime
-from functools import wraps
+import jwt
 
-from flask import make_response, render_template, session, request, jsonify
+from flask import make_response, render_template, session, request, json
 
 from dashboard import blueprint, config
 from dashboard.database.function_calls import get_data, get_data_from
@@ -53,33 +53,12 @@ def submit_test_results():
     return '', 204
 
 
-def check_security_token(func):
+@blueprint.route('/get_json_data', defaults={'time_from': 0})
+@blueprint.route('/get_json_data/<time_from>')
+def get_json_data_from(time_from: int):
     """
-        Checks if the security_token that is provided in the route-function, is equivalent to the security_token in the
-        configuration file. For example. If the rule of the endpoint is: /endpoint/<security_token> and the actual
-        request is: /endpoint/1234, then request.view_args.get('security_token', '') returns '1234'
-        This function can be used as a decorator, to verify the security_token. If the verification fails, an empty
-        json-string is returned.
-    :param func: the endpoint to be wrapped. Note that the endpoint must have a rule of the form:
-    '.../<security_token>...' otherwise this decorator doesn't make sense.
-    """
-
-    @wraps(func)
-    def wrapper(*args, **kwargs):
-        if config and config.security_token == request.view_args.get('security_token', ''):
-            return func(*args, **kwargs)
-        return jsonify()
-
-    return wrapper
-
-
-@blueprint.route('/get_json_data/<security_token>', defaults={'time_from': 0})
-@blueprint.route('/get_json_data/<security_token>/<time_from>')
-@check_security_token
-def get_json_data_from(security_token: str, time_from: int):
-    """
-    Only get the data if the security token with the request is equivalent to the security token in the configuration.
-    :param security_token: security token to be specified.
+    The returned data is the data that is encrypted using a security token. This security token is set in the
+    configuration.
     :param time_from: (optional) if specified, only the data-values after this date are returned.
                       input must be an timestamp value (utc) (= integer)
     :return: all entries from the database. (endpoint-table)
@@ -96,17 +75,16 @@ def get_json_data_from(security_token: str, time_from: int):
                 'group_by': entry.group_by,
                 'ip': entry.ip
             })
-        return jsonify(data)
+        return jwt.encode({'data': json.dumps(data)}, config.security_token, algorithm='HS256')
     except ValueError as e:
         return 'ValueError: {}'.format(e)
 
 
-@blueprint.route('/get_json_monitor_rules/<security_token>')
-@check_security_token
-def get_json_monitor_rules(security_token: str):
+@blueprint.route('/get_json_monitor_rules')
+def get_json_monitor_rules():
     """
-    Only get the data if the security token with the request is equivalent to the security token in the configuration.
-    :param security_token: security token for accessing the data
+    The returned data is the data that is encrypted using a security token. This security token is set in the
+    configuration.
     :return: all entries from the database (rules-table)
     """
     data = []
@@ -120,6 +98,6 @@ def get_json_monitor_rules(security_token: str):
                 'time_added': str(entry.time_added),
                 'version_added': entry.version_added
             })
-        return jsonify(data)
+        return jwt.encode({'data': json.dumps(data)}, config.security_token, algorithm='HS256')
     except ValueError as e:
         return 'ValueError: {}'.format(e)

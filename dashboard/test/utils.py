@@ -7,8 +7,9 @@ NAME = 'main'
 IP = '127.0.0.1'
 GROUP_BY = '1'
 EXECUTION_TIMES = [1000, 2000, 3000, 4000, 50000]
-TIMES = [datetime.datetime.now(), datetime.datetime.now(), datetime.datetime.now(), datetime.datetime.now(),
-         datetime.datetime.now()]
+TIMES = [datetime.datetime.now()] * 5
+for i in range(len(TIMES)):
+    TIMES[i] += datetime.timedelta(seconds=i)
 TEST_NAMES = ['test_name1', 'test_name2']
 
 

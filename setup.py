@@ -6,7 +6,7 @@ with open('requirements.txt') as f:
 
 setuptools.setup(
     name="flask_monitoring_dashboard",
-    version="1.9",
+    version="1.10.0",
     packages=setuptools.find_packages(),
     include_package_data=True,
     zip_safe=False,
