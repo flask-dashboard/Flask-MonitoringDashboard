@@ -55,7 +55,7 @@ def submit_test_results():
 
 @blueprint.route('/get_json_data', defaults={'time_from': 0})
 @blueprint.route('/get_json_data/<time_from>')
-def get_json_data_from(time_from: int):
+def get_json_data_from(time_from):
     """
     The returned data is the data that is encrypted using a security token. This security token is set in the
     configuration.
