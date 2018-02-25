@@ -1,7 +1,8 @@
 import datetime
 import jwt
+import pkg_resources
 
-from flask import make_response, render_template, session, request, json
+from flask import make_response, render_template, session, request, json, jsonify
 
 from dashboard import blueprint, config
 from dashboard.database.function_calls import get_data, get_data_from
@@ -9,6 +10,7 @@ from dashboard.database.monitor_rules import get_monitor_data
 from dashboard.database.tests import add_or_update_test, add_test_result, get_suite_nr
 from dashboard.database.tests_grouped import reset_tests_grouped, add_tests_grouped
 from dashboard.security import admin_secure
+# from setup import VERSION
 
 CSV_COLUMNS = ['endpoint', 'execution_time', 'time', 'version', 'group_by', 'ip']
 
@@ -101,3 +103,13 @@ def get_json_monitor_rules():
         return jwt.encode({'data': json.dumps(data)}, config.security_token, algorithm='HS256')
     except ValueError as e:
         return 'ValueError: {}'.format(e)
+
+
+@blueprint.route('/get_json_details')
+def get_json_details():
+    """
+    Some details about the deployment, such as the current version, etc...
+    :return: a json-object with the details.
+    """
+    version = pkg_resources.require("flask_monitoring_dashboard")[0].version
+    return jsonify({'version': version})

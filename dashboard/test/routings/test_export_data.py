@@ -49,3 +49,12 @@ class TestExportData(unittest.TestCase):
         self.assertEqual(row['last_accessed'], u'None')
         self.assertTrue(row['monitor'])
         self.assertEqual(row['version_added'], config.version)
+
+    def test_get_json_details(self):
+        """
+            Test whether the response is as it should be.
+        """
+        result = self.app.get('dashboard/get_json_details').data
+        data = json.loads(result)
+        import pkg_resources
+        self.assertEqual(data['version'], pkg_resources.require("flask_monitoring_dashboard")[0].version)
