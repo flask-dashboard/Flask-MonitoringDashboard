@@ -10,7 +10,7 @@ You can see the execution time and last access time per endpoint.
 Also, unit tests can be run by TravisCI and monitored.
 
 ### Status
-[![Build Status](https://travis-ci.org/flask-dashboard/Flask-Monitoring-Dashboard.svg?branch=master)](https://travis-ci.org/flask-dashboard/Flask-Monitoring-Dashboard.svg?branch=master)
+[![Build Status](https://travis-ci.org/flask-dashboard/Flask-Monitoring-Dashboard.svg?branch=master)](https://travis-ci.org/flask-dashboard/Flask-Monitoring-Dashboard.svg)
 
 ### Testing
 If you want to run the unit test locally, use the following command
