@@ -1,0 +1,10 @@
+flask>=0.9         # for monitoring the web-service
+sqlalchemy>=1.1.9  # for database support
+wtforms>=2.1       # for generating forms
+flask_wtf          # also for generating forms
+plotly             # for generating graphs
+configparser       # for parsing the config-file
+psutil             # for logging extra CPU-info
+colorhash          # for hashing a string into a color
+requests           # for submitting unit test results
+PyJWT              # for json encryption/decryption
