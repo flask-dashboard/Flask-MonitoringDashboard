@@ -46,6 +46,6 @@ class TestExportData(unittest.TestCase):
         self.assertEqual(len(data), 1)
         row = data[0]
         self.assertEqual(row['endpoint'], NAME)
-        self.assertEqual(row['last_accessed'], None)
+        self.assertEqual(row['last_accessed'], u'None')
         self.assertTrue(row['monitor'])
         self.assertEqual(row['version_added'], config.version)
