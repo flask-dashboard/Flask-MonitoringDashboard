@@ -6,23 +6,23 @@
             <div class="panel-body">
                 <ul class="nav nav-tabs">
                     <li><a {{ 'class="active-menu" style="color: white;"'|safe if index == 0 }}
-                            href="{{ url_for('flask_monitoringdashboard.overview') }}">Overview</a></li>
+                            href="{{ url_for('dashboard.overview') }}">Overview</a></li>
                     <li><a {{ 'class="active-menu" style="color: white;"'|safe if index == 1 }}
-                            href="{{ url_for('flask_monitoringdashboard.heatmap') }}">Heatmap of number of requests</a></li>
+                            href="{{ url_for('dashboard.heatmap') }}">Heatmap of number of requests</a></li>
                     <li><a {{ 'class="active-menu" style="color: white;"'|safe if index == 2 }}
-                            href="{{ url_for('flask_monitoringdashboard.page_number_of_requests_per_endpoint') }}">Requests per
+                            href="{{ url_for('dashboard.page_number_of_requests_per_endpoint') }}">Requests per
                         endpoint</a></li>
                     <li><a {{ 'class="active-menu" style="color: white;"'|safe if index == 3 }}
-                            href="{{ url_for('flask_monitoringdashboard.page_boxplot_per_version') }}">Time per version</a></li>
+                            href="{{ url_for('dashboard.page_boxplot_per_version') }}">Time per version</a></li>
                     <li><a {{ 'class="active-menu" style="color: white;"'|safe if index == 4 }}
-                            href="{{ url_for('flask_monitoringdashboard.page_boxplot_per_endpoint') }}">Time per endpoint</a></li>
+                            href="{{ url_for('dashboard.page_boxplot_per_endpoint') }}">Time per endpoint</a></li>
                 </ul>
 
                 <div id="loading">
                     <div class="col-md-12 col-sm-12">
                         <br>
                         <center>
-                            <img src="{{ url_for('flask_monitoringdashboard.static', filename='assets/loading.gif') }}"
+                            <img src="{{ url_for('dashboard.static', filename='assets/loading.gif') }}"
                                  alt="Be patient..." align="center"/>
                         </center>
                     </div>

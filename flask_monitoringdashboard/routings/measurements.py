@@ -5,11 +5,11 @@ import plotly.graph_objs as go
 from flask import session, render_template
 
 from flask_monitoringdashboard import blueprint, config
-from flask_monitoringdashboard.database.endpoint import get_last_accessed_times, get_num_requests
-from flask_monitoringdashboard.database.function_calls import get_times, get_reqs_endpoint_day, get_versions, get_data_per_version, \
-    get_endpoints, get_data_per_endpoint
-from flask_monitoringdashboard.security import secure, is_admin
 from flask_monitoringdashboard.colors import get_color
+from flask_monitoringdashboard.database.endpoint import get_last_accessed_times, get_num_requests
+from flask_monitoringdashboard.database.function_calls import get_times, get_reqs_endpoint_day, get_versions, \
+    get_data_per_version, get_endpoints, get_data_per_endpoint
+from flask_monitoringdashboard.security import secure, is_admin
 
 
 @blueprint.route('/measurements/overview')

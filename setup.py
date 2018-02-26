@@ -12,7 +12,7 @@ with open('requirements.txt') as f:
     required = f.read().splitlines()
 
 setuptools.setup(
-    name=" Flask-MonitoringDashboard",
+    name="Flask-MonitoringDashboard",
     version="1.10.0",
     packages=setuptools.find_packages(),
     include_package_data=True,
@@ -22,7 +22,7 @@ setuptools.setup(
     url='https://github.com/flask-dashboard/Flask-MonitoringDashboard',
     author="Patrick Vogel & Thijs Klooster",
     author_email="p.p.vogel@student.rug.nl",
-    description="A dashboard for automatic monitoring of python web-services",
+    description="A dashboard for automatic monitoring of Flask web-services",
     long_description=desc(),
     install_requires=required,
     classifiers=[

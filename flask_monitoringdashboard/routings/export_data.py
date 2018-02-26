@@ -111,5 +111,5 @@ def get_json_details():
     Some details about the deployment, such as the current version, etc...
     :return: a json-object with the details.
     """
-    version = pkg_resources.require("flask_monitoring_dashboard")[0].version
+    version = pkg_resources.require("Flask-MonitoringDashboard")[0].version
     return jsonify({'version': version})

@@ -10,15 +10,17 @@ from unittest import TestLoader
 # Abort if config file is not specified.
 config = os.getenv('DASHBOARD_CONFIG')
 if config is None:
-    print('You must specify a config file for the flask_monitoringdashboard to be able to use the unit test monitoring functionality.')
+    print('You must specify a config file for the dashboard to be able to use the unit test monitoring functionality.')
     print('Please set an environment variable \'DASHBOARD_CONFIG\' specifying the absolute path to your config file.')
     sys.exit(0)
 
 # Abort if log directory is not specified.
 log_dir = os.getenv('DASHBOARD_LOG_DIR')
 if log_dir is None:
-    print('You must specify a log directory for the flask_monitoringdashboard to be able to use the unit test monitoring functionality.')
-    print('Please set an environment variable \'DASHBOARD_LOG_DIR\' specifying the absolute path where you want the log files to be placed.')
+    print('You must specify a log directory for the dashboard to be able to use the unit test monitoring '
+          'functionality.')
+    print('Please set an environment variable \'DASHBOARD_LOG_DIR\' specifying the absolute path where you want the '
+          'log files to be placed.')
     sys.exit(0)
 
 n = 1
@@ -27,15 +29,15 @@ sys.path.insert(0, os.getcwd())
 parser = configparser.RawConfigParser()
 try:
     parser.read(config)
-    if parser.has_option('flask_monitoringdashboard', 'N'):
-        n = int(parser.get('flask_monitoringdashboard', 'N'))
-    if parser.has_option('flask_monitoringdashboard', 'TEST_DIR'):
-        test_dir = parser.get('flask_monitoringdashboard', 'TEST_DIR')
+    if parser.has_option('dashboard', 'N'):
+        n = int(parser.get('dashboard', 'N'))
+    if parser.has_option('dashboard', 'TEST_DIR'):
+        test_dir = parser.get('dashboard', 'TEST_DIR')
     else:
         print('No test directory specified in your config file. Please do so.')
         sys.exit(0)
-    if parser.has_option('flask_monitoringdashboard', 'SUBMIT_RESULTS_URL'):
-        url = parser.get('flask_monitoringdashboard', 'SUBMIT_RESULTS_URL')
+    if parser.has_option('dashboard', 'SUBMIT_RESULTS_URL'):
+        url = parser.get('dashboard', 'SUBMIT_RESULTS_URL')
     else:
         print('No url specified in your config file for submitting test results. Please do so.')
 except configparser.Error as e:
@@ -96,6 +98,6 @@ for h in hits:
 if url:
     try:
         requests.post(url, json=data)
-        print('Sent unit test results to the flask_monitoringdashboard.')
+        print('Sent unit test results to the dashboard.')
     except Exception as e:
-        print('Sending unit test results to the flask_monitoringdashboard failed:\n{}'.format(e))
+        print('Sending unit test results to the dashboard failed:\n{}'.format(e))

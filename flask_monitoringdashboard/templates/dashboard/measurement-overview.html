@@ -6,25 +6,25 @@
             <div class="panel-body">
                 <ul class="nav nav-tabs">
                     <li><a {{ 'class="active-menu" style="color: white;"'|safe if index == 0 }}
-                            href="{{ url_for('flask_monitoringdashboard.overview') }}">Overview</a></li>
+                            href="{{ url_for('dashboard.overview') }}">Overview</a></li>
                     <li><a {{ 'class="active-menu" style="color: white;"'|safe if index == 1 }}
-                            href="{{ url_for('flask_monitoringdashboard.heatmap') }}">Heatmap of number of requests</a></li>
+                            href="{{ url_for('dashboard.heatmap') }}">Heatmap of number of requests</a></li>
                     <li><a {{ 'class="active-menu" style="color: white;"'|safe if index == 2 }}
-                            href="{{ url_for('flask_monitoringdashboard.page_number_of_requests_per_endpoint') }}">Requests per
+                            href="{{ url_for('dashboard.page_number_of_requests_per_endpoint') }}">Requests per
                         endpoint</a></li>
                     <li><a {{ 'class="active-menu" style="color: white;"'|safe if index == 3 }}
-                            href="{{ url_for('flask_monitoringdashboard.page_boxplot_per_version') }}">Time per version</a></li>
+                            href="{{ url_for('dashboard.page_boxplot_per_version') }}">Time per version</a></li>
                     <li><a {{ 'class="active-menu" style="color: white;"'|safe if index == 4 }}
-                            href="{{ url_for('flask_monitoringdashboard.page_boxplot_per_endpoint') }}">Time per endpoint</a></li>
+                            href="{{ url_for('dashboard.page_boxplot_per_endpoint') }}">Time per endpoint</a></li>
                 </ul>
 
                 {% if is_admin %}
                     <div class="panel-heading">
                         Overview
-                        <a href="{{ url_for('flask_monitoringdashboard.download_csv') }}"
+                        <a href="{{ url_for('dashboard.download_csv') }}"
                            class="btn btn-primary btn-sm right-align-custom">Download
                             CSV</a>
-                        <a href="{{ url_for('flask_monitoringdashboard.export_data') }}"
+                        <a href="{{ url_for('dashboard.export_data') }}"
                            class="btn btn-primary btn-sm right-align-custom">View
                             CSV</a>
                     </div>
@@ -57,7 +57,7 @@
                                     {% endfor %}
                                     <td style="text-align: right;">{{ ((record.average*10)|round)/10 }}</td>
                                     <td>
-                                        <a href="{{ url_for('flask_monitoringdashboard.result_heatmap', end=record.endpoint) }}"
+                                        <a href="{{ url_for('dashboard.result_heatmap', end=record.endpoint) }}"
                                            class="btn btn-default btn-sm right-align-custom">
                                             Details
                                         </a>

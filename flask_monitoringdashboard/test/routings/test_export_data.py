@@ -57,4 +57,4 @@ class TestExportData(unittest.TestCase):
         result = self.app.get('dashboard/get_json_details').data
         data = json.loads(result)
         import pkg_resources
-        self.assertEqual(data['version'], pkg_resources.require("flask_monitoring_dashboard")[0].version)
+        self.assertEqual(data['version'], pkg_resources.require("Flask-MonitoringDashboard")[0].version)

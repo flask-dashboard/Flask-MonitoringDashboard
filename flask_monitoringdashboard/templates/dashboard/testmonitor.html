@@ -43,7 +43,7 @@
                                                 {% if test.name in groups[group] %}
                                                     <tr>
                                                         <td>
-                                                            <a href="{{ url_for('flask_monitoringdashboard.test_result', test=test.name) }}">{{ test.name }}</a>
+                                                            <a href="{{ url_for('dashboard.test_result', test=test.name) }}">{{ test.name }}</a>
                                                             <br> <b
                                                                 style="color:green;">{{ " Succeeded" if test.succeeded }}</b>
                                                             <b style="color:red;">{{ " Failed" if test.succeeded == False }}</b>
@@ -106,7 +106,7 @@
                     <div class="col-md-12 col-sm-12">
                         <br>
                         <center>
-                            <img src="{{ url_for('flask_monitoringdashboard.static', filename='assets/loading.gif') }}"
+                            <img src="{{ url_for('dashboard.static', filename='assets/loading.gif') }}"
                                  alt="Be patient..." align="center"/>
                         </center>
                     </div>

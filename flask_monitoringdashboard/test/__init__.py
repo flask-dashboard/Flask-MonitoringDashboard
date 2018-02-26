@@ -15,5 +15,5 @@ import unittest
 def start_testing():
     # Finds all files that are located in a file named 'test_???.py', where ??? can be anything
     test_loader = unittest.TestLoader()
-    test_suite = test_loader.discover('dashboard.test', pattern='test_*.py')
+    test_suite = test_loader.discover('flask_monitoringdashboard.test', pattern='test_*.py')
     return test_suite

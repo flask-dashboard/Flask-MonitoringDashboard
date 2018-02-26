@@ -27,7 +27,7 @@ def loc():
 
 
 # define the blueprint
-blueprint = Blueprint('flask_monitoringdashboard', __name__, template_folder=loc() + 'templates')
+blueprint = Blueprint('dashboard', __name__, template_folder=loc() + 'templates')
 
 
 def bind(app, blue_print=None):

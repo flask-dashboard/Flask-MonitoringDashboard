@@ -14,8 +14,8 @@ class Config(object):
             Sets the default values for the project
         """
         self.version = '1.0'
-        self.link = 'flask_monitoringdashboard'
-        self.database_name = 'sqlite:///flask-flask_monitoringdashboard.db'
+        self.link = 'dashboard'
+        self.database_name = 'sqlite:///flask_monitoringdashboard.db'
         self.test_dir = None
         self.username = 'admin'
         self.password = 'admin'
@@ -30,10 +30,10 @@ class Config(object):
 
     def init_from(self, file=None, envvar=None):
         """
-            The config_file must at least contains the following variables in section 'flask_monitoringdashboard':
+            The config_file must at least contains the following variables in section 'dashboard':
             APP_VERSION: the version of the app that you use. Updating the version helps in 
                 showing differences in execution times of a function over a period of time.
-            CUSTOM_LINK: The flask_monitoringdashboard can be visited at localhost:5000/{{CUSTOM_LINK}}.
+            CUSTOM_LINK: The dashboard can be visited at localhost:5000/{{CUSTOM_LINK}}.
             DATABASE: Suppose you have multiple projects where you're working on and want to 
                 separate the results. Then you can specify different database_names, such that the 
                 result of each project is stored in its own database.
@@ -44,7 +44,7 @@ class Config(object):
             GIT = If you're using git, then it is easier to set the location to the .git-folder, 
                 The location is relative to the config-file.
 
-            USERNAME: for logging into the flask_monitoringdashboard, a username and password is required. The
+            USERNAME: for logging into the dashboard, a username and password is required. The
                 username can be set using this variable.
             PASSWORD: same as for the username, but this is the password variable.
             GUEST_USERNAME: A guest can only see the results, but cannot configure/download data.
@@ -75,22 +75,22 @@ class Config(object):
         parser = configparser.RawConfigParser()
         try:
             parser.read(file)
-            if parser.has_option('flask_monitoringdashboard', 'APP_VERSION'):
-                self.version = parser.get('flask_monitoringdashboard', 'APP_VERSION')
-            if parser.has_option('flask_monitoringdashboard', 'CUSTOM_LINK'):
-                self.link = parser.get('flask_monitoringdashboard', 'CUSTOM_LINK')
-            if parser.has_option('flask_monitoringdashboard', 'DATABASE'):
-                self.database_name = parser.get('flask_monitoringdashboard', 'DATABASE')
-            if parser.has_option('flask_monitoringdashboard', 'TEST_DIR'):
-                self.test_dir = parser.get('flask_monitoringdashboard', 'TEST_DIR')
+            if parser.has_option('dashboard', 'APP_VERSION'):
+                self.version = parser.get('dashboard', 'APP_VERSION')
+            if parser.has_option('dashboard', 'CUSTOM_LINK'):
+                self.link = parser.get('dashboard', 'CUSTOM_LINK')
+            if parser.has_option('dashboard', 'DATABASE'):
+                self.database_name = parser.get('dashboard', 'DATABASE')
+            if parser.has_option('dashboard', 'TEST_DIR'):
+                self.test_dir = parser.get('dashboard', 'TEST_DIR')
 
             # For manually defining colors of specific endpoints
-            if parser.has_option('flask_monitoringdashboard', 'COLORS'):
-                self.colors = ast.literal_eval(parser.get('flask_monitoringdashboard', 'COLORS'))
+            if parser.has_option('dashboard', 'COLORS'):
+                self.colors = ast.literal_eval(parser.get('dashboard', 'COLORS'))
 
             # When the option git is selected, it overrides the given version
-            if parser.has_option('flask_monitoringdashboard', 'GIT'):
-                git = parser.get('flask_monitoringdashboard', 'GIT')
+            if parser.has_option('dashboard', 'GIT'):
+                git = parser.get('dashboard', 'GIT')
                 try:
                     # current hash can be found in the link in HEAD-file in git-folder
                     # The file is specified by: 'ref: <location>'
@@ -105,24 +105,24 @@ class Config(object):
 
             # provide username and/or password ..
             # .. for admin
-            if parser.has_option('flask_monitoringdashboard', 'USERNAME'):
-                self.username = parser.get('flask_monitoringdashboard', 'USERNAME')
-            if parser.has_option('flask_monitoringdashboard', 'PASSWORD'):
-                self.password = parser.get('flask_monitoringdashboard', 'PASSWORD')
+            if parser.has_option('dashboard', 'USERNAME'):
+                self.username = parser.get('dashboard', 'USERNAME')
+            if parser.has_option('dashboard', 'PASSWORD'):
+                self.password = parser.get('dashboard', 'PASSWORD')
             # .. for guest (a guest can only see the results, but cannot configure or download any data)
-            if parser.has_option('flask_monitoringdashboard', 'GUEST_USERNAME'):
-                self.guest_username = parser.get('flask_monitoringdashboard', 'GUEST_USERNAME')
-            if parser.has_option('flask_monitoringdashboard', 'GUEST_PASSWORD'):
-                self.guest_password = ast.literal_eval(parser.get('flask_monitoringdashboard', 'GUEST_PASSWORD'))
+            if parser.has_option('dashboard', 'GUEST_USERNAME'):
+                self.guest_username = parser.get('dashboard', 'GUEST_USERNAME')
+            if parser.has_option('dashboard', 'GUEST_PASSWORD'):
+                self.guest_password = ast.literal_eval(parser.get('dashboard', 'GUEST_PASSWORD'))
 
             # when an outlier detection constant has been set up:
-            if parser.has_option('flask_monitoringdashboard', 'OUTLIER_DETECTION_CONSTANT'):
+            if parser.has_option('dashboard', 'OUTLIER_DETECTION_CONSTANT'):
                 self.outlier_detection_constant = ast.literal_eval(
-                    parser.get('flask_monitoringdashboard', 'OUTLIER_DETECTION_CONSTANT'))
+                    parser.get('dashboard', 'OUTLIER_DETECTION_CONSTANT'))
 
             # when a security token is provided:
-            if parser.has_option('flask_monitoringdashboard', 'security_token'):
-                self.security_token = parser.get('flask_monitoringdashboard', 'SECURITY_TOKEN')
+            if parser.has_option('dashboard', 'security_token'):
+                self.security_token = parser.get('dashboard', 'SECURITY_TOKEN')
 
         except configparser.Error:
             raise

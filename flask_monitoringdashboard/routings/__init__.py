@@ -24,7 +24,7 @@ def static(filename):
     return send_from_directory(loc() + 'static', filename)
 
 
-# All rules below are for viewing the flask_monitoringdashboard-pages
+# All rules below are for viewing the dashboard-pages
 @blueprint.route('/')
 def index():
-    return redirect(url_for('flask_monitoringdashboard.overview'))
+    return redirect(url_for('dashboard.overview'))
