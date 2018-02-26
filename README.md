@@ -1,13 +1,25 @@
-# Automatic monitoring dashboard
-Dashboard for automatic monitoring of python web services
+# Flask Monitoring Dashboard
+Dashboard for automatic monitoring of Flask web services.
 
-This is a flask extension that can be added to your existing flask application.
+The Flask Monitoring Dashboard provides 4 main functionalities:
+- **Monitor the Flask application:**
+This Flask extensions finds all your endpoints.
+You can choose which endpoints you want to monitor and which not.
+- **Monitor your test coverage:**
+Find out what endpoints are covered by unittest. 
+For more information, see Section 'TravisCI unit testing'.
+- **Collect extra information about outliers:**
+Outliers are requests that take way longer to process than regular requests.
+The dashboard stores more information about outliers, such as:
+    - The stacktrace in which it got stuck.
+    - Request values.
+    - Request headers.
+    - Request environment.
+- **Visualize the collected data in a number useful graphs:**
+The dashboard is automatically added to your existing Flask application.
+When running your app, the dashboard van be viewed by default in the route:
 
-It measures which python functions are heavily used and which are not. 
-
-You can see the execution time and last access time per endpoint.
-
-Also, unit tests can be run by TravisCI and monitored.
+    /dashboard
 
 ### Status
 [![Build Status](https://travis-ci.org/flask-dashboard/Flask-Monitoring-Dashboard.svg?branch=master)](https://travis-ci.org/flask-dashboard/Flask-Monitoring-Dashboard.svg)
@@ -68,10 +80,6 @@ The following things can be configured:
     COLORS={'main':[0,97,255], 'static':[255,153,0]}
 
 For more information, please refer to [this file](dashboard/config.py)
-
-When running your app, the dashboard van be viewed by default in the route:
-
-    /dashboard
 
 ## TravisCI unit testing
 To enable Travis to run your unit tests and send the results to the dashboard, four steps have to be taken:
