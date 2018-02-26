@@ -4,6 +4,7 @@
 """
 import time
 import datetime
+from flask import request
 from functools import wraps
 from dashboard import user_app, config
 from dashboard.database.monitor_rules import get_monitor_rules
@@ -59,14 +60,14 @@ def track_performance(func, endpoint):
         result = func(*args, **kwargs)
         time2 = time.time()
         t = (time2 - time1) * 1000
-        add_function_call(time=t, endpoint=endpoint)
+        add_function_call(time=t, endpoint=endpoint, ip=request.environ['REMOTE_ADDR'])
 
         # outlier detection
         endpoint_count[endpoint] += 1
         endpoint_sum[endpoint] += t
         # check for being an outlier
         if average and float(t) > average:
-            add_outlier(endpoint, t, stack_info)
+            add_outlier(endpoint, t, stack_info, request)
 
         return result
 

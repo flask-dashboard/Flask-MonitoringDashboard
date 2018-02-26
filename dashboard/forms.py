@@ -10,14 +10,14 @@ class MonitorDashboard(FlaskForm):
 
 class Login(FlaskForm):
     """ Used for serving a login form. """
-    name = StringField('Username', [validators.required()])
-    password = PasswordField('Password', [validators.required()])
+    name = StringField('Username', [validators.data_required()])
+    password = PasswordField('Password', [validators.data_required()])
     submit = SubmitField('Login')
 
 
 class ChangeSetting(FlaskForm):
     """ Used for changing the username or password that is required to login on the dashboard. """
-    username = StringField('Username', [validators.required()])
+    username = StringField('Username', [validators.data_required()])
     password = PasswordField('New password', [validators.equal_to(fieldname='confirm')])
     confirm = PasswordField('Confirm password')
     submit = SubmitField('Update changes')

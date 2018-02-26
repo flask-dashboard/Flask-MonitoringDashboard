@@ -1,9 +1,9 @@
 import datetime
-from flask import json, request
+from flask import json
 from dashboard.database import session_scope, Outlier
 
 
-def add_outlier(endpoint, execution_time, stack_info):
+def add_outlier(endpoint, execution_time, stack_info, request):
     """ Collects information (request-parameters, memory, stacktrace) about the request and adds it in the database. """
     with session_scope() as db_session:
         outlier = Outlier(endpoint=endpoint, request_values=json.dumps(request.values),
