@@ -1,0 +1,34 @@
+{% extends "dashboard/main.html" %}
+{% block content %}
+
+    <div class="row">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                {{ name }}
+            </div>
+            <div class="panel-body">
+
+                <div id="loading">
+                    <div class="col-md-12 col-sm-12">
+                        <br>
+                        <center>
+                            <img src="{{ url_for('flask_monitoringdashboard.static', filename='assets/loading.gif') }}"
+                                 alt="Be patient..." align="center"/>
+                        </center>
+                    </div>
+                </div>
+
+                <div class="col-md-12 col-sm-12">
+                    {{ boxplot|safe }}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        $(window).ready(function () {
+            $('#loading').hide();
+        });
+    </script>
+
+{% endblock %}

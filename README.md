@@ -5,6 +5,8 @@ The Flask Monitoring Dashboard provides 4 main functionalities:
 - **Monitor the Flask application:**
 This Flask extensions finds all your endpoints.
 You can choose which endpoints you want to monitor and which not.
+Monitoring and endpoint allows you to see which endpoints are being processed quickly, and which are not.
+Additionally, it provides information about the performance of the endpoint throughout different versions.
 - **Monitor your test coverage:**
 Find out what endpoints are covered by unittest. 
 For more information, see Section 'TravisCI unit testing'.
@@ -79,7 +81,7 @@ The following things can be configured:
     OUTLIER_DETECTION_CONSTANT=2.5
     COLORS={'main':[0,97,255], 'static':[255,153,0]}
 
-For more information, please refer to [this file](dashboard/config.py)
+For more information, please refer to [this file](flask_monitoringdashboard/config.py)
 
 ## TravisCI unit testing
 To enable Travis to run your unit tests and send the results to the dashboard, four steps have to be taken:
