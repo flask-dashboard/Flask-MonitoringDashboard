@@ -11,3 +11,4 @@ Please note that the changes before version 1.10.0 have not been documented.
 
 - Added security for automatic endpoint-data retrieval.
 - Added test for export_data-endpoints
+- Added MIT License.
