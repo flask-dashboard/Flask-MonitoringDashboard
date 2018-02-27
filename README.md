@@ -39,13 +39,13 @@ To install from source, download the source code, then run this:
 
 Or install with pip:
     
-    pip install flask_monitoring_dashboard
+    pip install flask_monitoringdashboard
     
 ### Setup
 Adding the extension to your flask app is simple:
 
     from flask import Flask
-    import dashboard
+    import flask_monitoringdashboard as dashboard
 
     user_app = Flask(__name__)
     dashboard.config.init_from(file='/<path to your config file>/config.cfg')
