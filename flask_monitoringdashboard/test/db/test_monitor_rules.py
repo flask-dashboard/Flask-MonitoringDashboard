@@ -6,7 +6,7 @@
 
 import unittest
 
-from flask_monitoringdashboard.test.utils import set_test_environment, clear_db, add_fake_data, NAME
+from flask_monitoringdashboard.test.utils import set_test_environment, clear_db, add_fake_data, NAME, TIMES
 
 
 class TestMonitorRule(unittest.TestCase):
@@ -27,7 +27,7 @@ class TestMonitorRule(unittest.TestCase):
         self.assertEqual(result[0].endpoint, NAME)
         self.assertTrue(result[0].monitor)
         self.assertEqual(result[0].version_added, config.version)
-        self.assertIsNone(result[0].last_accessed)
+        self.assertEqual(result[0].last_accessed, TIMES[0])
 
     def test_get_monitor_names(self):
         """

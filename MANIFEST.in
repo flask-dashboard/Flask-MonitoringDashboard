@@ -1,2 +1,2 @@
-recursive-include dashboard/static *
-recursive-include dashboard/templates *
+recursive-include flask_monitoringdashboard/static *
+recursive-include flask_monitoringdashboard/templates *

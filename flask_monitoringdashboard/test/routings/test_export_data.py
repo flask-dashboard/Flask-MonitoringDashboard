@@ -1,23 +1,42 @@
 import unittest
-import jwt
 
-from flask_monitoringdashboard.test.utils import set_test_environment, clear_db, add_fake_data, EXECUTION_TIMES, NAME, TIMES, GROUP_BY, \
-    IP
-from flask import Flask, json
+import jwt
+from flask import json
+
+from flask_monitoringdashboard.test.utils import set_test_environment, clear_db, add_fake_data, login, get_test_app, \
+    EXECUTION_TIMES, NAME, GROUP_BY, IP, TIMES
 
 
 class TestExportData(unittest.TestCase):
 
     def setUp(self):
         set_test_environment()
-        import flask_monitoringdashboard
-        user_app = Flask(__name__)
-        user_app.testing = True
-        flask_monitoringdashboard.config.get_group_by = lambda: '12345'
-        flask_monitoringdashboard.bind(app=user_app)
         clear_db()
         add_fake_data()
-        self.app = user_app.test_client()
+        self.app = get_test_app()
+
+    def test_download_csv(self):
+        """
+            Just retrieve the content and check if nothing breaks
+        """
+        self.assertEqual(302, self.app.get('dashboard/download-csv').status_code)
+        login(self.app)
+        self.assertEqual(200, self.app.get('dashboard/download-csv').status_code)
+
+    def test_export_data(self):
+        """
+            Just retrieve the content and check if nothing breaks
+        """
+        self.assertEqual(302, self.app.get('dashboard/export-data').status_code)
+        login(self.app)
+        self.assertEqual(200, self.app.get('dashboard/export-data').status_code)
+
+    def test_submit_test_results(self):
+        """
+            Just retrieve the content and check if nothing breaks
+        """
+        pass
+        # TODO: Implement function
 
     def test_get_json_data_from(self):
         """
@@ -46,7 +65,7 @@ class TestExportData(unittest.TestCase):
         self.assertEqual(len(data), 1)
         row = data[0]
         self.assertEqual(row['endpoint'], NAME)
-        self.assertEqual(row['last_accessed'], u'None')
+        self.assertEqual(row['last_accessed'], str(TIMES[0]))
         self.assertTrue(row['monitor'])
         self.assertEqual(row['version_added'], config.version)
 

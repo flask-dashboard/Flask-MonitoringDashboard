@@ -3,6 +3,8 @@
 """
 import datetime
 
+from flask import Flask
+
 NAME = 'main'
 IP = '127.0.0.1'
 GROUP_BY = '1'
@@ -42,7 +44,7 @@ def add_fake_data():
     # Add MonitorRule
     with session_scope() as db_session:
         db_session.add(MonitorRule(endpoint=NAME, monitor=True, time_added=datetime.datetime.now(),
-                                   version_added=config.version))
+                                   version_added=config.version, last_accessed=TIMES[0]))
 
     # Add Tests
     with session_scope() as db_session:
@@ -52,6 +54,31 @@ def add_fake_data():
     with session_scope() as db_session:
         for test_name in TEST_NAMES:
             db_session.add(TestsGrouped(endpoint=NAME, test_name=test_name))
+
+
+def get_test_app():
+    """
+    :return: Flask Test Application with the right settings
+    """
+    import flask_monitoringdashboard
+    user_app = Flask(__name__)
+    user_app.config['SECRET_KEY'] = flask_monitoringdashboard.config.security_token
+    user_app.testing = True
+    flask_monitoringdashboard.config.get_group_by = lambda: '12345'
+    flask_monitoringdashboard.bind(app=user_app)
+    return user_app.test_client()
+
+
+def login(test_app):
+    """
+    Used for setting the sessions, such that you have a fake login to the dashboard.
+    :param test_app:
+    """
+    from flask_monitoringdashboard import config
+    with test_app as c:
+        with c.session_transaction() as sess:
+            sess[config.link + '_logged_in'] = True
+            sess[config.link + '_admin'] = True
 
 
 def mean(numbers):
