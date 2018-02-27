@@ -25,6 +25,8 @@ When running your app, the dashboard van be viewed by default in the route:
 
 ### Status
 [![Build Status](https://travis-ci.org/flask-dashboard/Flask-Monitoring-Dashboard.svg?branch=master)](https://travis-ci.org/flask-dashboard/Flask-Monitoring-Dashboard.svg)
+[![Documentation Status](https://readthedocs.org/projects/flask-monitoringdashboard/badge/?version=latest)](http://flask-monitoringdashboard.readthedocs.io/en/latest/?badge=latest)
+
 
 ### Testing
 If you want to run the unit test locally, use the following command
