@@ -4,7 +4,7 @@ import setuptools
 def desc():
     info = open('README.md').read()
     try:
-        return info + '\n\n' + open('CHANGELOG.md').read()
+        return info + '\n\n' + open('CHANGELOG.rst').read()
     except IOError:
         return info
 
