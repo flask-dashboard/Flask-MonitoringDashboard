@@ -13,7 +13,7 @@ with open('requirements.txt') as f:
 
 setuptools.setup(
     name="Flask-MonitoringDashboard",
-    version="1.10.2",
+    version="1.10.3",
     packages=setuptools.find_packages(),
     include_package_data=True,
     platforms='Any',
@@ -36,5 +36,11 @@ setuptools.setup(
         'Programming Language :: Python :: 3.3',
         'Programming Language :: Python :: 3.4',
         'Programming Language :: Python :: 3.5',
-        'Programming Language :: Python :: 3.6']
+        'Programming Language :: Python :: 3.6'],
+    project_urls={
+        'Bug Reports': 'https://github.com/flask-dashboard/Flask-MonitoringDashboard/issues',
+        'PyPi': 'https://pypi.org/project/Flask-MonitoringDashboard/',
+        'Documentation': 'http://flask-monitoringdashboard.readthedocs.io/',
+        'Source': 'https://github.com/flask-dashboard/Flask-MonitoringDashboard/',
+    },
 )
