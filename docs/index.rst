@@ -53,13 +53,16 @@ If you are interested in the Flask Monitoring Dashboard, you can find more infor
    :maxdepth: 2
 
    installation
+   
    configuration
+   
    functionality
 
 Developer information
 ---------------------
 .. toctree::
-   :maxdepth: 1
+   :maxdepth: 2
 
    contact
+   
    changelog

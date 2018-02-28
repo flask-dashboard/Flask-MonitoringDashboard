@@ -14,7 +14,7 @@
 
 import os
 import sys
-sys.path.insert(0, os.path.abspath('..'))	
+sys.path.insert(0, os.path.abspath('../flask-monitoringdashboard'))	
 
 
 # -- Project information -----------------------------------------------------
@@ -90,6 +90,8 @@ html_theme = 'flask'
 html_theme_options = {
     'github_fork': 'https://github.com/flask-dashboard/Flask-MonitoringDashboard'
 }
+
+html_sidebars = {'**': ['globaltoc.html', 'searchbox.html', 'sourcelink.html']}
 
 # Add any paths that contain custom static files (such as style sheets) here,
 # relative to this directory. They are copied after the builtin static files,
