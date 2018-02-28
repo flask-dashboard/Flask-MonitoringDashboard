@@ -5,7 +5,7 @@
 # This file does only contain a selection of the most common options. For a
 # full list see the documentation:
 # http://www.sphinx-doc.org/en/stable/config
-
+import pkg_resources
 # -- Path setup --------------------------------------------------------------
 
 # If extensions (or modules to document with autodoc) are in another directory,
@@ -23,10 +23,8 @@ project = 'Flask-MonitoringDashboard'
 copyright = '2018, Patrick Vogel & Thijs Klooster'
 author = 'Patrick Vogel & Thijs Klooster'
 
-# The short X.Y version
-version = '1.10.0'
-# The full version, including alpha/beta/rc tags
-release = '1.10.0'
+version = pkg_resources.require("Flask-MonitoringDashboard")[0].version
+release = pkg_resources.require("Flask-MonitoringDashboard")[0].version
 
 
 # -- General configuration ---------------------------------------------------
