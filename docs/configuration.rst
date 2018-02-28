@@ -5,8 +5,8 @@ you can use the advanced features by correctly configuration the dashboard.
 
 Using a configuration file
 --------------------------
-You can use a configuration file for all options.
-This is explained in the section below.
+You can use a configuration file for all options below.
+This is explained in the following section.
 In order to configure the dashboard with the configuration-file, you can use the following function:
 
 .. code-block:: python
@@ -22,6 +22,7 @@ Thus, it becomes:
 
    app = Flask(__name__)
    dashboard.config.init_from(file='/<path to file>/config.cfg')
+   # Make sure that you first configure the dashboard, before binding it to your Flask application
    dashboard.bind(app)
    ...
 
@@ -32,7 +33,7 @@ Thus, it becomes:
    if __name__ == '__main__':
      app.run(debug=True)
 
-Instead of having a hardcoded string containing the location of the config file in the code above, it is also possible
+Instead of having a hard-coded string containing the location of the config file in the code above, it is also possible
 to define an environment variable that specifies the location of this config file.
 The line should then be:
 
@@ -107,3 +108,7 @@ This might look a bit overwhelming, but the following list explains everything i
 
      COLORS={'main':[0,97,255], 'static':[255,153,0]}
 
+What have you configured?
+-------------------------
+A lot of configuration options, but you might wonder what functionality is now supported in your Flask Monitoring Dashboard?
+Have a look at `this file <functionality.html>`_ to find the answer.

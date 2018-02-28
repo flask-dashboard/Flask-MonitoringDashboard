@@ -19,12 +19,12 @@ In the former case, you're ok. In the latter, you can follow
 
 Installing a Virtual Environment (Optional)
 -------------------------------------------
-Although you don't explicitly need a Virtual Environment, it is highly recommend.
+Although you don't need a Virtual Environment, it is highly recommend.
 See `this page <https://virtualenv.pypa.io/en/stable/installation/>`_ to install a Virtual Environment.
 
 Configuring the Virtual Environment (Optional)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-If you have skipped the previous section, you can also skip this one.
+If you have skipped the previous section, you can also skip this one (since it's optional).
 Once you've installed the Virtual Environment, you need to configure it.
 This can be done by the following command:
 
