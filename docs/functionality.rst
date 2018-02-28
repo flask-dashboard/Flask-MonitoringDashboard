@@ -218,3 +218,8 @@ The 'Measurements'-tab contains the following content:
      to detect if there is a difference in the execution time between users.
 
    - **Outliers:** See Section (Outliers) above.
+
+Need more information?
+----------------------
+See the `contact page <contact.html>`_ to see how you can contribute on the project.
+Furthermore you can request this page for questions, bugs, or other information. 
