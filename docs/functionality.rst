@@ -110,7 +110,7 @@ To enable Travis to run your unit tests and send the results to the dashboard, f
 
        dependency_links=["https://github.com/flask-dashboard/Flask-MonitoringDashboard/tarball/master#egg=flask_monitoringdashboard"]
 
-       install_requires=('flask_monitoring_dashboard')
+       install_requires=('flask_monitoringdashboard')
 
 3. In your `.travis.yml` file, three script commands should be added:
 
@@ -118,7 +118,7 @@ To enable Travis to run your unit tests and send the results to the dashboard, f
 
        export DASHBOARD_CONFIG=./config.cfg
        export DASHBOARD_LOG_DIR=./logs/
-       python -m dashboard.collect_performance
+       python -m flask_monitoringdashboard.collect_performance
 
   The config environment variable specifies where the performance collection process can find the config file.
   The log directory environment variable specifies where the performance collection process should place the logs it uses.
