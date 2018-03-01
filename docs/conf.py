@@ -86,7 +86,7 @@ html_theme = 'flask'
 # documentation.
 #
 html_theme_options = {
-    'github_fork': 'https://github.com/flask-dashboard/Flask-MonitoringDashboard'
+    'github_fork': 'flask-dashboard/Flask-MonitoringDashboard'
 }
 
 html_sidebars = {'**': ['globaltoc.html', 'searchbox.html', 'sourcelink.html']}

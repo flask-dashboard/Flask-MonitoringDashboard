@@ -1,27 +1,23 @@
 # Flask Monitoring Dashboard
-Dashboard for automatic monitoring of Flask web services.
+Dashboard for automatic monitoring of Flask web-services.
 
-The Flask Monitoring Dashboard provides 4 main functionalities:
+The Flask Monitoring Dashboard is an extension that offers 4 main functionalities with little effort from the Flask developer:
 - **Monitor the Flask application:**
-This Flask extensions finds all your endpoints.
-You can choose which endpoints you want to monitor and which not.
-Monitoring and endpoint allows you to see which endpoints are being processed quickly, and which are not.
-Additionally, it provides information about the performance of the endpoint throughout different versions and different users.
+Our Dashboard allows you to see which endpoints process a lot of request and how fast. 
+Additionally, it provides information about the evolving performance of an endpoint throughout different versions if you’re using git.
 - **Monitor your test coverage:**
-Find out what endpoints are covered by unittest. 
+The dashboard allows you to find out which endpoints are covered by unit tests, allowing also for integration with Travis for automation purposes. 
 For more information, see [this file](http://flask-monitoringdashboard.readthedocs.io/en/latest/functionality.html#test-coverage-monitoring).
 - **Collect extra information about outliers:**
-Outliers are requests that take way longer to process than regular requests.
-The dashboard stores more information about outliers, such as:
-    - The stacktrace in which it got stuck.
-    - Request values.
-    - Request headers.
-    - Request environment.
+Outliers are requests that take much longer to process than regular requests. 
+The dashboard automatically detects that a request is an outlier and stores extra information about it (stack trace, request values, Request headers, Request environment).
 - **Visualize the collected data in a number useful graphs:**
 The dashboard is automatically added to your existing Flask application.
-When running your app, the dashboard van be viewed by default in the route:
+You can view the results by default using the default endpoint (this can be configured to another route):
 
     [/dashboard](http://localhost:5000/dashboard)
+
+For a more advanced documentation, take a look at the information on [this site](http://flask-monitoringdashboard.readthedocs.io/en/latest/functionality.html).
 
 ### Status
 [![Build Status](https://travis-ci.org/flask-dashboard/Flask-MonitoringDashboard.svg?branch=master)](https://travis-ci.org/flask-dashboard/Flask-MonitoringDashboard.svg?branch=master)
