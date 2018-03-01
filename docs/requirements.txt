@@ -1,2 +1,3 @@
+Flask-MonitoringDashboard
 Sphinx
 Flask-Sphinx-Themes
