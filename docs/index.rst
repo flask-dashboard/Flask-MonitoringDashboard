@@ -55,5 +55,7 @@ Developer information
    :maxdepth: 2
 
    contact
+
+   todo
    
    changelog
