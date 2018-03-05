@@ -32,6 +32,12 @@ This can be done by the following command:
 
    virtualenv ENV
 
+Or using the following command for Python3:
+
+.. code-block:: bash
+
+   virtualenv --python=python3 ENV
+
 Activate the Virtual Environment (Optional)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 This is the last part of the configuring the virtual environment.
@@ -44,7 +50,7 @@ It is (again) one simple command:
 
 Installing the Flask Monitoring Dashboard Package
 -------------------------------------------------
-Using the command below, you can install the Flask Monitoring Dashboard:
+You can install the Flask Monitoring Dashboard using the command below:
 
 .. code-block:: bash
 
@@ -61,7 +67,7 @@ Alternatively, you can install the Flask Monitoring Dashboard from
 
 Setup the Flask Monitoring Dashboard
 -------------------------------------
-Once you've successfully installed the package, you can use it in your code.
+After you've successfully installed the package, you can use it in your code.
 Suppose that you've already a Flask application that looks like this:
 
 .. code-block:: python
@@ -79,7 +85,7 @@ Suppose that you've already a Flask application that looks like this:
    if __name__ == '__main__':
      app.run(debug=True)
 
-With only two lines of code, you can add the extension to your Flask application:
+You can add the extension to your Flask application with only two lines of code:
 
 .. code-block:: python
 
@@ -108,5 +114,6 @@ Together, it becomes:
 
 Further configuration
 ---------------------
-You are now ready for using the Flask Monitoring Dashboard.
-For a more advanced used, which we recommend, have a look at `the configuration page <configuration.html>`_.
+You are now ready for using the Flask Monitoring Dashboard, and you can already view the dashboard at: `dashboard <http://localhost:5000/dashboard>`_.
+
+However, the Dashboard offers many functionality which have to be configured. This is explained on `the configuration page <configuration.html>`_.

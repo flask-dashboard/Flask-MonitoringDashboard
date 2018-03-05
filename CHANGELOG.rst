@@ -6,7 +6,14 @@ This project adheres to `Semantic Versioning <http://semver.org/>`_.
 Please note that the changes before version 1.10.0 have not been documented.
 
 Unreleased
--------------------------------------------------------------------------
+----------
+Changed
+
+- Added TODO List
+
+
+v1.10.0
+----------
 Changed
 
 - Added security for automatic endpoint-data retrieval.

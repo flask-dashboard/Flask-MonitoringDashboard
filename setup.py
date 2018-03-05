@@ -13,7 +13,7 @@ with open('requirements.txt') as f:
 
 setuptools.setup(
     name="Flask-MonitoringDashboard",
-    version="1.10.3",
+    version="1.10.4",
     packages=setuptools.find_packages(),
     include_package_data=True,
     platforms='Any',

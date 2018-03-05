@@ -11,6 +11,8 @@ from threading import Thread, enumerate
 import sys
 import psutil
 
+LOG_FILE = 'stacktrace.log'
+
 
 class StackInfo(object):
     def __init__(self, average):
@@ -22,8 +24,8 @@ class StackInfo(object):
         try:
             thread = Thread(target=log_stack_trace, args=(self,))
             thread.start()
-        except Exception:
-            print('Can\'t log traceback information')
+        except Exception as e:
+            print('Can\'t log traceback information: {}'.format(e))
             traceback.print_exc()
 
 
@@ -36,17 +38,17 @@ def log_stack_trace(stack_info):
     try:
         for th in enumerate():
             try:
-                f = open('stacktrace.log', 'w+')
+                f = open(LOG_FILE, 'w')
                 stack_list.extend(['', str(th)])
                 traceback.print_stack(sys._current_frames()[th.ident], file=f)
                 f.close()
-                f = open('stacktrace.log', 'r')
+                f = open(LOG_FILE, 'r')
                 stack_list.extend(f.readlines())
-            except Exception:
-                print('Exception occurred:')
+            except Exception as e:
+                print('Exception occurred: {}'.format(e))
                 traceback.print_exc()
-    except Exception:
-        print('Exception occurred: ')
+    except Exception as e:
+        print('Exception occurred: {}'.format(e))
         traceback.print_exc()
 
     # Set the values in the object
