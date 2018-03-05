@@ -42,11 +42,11 @@ def log_stack_trace(stack_info):
                 f.close()
                 f = open('stacktrace.log', 'r')
                 stack_list.extend(f.readlines())
-            except Exception:
-                print('Exception occurred:')
+            except Exception as e:
+                print('Exception occurred: {}'.format(e))
                 traceback.print_exc()
-    except Exception:
-        print('Exception occurred: ')
+    except Exception as e:
+        print('Exception occurred: {}'.format(e))
         traceback.print_exc()
 
     # Set the values in the object
