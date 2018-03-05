@@ -7,7 +7,7 @@
 
 import time
 import traceback
-from threading import Thread, enumerate
+from threading import Thread
 import sys
 import psutil
 
@@ -33,23 +33,14 @@ def log_stack_trace(stack_info):
     # average is in ms, sleep requires seconds
     time.sleep(stack_info.average / 1000.0)
 
-    # iterate through every active thread and get the stack-trace
+    # iterate through every active thread and store the stack-trace
     stack_list = []
-    try:
-        for th in enumerate():
-            try:
-                f = open(LOG_FILE, 'w')
-                stack_list.extend(['', str(th)])
-                traceback.print_stack(sys._current_frames()[th.ident], file=f)
-                f.close()
-                f = open(LOG_FILE, 'r')
-                stack_list.extend(f.readlines())
-            except Exception as e:
-                print('Exception occurred: {}'.format(e))
-                traceback.print_exc()
-    except Exception as e:
-        print('Exception occurred: {}'.format(e))
-        traceback.print_exc()
+    for thread_id, stack in sys._current_frames().items():
+        stack_list.append("\n# Thread_id: %s" % thread_id)
+        for filename, lineno, name, line in traceback.extract_stack(stack):
+            stack_list.append('File: "%s", line %d, in %s' % (filename, lineno, name))
+            if line:
+                stack_list.append("  %s" % (line.strip()))
 
     # Set the values in the object
     stack_info.stacktrace = '<br />'.join(stack_list)
