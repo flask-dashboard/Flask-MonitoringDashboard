@@ -11,6 +11,8 @@ Changed
 
 - Added TODO List
 
+- Updated functionality to retrieve the stacktrace of an Outlier
+
 
 v1.10.0
 ----------
