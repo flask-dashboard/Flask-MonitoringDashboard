@@ -1,7 +1,7 @@
 # Flask Monitoring Dashboard
 Dashboard for automatic monitoring of Flask web-services.
 
-The Flask Monitoring Dashboard is an extension that offers 4 main functionalities with little effort from the Flask developer:
+The Flask Monitoring Dashboard is an extension that offers four main functionalities with little effort from the Flask developer:
 - **Monitor the Flask application:**
 Our Dashboard allows you to see which endpoints process a lot of request and how fast. 
 Additionally, it provides information about the evolving performance of an endpoint throughout different versions if you’re using git.
