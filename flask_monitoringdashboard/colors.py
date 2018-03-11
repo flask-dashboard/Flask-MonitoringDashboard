@@ -1,5 +1,6 @@
 from colorhash import ColorHash
 from flask_monitoringdashboard import config
+import re
 
 
 def get_color(hash):
@@ -10,7 +11,7 @@ def get_color(hash):
     :return: a color (as string)
     """
     if hash in config.colors:
-        rgb = config.colors[hash]
+        rgb = re.findall(r'\d+', config.colors[hash])
     else:
         rgb = ColorHash(hash).rgb
     return 'rgb({0}, {1}, {2})'.format(rgb[0], rgb[1], rgb[2])

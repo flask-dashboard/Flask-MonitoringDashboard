@@ -13,6 +13,7 @@ Changed
 
 - Updated functionality to retrieve the stacktrace of an Outlier
 
+- Fixed bug with white colors from the config option
 
 v1.10.0
 ----------
