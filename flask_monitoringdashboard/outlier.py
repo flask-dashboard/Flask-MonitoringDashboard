@@ -11,8 +11,6 @@ from threading import Thread
 import sys
 import psutil
 
-LOG_FILE = 'stacktrace.log'
-
 
 class StackInfo(object):
     def __init__(self, average):
