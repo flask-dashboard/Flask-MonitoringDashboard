@@ -4,27 +4,26 @@
 """
 
 from flask import Flask, redirect, url_for
-import flask_monitoringdashboard as dashboard
-import os
-
-user_app = Flask(__name__)
-here = os.path.abspath(os.path.dirname(__file__))
-dashboard.config.init_from(file=here + '/config.cfg')
 
 
-def get_session_id():
-    # implement here your own custom function
-    return '12345'
+def create_app():
+    import flask_monitoringdashboard as dashboard
 
+    app = Flask(__name__)
 
-dashboard.config.get_group_by = get_session_id
-dashboard.bind(app=user_app)
+    def get_session_id():
+        # implement here your own custom function
+        return '12345'
 
+    dashboard.config.get_group_by = get_session_id
+    dashboard.bind(app=app)
 
-@user_app.route('/')
-def main():
-    return redirect(url_for('dashboard.index'))
+    @app.route('/')
+    def main():
+        return redirect(url_for('dashboard.index'))
+
+    return app
 
 
 if __name__ == '__main__':
-    user_app.run(debug=True, host='0.0.0.0')
+    create_app().run(debug=True, host='0.0.0.0')

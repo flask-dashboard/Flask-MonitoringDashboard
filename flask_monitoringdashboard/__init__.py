@@ -15,7 +15,6 @@
 import os
 from flask import Blueprint
 from flask_monitoringdashboard.config import Config
-from unittest import TestLoader
 
 config = Config()
 user_app = None
@@ -40,6 +39,11 @@ def bind(app, blue_print=None):
     assert app is not None
     global user_app, blueprint
     user_app = app
+
+    # Provide a secret-key for using WTF-forms
+    if not user_app.secret_key:
+        print('WARNING: You should provide a security key.')
+        user_app.secret_key = 'my-secret-key'
 
     if blue_print:
         import os

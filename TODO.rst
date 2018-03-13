@@ -21,6 +21,8 @@ Features to be implemented
   - Page '/result/<endpoint>/time_per_version' - Max 10 versions per plot.
   - Page '/result/<endpoint>/outliers' - Max 20 results per table.
 
+[ ] Refactor all measurement-endpoints in a Blueprint
+
 Work in progress
 ----------------
 *Use this section if someone is already working on an item above.*
