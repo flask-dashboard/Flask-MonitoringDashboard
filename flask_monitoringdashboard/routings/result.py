@@ -9,13 +9,13 @@ from werkzeug.routing import BuildError
 from wtforms import SelectMultipleField, SubmitField
 
 from flask_monitoringdashboard import blueprint, config
-from flask_monitoringdashboard.database import FunctionCall
+from flask_monitoringdashboard.database import FunctionCall, Outlier
 from flask_monitoringdashboard.database.endpoint import get_endpoint_column, get_endpoint_results, get_monitor_rule, \
     get_line_results, get_all_measurement_per_column, get_endpoint_column_user_sorted, get_all_measurement
 from flask_monitoringdashboard.database.function_calls import get_versions
 from flask_monitoringdashboard.security import secure
 from flask_monitoringdashboard.routings.measurements import get_heatmap
-from flask_monitoringdashboard.database.outlier import get_outliers
+from flask_monitoringdashboard.database.outlier import get_outliers_sorted
 from flask_monitoringdashboard.colors import get_color
 
 # Constants
@@ -94,7 +94,7 @@ def result_outliers(end):
     rule = get_monitor_rule(end)
     url = get_url(end)
     return render_template('endpoint/outliers.html', link=config.link, session=session, rule=rule, url=url,
-                           end=end, index=7, table=get_outliers(end))
+                           end=end, index=7, table=get_outliers_sorted(end, Outlier.execution_time))
 
 
 def formatter(ms):

@@ -30,5 +30,5 @@ class TestMonitorRule(unittest.TestCase):
         """
             Test whether the function returns the right values.
         """
-        from flask_monitoringdashboard.database.outlier import get_outliers
-        self.assertEqual(get_outliers(NAME), [])
+        from flask_monitoringdashboard.database.outlier import get_outliers_sorted, Outlier
+        self.assertEqual(get_outliers_sorted(NAME, Outlier.time), [])

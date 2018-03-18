@@ -5,29 +5,41 @@
         <div class="table-responsive" style="overflow-x: scroll;">
             <table class="table table-striped table-bordered table-hover">
                 <tr>
-                    <th>Date</th>
-                    <th>Execution time (in ms)</th>
-                    <th>Request values</th>
-                    <th>Request headers</th>
-                    <th>Request environment</th>
-                    <th>Request url</th>
-                    <th>Cpu percent</th>
-                    <th>Memory</th>
-                    <th>Stacktrace</th>
+                    <td><strong>Date</strong></td>
+                    {% for row in table %}<td>{{ row.time }}</td>{% endfor %}
                 </tr>
-                {% for row in table %}
-                    <tr>
-                        <td style="max-width: 200px; word-wrap: break-word;">{{ row.time }}</td>
-                        <td style="max-width: 200px; word-wrap: break-word;">{{ row.execution_time }}</td>
-                        <td style="max-width: 300px; word-wrap: break-word;">{{ row.request_values }}</td>
-                        <td style="max-width: 300px; word-wrap: break-word;">{{ row.request_headers }}</td>
-                        <td style="max-width: 300px; word-wrap: break-word;">{{ row.request_environment }}</td>
-                        <td style="max-width: 200px; word-wrap: break-word;">{{ row.request_url }}</td>
-                        <td style="max-width: 100px; word-wrap: break-word;">{{ row.cpu_percent }}</td>
-                        <td style="max-width: 300px; word-wrap: break-word;">{{ row.memory }}</td>
-                        <td style="max-width: 600px; word-wrap: break-word;">{{ row.stacktrace|safe }}</td>
-                    </tr>
-                {% endfor %}
+                <tr>
+                    <td><strong>Execution time (in ms)</strong></td>
+                    {% for row in table %}<td>{{ row.execution_time }}</td>{% endfor %}
+                </tr>
+                <tr>
+                    <td><strong>Request values</strong></td>
+                    {% for row in table %}<td>{{ row.request_values }}</td>{% endfor %}
+                </tr>
+                <tr>
+                    <td><strong>Request headers</strong></td>
+                    {% for row in table %}<td>{{ row.request_headers }}</td>{% endfor %}
+                </tr>
+                <tr>
+                    <td><strong>Request environment</strong></td>
+                    {% for row in table %}<td>{{ row.request_environment }}</td>{% endfor %}
+                </tr>
+                <tr>
+                    <td><strong>Request url</strong></td>
+                    {% for row in table %}<td>{{ row.request_url }}</td>{% endfor %}
+                </tr>
+                <tr>
+                    <td><strong>Cpu percent</strong></td>
+                    {% for row in table %}<td>{{ row.cpu_percent }}</td>{% endfor %}
+                </tr>
+                <tr>
+                    <td><strong>Memory</strong></td>
+                    {% for row in table %}<td>{{ row.memory }}</td>{% endfor %}
+                </tr>
+                <tr>
+                    <td><strong>Stacktrace</strong></td>
+                    {% for row in table %}<td>{{ row.stacktrace|safe }}</td>{% endfor %}
+                </tr>
             </table>
         </div>
     </div>
