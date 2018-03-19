@@ -2,18 +2,19 @@ import setuptools
 
 
 def desc():
-    info = open('README.md').read()
-    try:
-        return info + '\n\n' + open('CHANGELOG.rst').read()
-    except IOError:
-        return info
+    info = ''
+    with open('README.md', encoding='utf-8') as readme:
+        info = readme.read()
+        with open('CHANGELOG.rst', encoding='utf-8') as changelog:
+            info = info + '\n\n' + changelog.read()
+    return info
 
 with open('requirements.txt') as f:
     required = f.read().splitlines()
 
 setuptools.setup(
     name="Flask-MonitoringDashboard",
-    version='1.10.5',
+    version='1.10.6',
     packages=setuptools.find_packages(),
     include_package_data=True,
     platforms='Any',
