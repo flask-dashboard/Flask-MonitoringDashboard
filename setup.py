@@ -1,12 +1,12 @@
 import setuptools
+import io
 
 
 def desc():
-    info = ''
-    with open('README.md', encoding='utf-8') as readme:
+    with open('README.md') as readme:
         info = readme.read()
-        with open('CHANGELOG.rst', encoding='utf-8') as changelog:
-            info = info + '\n\n' + changelog.read()
+    with open('CHANGELOG.rst') as changelog:
+        info = info + '\n\n' + changelog.read()
     return info
 
 with open('requirements.txt') as f:
