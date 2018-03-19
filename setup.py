@@ -10,7 +10,7 @@ def desc():
         with open(loc + '/CHANGELOG.rst') as changelog:
             return info + '\n\n' + changelog.read()
     except Exception as e:
-        print('Unable to retrieve setup: {}'.format(e))
+        print('Unable to retrieve description: {}'.format(e))
         return 'long_description'
 
 with open(loc + '/requirements.txt') as f:
