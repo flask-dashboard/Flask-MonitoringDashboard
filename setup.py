@@ -1,15 +1,17 @@
 import setuptools
 import io
+import os
+loc = os.path.dirname(os.path.abspath(__file__))
 
 
 def desc():
-    with open('README.md') as readme:
+    with open(loc + 'README.md') as readme:
         info = readme.read()
-    with open('CHANGELOG.rst') as changelog:
+    with open(loc + 'CHANGELOG.rst') as changelog:
         info = info + '\n\n' + changelog.read()
     return info
 
-with open('requirements.txt') as f:
+with open(loc + 'requirements.txt') as f:
     required = f.read().splitlines()
 
 setuptools.setup(
