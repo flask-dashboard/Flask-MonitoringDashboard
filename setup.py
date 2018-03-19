@@ -1,22 +1,24 @@
 import setuptools
-import io
 import os
 loc = os.path.dirname(os.path.abspath(__file__))
 
 
 def desc():
-    with open(loc + '/README.md') as readme:
-        info = readme.read()
-    with open(loc + '/CHANGELOG.rst') as changelog:
-        info = info + '\n\n' + changelog.read()
-    return info
+    try:
+        with open(loc + '/README.md') as readme:
+            info = readme.read()
+        with open(loc + '/CHANGELOG.rst') as changelog:
+            return info + '\n\n' + changelog.read()
+    except Exception as e:
+        print('Unable to retrieve setup: {}'.format(e))
+        return 'long_description'
 
 with open(loc + '/requirements.txt') as f:
     required = f.read().splitlines()
 
 setuptools.setup(
     name="Flask-MonitoringDashboard",
-    version='1.10.7',
+    version='1.10.8',
     packages=setuptools.find_packages(),
     include_package_data=True,
     platforms='Any',
