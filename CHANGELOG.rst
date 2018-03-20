@@ -9,6 +9,8 @@ Unreleased
 ----------
 Changed
 
+- Fixed bug with configuration
+
 - Added TODO List
 
 - Updated functionality to retrieve the stacktrace of an Outlier
