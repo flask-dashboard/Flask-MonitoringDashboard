@@ -13,6 +13,7 @@ def desc():
         print('Unable to retrieve description: {}'.format(e))
         return 'long_description'
 
+
 with open(loc + '/requirements.txt') as f:
     required = f.read().splitlines()
 
