@@ -11,6 +11,8 @@ Changed
 
 - Fixed bug with configuration
 
+- Changed rows and column in outlier-table
+
 - Added TODO List
 
 - Updated functionality to retrieve the stacktrace of an Outlier

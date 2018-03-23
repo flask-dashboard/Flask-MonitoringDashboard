@@ -443,3 +443,8 @@ font-size: 19px;
     float: right;
     margin-left: 5px;
 }
+
+.scrollable {
+    height: 250px;
+    overflow-y: auto;
+}

@@ -22,6 +22,10 @@ def create_app():
     def main():
         return redirect(url_for('dashboard.index'))
 
+    @app.route('/endpoint')
+    def endpoint():
+        return redirect(url_for('dashboard.index'))
+
     return app
 
 
