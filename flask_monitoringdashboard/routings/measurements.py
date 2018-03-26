@@ -19,9 +19,11 @@ def overview():
     for result in get_times():
         colors[result.endpoint] = get_color(result.endpoint)
     week_ago = datetime.datetime.now() - datetime.timedelta(days=7)
+    today = datetime.datetime.now().replace(hour=0, minute=0, second=0, microsecond=0)
+    print(today)
     return render_template('dashboard/measurement-overview.html', link=config.link, curr=2, times=get_times(),
                            colors=colors, access=get_last_accessed_times(), session=session, index=0,
-                           is_admin=is_admin(), hits_last_days=get_hits(week_ago))
+                           is_admin=is_admin(), hits_last_days=get_hits(week_ago), hits_today=get_hits(today))
 
 
 @blueprint.route('/measurements/heatmap')
