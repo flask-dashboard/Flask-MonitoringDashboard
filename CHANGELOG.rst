@@ -9,6 +9,8 @@ Unreleased
 ----------
 Changed
 
+- Added new graph: Version usage
+
 - Fixed bug with configuration
 
 - Changed rows and column in outlier-table

@@ -15,7 +15,7 @@ def create_app():
         # implement here your own custom function
         return '12345'
 
-    dashboard.config.init_from()
+    dashboard.config.version = 'test-version'
     dashboard.bind(app=app)
 
     @app.route('/')

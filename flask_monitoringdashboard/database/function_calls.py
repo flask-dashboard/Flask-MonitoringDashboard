@@ -66,10 +66,22 @@ def get_data():
 
 
 def get_data_per_version(version):
-    """ Returns all data in the FuctionCall table, grouped by their version. """
+    """ Returns all data in the FunctionCall table, grouped by their version. """
     with session_scope() as db_session:
         result = db_session.query(FunctionCall.execution_time, FunctionCall.version). \
             filter(FunctionCall.version == version).all()
+        db_session.expunge_all()
+        return result
+
+
+def get_hits_per_version(version):
+    """ Returns the hits per endpoint per version """
+    with session_scope() as db_session:
+        result = db_session.query(FunctionCall.endpoint,
+                                  FunctionCall.version,
+                                  func.count(FunctionCall.endpoint).label('count')). \
+                    filter(FunctionCall.version == version). \
+                    group_by(FunctionCall.endpoint).all()
         db_session.expunge_all()
         return result
 

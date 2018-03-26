@@ -19,6 +19,14 @@ class TestMeasurement(unittest.TestCase):
         login(self.app)
         self.assertEqual(200, self.app.get('dashboard/measurements/overview').status_code)
 
+    def test_version_usage(self):
+        """
+            Just retrieve the content and check if nothing breaks
+        """
+        self.assertEqual(302, self.app.get('dashboard/measurements/version_usage').status_code)
+        login(self.app)
+        self.assertEqual(200, self.app.get('dashboard/measurements/version_usage').status_code)
+
     def test_heatmap(self):
         """
             Just retrieve the content and check if nothing breaks

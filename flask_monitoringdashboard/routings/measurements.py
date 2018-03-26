@@ -8,7 +8,7 @@ from flask_monitoringdashboard import blueprint, config
 from flask_monitoringdashboard.colors import get_color
 from flask_monitoringdashboard.database.endpoint import get_last_accessed_times, get_num_requests
 from flask_monitoringdashboard.database.function_calls import get_times, get_reqs_endpoint_day, get_versions, \
-    get_data_per_version, get_endpoints, get_data_per_endpoint
+    get_data_per_version, get_endpoints, get_data_per_endpoint, get_hits_per_version
 from flask_monitoringdashboard.security import secure, is_admin
 
 
@@ -33,13 +33,20 @@ def heatmap():
                            graph=get_heatmap(end=None))
 
 
+@blueprint.route('/measurements/version_usage')
+@secure
+def version_usage():
+    return render_template('dashboard/measurement.html', link=config.link, curr=2, session=session, index=2,
+                           graph=get_version_usage())
+
+
 @blueprint.route('/measurements/requests')
 @secure
 def page_number_of_requests_per_endpoint():
     colors = {}
     for result in get_times():
         colors[result.endpoint] = get_color(result.endpoint)
-    return render_template('dashboard/measurement.html', link=config.link, curr=2, session=session, index=2,
+    return render_template('dashboard/measurement.html', link=config.link, curr=2, session=session, index=3,
                            graph=get_stacked_bar())
 
 
@@ -49,7 +56,7 @@ def page_boxplot_per_version():
     colors = {}
     for result in get_times():
         colors[result.endpoint] = get_color(result.endpoint)
-    return render_template('dashboard/measurement.html', link=config.link, curr=2, session=session, index=3,
+    return render_template('dashboard/measurement.html', link=config.link, curr=2, session=session, index=4,
                            graph=get_boxplot_per_version())
 
 
@@ -59,7 +66,7 @@ def page_boxplot_per_endpoint():
     colors = {}
     for result in get_times():
         colors[result.endpoint] = get_color(result.endpoint)
-    return render_template('dashboard/measurement.html', link=config.link, curr=2, session=session, index=4,
+    return render_template('dashboard/measurement.html', link=config.link, curr=2, session=session, index=5,
                            graph=get_boxplot_per_endpoint())
 
 
@@ -192,6 +199,52 @@ def get_boxplot_per_endpoint():
         )
     )
     return plotly.offline.plot(go.Figure(data=data, layout=layout), output_type='div', show_link=False)
+
+
+def get_version_usage():
+    """
+    Used for getting a Heatmap with an overview of which endpoints are used in which versions
+    :return:
+    """
+    all_endpoints = []
+    versions = [v.version for v in get_versions()]
+
+    hits_version = {}
+    for version in versions:
+        hits_version[version] = get_hits_per_version(version)
+        for record in hits_version[version]:
+            if record.endpoint not in all_endpoints:
+                all_endpoints.append(record.endpoint)
+
+    all_endpoints = sorted(all_endpoints)
+    data = {}
+    data_list = []
+    for endpoint in all_endpoints:
+        data[endpoint] = {}
+        for version in versions:
+            data[endpoint][version] = 0
+    print(versions)
+    for version in versions:
+        for record in hits_version[version]:
+            data[record.endpoint][version] = record.count
+
+    for i in range(len(all_endpoints)):
+        data_list.append([])
+        for j in range(len(versions)):
+            data_list[i].append(data[all_endpoints[i]][versions[j]])
+
+    layout = go.Layout(
+        autosize=True,
+        height=800,
+        plot_bgcolor='rgba(249,249,249,1)',
+        showlegend=False,
+        title='Heatmap of hits per endpoint per version',
+        xaxis=go.XAxis(title='Versions', type='category'),
+        yaxis=dict(title='Endpoints')
+    )
+
+    trace = go.Heatmap(z=data_list, x=versions, y=all_endpoints)
+    return plotly.offline.plot(go.Figure(data=[trace], layout=layout), output_type='div', show_link=False)
 
 
 def get_heatmap(end):

@@ -9,14 +9,17 @@
                             href="{{ url_for('dashboard.overview') }}">Overview</a></li>
                     <li><a {{ 'class="active-menu" style="color: white;"'|safe if index == 1 }}
                             href="{{ url_for('dashboard.heatmap') }}">Heatmap of number of requests</a></li>
-                    <li><a {{ 'class="active-menu" style="color: white;"'|safe if index == 2 }}
+                    <li><a {{'class="active-menu" style="color: white;"'|safe if index == 2 }}
+                            href="{{ url_for('dashboard.version_usage') }}">Version usage</a></li>
+                    <li><a {{ 'class="active-menu" style="color: white;"'|safe if index == 3 }}
                             href="{{ url_for('dashboard.page_number_of_requests_per_endpoint') }}">Requests per
                         endpoint</a></li>
-                    <li><a {{ 'class="active-menu" style="color: white;"'|safe if index == 3 }}
-                            href="{{ url_for('dashboard.page_boxplot_per_version') }}">Time per version</a></li>
                     <li><a {{ 'class="active-menu" style="color: white;"'|safe if index == 4 }}
+                            href="{{ url_for('dashboard.page_boxplot_per_version') }}">Time per version</a></li>
+                    <li><a {{ 'class="active-menu" style="color: white;"'|safe if index == 5 }}
                             href="{{ url_for('dashboard.page_boxplot_per_endpoint') }}">Time per endpoint</a></li>
                 </ul>
+
 
                 <div id="loading">
                     <div class="col-md-12 col-sm-12">
