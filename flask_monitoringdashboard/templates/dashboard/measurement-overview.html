@@ -39,6 +39,7 @@
                                 <th>Color</th>
                                 <th class="clickable">Endpoint</th>
                                 <th class="clickable">Hits</th>
+                                <th class="clickable">Hits in the past 7 days</th>
                                 <th class="clickable">Last accessed</th>
                                 <th class="clickable">Average execution time (in ms)</th>
                                 <th></th>
@@ -50,6 +51,12 @@
                                     <td style="background-color: {{ colors[record.endpoint] }}"></td>
                                     <td style="max-width: 200px; overflow: hidden; white-space: nowrap; text-overflow: ellipsis;">{{ record.endpoint }}</td>
                                     <td style="text-align: right;">{{ record.count }}</td>
+                                    <td style="text-align: right;">
+                                        {% for hits in hits_last_days %}
+                                            {{ hits.count if hits.endpoint == record.endpoint }}
+                                        {% endfor %}
+
+                                    </td>
                                     {% for a in access %}
                                         {% if record.endpoint == a.endpoint %}
                                             <td style="text-align: center;">{{ "{:%Y-%m-%d %H:%M:%S }".format(a.last_accessed) if a.last_accessed }}</td>
