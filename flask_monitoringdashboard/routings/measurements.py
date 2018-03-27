@@ -223,10 +223,14 @@ def get_version_usage():
         data[endpoint] = {}
         for version in versions:
             data[endpoint][version] = 0
-    print(versions)
+
     for version in versions:
+        total_hits = sum([record.count for record in hits_version[version]])
+        if total_hits == 0:
+            total_hits = 1  # avoid division by zero
+
         for record in hits_version[version]:
-            data[record.endpoint][version] = record.count
+            data[record.endpoint][version] = record.count / total_hits
 
     for i in range(len(all_endpoints)):
         data_list.append([])
@@ -240,7 +244,10 @@ def get_version_usage():
         showlegend=False,
         title='Heatmap of hits per endpoint per version',
         xaxis=go.XAxis(title='Versions', type='category'),
-        yaxis=dict(title='Endpoints')
+        yaxis=dict(title='Endpoints', type='category'),
+        margin=go.Margin(
+            l=200
+        )
     )
 
     trace = go.Heatmap(z=data_list, x=versions, y=all_endpoints)
