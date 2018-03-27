@@ -244,13 +244,25 @@ def get_version_usage():
         showlegend=False,
         title='Heatmap of hits per endpoint per version',
         xaxis=go.XAxis(title='Versions', type='category'),
-        yaxis=dict(title='Endpoints', type='category'),
+        yaxis=dict(title='Endpoints', type='category', autorange='reversed'),
         margin=go.Margin(
             l=200
         )
     )
 
-    trace = go.Heatmap(z=data_list, x=versions, y=all_endpoints)
+    trace = go.Heatmap(
+        z=data_list,
+        x=versions,
+        y=all_endpoints,
+        colorscale=[[0, 'rgb(254, 254, 254)'], [1, 'rgb(1, 1, 254)']],
+        colorbar=dict(
+            titleside='top',
+            tickmode='array',
+            tickvals=[1, 0],
+            ticktext=['100%', '0%'],
+            # ticks='outside'
+        )
+    )
     return plotly.offline.plot(go.Figure(data=[trace], layout=layout), output_type='div', show_link=False)
 
 
