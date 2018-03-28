@@ -11,6 +11,8 @@ Changed
 
 - Added new graph: Version usage
 
+- Added column (Hits in past 7 days) in Measurements Overview
+
 - Fixed bug with configuration
 
 - Changed rows and column in outlier-table

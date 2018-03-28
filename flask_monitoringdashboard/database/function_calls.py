@@ -46,6 +46,30 @@ def get_times():
         return result
 
 
+def get_hits(date_from=None):
+    """ Return all entries of measurements with the number of execution times which are called after 'date_from'
+    :param date_from: A datetime-object
+    """
+    with session_scope() as db_session:
+        result = db_session.query(FunctionCall.endpoint,
+                                  func.count(FunctionCall.execution_time).label('count')). \
+            filter(FunctionCall.time > date_from).group_by(FunctionCall.endpoint).all()
+        db_session.expunge_all()
+        return result
+
+
+def get_average(date_from=None):
+    """ Return the average of execution times which are called after 'date_from' grouped per endpoint
+    :param date_from: A datetime-object
+    """
+    with session_scope() as db_session:
+        result = db_session.query(FunctionCall.endpoint,
+                                  func.avg(FunctionCall.execution_time).label('average')). \
+            filter(FunctionCall.time > date_from).group_by(FunctionCall.endpoint).all()
+        db_session.expunge_all()
+        return result
+
+
 def get_data_from(time_from):
     """
         Returns all data in the FunctionCall table, for the export data option.
