@@ -244,7 +244,7 @@ def get_version_usage():
         showlegend=False,
         title='Heatmap of hits per endpoint per version',
         xaxis=go.XAxis(title='Versions', type='category'),
-        yaxis=dict(title='Endpoints', type='category', autorange='reversed'),
+        yaxis=dict(type='category', autorange='reversed'),
         margin=go.Margin(
             l=200
         )
