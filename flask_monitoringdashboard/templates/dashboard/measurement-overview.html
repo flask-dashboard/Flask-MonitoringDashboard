@@ -55,7 +55,8 @@
                             </thead>
                             <tbody>
                             {% for record in times %}
-                                <tr>
+                                <tr style="cursor: pointer"
+                                    onclick="window.location='{{ url_for('dashboard.result_heatmap', end=record.endpoint) }}';">
                                     <td style="background-color: {{ colors[record.endpoint] }}"></td>
                                     <td style="max-width: 200px; overflow: hidden; white-space: nowrap; text-overflow: ellipsis;">{{ record.endpoint }}</td>
                                     <td style="text-align: right;">
@@ -88,11 +89,8 @@
                                         {% endif %}
                                     {% endfor %}
 
-                                    <td>
-                                        <a href="{{ url_for('dashboard.result_heatmap', end=record.endpoint) }}"
-                                           class="btn btn-default btn-sm right-align-custom">
-                                            Details
-                                        </a>
+                                    <td><a href="{{ url_for('dashboard.result_heatmap', end=record.endpoint) }}"
+                                           class="btn btn-default btn-sm right-align-custom">Details</a>
                                     </td>
                                 </tr>
                             {% endfor %}

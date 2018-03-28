@@ -7,8 +7,11 @@ Please note that the changes before version 1.10.0 have not been documented.
 
 Unreleased
 ----------
-Changed
 
+
+v1.11.0
+-------
+Changed
 - Added column (Hits in past 7 days) in Measurements Overview
 
 - Fixed bug with configuration
