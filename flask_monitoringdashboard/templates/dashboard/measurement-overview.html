@@ -36,14 +36,21 @@
                         <table class="table table-striped table-bordered table-hover sortable">
                             <thead>
                             <tr>
-                                <th>Color</th>
-                                <th class="clickable">Endpoint</th>
-                                <th class="clickable">Hits</th>
-                                <th class="clickable">Hits in past 7 days</th>
-                                <th class="clickable">Hits today</th>
-                                <th class="clickable">Last accessed</th>
-                                <th class="clickable">Average execution time (in ms)</th>
-                                <th></th>
+                                <th rowspan="2">Color</th>
+                                <th class="clickable" rowspan="2">Endpoint</th>
+                                <th colspan="3" style="text-align: center;">Number of hits</th>
+                                <th colspan="3" style="text-align: center;">Average execution time (in ms)</th>
+                                <th class="clickable" rowspan="2">Last accessed</th>
+                                <th rowspan="2">Details</th>
+                            </tr>
+                            <tr>
+                                <th class="clickable">Today</th>
+                                <th class="clickable">Last 7 days</th>
+                                <th class="clickable">Overall</th>
+
+                                <th class="clickable">Today</th>
+                                <th class="clickable">Last 7 days</th>
+                                <th class="clickable">Overall</th>
                             </tr>
                             </thead>
                             <tbody>
@@ -51,23 +58,36 @@
                                 <tr>
                                     <td style="background-color: {{ colors[record.endpoint] }}"></td>
                                     <td style="max-width: 200px; overflow: hidden; white-space: nowrap; text-overflow: ellipsis;">{{ record.endpoint }}</td>
-                                    <td style="text-align: right;">{{ record.count }}</td>
-                                    <td style="text-align: right;">
-                                        {% for hits in hits_last_days %}
-                                            {{ hits.count if hits.endpoint == record.endpoint }}
-                                        {% endfor %}
-                                    </td>
                                     <td style="text-align: right;">
                                         {% for hits in hits_today %}
                                             {{ hits.count if hits.endpoint == record.endpoint }}
                                         {% endfor %}
                                     </td>
+                                    <td style="text-align: right;">
+                                        {% for hits in hits_last_days %}
+                                            {{ hits.count if hits.endpoint == record.endpoint }}
+                                        {% endfor %}
+                                    </td>
+                                    <td style="text-align: right;">{{ record.count }}</td>
+
+                                    <td style="text-align: right;">
+                                        {% for average in average_today %}
+                                            {{ ((average.average*10)|round)/10 if average.endpoint == record.endpoint }}
+                                        {% endfor %}
+                                    </td>
+                                    <td style="text-align: right;">
+                                        {% for average in average_last_days %}
+                                            {{ ((average.average*10)|round)/10 if average.endpoint == record.endpoint }}
+                                        {% endfor %}
+                                    </td>
+                                    <td style="text-align: right;">{{ ((record.average*10)|round)/10 }}</td>
+
                                     {% for a in access %}
                                         {% if record.endpoint == a.endpoint %}
                                             <td style="text-align: center;">{{ "{:%Y-%m-%d %H:%M:%S }".format(a.last_accessed) if a.last_accessed }}</td>
                                         {% endif %}
                                     {% endfor %}
-                                    <td style="text-align: right;">{{ ((record.average*10)|round)/10 }}</td>
+
                                     <td>
                                         <a href="{{ url_for('dashboard.result_heatmap', end=record.endpoint) }}"
                                            class="btn btn-default btn-sm right-align-custom">
