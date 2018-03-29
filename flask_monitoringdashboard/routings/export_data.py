@@ -1,11 +1,12 @@
 import datetime
 import jwt
 import pkg_resources
+import time
 
 from flask import make_response, render_template, session, request, json, jsonify
 
 from flask_monitoringdashboard import blueprint, config
-from flask_monitoringdashboard.database.function_calls import get_data, get_data_from
+from flask_monitoringdashboard.database.function_calls import get_data, get_data_between, get_date_of_first_request
 from flask_monitoringdashboard.database.monitor_rules import get_monitor_data
 from flask_monitoringdashboard.database.tests import add_or_update_test, add_test_result, get_suite_nr
 from flask_monitoringdashboard.database.tests_grouped import reset_tests_grouped, add_tests_grouped
@@ -55,9 +56,12 @@ def submit_test_results():
     return '', 204
 
 
-@blueprint.route('/get_json_data', defaults={'time_from': 0})
-@blueprint.route('/get_json_data/<time_from>')
-def get_json_data_from(time_from):
+@blueprint.route('/get_json_data', defaults={'time_from': 0,
+                                             'time_to': time.mktime(datetime.datetime.utcnow().timetuple())})
+@blueprint.route('/get_json_data/<time_from>', defaults={
+    'time_to': time.mktime(datetime.datetime.utcnow().timetuple())})
+@blueprint.route('/get_json_data/<time_from>/<time_to>')
+def get_json_data_from(time_from, time_to):
     """
     The returned data is the data that is encrypted using a security token. This security token is set in the
     configuration.
@@ -67,7 +71,9 @@ def get_json_data_from(time_from):
     """
     data = []
     try:
-        for entry in get_data_from(datetime.datetime.utcfromtimestamp(int(time_from))):
+        time1 = datetime.datetime.utcfromtimestamp(int(time_from))
+        time2 = datetime.datetime.utcfromtimestamp(int(time_to))
+        for entry in get_data_between(time1, time2):
             # nice conversion to json-object
             data.append({
                 'endpoint': entry.endpoint,
@@ -112,4 +118,5 @@ def get_json_details():
     :return: a json-object with the details.
     """
     version = pkg_resources.require("Flask-MonitoringDashboard")[0].version
-    return jsonify({'version': version})
+    return jsonify({'version': version,
+                    'first_request': get_date_of_first_request()})

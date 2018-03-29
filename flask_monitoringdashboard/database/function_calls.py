@@ -3,7 +3,7 @@ Contains all functions that access any functionCall-object
 """
 
 import datetime
-
+import time
 from sqlalchemy import func, desc, text, asc
 
 from flask_monitoringdashboard import config
@@ -46,13 +46,14 @@ def get_times():
         return result
 
 
-def get_data_from(time_from):
+def get_data_between(time_from, time_to):
     """
         Returns all data in the FunctionCall table, for the export data option.
         This function returns all data after the time_from date.
     """
     with session_scope() as db_session:
-        result = db_session.query(FunctionCall).filter(FunctionCall.time >= time_from).all()
+        result = db_session.query(FunctionCall).filter(FunctionCall.time >= time_from)\
+            .filter(FunctionCall.time <= time_to).all()
         db_session.expunge_all()
         return result
 
@@ -62,7 +63,7 @@ def get_data():
     Equivalent function to get_data_from, but returns all data.
     :return: all data from the database in the Endpoint-table.
     """
-    return get_data_from(datetime.date(1970, 1, 1))
+    return get_data_between(datetime.date(1970, 1, 1), datetime.datetime.now())
 
 
 def get_data_per_version(version):
@@ -99,3 +100,10 @@ def get_endpoints():
             group_by(FunctionCall.endpoint).order_by(asc('cnt')).all()
         db_session.expunge_all()
         return result
+
+
+def get_date_of_first_request():
+    """ return the date (as unix timestamp) of the first request """
+    with session_scope() as db_session:
+        result = db_session.query(FunctionCall.time).first()
+        return time.mktime(result[0].timetuple())

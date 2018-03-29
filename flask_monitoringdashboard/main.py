@@ -15,7 +15,8 @@ def create_app():
         # implement here your own custom function
         return '12345'
 
-    dashboard.config.init_from()
+    dashboard.config.outlier_detection_constant = 0
+
     dashboard.bind(app=app)
 
     @app.route('/')
