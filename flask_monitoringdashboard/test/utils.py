@@ -2,6 +2,7 @@
     Some useful functions for setting up the testing environment, adding data, etc..
 """
 import datetime
+import time
 
 from flask import Flask
 
@@ -9,10 +10,12 @@ NAME = 'main'
 IP = '127.0.0.1'
 GROUP_BY = '1'
 EXECUTION_TIMES = [1000, 2000, 3000, 4000, 50000]
-TIMES = [datetime.datetime.now()] * 5
+TIMES = [datetime.datetime.utcnow()] * 5
 for i in range(len(TIMES)):
     TIMES[i] += datetime.timedelta(seconds=i)
 TEST_NAMES = ['test_name1', 'test_name2']
+print('Sleeping 10 seconds before executing tests')
+time.sleep(10)
 
 
 def set_test_environment():
@@ -43,7 +46,7 @@ def add_fake_data():
 
     # Add MonitorRule
     with session_scope() as db_session:
-        db_session.add(MonitorRule(endpoint=NAME, monitor=True, time_added=datetime.datetime.now(),
+        db_session.add(MonitorRule(endpoint=NAME, monitor=True, time_added=datetime.datetime.utcnow(),
                                    version_added=config.version, last_accessed=TIMES[0]))
 
     # Add Tests
