@@ -7,6 +7,10 @@ Please note that the changes before version 1.10.0 have not been documented.
 
 Unreleased
 ----------
+
+
+v1.11.0
+-------
 Changed
 
 - Added new graph: Version usage
