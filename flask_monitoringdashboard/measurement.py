@@ -58,6 +58,7 @@ def track_performance(func, endpoint):
 
         time1 = time.time()
         result = func(*args, **kwargs)
+        stack_info.stop()
         time2 = time.time()
         t = (time2 - time1) * 1000
         add_function_call(time=t, endpoint=endpoint, ip=request.environ['REMOTE_ADDR'])
