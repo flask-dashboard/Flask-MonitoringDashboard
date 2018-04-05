@@ -50,6 +50,9 @@ def track_performance(func, endpoint):
     def wrapper(*args, **kwargs):
         # compute average
         average = get_average(endpoint)
+
+        stack_info = None
+
         if average:
             average *= config.outlier_detection_constant
 
@@ -58,7 +61,10 @@ def track_performance(func, endpoint):
 
         time1 = time.time()
         result = func(*args, **kwargs)
-        stack_info.stop()
+
+        if stack_info:
+            stack_info.stop()
+
         time2 = time.time()
         t = (time2 - time1) * 1000
         add_function_call(time=t, endpoint=endpoint, ip=request.environ['REMOTE_ADDR'])
@@ -66,8 +72,8 @@ def track_performance(func, endpoint):
         # outlier detection
         endpoint_count[endpoint] += 1
         endpoint_sum[endpoint] += t
-        # check for being an outlier
-        if average and float(t) > average:
+
+        if stack_info:
             add_outlier(endpoint, t, stack_info, request)
 
         return result
