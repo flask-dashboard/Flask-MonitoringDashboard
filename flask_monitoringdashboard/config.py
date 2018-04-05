@@ -24,6 +24,7 @@ class Config(object):
         self.outlier_detection_constant = 2.5
         self.colors = {}
         self.security_token = 'cc83733cb0af8b884ff6577086b87909'
+        self.monitor_everything = False
 
         # define a custom function to retrieve the session_id or username
         self.get_group_by = None
