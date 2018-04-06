@@ -88,7 +88,7 @@ class Config(object):
             if parser.has_option('dashboard', 'TEST_DIR'):
                 self.test_dir = parser.get('dashboard', 'TEST_DIR')
             if parser.has_option('dashboard', 'OUTLIERS_ENABLED'):
-                self.outliers_enabled = parser.get('OUTLIERS_ENABLED')
+                self.outliers_enabled = parser.get('dashboard', 'OUTLIERS_ENABLED') == "True"
 
             # For manually defining colors of specific endpoints
             if parser.has_option('dashboard', 'COLORS'):
