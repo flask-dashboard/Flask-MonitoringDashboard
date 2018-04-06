@@ -24,6 +24,7 @@ class Config(object):
         self.outlier_detection_constant = 2.5
         self.colors = {}
         self.security_token = 'cc83733cb0af8b884ff6577086b87909'
+        self.outliers_enabled = True
 
         # define a custom function to retrieve the session_id or username
         self.get_group_by = None
@@ -56,6 +57,8 @@ class Config(object):
 
             SECURITY_TOKEN: Used for getting the data in /get_json_data/<security_token>
 
+            OUTLIERS_ENABLED: Whether you want the Dashboard to collect extra information about outliers.
+
             :param file: a string pointing to the location of the config-file
             :param envvar: a string specifying which environment variable holds the config file location
         """
@@ -84,6 +87,8 @@ class Config(object):
                 self.database_name = parser.get('dashboard', 'DATABASE')
             if parser.has_option('dashboard', 'TEST_DIR'):
                 self.test_dir = parser.get('dashboard', 'TEST_DIR')
+            if parser.has_option('dashboard', 'OUTLIERS_ENABLED'):
+                self.outliers_enabled = parser.get('OUTLIERS_ENABLED')
 
             # For manually defining colors of specific endpoints
             if parser.has_option('dashboard', 'COLORS'):

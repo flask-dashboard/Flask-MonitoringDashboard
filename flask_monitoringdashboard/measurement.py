@@ -91,6 +91,9 @@ def track_last_accessed(func, endpoint):
 
 
 def get_average(endpoint):
+    if not config.outliers_enabled:
+        return None
+
     if endpoint in endpoint_count:
         if endpoint_count[endpoint] < 10:
             return None
