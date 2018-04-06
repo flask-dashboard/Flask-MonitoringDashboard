@@ -259,7 +259,7 @@ def get_version_usage():
         z=data_list,
         x=versions,
         y=all_endpoints,
-        colorscale=[[0, 'rgb(254, 254, 254)'], [1, 'rgb(1, 1, 254)']],
+        colorscale=[[0, 'rgb(255, 255, 255)'], [0.01, 'rgb(240,240,240)'],[1, 'rgb(1, 1, 1)']],
         colorbar=dict(
             titleside='top',
             tickmode='array',
