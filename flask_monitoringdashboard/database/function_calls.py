@@ -28,7 +28,8 @@ def add_function_call(time, endpoint, ip):
     with session_scope() as db_session:
         group_by = None
         try:
-            group_by = config.get_group_by()
+            if config.get_group_by:
+                group_by = config.get_group_by()
         except Exception as e:
             print('Can\'t execute group_by function: {}'.format(e))
         call = FunctionCall(endpoint=endpoint, execution_time=time, version=config.version,
