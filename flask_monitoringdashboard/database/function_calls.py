@@ -27,8 +27,10 @@ def add_function_call(time, endpoint, ip):
     """ Add a measurement to the database. """
     with session_scope() as db_session:
         group_by = None
-        if config.get_group_by:
+        try:
             group_by = config.get_group_by()
+        except Exception as e:
+            print('Can\'t execute group_by function: {}'.format(e))
         call = FunctionCall(endpoint=endpoint, execution_time=time, version=config.version,
                             time=datetime.datetime.now(), group_by=str(group_by), ip=ip)
         db_session.add(call)
