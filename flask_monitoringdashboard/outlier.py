@@ -21,7 +21,7 @@ class StackInfo(object):
         self.stopped = False
 
         try:
-            thread = Thread(target=self.log_stack_trace, args=(self,))
+            thread = Thread(target=self.log_stack_trace)
             thread.start()
         except Exception as e:
             print('Can\'t log traceback information: {}'.format(e))
