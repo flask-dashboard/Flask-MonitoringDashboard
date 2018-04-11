@@ -1,16 +1,11 @@
-{% extends "dashboard/main.html" %}
+{% extends "dashboard/measurement-overview.html" %}
 {% block content %}
 
-    <div class="row">
-        <!-- Advanced Tables -->
-        <div class="panel panel-default">
-            <div class="panel-heading">
-                Settings from config file
-            </div>
-            <br/>
-            <div class="panel-body">
-                <div class="table-responsive">
-                    <table class="table table-striped table-bordered table-hover">
+<div class="card mb-3">
+  <div class="card-header">Settings</div>
+  <div class="card-body">
+    <div class="table-responsive">
+      <table class="table table-striped table-bordered table-hover">
                         <tr>
                             <td><b>Dashboard link</b></td>
                             <td>/{{ link }}</td>
@@ -21,7 +16,7 @@
                         </tr>
                         <tr>
                             <td><b>Group by variable</b></td>
-                            <td>{{ config.get_group_by() if config.get_group_by() != None else "Unspecified" }}</td>
+                            <td>{{ group_by if group_by != None else "Unspecified" }}</td>
                         </tr>
                         <tr>
                             <td><b>Measurements database</b></td>
@@ -43,6 +38,5 @@
                 </div>
             </div>
         </div>
-    </div>
 
 {% endblock %}

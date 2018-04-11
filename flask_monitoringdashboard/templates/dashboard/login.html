@@ -1,72 +1,52 @@
-<!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml">
-<head>
-    <meta charset="utf-8"/>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <title>Monitoring Dashboard</title>
-    <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}">
-    {#    <link rel="stylesheet" href="{{ url_for('dashboard.static', filename='css/main.css') }}"/>#}
-    <!-- Bootstrap Styles-->
-    <link rel="stylesheet" href="{{ url_for('dashboard.static', filename='css/bootstrap.css') }}"/>
-    <!-- FontAwesome Styles-->
-    <link rel="stylesheet" href="{{ url_for('dashboard.static', filename='css/font-awesome.min.css') }}"/>
-    <!-- Custom Styles-->
-    <link rel="stylesheet" href="{{ url_for('dashboard.static', filename='css/custom-styles.css') }}"/>
-    <!-- Google Fonts-->
-    <link href='http://fonts.googleapis.com/css?family=Open+Sans' rel='stylesheet' type='text/css'/>
-    <!-- Other-->
-    <!--[if lte IE 8]><script src="{{ url_for('dashboard.static', filename='js/ie/html5shiv.js') }}"></script>
-    <![endif]-->
-    <!--[if lte IE 9]><link rel="stylesheet" href="{{ url_for('dashboard.static', filename='css/ie9.css') }}" />
-    <![endif]-->
-    <!--[if lte IE 8]><link rel="stylesheet" href="{{ url_for('dashboard.static', filename='css/ie8.css') }}" />
-    <![endif]-->
-    <script src="{{ url_for('dashboard.static', filename='js/sort.js') }}"></script>
-    <script src="{{ url_for('dashboard.static', filename='js/jquery.min.js') }}"></script>
-</head>
+{% extends "base.html" %}
+{% block body %}
 <body>
-<div>
-    <br><br>
-    <div class="panel panel-primary panel-custom-login">
-        <div class="panel-heading panel-heading-custom">
-            Login
-        </div>
-        <div class="panel-body">
-
-            {% for error in form.errors %}
-                <div class="alert alert-danger">
-                    {{ form.errors[error][0] }}
-                </div>
-            {% endfor %}
-
-            <form action="" method="POST">
-                {{ form.hidden_tag() }}
-                {{ form.name.label }} <br/> {{ form.name }} <br/><br/>
-                {{ form.password.label }} <br/> {{ form.password }} <br/><br/>
-                {{ form.submit }}
-            </form>
-        </div>
-        <div class="panel-footer">
-            <b>Monitoring Dashboard</b> <br/> <i>Automated monitoring of your Flask web apps</i>
-        </div>
+<div class="container py-5">
+  <div class="row">
+    <div class="col-md-6 offset-md-3">
+      <div class="text-center">
+        <h1>Flask Monitoring Dashboard</h1>
+        <hr />
+      </div>
     </div>
-</div>
+  </div>
 
+  <div class="row">
+    <div class="col-md-6 offset-md-3">
+      <span class="anchor" id="formLogin"></span>
+      <div class="card card-outline-secondary">
+        <div class="card-header">
+          <h3 class="mb-0">Login</h3>
+        </div>
 
-<!-- JS Scripts-->
-<!-- jQuery Js -->
-<script src="{{ url_for('dashboard.static', filename='js/jquery-1.10.2.js') }}"></script>
-<!-- Bootstrap Js -->
-<script src="{{ url_for('dashboard.static', filename='js/bootstrap.min.js') }}"></script>
-<!-- Metis Menu Js -->
-<script src="{{ url_for('dashboard.static', filename='js/jquery.metisMenu.js') }}"></script>
-<!-- Custom Js -->
-<script src="{{ url_for('dashboard.static', filename='js/custom-scripts.js') }}"></script>
-<script src="{{ url_for('dashboard.static', filename='js/skel.min.js') }}"></script>
-<script src="{{ url_for('dashboard.static', filename='js/util.js') }}"></script>
-<!--[if lte IE 8]><script src="{{ url_for('dashboard.static', filename='js/ie/respond.min.js') }}"></script>
-<![endif]-->
-<script src="{{ url_for('dashboard.static', filename='js/main.js') }}"></script>
+        <div class="card-body">
+          {% for error in form.errors %}
+            <div class="alert alert-danger">
+              {{ form.errors[error][0] }}
+            </div>
+          {% endfor %}
 
-</body>
-</html>
+          <form class="form" method="POST">
+              {{ form.hidden_tag() }}
+            <div class="form-group">
+                {{ form.name.label }}
+                {{ form.name(class_="form-control") }}
+            </div>
+
+            <div class="form-group">
+              {{ form.password.label }}
+              {{ form.password(class_="form-control") }}
+            </div>
+
+            {{ form.submit(class_="btn btn-primary btn-lg") }}
+          </form>
+          <hr />
+
+          <div class="text-center">
+            For advanced documentation, see <a href="http://flask-monitoringdashboard.readthedocs.io">this site</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock %}

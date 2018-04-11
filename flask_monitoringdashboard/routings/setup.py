@@ -19,7 +19,13 @@ import plotly.graph_objs as go
 @admin_secure
 def settings():
     password = 'x' * len(config.password)
-    return render_template('dashboard/settings.html', link=config.link, session=session, config=config, pw=password)
+    group_by = None
+    try:
+        group_by = config.get_group_by()
+    except Exception:
+        pass
+    return render_template('dashboard/settings.html', link=config.link, session=session, config=config, pw=password,
+                           group_by=group_by)
 
 
 def formatter(x):

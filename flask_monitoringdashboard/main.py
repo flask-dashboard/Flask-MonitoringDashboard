@@ -3,7 +3,7 @@
     attached to an existing flask application.
 """
 
-from flask import Flask, redirect, url_for
+from flask import Flask, redirect, url_for, render_template
 
 
 def create_app():
@@ -17,6 +17,10 @@ def create_app():
 
     dashboard.config.version = 'test-version'
     dashboard.bind(app=app)
+
+    @app.route('/base')
+    def base():
+        return render_template('base.html')
 
     @app.route('/')
     def main():

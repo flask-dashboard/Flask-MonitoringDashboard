@@ -10,8 +10,8 @@ class MonitorDashboard(FlaskForm):
 
 class Login(FlaskForm):
     """ Used for serving a login form. """
-    name = StringField('Username', [validators.data_required()])
-    password = PasswordField('Password', [validators.data_required()])
+    name = StringField('<i class="fa fa-user"></i> Username', [validators.data_required()])
+    password = PasswordField('<i class="fa fa-lock"></i> Password', [validators.data_required()])
     submit = SubmitField('Login')
 
 
