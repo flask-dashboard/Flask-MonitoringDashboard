@@ -14,7 +14,7 @@ from flask_monitoringdashboard.database.endpoint import get_endpoint_column, get
     get_line_results, get_all_measurement_per_column, get_endpoint_column_user_sorted, get_all_measurement
 from flask_monitoringdashboard.database.function_calls import get_versions
 from flask_monitoringdashboard.security import secure
-from flask_monitoringdashboard.routings.measurements import get_heatmap
+from flask_monitoringdashboard.views.dashboard.heatmap import get_heatmap
 from flask_monitoringdashboard.database.outlier import get_outliers_sorted
 from flask_monitoringdashboard.colors import get_color
 

@@ -1,47 +1,56 @@
-{% extends "dashboard/measurement-overview.html" %}
+{% extends "dashboard/dashboard-base.html" %}
 
 {% block menu %}
+{% set url_heatmap='dashboard.result_heatmap' %}
+{% set url_time_hour='dashboard.result_time_per_hour' %}
+{% set url_hits_hour='dashboard.result_hits_per_hour' %}
+{% set url_version_user='dashboard.result_time_per_version_per_user' %}
+{% set url_version_ip='dashboard.result_time_per_version_per_ip' %}
+{% set url_version='dashboard.result_time_per_version' %}
+{% set url_user='dashboard.result_time_per_user' %}
+{% set url_outliers='dashboard.result_outliers' %}
+
 <nav class="navbar navbar-expand-sm navbar-dark" style="background: #343a40; margin-bottom: 15px;">
   <div class="collapse navbar-collapse" id="nav-content">
-    <ul class="nav">
+    <ul class="navbar-nav nav-pills">
       <li class="nav-item">
-        <a class="nav-link" style="color: white" href="{{ url_for('dashboard.result_heatmap', end=end) }}">
-          Heatmap
+        <a class="nav-link {{ active_if_is(url_heatmap) }}" href="{{ url_for(url_heatmap, end=end) }}">
+            <span class="nav-link-text">Heatmap</span>
         </a>
       </li>
       <li class="nav-item">
-        <a class="nav-link" style="color: white" href="{{ url_for('dashboard.result_time_per_hour', end=end) }}">
-           Time per hour
+        <a class="nav-link {{ active_if_is(url_time_hour) }}" href="{{ url_for(url_time_hour, end=end) }}">
+            <span class="nav-link-text">Time per hour</span>
         </a>
       </li>
       <li class="nav-item">
-        <a class="nav-link" style="color: white" href="{{ url_for('dashboard.result_hits_per_hour', end=end) }}">
-          Hits per hour
+        <a class="nav-link {{ active_if_is(url_hits_hour) }}" href="{{ url_for(url_hits_hour, end=end) }}">
+            <span class="nav-link-text">Hits per hour</span>
         </a>
       </li>
       <li class="nav-item">
-        <a class="nav-link" style="color: white" href="{{ url_for('dashboard.result_time_per_version_per_user', end=end) }}">
-          Time per version per user
+        <a class="nav-link {{ active_if_is(url_version_user) }}" href="{{ url_for(url_version_user, end=end) }}">
+            <span class="nav-link-text">Time per version per user</span>
         </a>
       </li>
       <li class="nav-item">
-        <a class="nav-link" style="color: white" href="{{ url_for('dashboard.result_time_per_version_per_ip', end=end) }}">
-          Time per version per ip
+        <a class="nav-link {{ active_if_is(url_version_ip) }}" href="{{ url_for(url_version_ip, end=end) }}">
+            <span class="nav-link-text">Time per version per ip</span>
         </a>
       </li>
       <li class="nav-item">
-        <a class="nav-link" style="color: white" href="{{ url_for('dashboard.result_time_per_version', end=end) }}">
-          Time per version
+        <a class="nav-link {{ active_if_is(url_version) }}" href="{{ url_for(url_version, end=end) }}">
+            <span class="nav-link-text">Time per version</span>
         </a>
       </li>
       <li class="nav-item">
-        <a class="nav-link" style="color: white" href="{{ url_for('dashboard.result_time_per_user', end=end) }}">
-          Time per user
+        <a class="nav-link {{ active_if_is(url_user) }}" href="{{ url_for(url_user, end=end) }}">
+            <span class="nav-link-text">Time per user</span>
         </a>
       </li>
       <li class="nav-item">
-        <a class="nav-link" style="color: white" href="{{ url_for('dashboard.result_outliers', end=end) }}">
-          Outliers
+        <a class="nav-link {{ active_if_is(url_outliers) }}" href="{{ url_for(url_outliers, end=end) }}">
+            <span class="nav-link-text">Outliers</span>
         </a>
       </li>
     </ul>

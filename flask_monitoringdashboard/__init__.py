@@ -61,7 +61,7 @@ def bind(app, blue_print=None):
             return response
 
     # Add all route-functions to the blueprint
-    import flask_monitoringdashboard.routings
+    import flask_monitoringdashboard.views
 
     # Add wrappers to the endpoints that have to be monitored
     from flask_monitoringdashboard.measurement import init_measurement

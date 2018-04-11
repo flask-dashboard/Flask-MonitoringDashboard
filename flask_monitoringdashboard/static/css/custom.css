@@ -491,3 +491,11 @@ footer.sticky-footer {
   height: 250px;
   overflow-y: auto;
 }
+
+.my-active {
+  background-color: #F7F7F7;
+}
+
+.my-active>.nav-link-text {
+  color: rgba(0, 0, 0, 0.7);
+}

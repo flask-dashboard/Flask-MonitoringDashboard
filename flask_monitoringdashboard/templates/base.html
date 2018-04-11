@@ -5,8 +5,6 @@
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-  <meta name="description" content="">
-  <meta name="author" content="">
   <title>Flask Monitoring Dashboard</title>
 
   <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" rel="stylesheet">
@@ -15,6 +13,23 @@
 
   <link href="{{ url_for('dashboard.static', filename='css/custom.css') }}" rel="stylesheet">
 </head>
+
+{% macro active_if_is(name) -%}
+  {{ "my-active" if request.endpoint == name }}
+{%- endmacro %}
+
+{% macro active_if_in(list) -%}
+  {{ "my-active" if request.endpoint in list }}
+{%- endmacro %}
+
+{% macro active_if_not_in(list) -%}
+  {{ "my-active" if not request.endpoint in list }}
+{%- endmacro %}
+
+{% set rules_list=['dashboard.rules'] %}
+{% set testmonitor_list=['dashboard.testmonitor', 'dashboard.testresult'] %}
+{% set settings_list=['dashboard.settings'] %}
+{% set exclude_list=rules_list + testmonitor_list + settings_list %}
 
 {% block body %}
 <body class="fixed-nav sticky-footer bg-dark" id="page-top">
@@ -27,21 +42,27 @@
       <span class="navbar-toggler-icon"></span>
     </button>
     <div class="collapse navbar-collapse" id="navbarResponsive">
-      <ul class="navbar-nav navbar-sidenav" id="exampleAccordion">
-        <li class="nav-item" data-toggle="tooltip" data-placement="right" title="Components">
-          <a class="nav-link" href="{{ url_for('dashboard.rules') }}">
+      <ul class="navbar-nav navbar-sidenav nav-pills" id="exampleAccordion">
+        <li class="nav-item" data-toggle="tooltip" data-placement="right" title="Rules">
+          <a class="nav-link {{ active_if_in(rules_list) }}" href="{{ url_for('dashboard.rules') }}">
             <i class="fa fa-fw fa-wrench"></i>
             <span class="nav-link-text">Rules</span>
           </a>
         </li>
         <li class="nav-item" data-toggle="tooltip" data-placement="right" title="Dashboard">
-          <a class="nav-link" href="{{ url_for('dashboard.index') }}">
+          <a class="nav-link {{ active_if_not_in(exclude_list) }}" href="{{ url_for('dashboard.index') }}">
             <i class="fa fa-fw fa-dashboard"></i>
             <span class="nav-link-text">Dashboard</span>
           </a>
         </li>
-        <li class="nav-item" data-toggle="tooltip" data-placement="right" title="Dashboard">
-          <a class="nav-link" href="{{ url_for('dashboard.settings') }}">
+        <li class="nav-item" data-toggle="tooltip" data-placement="right" title="Testmonitor">
+          <a class="nav-link {{ active_if_in(testmonitor_list) }}" href="{{ url_for('dashboard.testmonitor') }}">
+            <i class="fa fa-fw fa-desktop"></i>
+            <span class="nav-link-text">Testmonitor</span>
+          </a>
+        </li>
+        <li class="nav-item" data-toggle="tooltip" data-placement="right" title="Settings">
+          <a class="nav-link {{ active_if_in(settings_list) }}" href="{{ url_for('dashboard.settings') }}">
             <i class="fa fa-fw fa-gear"></i>
             <span class="nav-link-text">Settings</span>
           </a>
@@ -123,6 +144,10 @@
   <script src="{{ url_for('dashboard.static', filename='js/custom-datatables.js') }}"></script>
   {% block script %}
   {% endblock %}
+  <script>
+      $(document).ready(function () { console.log('{{ request.endpoint }}');
+      $("#{{request.endpoint}}").addClass("active"); })
+    </script>
 </div>
 </body>
 </html>

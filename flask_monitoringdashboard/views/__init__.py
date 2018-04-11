@@ -7,20 +7,28 @@ from flask.helpers import send_from_directory
 from flask import redirect, url_for
 
 # Import more route-functions
-import flask_monitoringdashboard.routings.login
-import flask_monitoringdashboard.routings.setup
-import flask_monitoringdashboard.routings.result
-import flask_monitoringdashboard.routings.export_data
-import flask_monitoringdashboard.routings.measurements
+from . import auth
+from . import dashboard
+from . import rules
+from . import settings
+from . import testmonitor
+from . import result
+from . import export_data
 
 
-# Rule for serving static files
 @blueprint.route('/static/<path:filename>')
 def static(filename):
+    """
+    Serve static files
+    :param filename: filename in the /static file
+    :return: content of the file
+    """
     return send_from_directory(loc() + 'static', filename)
 
 
-# All rules below are for viewing the dashboard-pages
 @blueprint.route('/')
 def index():
+    """
+    Redirect to the default page
+    """
     return redirect(url_for('dashboard.overview'))
