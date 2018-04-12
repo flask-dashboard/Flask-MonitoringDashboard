@@ -11,14 +11,6 @@ from flask_monitoringdashboard.database.tests_grouped import get_tests_grouped
 from flask_monitoringdashboard.security import secure
 
 
-def formatter(x):
-    sec = x // 1000
-    ms = round(x % 1000, 2)
-    if sec == 0:
-        return '{0}ms'.format(ms)
-    return '{0}s and {1}ms'.format(sec, ms)
-
-
 @blueprint.route('/testmonitor/<test>')
 @secure
 def test_result(test):

@@ -9,15 +9,15 @@
       <table class="table table-striped table-bordered table-hover">
         <tr>
           <td><b>Dashboard link</b></td>
-          <td>/{{ link }}</td>
+            <td><a href="{{ url_for(details.link + '.index') }}">/{{ details.link }}</a></td>
         </tr>
         <tr>
-          <td><b>Version of monitored app</b></td>
-          <td>{{ config.version }}</td>
+          <td><b>Current deployed version</b></td>
+          <td>{{ details.version }}</td>
         </tr>
         <tr>
-          <td><b>Group by variable</b></td>
-          <td>{{ group_by if group_by != None else "Unspecified" }}</td>
+          <td><b>Monitoring Dashboard version</b></td>
+          <td>{{ details['dashboard-version'] }}</td>
         </tr>
         <tr>
           <td><b>Measurements database</b></td>
@@ -33,7 +33,11 @@
         </tr>
         <tr>
           <td><b>Password</b></td>
-          <td>{{ pw }}</td>
+          <td>{{ '*' * config.password|length }}</td>
+        </tr>
+          <tr>
+          <td><b>First Request</b></td>
+          <td>{{ details['first-request'] }}</td>
         </tr>
       </table>
     </div>

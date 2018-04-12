@@ -15,14 +15,6 @@ class Login(FlaskForm):
     submit = SubmitField('Login')
 
 
-class ChangeSetting(FlaskForm):
-    """ Used for changing the username or password that is required to login on the dashboard. """
-    username = StringField('Username', [validators.data_required()])
-    password = PasswordField('New password', [validators.equal_to(fieldname='confirm')])
-    confirm = PasswordField('Confirm password')
-    submit = SubmitField('Update changes')
-
-
 class RunTests(FlaskForm):
     """ Used for serving a login form on /{{ link }}/testmonitor. """
     submit = SubmitField('Run selected tests')

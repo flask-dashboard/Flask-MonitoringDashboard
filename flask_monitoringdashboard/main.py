@@ -1,9 +1,9 @@
 """
-    This file can be executed for developing purposes. It is not used, when the flask_monitoring_dashboard is
-    attached to an existing flask application.
+    This file can be executed for developing purposes.
+    It is not used when the flask_monitoring_dashboard is attached to an existing flask application.
 """
 
-from flask import Flask, redirect, url_for, render_template
+from flask import Flask, redirect, url_for
 
 
 def create_app():
@@ -17,10 +17,6 @@ def create_app():
 
     dashboard.config.version = 'test-version'
     dashboard.bind(app=app)
-
-    @app.route('/base')
-    def base():
-        return render_template('base.html')
 
     @app.route('/')
     def main():

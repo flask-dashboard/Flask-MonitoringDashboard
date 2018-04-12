@@ -28,4 +28,9 @@ def login():
 
 @blueprint.route('/logout')
 def logout():
+    """
+    Remove the session variables from the user.
+    Redirect the user to the login page.
+    :return:
+    """
     return on_logout()

@@ -7,14 +7,15 @@ from flask import render_template
 from flask_monitoringdashboard import blueprint
 from flask_monitoringdashboard.database.endpoint import get_line_results
 from flask_monitoringdashboard.security import secure
-from .utils import get_details
+from .utils import get_endpoint_details
 
 
 @blueprint.route('/result/<end>/time_per_hour')
 @secure
 def result_time_per_hour(end):
     title = 'Time per hour for endpoint: {}'.format(end)
-    return render_template('endpoint/plotly.html', title=title, details=get_details(end), graph=get_time_per_hour(end))
+    return render_template('endpoint/plotly.html', title=title, details=get_endpoint_details(end),
+                           graph=get_time_per_hour(end))
 
 
 def get_time_per_hour(end):

@@ -8,14 +8,14 @@ from flask_monitoringdashboard.database import FunctionCall
 from flask_monitoringdashboard.database.endpoint import get_all_measurement_per_column
 from flask_monitoringdashboard.database.function_calls import get_versions
 from flask_monitoringdashboard.security import secure
-from .utils import get_details
+from .utils import get_endpoint_details
 
 
 @blueprint.route('/result/<end>/time_per_version')
 @secure
 def result_time_per_version(end):
     title = 'Time per version for endpoint: {}'.format(end)
-    return render_template('endpoint/plotly.html', title=title, details=get_details(end),
+    return render_template('endpoint/plotly.html', title=title, details=get_endpoint_details(end),
                            graph=get_time_per_version(end, get_versions(end)))
 
 

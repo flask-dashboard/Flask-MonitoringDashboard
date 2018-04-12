@@ -1,17 +1,32 @@
+import pkg_resources
 from flask import url_for, request
+from flask_monitoringdashboard.database.function_calls import get_date_of_first_request
+
 from flask_monitoringdashboard.database.endpoint import get_monitor_rule
 from flask_wtf import FlaskForm
 from werkzeug.routing import BuildError
 from wtforms import SelectMultipleField, SubmitField
+from flask_monitoringdashboard import config
 
 BUBBLE_SIZE_RATIO = 1250
 
 
-def get_details(endpoint):
+def get_endpoint_details(endpoint):
+    """ Return details about an endpoint"""
     return {
         'endpoint': endpoint,
         'rule': get_monitor_rule(endpoint),
-        'url': get_url(endpoint)
+        'url': get_url(endpoint),
+    }
+
+
+def get_details():
+    """ Return details about the deployment """
+    return {
+        'link': config.link,
+        'dashboard-version': pkg_resources.require("Flask-MonitoringDashboard")[0].version,
+        'version': config.version,
+        'first-request': get_date_of_first_request()
     }
 
 

@@ -8,14 +8,15 @@ from flask_monitoringdashboard import blueprint
 from flask_monitoringdashboard.colors import get_color
 from flask_monitoringdashboard.database.endpoint import get_line_results
 from flask_monitoringdashboard.security import secure
-from .utils import get_details
+from .utils import get_endpoint_details
 
 
 @blueprint.route('/result/<end>/hits_per_hour')
 @secure
 def result_hits_per_hour(end):
     title = 'Hits per hour for endpoint: {}'.format(end)
-    return render_template('endpoint/plotly.html', title=title, details=get_details(end), graph=get_hits_per_hour(end))
+    return render_template('endpoint/plotly.html', title=title, details=get_endpoint_details(end),
+                           graph=get_hits_per_hour(end))
 
 
 def get_hits_per_hour(end):

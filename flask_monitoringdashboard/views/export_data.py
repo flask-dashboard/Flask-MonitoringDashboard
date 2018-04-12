@@ -1,17 +1,16 @@
 import datetime
-import jwt
-import pkg_resources
-import time
 
+import jwt
 from flask import make_response, render_template, session, request, json, jsonify
 
 from flask_monitoringdashboard import blueprint, config
-from flask_monitoringdashboard.database.function_calls import get_data, get_data_between, get_date_of_first_request
+from flask_monitoringdashboard.database.function_calls import get_data, get_data_between
 from flask_monitoringdashboard.database.monitor_rules import get_monitor_data
 from flask_monitoringdashboard.database.tests import add_or_update_test, add_test_result, get_suite_nr
 from flask_monitoringdashboard.database.tests_grouped import reset_tests_grouped, add_tests_grouped
 from flask_monitoringdashboard.security import admin_secure
 # from setup import VERSION
+from flask_monitoringdashboard.views.details.utils import get_details
 
 CSV_COLUMNS = ['endpoint', 'execution_time', 'time', 'version', 'group_by', 'ip']
 
@@ -119,6 +118,4 @@ def get_json_details():
     Some details about the deployment, such as the current version, etc...
     :return: a json-object with the details.
     """
-    version = pkg_resources.require("Flask-MonitoringDashboard")[0].version
-    return jsonify({'version': version,
-                    'first_request': get_date_of_first_request()})
+    return jsonify(get_details())

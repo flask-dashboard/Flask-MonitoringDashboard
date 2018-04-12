@@ -10,7 +10,7 @@ from flask_monitoringdashboard.database import FunctionCall
 from flask_monitoringdashboard.database.endpoint import get_endpoint_column, get_endpoint_results, get_all_measurement
 from flask_monitoringdashboard.database.function_calls import get_versions
 from flask_monitoringdashboard.security import secure
-from .utils import get_details, formatter, get_form
+from .utils import get_endpoint_details, formatter, get_form
 
 
 @blueprint.route('/result/<end>/time_per_version_per_ip', methods=['GET', 'POST'])
@@ -18,7 +18,8 @@ from .utils import get_details, formatter, get_form
 def result_time_per_version_per_ip(end):
     title = 'Time per version per ip for endpoint: {}'.format(end)
     graph, form = get_time_per_version_per_ip(end, get_versions(end))
-    return render_template('endpoint/time_per_user.html', title=title, details=get_details(end), graph=graph, form=form)
+    return render_template('endpoint/time_per_user.html', title=title, details=get_endpoint_details(end),
+                           graph=graph, form=form)
 
 
 def get_time_per_version_per_ip(end, versions):
