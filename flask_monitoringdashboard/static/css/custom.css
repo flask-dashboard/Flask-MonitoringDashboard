@@ -496,6 +496,10 @@ footer.sticky-footer {
   background-color: #F7F7F7;
 }
 
+.nav-link-text {
+  color: #989898;
+}
+
 .my-active>.nav-link-text {
   color: rgba(0, 0, 0, 0.7);
 }

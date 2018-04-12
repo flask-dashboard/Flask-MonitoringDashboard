@@ -2,18 +2,18 @@
     Main class for adding all route-functions to user_app.
     Setup requires only to import this file. All other imports are done in this file
 """
-from flask_monitoringdashboard import blueprint, loc
-from flask.helpers import send_from_directory
 from flask import redirect, url_for
+from flask.helpers import send_from_directory
 
+from flask_monitoringdashboard import blueprint, loc
 # Import more route-functions
 from . import auth
 from . import dashboard
+from . import details
+from . import export_data
 from . import rules
 from . import settings
 from . import testmonitor
-from . import result
-from . import export_data
 
 
 @blueprint.route('/static/<path:filename>')
