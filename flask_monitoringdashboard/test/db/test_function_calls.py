@@ -59,13 +59,16 @@ class TestFunctionCall(unittest.TestCase):
             Test whether the function returns the right values.
         """
         from flask_monitoringdashboard.database.function_calls import get_data_between
-        result = get_data_between(TIMES[len(TIMES)-1], TIMES[len(TIMES)-1])
-        self.assertEqual(len(result), 1)
-        self.assertEqual(result[0].endpoint, NAME)
-        self.assertEqual(result[0].execution_time, EXECUTION_TIMES[len(TIMES)-1])
-        self.assertEqual(result[0].time, TIMES[len(TIMES)-1])
-        self.assertEqual(result[0].group_by, GROUP_BY)
-        self.assertEqual(result[0].ip, IP)
+        size = 2
+        first = len(TIMES) - size - 1
+        last = len(TIMES) - 1
+        result = get_data_between(TIMES[first], TIMES[last])
+        for i in range(size):
+            self.assertEqual(result[i].endpoint, NAME)
+            self.assertEqual(result[i].execution_time, EXECUTION_TIMES[first + i])
+            self.assertEqual(result[i].time, TIMES[first + i])
+            self.assertEqual(result[i].group_by, GROUP_BY)
+            self.assertEqual(result[i].ip, IP)
 
     def test_get_data(self):
         """

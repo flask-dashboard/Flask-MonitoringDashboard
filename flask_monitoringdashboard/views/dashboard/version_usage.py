@@ -12,7 +12,7 @@ from flask_monitoringdashboard.security import secure
 @secure
 def version_usage():
     return render_template('dashboard/dashboard.html', link=config.link, curr=2, session=session, index=2,
-                           graph=get_version_usage())
+                           graph=get_version_usage(), title='Version Usage')
 
 
 def get_version_usage():

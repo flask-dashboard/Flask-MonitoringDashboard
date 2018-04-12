@@ -16,7 +16,7 @@ def page_boxplot_per_endpoint():
     for result in get_times():
         colors[result.endpoint] = get_color(result.endpoint)
     return render_template('dashboard/dashboard.html', link=config.link, curr=2, session=session, index=5,
-                           graph=get_boxplot_per_endpoint())
+                           graph=get_boxplot_per_endpoint(), title='Time per endpoint')
 
 
 def get_boxplot_per_endpoint():

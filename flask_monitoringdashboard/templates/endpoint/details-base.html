@@ -14,42 +14,42 @@
   <div class="collapse navbar-collapse" id="nav-content">
     <ul class="navbar-nav nav-pills">
       <li class="nav-item">
-        <a class="nav-link {{ active_if_is(url_heatmap) }}" href="{{ url_for(url_heatmap, end=end) }}">
+        <a class="nav-link {{ active_if_is(url_heatmap) }}" href="{{ url_for(url_heatmap, end=details.endpoint) }}">
             <span class="nav-link-text">Heatmap</span>
         </a>
       </li>
       <li class="nav-item">
-        <a class="nav-link {{ active_if_is(url_time_hour) }}" href="{{ url_for(url_time_hour, end=end) }}">
+        <a class="nav-link {{ active_if_is(url_time_hour) }}" href="{{ url_for(url_time_hour, end=details.endpoint) }}">
             <span class="nav-link-text">Time per hour</span>
         </a>
       </li>
       <li class="nav-item">
-        <a class="nav-link {{ active_if_is(url_hits_hour) }}" href="{{ url_for(url_hits_hour, end=end) }}">
+        <a class="nav-link {{ active_if_is(url_hits_hour) }}" href="{{ url_for(url_hits_hour, end=details.endpoint) }}">
             <span class="nav-link-text">Hits per hour</span>
         </a>
       </li>
       <li class="nav-item">
-        <a class="nav-link {{ active_if_is(url_version_user) }}" href="{{ url_for(url_version_user, end=end) }}">
+        <a class="nav-link {{ active_if_is(url_version_user) }}" href="{{ url_for(url_version_user, end=details.endpoint) }}">
             <span class="nav-link-text">Time per version per user</span>
         </a>
       </li>
       <li class="nav-item">
-        <a class="nav-link {{ active_if_is(url_version_ip) }}" href="{{ url_for(url_version_ip, end=end) }}">
+        <a class="nav-link {{ active_if_is(url_version_ip) }}" href="{{ url_for(url_version_ip, end=details.endpoint) }}">
             <span class="nav-link-text">Time per version per ip</span>
         </a>
       </li>
       <li class="nav-item">
-        <a class="nav-link {{ active_if_is(url_version) }}" href="{{ url_for(url_version, end=end) }}">
+        <a class="nav-link {{ active_if_is(url_version) }}" href="{{ url_for(url_version, end=details.endpoint) }}">
             <span class="nav-link-text">Time per version</span>
         </a>
       </li>
       <li class="nav-item">
-        <a class="nav-link {{ active_if_is(url_user) }}" href="{{ url_for(url_user, end=end) }}">
+        <a class="nav-link {{ active_if_is(url_user) }}" href="{{ url_for(url_user, end=details.endpoint) }}">
             <span class="nav-link-text">Time per user</span>
         </a>
       </li>
       <li class="nav-item">
-        <a class="nav-link {{ active_if_is(url_outliers) }}" href="{{ url_for(url_outliers, end=end) }}">
+        <a class="nav-link {{ active_if_is(url_outliers) }}" href="{{ url_for(url_outliers, end=details.endpoint) }}">
             <span class="nav-link-text">Outliers</span>
         </a>
       </li>
@@ -66,25 +66,25 @@
       <table class="table table-striped table-bordered table-hover">
         <tr>
           <td><b>Endpoint</b></td>
-          <td>{{ rule.endpoint }}</td>
+          <td>{{ details.endpoint }}</td>
         </tr>
         <tr>
           <td><b>Added since app version</b></td>
-          <td>{{ rule.version_added }}</td>
+          <td>{{ details.rule.version_added }}</td>
         </tr>
         <tr>
           <td><b>Date added to app</b></td>
-          <td>{{ "{:%Y-%m-%d %H:%M:%S }".format(rule.time_added) }}</td>
+          <td>{{ "{:%Y-%m-%d %H:%M:%S }".format(details.rule.time_added) }}</td>
         </tr>
         {% if url %}
           <tr>
             <td><b>Link to endpoint</b></td>
-            <td><a href="{{ url }}">{{ url }}</a></td>
+            <td><a href="{{ details.url }}">{{ details.url }}</a></td>
           </tr>
         {% endif %}
         <tr>
           <td><b>Last accessed</b></td>
-          <td>{{ "{:%Y-%m-%d %H:%M:%S }".format(rule.last_accessed) }}</td>
+          <td>{{ "{:%Y-%m-%d %H:%M:%S }".format(details.rule.last_accessed) }}</td>
         </tr>
       </table>
     </div>

@@ -36,7 +36,7 @@ def export_data():
     data = get_data()
     for entry in data:
         csv.append(','.join([str(entry.__getattribute__(c)) for c in CSV_COLUMNS]) + '\n')
-    return render_template('dashboard/export-data.html', link=config.link, session=session, data=csv)
+    return render_template('export-data.html', link=config.link, session=session, data=csv)
 
 
 @blueprint.route('/submit-test-results', methods=['POST'])

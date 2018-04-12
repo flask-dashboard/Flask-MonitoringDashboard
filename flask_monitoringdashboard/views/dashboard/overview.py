@@ -22,4 +22,5 @@ def overview():
     return render_template('dashboard/dashboard-base.html', link=config.link, curr=2, times=get_times(),
                            colors=colors, access=get_last_accessed_times(), session=session, index=0,
                            is_admin=is_admin(), hits_last_days=get_hits(week_ago), hits_today=get_hits(today),
-                           average_last_days=get_average(week_ago), average_today=get_average(today))
+                           average_last_days=get_average(week_ago), average_today=get_average(today),
+                           title='Dashboard Overview')

@@ -18,7 +18,7 @@ def heatmap():
     for result in get_times():
         colors[result.endpoint] = get_color(result.endpoint)
     return render_template('dashboard/dashboard.html', link=config.link, curr=2, session=session, index=1,
-                           graph=get_heatmap(end=None))
+                           graph=get_heatmap(end=None), title='Heatmap')
 
 
 def get_heatmap(end):

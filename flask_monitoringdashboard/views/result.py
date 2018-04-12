@@ -22,79 +22,73 @@ from flask_monitoringdashboard.colors import get_color
 BUBBLE_SIZE_RATIO = 1250
 
 
+def get_details(endpoint):
+    return {
+        'endpoint': endpoint,
+        'rule': get_monitor_rule(endpoint),
+        'url': get_url(endpoint)
+    }
+
+
 @blueprint.route('/result/<end>/heatmap')
 @secure
 def result_heatmap(end):
-    rule = get_monitor_rule(end)
-    url = get_url(end)
-    return render_template('endpoint/plotly.html', link=config.link, session=session, rule=rule, url=url,
-                           graph=get_heatmap(end), end=end, index=0)
+    title = 'Heatmap for endpoint: {}'.format(end)
+    return render_template('endpoint/plotly.html', title=title, details=get_details(end), graph=get_heatmap(end))
 
 
 @blueprint.route('/result/<end>/time_per_hour')
 @secure
 def result_time_per_hour(end):
-    rule = get_monitor_rule(end)
-    url = get_url(end)
-    return render_template('endpoint/plotly.html', link=config.link, session=session, rule=rule, url=url,
-                           graph=get_time_per_hour(end), end=end, index=1)
+    title = 'Time per hour for endpoint: {}'.format(end)
+    return render_template('endpoint/plotly.html', title=title, details=get_details(end), graph=get_time_per_hour(end))
 
 
 @blueprint.route('/result/<end>/hits_per_hour')
 @secure
 def result_hits_per_hour(end):
-    rule = get_monitor_rule(end)
-    url = get_url(end)
-    return render_template('endpoint/plotly.html', link=config.link, session=session, rule=rule, url=url,
-                           graph=get_hits_per_hour(end), end=end, index=2)
+    title = 'Hits per hour for endpoint: {}'.format(end)
+    return render_template('endpoint/plotly.html', title=title, details=get_details(end), graph=get_hits_per_hour(end))
 
 
 @blueprint.route('/result/<end>/time_per_version_per_user', methods=['GET', 'POST'])
 @secure
 def result_time_per_version_per_user(end):
-    rule = get_monitor_rule(end)
-    url = get_url(end)
+    title = 'Time per version per user for endpoint: {}'.format(end)
     graph, form = get_time_per_version_per_user(end, get_versions(end))
-    return render_template('endpoint/time_per_user.html', link=config.link, session=session, rule=rule, url=url,
-                           graph=graph, form=form, end=end, index=3)
+    return render_template('endpoint/time_per_user.html', title=title, details=get_details(end), graph=graph, form=form)
 
 
 @blueprint.route('/result/<end>/time_per_version_per_ip', methods=['GET', 'POST'])
 @secure
 def result_time_per_version_per_ip(end):
-    rule = get_monitor_rule(end)
-    url = get_url(end)
+    title = 'Time per version per ip for endpoint: {}'.format(end)
     graph, form = get_time_per_version_per_ip(end, get_versions(end))
-    return render_template('endpoint/time_per_user.html', link=config.link, session=session, rule=rule, url=url,
-                           graph=graph, form=form, end=end, index=4)
+    return render_template('endpoint/time_per_user.html', title=title, details=get_details(end), graph=graph, form=form)
 
 
 @blueprint.route('/result/<end>/time_per_version')
 @secure
 def result_time_per_version(end):
-    rule = get_monitor_rule(end)
-    url = get_url(end)
-    return render_template('endpoint/plotly.html', link=config.link, session=session, rule=rule, url=url,
-                           graph=get_time_per_version(end, get_versions(end)), end=end, index=5)
+    title = 'Time per version for endpoint: {}'.format(end)
+    return render_template('endpoint/plotly.html', title=title, details=get_details(end),
+                           graph=get_time_per_version(end, get_versions(end)))
 
 
 @blueprint.route('/result/<end>/time_per_user', methods=['GET', 'POST'])
 @secure
 def result_time_per_user(end):
-    rule = get_monitor_rule(end)
-    url = get_url(end)
+    title = 'Time per user for endpoint: {}'.format(end)
     graph, form = get_time_per_user(end)
-    return render_template('endpoint/time_per_user.html', link=config.link, session=session, rule=rule, url=url,
-                           graph=graph, form=form, end=end, index=6)
+    return render_template('endpoint/time_per_user.html', title=title, details=get_details(end), graph=graph, form=form)
 
 
 @blueprint.route('/result/<end>/outliers')
 @secure
 def result_outliers(end):
-    rule = get_monitor_rule(end)
-    url = get_url(end)
-    return render_template('endpoint/outliers.html', link=config.link, session=session, rule=rule, url=url,
-                           end=end, index=7, table=get_outliers_sorted(end, Outlier.execution_time))
+    title = 'Outliers for endpoint: {}'.format(end)
+    table = get_outliers_sorted(end, Outlier.execution_time)
+    return render_template('endpoint/outliers.html', title=title, details=get_details(end), table=table)
 
 
 def formatter(ms):
