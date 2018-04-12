@@ -25,7 +25,7 @@ def get_details():
     return {
         'link': config.link,
         'dashboard-version': pkg_resources.require("Flask-MonitoringDashboard")[0].version,
-        'version': config.version,
+        'config-version': config.version,
         'first-request': get_date_of_first_request()
     }
 
