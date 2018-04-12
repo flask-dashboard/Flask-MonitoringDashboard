@@ -81,7 +81,7 @@ def get_data_between(time_from, time_to=None):
     with session_scope() as db_session:
         result = db_session.query(FunctionCall).filter(FunctionCall.time >= time_from)
         if time_to:
-            result = result.filter(FunctionCall.time <= time_to)
+            result = result.filter(FunctionCall.time < time_to)
         result = result.all()
         db_session.expunge_all()
         return result
