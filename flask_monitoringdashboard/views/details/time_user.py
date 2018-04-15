@@ -6,7 +6,7 @@ from flask_monitoringdashboard import blueprint
 from flask_monitoringdashboard.colors import get_color
 from flask_monitoringdashboard.database import FunctionCall
 from flask_monitoringdashboard.database.endpoint import get_all_measurement_per_column, get_endpoint_column_user_sorted
-from flask_monitoringdashboard.security import secure
+from flask_monitoringdashboard.auth import secure
 from .utils import get_endpoint_details, get_form
 
 

@@ -5,6 +5,7 @@
 """
 
 import unittest
+import time
 
 from flask_monitoringdashboard.test.utils import set_test_environment, clear_db, add_fake_data, mean, \
     EXECUTION_TIMES, TIMES, NAME, GROUP_BY, IP
@@ -134,3 +135,10 @@ class TestFunctionCall(unittest.TestCase):
         self.assertEqual(len(result), 1)
         self.assertEqual(result[0].endpoint, NAME)
         self.assertEqual(result[0].cnt, len(EXECUTION_TIMES))
+
+    def test_get_date_of_first_request(self):
+        """
+            Test whether the function returns the right values.
+        """
+        from flask_monitoringdashboard.database.function_calls import get_date_of_first_request
+        self.assertEqual(get_date_of_first_request(), int(time.mktime(TIMES[0].timetuple())))

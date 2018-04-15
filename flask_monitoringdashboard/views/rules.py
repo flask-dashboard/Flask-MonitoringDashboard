@@ -6,7 +6,7 @@ from flask_monitoringdashboard.database.endpoint import get_monitor_rule, update
 from flask_monitoringdashboard.database.monitor_rules import reset_monitor_endpoints
 from flask_monitoringdashboard.forms import MonitorDashboard
 from flask_monitoringdashboard.measurement import track_performance
-from flask_monitoringdashboard.security import admin_secure
+from flask_monitoringdashboard.auth import admin_secure
 
 
 @blueprint.route('/rules', methods=['GET', 'POST'])

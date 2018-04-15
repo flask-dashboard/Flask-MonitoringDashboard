@@ -26,10 +26,10 @@
   {{ "my-active" if not request.endpoint in list }}
 {%- endmacro %}
 
-{% set rules_list=['dashboard.rules'] %}
+{% set rules_endpoint='dashboard.rules' %}
 {% set testmonitor_list=['dashboard.testmonitor', 'dashboard.testresult'] %}
-{% set settings_list=['dashboard.settings'] %}
-{% set exclude_list=rules_list + testmonitor_list + settings_list %}
+{% set config_endpoint='dashboard.configuration' %}
+{% set exclude_list=[rules_endpoint, config_endpoint] + testmonitor_list %}
 
 {% block body %}
 <body class="fixed-nav sticky-footer bg-dark" id="page-top">
@@ -44,7 +44,7 @@
     <div class="collapse navbar-collapse" id="navbarResponsive">
       <ul class="navbar-nav navbar-sidenav nav-pills" id="exampleAccordion">
         <li class="nav-item" data-toggle="tooltip" data-placement="right" title="Rules">
-          <a class="nav-link {{ active_if_in(rules_list) }}" href="{{ url_for('dashboard.rules') }}">
+          <a class="nav-link {{ active_if_in(rules_list) }}" href="{{ url_for(rules_endpoint) }}">
             <i class="fa fa-fw fa-wrench"></i>
             <span class="nav-link-text">Rules</span>
           </a>
@@ -56,15 +56,15 @@
           </a>
         </li>
         <li class="nav-item" data-toggle="tooltip" data-placement="right" title="Testmonitor">
-          <a class="nav-link {{ active_if_in(testmonitor_list) }}" href="{{ url_for('dashboard.testmonitor') }}">
+          <a class="nav-link {{ active_if_in(testmonitor_list) }}" href="{{ url_for(testmonitor_list[0]) }}">
             <i class="fa fa-fw fa-desktop"></i>
             <span class="nav-link-text">Testmonitor</span>
           </a>
         </li>
-        <li class="nav-item" data-toggle="tooltip" data-placement="right" title="Settings">
-          <a class="nav-link {{ active_if_in(settings_list) }}" href="{{ url_for('dashboard.settings') }}">
+        <li class="nav-item" data-toggle="tooltip" data-placement="right" title="Configuration">
+          <a class="nav-link {{ active_if_in(config_list) }}" href="{{ url_for(config_endpoint) }}">
             <i class="fa fa-fw fa-gear"></i>
-            <span class="nav-link-text">Settings</span>
+            <span class="nav-link-text">Configuration</span>
           </a>
         </li>
       </ul>

@@ -27,7 +27,7 @@ class Config(object):
         self.outliers_enabled = True
 
         # define a custom function to retrieve the session_id or username
-        self.get_group_by = None
+        self.group_by = None
 
     def init_from(self, file=None, envvar=None):
         """

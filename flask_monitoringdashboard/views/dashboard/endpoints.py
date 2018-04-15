@@ -6,7 +6,7 @@ from flask_monitoringdashboard import blueprint, config
 from flask_monitoringdashboard.colors import get_color
 from flask_monitoringdashboard.database.function_calls import get_endpoints, get_data_per_endpoint
 from flask_monitoringdashboard.database.function_calls import get_times
-from flask_monitoringdashboard.security import secure
+from flask_monitoringdashboard.auth import secure
 
 
 @blueprint.route('/measurements/endpoints')

@@ -6,7 +6,7 @@ from flask_monitoringdashboard import blueprint, config
 from flask_monitoringdashboard.colors import get_color
 from flask_monitoringdashboard.database.endpoint import get_last_accessed_times
 from flask_monitoringdashboard.database.function_calls import get_times, get_hits, get_average
-from flask_monitoringdashboard.security import secure, is_admin
+from flask_monitoringdashboard.auth import secure, is_admin
 
 
 @blueprint.route('/measurements/overview')

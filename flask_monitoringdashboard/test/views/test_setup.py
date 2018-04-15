@@ -16,9 +16,9 @@ class TestSetup(unittest.TestCase):
         """
             Just retrieve the content and check if nothing breaks
         """
-        self.assertEqual(302, self.app.get('dashboard/settings').status_code)
+        self.assertEqual(302, self.app.get('dashboard/configuration').status_code)
         login(self.app)
-        self.assertEqual(200, self.app.get('dashboard/settings').status_code)
+        self.assertEqual(200, self.app.get('dashboard/configuration').status_code)
 
     def test_rules(self):
         """

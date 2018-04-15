@@ -147,4 +147,6 @@ def get_date_of_first_request():
     """ return the date (as unix timestamp) of the first request """
     with session_scope() as db_session:
         result = db_session.query(FunctionCall.time).first()
-        return time.mktime(result[0].timetuple())
+        if result:
+            return int(time.mktime(result[0].timetuple()))
+        return -1

@@ -12,7 +12,7 @@ from . import dashboard
 from . import details
 from . import export_data
 from . import rules
-from . import settings
+from . import configuration
 from . import testmonitor
 
 
