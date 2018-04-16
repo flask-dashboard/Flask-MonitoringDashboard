@@ -15,6 +15,7 @@
 </head>
 
 {% macro active_if_is(name) -%}
+    {{ request.endpoint }}
   {{ "my-active" if request.endpoint == name }}
 {%- endmacro %}
 
@@ -31,6 +32,10 @@
 {% set config_endpoint='dashboard.configuration' %}
 {% set exclude_list=[rules_endpoint, config_endpoint] + testmonitor_list %}
 
+{% macro submenu(endpoint, name) -%}
+<li><a class="{{ active_if_is(endpoint) }}" href="{{ url_for(endpoint) }}">{{ name }}</a></li>
+{%- endmacro %}
+
 {% block body %}
 <body class="fixed-nav sticky-footer bg-dark" id="page-top">
   <!-- Navigation-->
@@ -38,22 +43,34 @@
     <div class="navbar-brand">
       <h4>Flask Monitoring Dashboard</h4>
     </div>
-    <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
+    <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse"
+            data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false"
+            aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>
     </button>
     <div class="collapse navbar-collapse" id="navbarResponsive">
       <ul class="navbar-nav navbar-sidenav nav-pills" id="exampleAccordion">
         <li class="nav-item" data-toggle="tooltip" data-placement="right" title="Rules">
-          <a class="nav-link {{ active_if_in(rules_list) }}" href="{{ url_for(rules_endpoint) }}">
+          <a class="nav-link {{ active_if_is(rules_endpoint) }}" href="{{ url_for(rules_endpoint) }}">
             <i class="fa fa-fw fa-wrench"></i>
             <span class="nav-link-text">Rules</span>
           </a>
         </li>
         <li class="nav-item" data-toggle="tooltip" data-placement="right" title="Dashboard">
-          <a class="nav-link {{ active_if_not_in(exclude_list) }}" href="{{ url_for('dashboard.index') }}">
+          <a class="nav-link nav-link-collapse {{ "my-active" if request.endpoint not in exclude_list }}"
+             data-toggle="collapse" href="#collapseDashboard" >
             <i class="fa fa-fw fa-dashboard"></i>
             <span class="nav-link-text">Dashboard</span>
           </a>
+          <ul class="sidenav-second-level {{ "collapse" if request.endpoint in exclude_list }}"
+              id="collapseDashboard">
+            {{ submenu('dashboard.overview', 'Overview') }}
+            {{ submenu('dashboard.heatmap', 'Heatmap') }}
+            {{ submenu('dashboard.version_usage', 'Version usage') }}
+            {{ submenu('dashboard.page_number_of_requests_per_endpoint', 'Request per endpoint') }}
+            {{ submenu('dashboard.page_boxplot_per_version', 'Time per version') }}
+            {{ submenu('dashboard.page_boxplot_per_endpoint', 'Time per endpoint') }}
+          </ul>
         </li>
         <li class="nav-item" data-toggle="tooltip" data-placement="right" title="Testmonitor">
           <a class="nav-link {{ active_if_in(testmonitor_list) }}" href="{{ url_for(testmonitor_list[0]) }}">
@@ -62,7 +79,7 @@
           </a>
         </li>
         <li class="nav-item" data-toggle="tooltip" data-placement="right" title="Configuration">
-          <a class="nav-link {{ active_if_in(config_list) }}" href="{{ url_for(config_endpoint) }}">
+          <a class="nav-link {{ active_if_is(config_endpoint) }}" href="{{ url_for(config_endpoint) }}">
             <i class="fa fa-fw fa-gear"></i>
             <span class="nav-link-text">Configuration</span>
           </a>
@@ -92,11 +109,6 @@
   </nav>
   <div class="content-wrapper">
     <div class="container-fluid">
-
-      <ol class="breadcrumb">
-        <h2>{{ title }}</h2>
-      </ol>
-
       {% block content %}
 
       {% endblock %}

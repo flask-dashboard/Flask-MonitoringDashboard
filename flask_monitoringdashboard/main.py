@@ -16,6 +16,8 @@ def create_app():
         return '12345'
 
     dashboard.config.version = 'test-version'
+    dashboard.config.group_by = 'User', lambda: 3
+
     dashboard.bind(app=app)
 
     @app.route('/')
