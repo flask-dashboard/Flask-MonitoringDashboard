@@ -64,7 +64,7 @@ def bind(app, blue_print=None):
     import flask_monitoringdashboard.views
 
     # Add wrappers to the endpoints that have to be monitored
-    from flask_monitoringdashboard.measurement import init_measurement
+    from flask_monitoringdashboard.core.measurement import init_measurement
     blueprint.before_app_first_request(init_measurement)
 
     # register the blueprint to the app

@@ -1,7 +1,7 @@
 from flask_monitoringdashboard import blueprint, config
 from flask import redirect, request, session, render_template, url_for
-from flask_monitoringdashboard.forms import Login
-from flask_monitoringdashboard.auth import check_login, on_logout
+from flask_monitoringdashboard.core.forms import Login
+from flask_monitoringdashboard.core.auth import check_login, on_logout
 
 
 MAIN_PAGE = 'dashboard.index'

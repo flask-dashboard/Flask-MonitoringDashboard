@@ -8,7 +8,7 @@ from flask_monitoringdashboard import blueprint, config
 from flask_monitoringdashboard.colors import get_color
 from flask_monitoringdashboard.database.endpoint import get_num_requests
 from flask_monitoringdashboard.database.function_calls import get_times
-from flask_monitoringdashboard.auth import secure
+from flask_monitoringdashboard.core.auth import secure
 
 
 @blueprint.route('/measurements/heatmap')

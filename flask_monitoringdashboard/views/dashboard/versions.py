@@ -6,7 +6,7 @@ from flask_monitoringdashboard import blueprint, config
 from flask_monitoringdashboard.colors import get_color
 from flask_monitoringdashboard.database.function_calls import get_times, get_versions, \
     get_data_per_version
-from flask_monitoringdashboard.auth import secure
+from flask_monitoringdashboard.core.auth import secure
 
 
 @blueprint.route('/measurements/versions')

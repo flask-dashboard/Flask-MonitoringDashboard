@@ -14,6 +14,8 @@ Changed
 - Refactored code
 
 Fixed issues:
+- #63
+- #80
 - #89
 -
 

@@ -11,10 +11,6 @@ def create_app():
 
     app = Flask(__name__)
 
-    def get_session_id():
-        # implement here your own custom function
-        return '12345'
-
     dashboard.config.version = 'test-version'
     dashboard.config.group_by = 'User', lambda: 3
 
@@ -32,4 +28,4 @@ def create_app():
 
 
 if __name__ == '__main__':
-    create_app().run(debug=True, host='0.0.0.0')
+    create_app().run(debug=True)

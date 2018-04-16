@@ -7,7 +7,7 @@ from flask_monitoringdashboard.colors import get_color
 from flask_monitoringdashboard.database import FunctionCall
 from flask_monitoringdashboard.database.endpoint import get_all_measurement_per_column
 from flask_monitoringdashboard.database.function_calls import get_versions
-from flask_monitoringdashboard.auth import secure
+from flask_monitoringdashboard.core.auth import secure
 from .utils import get_endpoint_details
 
 

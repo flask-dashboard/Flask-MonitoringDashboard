@@ -8,7 +8,7 @@ from flask_monitoringdashboard.database.monitor_rules import get_monitor_names
 from flask_monitoringdashboard.database.tests import get_res_current, get_measurements
 from flask_monitoringdashboard.database.tests import get_tests, get_results, get_suites, get_test_measurements
 from flask_monitoringdashboard.database.tests_grouped import get_tests_grouped
-from flask_monitoringdashboard.auth import secure
+from flask_monitoringdashboard.core.auth import secure
 
 
 @blueprint.route('/testmonitor/<test>')

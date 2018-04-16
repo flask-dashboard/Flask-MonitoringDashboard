@@ -8,7 +8,7 @@ from flask_monitoringdashboard.database.function_calls import get_data, get_data
 from flask_monitoringdashboard.database.monitor_rules import get_monitor_data
 from flask_monitoringdashboard.database.tests import add_or_update_test, add_test_result, get_suite_nr
 from flask_monitoringdashboard.database.tests_grouped import reset_tests_grouped, add_tests_grouped
-from flask_monitoringdashboard.auth import admin_secure
+from flask_monitoringdashboard.core.auth import admin_secure
 # from setup import VERSION
 from flask_monitoringdashboard.views.details.utils import get_details
 

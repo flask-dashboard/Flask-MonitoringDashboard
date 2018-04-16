@@ -4,9 +4,9 @@ from flask_monitoringdashboard import blueprint, config, user_app
 from flask_monitoringdashboard.colors import get_color
 from flask_monitoringdashboard.database.endpoint import get_monitor_rule, update_monitor_rule, get_last_accessed_times
 from flask_monitoringdashboard.database.monitor_rules import reset_monitor_endpoints
-from flask_monitoringdashboard.forms import MonitorDashboard
-from flask_monitoringdashboard.measurement import track_performance
-from flask_monitoringdashboard.auth import admin_secure
+from flask_monitoringdashboard.core.forms import MonitorDashboard
+from flask_monitoringdashboard.core.measurement import track_performance
+from flask_monitoringdashboard.core.auth import admin_secure
 
 
 @blueprint.route('/rules', methods=['GET', 'POST'])

@@ -11,7 +11,7 @@ from flask_monitoringdashboard.database.monitor_rules import get_monitor_rules
 from flask_monitoringdashboard.database.endpoint import update_last_accessed
 from flask_monitoringdashboard.database.function_calls import add_function_call
 from flask_monitoringdashboard.database.outlier import add_outlier
-from flask_monitoringdashboard.outlier import StackInfo
+from flask_monitoringdashboard.core.outlier import StackInfo
 
 # count and sum are dicts and used for calculating the averages
 endpoint_count = {}

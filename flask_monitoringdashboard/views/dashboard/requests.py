@@ -5,7 +5,7 @@ from flask import session, render_template
 from flask_monitoringdashboard import blueprint, config
 from flask_monitoringdashboard.colors import get_color
 from flask_monitoringdashboard.database.function_calls import get_times, get_reqs_endpoint_day
-from flask_monitoringdashboard.auth import secure
+from flask_monitoringdashboard.core.auth import secure
 
 
 @blueprint.route('/measurements/requests')
