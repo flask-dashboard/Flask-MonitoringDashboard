@@ -3,6 +3,7 @@
 """
 from flask_monitoringdashboard import config
 import ast
+import os
 
 HEADER_NAME = 'dashboard'
 
