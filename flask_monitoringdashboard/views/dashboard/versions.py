@@ -1,12 +1,12 @@
 import plotly
 import plotly.graph_objs as go
-from flask import session, render_template
+from flask import render_template
 
-from flask_monitoringdashboard import blueprint, config
+from flask_monitoringdashboard import blueprint
 from flask_monitoringdashboard.colors import get_color
+from flask_monitoringdashboard.core.auth import secure
 from flask_monitoringdashboard.database.function_calls import get_times, get_versions, \
     get_data_per_version
-from flask_monitoringdashboard.core.auth import secure
 
 
 @blueprint.route('/measurements/versions')
@@ -15,8 +15,7 @@ def page_boxplot_per_version():
     colors = {}
     for result in get_times():
         colors[result.endpoint] = get_color(result.endpoint)
-    return render_template('dashboard/dashboard.html', link=config.link, curr=2, session=session, index=4,
-                           graph=get_boxplot_per_version(), title='Time per version')
+    return render_template('dashboard/dashboard.html', graph=get_boxplot_per_version(), title='Time per version')
 
 
 def get_boxplot_per_version():

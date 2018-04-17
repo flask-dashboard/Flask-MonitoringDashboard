@@ -13,10 +13,8 @@ from .utils import get_endpoint_details, get_form
 @blueprint.route('/result/<end>/time_per_user', methods=['GET', 'POST'])
 @secure
 def result_time_per_user(end):
-    title = 'Time per user for endpoint: {}'.format(end)
     graph, form = get_time_per_user(end)
-    return render_template('endpoint/time_per_user.html', title=title, details=get_endpoint_details(end),
-                           graph=graph, form=form)
+    return render_template('endpoint/time_per_user.html', details=get_endpoint_details(end), graph=graph, form=form)
 
 
 def get_time_per_user(end):

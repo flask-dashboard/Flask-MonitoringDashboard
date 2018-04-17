@@ -1,12 +1,12 @@
 import plotly
 import plotly.graph_objs as go
-from flask import session, render_template
+from flask import render_template
 
-from flask_monitoringdashboard import blueprint, config
+from flask_monitoringdashboard import blueprint
 from flask_monitoringdashboard.colors import get_color
+from flask_monitoringdashboard.core.auth import secure
 from flask_monitoringdashboard.database.function_calls import get_endpoints, get_data_per_endpoint
 from flask_monitoringdashboard.database.function_calls import get_times
-from flask_monitoringdashboard.core.auth import secure
 
 
 @blueprint.route('/measurements/endpoints')
@@ -15,8 +15,7 @@ def page_boxplot_per_endpoint():
     colors = {}
     for result in get_times():
         colors[result.endpoint] = get_color(result.endpoint)
-    return render_template('dashboard/dashboard.html', link=config.link, curr=2, session=session, index=5,
-                           graph=get_boxplot_per_endpoint(), title='Time per endpoint')
+    return render_template('dashboard/dashboard.html', graph=get_boxplot_per_endpoint(), title='Time per endpoint')
 
 
 def get_boxplot_per_endpoint():

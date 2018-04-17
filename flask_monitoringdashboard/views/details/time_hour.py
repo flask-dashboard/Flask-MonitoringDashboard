@@ -5,17 +5,15 @@ import plotly.graph_objs as go
 from flask import render_template
 
 from flask_monitoringdashboard import blueprint
-from flask_monitoringdashboard.database.endpoint import get_line_results
 from flask_monitoringdashboard.core.auth import secure
+from flask_monitoringdashboard.database.endpoint import get_line_results
 from .utils import get_endpoint_details
 
 
 @blueprint.route('/result/<end>/time_per_hour')
 @secure
 def result_time_per_hour(end):
-    title = 'Time per hour for endpoint: {}'.format(end)
-    return render_template('endpoint/plotly.html', title=title, details=get_endpoint_details(end),
-                           graph=get_time_per_hour(end))
+    return render_template('endpoint/plotly.html', details=get_endpoint_details(end), graph=get_time_per_hour(end))
 
 
 def get_time_per_hour(end):
@@ -62,4 +60,3 @@ def get_time_per_hour(end):
         )
     )
     return plotly.offline.plot(go.Figure(data=graph, layout=layout), output_type='div', show_link=False)
-

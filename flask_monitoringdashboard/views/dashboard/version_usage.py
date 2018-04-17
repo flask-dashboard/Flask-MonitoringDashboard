@@ -1,18 +1,17 @@
 import plotly
 import plotly.graph_objs as go
-from flask import session, render_template
+from flask import render_template
 
-from flask_monitoringdashboard import blueprint, config
+from flask_monitoringdashboard import blueprint
+from flask_monitoringdashboard.core.auth import secure
 from flask_monitoringdashboard.database.function_calls import get_versions, \
     get_hits_per_version
-from flask_monitoringdashboard.core.auth import secure
 
 
 @blueprint.route('/measurements/version_usage')
 @secure
 def version_usage():
-    return render_template('dashboard/dashboard.html', link=config.link, curr=2, session=session, index=2,
-                           graph=get_version_usage(), title='Version Usage')
+    return render_template('dashboard/dashboard.html', graph=get_version_usage(), title='Version Usage')
 
 
 def get_version_usage():
@@ -68,7 +67,7 @@ def get_version_usage():
         z=data_list,
         x=versions,
         y=all_endpoints,
-        colorscale=[[0, 'rgb(255, 255, 255)'], [0.01, 'rgb(240,240,240)'],[1, 'rgb(1, 1, 1)']],
+        colorscale=[[0, 'rgb(255, 255, 255)'], [0.01, 'rgb(240,240,240)'], [1, 'rgb(1, 1, 1)']],
         colorbar=dict(
             titleside='top',
             tickmode='array',
