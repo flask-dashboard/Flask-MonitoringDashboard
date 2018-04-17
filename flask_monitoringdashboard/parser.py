@@ -1,21 +1,20 @@
 """
     Helper functions for parsing the arguments from the config file
 """
-from flask_monitoringdashboard import config
 import ast
 import os
 
 HEADER_NAME = 'dashboard'
 
 
-def parse_version(parser):
+def parse_version(parser, version):
     """
     Parse the version given in the config-file.
     If both GIT and VERSION are used, the GIT argument is used.
-    :param parser:
-    :return:
+    :param parser: the parser to be used for parsing
+    :param version: the default version
     """
-    version = parse_string(parser, 'APP_VERSION', config.version)
+    version = parse_string(parser, 'APP_VERSION', version)
     if parser.has_option(HEADER_NAME, 'GIT'):
         git = parser.get(HEADER_NAME, 'GIT')
         try:

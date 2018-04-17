@@ -75,7 +75,7 @@ class Config(object):
         parser = configparser.RawConfigParser()
         try:
             parser.read(file)
-            parse_version(parser)
+            parse_version(parser, self.version)
 
             self.link = parse_string(parser, 'CUSTOM_LINK', self.link)
             self.database_name = parse_string(parser, 'DATABASE', self.database_name)
@@ -85,7 +85,6 @@ class Config(object):
             self.colors = parse_literal(parser, 'COLORS', self.colors)
             self.outlier_detection_constant = parse_literal(parser, 'OUTlIER_DETECTION_CONSTANT',
                                                             self.outlier_detection_constant)
-
             self.username = parse_string(parser, 'USERNAME', self.username)
             self.password = parse_string(parser, 'PASSWORD', self.password)
             self.guest_username = parse_string(parser, 'GUEST_USERNAME', self.guest_username)
