@@ -1,7 +1,7 @@
 """
     Helper functions for parsing the arguments from the config file
 """
-from . import config
+from flask_monitoringdashboard import config
 import ast
 
 HEADER_NAME = 'dashboard'
