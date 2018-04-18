@@ -1,9 +1,10 @@
 """
 Contains all functions that access a single endpoint
 """
+import datetime
+
 from sqlalchemy import func, text, asc
 from sqlalchemy.orm.exc import NoResultFound
-import datetime
 
 from flask_monitoringdashboard import config
 from flask_monitoringdashboard.database import session_scope, FunctionCall, MonitorRule
@@ -16,32 +17,35 @@ def get_line_results(endpoint):
     :return: simple statistics, as described above
     """
     with session_scope() as db_session:
-        query = text("""select
-                datetime(CAST(strftime('%s', time)/3600 AS INT)*3600, 'unixepoch') as newTime, 
-                avg(execution_time) as avg,
-                min(execution_time) as min,
-                max(execution_time) as max,
-                count(execution_time) as count
-            from functioncalls 
-            where endpoint=:val group by newTime""")
+        query = text("""SELECT
+                datetime(CAST(strftime('%s', time)/3600 AS INT)*3600, 'unixepoch') AS newTime, 
+                avg(execution_time) AS avg,
+                min(execution_time) AS min,
+                max(execution_time) AS max,
+                count(execution_time) AS count
+            FROM functioncalls 
+            WHERE endpoint=:val GROUP BY newTime""")
         result = db_session.execute(query, {'val': endpoint})
         data = result.fetchall()
         return data
 
 
-def get_num_requests(endpoint):
+def get_num_requests(endpoint, start_date, end_date):
     """ Returns a list with all dates on which an endpoint is accessed.
         :param endpoint: if None, the result is the sum of all endpoints
+        :param start_date: datetime.date object
+        :param end_date: datetime.date object
     """
     with session_scope() as db_session:
-        query = text("""select
-                datetime(CAST(strftime('%s', time)/3600 AS INT)*3600, 'unixepoch') AS newTime,
-                count(execution_time) as count
-                from functioncalls
-                where (endpoint=:val OR :val='None') group by newTime""")
-        result = db_session.execute(query, {'val': str(endpoint)})
-        data = result.fetchall()
-        return data
+        query = db_session.query(func.strftime('%Y-%m-%d %H:00:00', FunctionCall.time).label('newTime'),
+                                 func.count(FunctionCall.execution_time).label('count'))
+        if endpoint:
+            query = query.filter(FunctionCall.endpoint == endpoint)
+        result = query.filter(FunctionCall.time >= datetime.datetime.combine(start_date, datetime.time(0, 0, 0, 0))). \
+            filter(FunctionCall.time <= datetime.datetime.combine(end_date, datetime.time(23, 59, 59))).\
+            group_by('newTime').all()
+        db_session.expunge_all()
+        return result
 
 
 def get_endpoint_column(endpoint, column):
@@ -122,12 +126,12 @@ def get_all_measurement_per_column(endpoint, column, value):
         return result
 
 
-def get_last_accessed_times():
+def get_last_accessed_times(endpoint):
     """ Returns a list of all endpoints and their last accessed time. """
     with session_scope() as db_session:
-        result = db_session.query(MonitorRule.endpoint, MonitorRule.last_accessed).all()
+        result = db_session.query(MonitorRule.last_accessed).filter(MonitorRule.endpoint == endpoint).first()
         db_session.expunge_all()
-        return result
+        return result[0]
 
 
 def update_last_accessed(endpoint, value):

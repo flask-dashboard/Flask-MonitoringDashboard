@@ -5,61 +5,43 @@ import plotly.graph_objs as go
 from flask import render_template
 
 from flask_monitoringdashboard import blueprint
-from flask_monitoringdashboard.colors import get_color
 from flask_monitoringdashboard.core.auth import secure
+from flask_monitoringdashboard.core.forms import get_daterange_form
 from flask_monitoringdashboard.database.endpoint import get_num_requests
-from flask_monitoringdashboard.database.function_calls import get_times
 
 
-@blueprint.route('/measurements/heatmap')
+@blueprint.route('/measurements/heatmap', methods=['GET', 'POST'])
 @secure
 def heatmap():
-    colors = {}
-    for result in get_times():
-        colors[result.endpoint] = get_color(result.endpoint)
-    return render_template('dashboard/dashboard.html', graph=get_heatmap(end=None), title='Heatmap')
+    form = get_daterange_form()
+    return render_template('dashboard/graph.html', form=form, graph=get_heatmap(form), title='Heatmap')
 
 
-def get_heatmap(end):
-    # list of hours: 1:00 - 23:00
-    hours = ['0' + str(hour) + ':00' for hour in range(0, 10)] + \
-            [str(hour) + ':00' for hour in range(10, 24)]
+def get_heatmap(form, end=None):
+    """
+    Return HTML code for generating a Heatmap.
+    :param form: A SelectDateRangeForm, which is used to filter the selection
+    :param end: optionally, filter the data on a specific endpoint
+    :return: HTML code with the graph
+    """
+    # list of hours: 0:00 - 23:00
+    hours = ['0{}:00'.format(h) for h in range(0, 10)] + ['{}:00'.format(h) for h in range(10, 24)]
 
-    data = get_num_requests(end)
-    # list of days (format: year-month-day)
-    days = [str(d.newTime[:10]) for d in data]
-    # remove duplicates and sort the result
-    days = sorted(list(set(days)))
+    delta = form.end_date.data - form.start_date.data
+    days = [form.start_date.data + datetime.timedelta(days=i) for i in range(delta.days + 1)]
 
-    if len(data) == 0:
-        return None
+    # create empty 2D-list: [hour][day]
+    heatmap_data = []
+    for i in range(len(hours)):
+        heatmap_data.append([])
+        [heatmap_data[i].append(0) for _ in days]
 
-    first_day = max(datetime.datetime.strptime(days[0], '%Y-%m-%d'),
-                    datetime.datetime.now() - datetime.timedelta(days=30))
-    first_day -= datetime.timedelta(hours=12)
-    last_day = datetime.datetime.strptime(days[len(days) - 1], '%Y-%m-%d') + datetime.timedelta(hours=12)
-
-    # create empty 2D-dictionary with the keys: [hour][day]
-    requests = {}
-    for hour in hours:
-        requests_day = {}
-        for day in days:
-            requests_day[day] = 0
-        requests[hour] = requests_day
-
-    # add data to the dictionary
-    for d in data:
-        day = str(d.newTime[:10])
-        hour = str(d.newTime[11:16])
-        requests[hour][day] = d.count
-
-    # create a 2D-list out of the dictionary
-    requests_list = []
-    for hour in hours:
-        day_list = []
-        for day in days:
-            day_list.append(requests[hour][day])
-        requests_list.append(day_list)
+    # add data from database to heatmap_data
+    for d in get_num_requests(end, form.start_date.data, form.end_date.data):
+        parsed_time = datetime.datetime.strptime(d.newTime, '%Y-%m-%d %H:%M:%S')
+        day_index = (parsed_time - datetime.datetime.combine(form.start_date.data, datetime.time(0, 0, 0, 0))).days
+        hour_index = int(parsed_time.strftime('%H'))
+        heatmap_data[hour_index][day_index] = d.count
 
     layout = go.Layout(
         autosize=True,
@@ -67,10 +49,10 @@ def get_heatmap(end):
         plot_bgcolor='rgba(249,249,249,1)',
         showlegend=False,
         title='Heatmap of number of requests',
-        xaxis=go.XAxis(range=[first_day, last_day],
+        xaxis=go.XAxis(range=[(form.start_date.data - datetime.timedelta(days=1, hours=6)).
+                       strftime('%Y-%m-%d 12:00:00'), form.end_date.data.strftime('%Y-%m-%d 12:00:00')],
                        title='Date'),
         yaxis=dict(title='Time', autorange='reversed')
     )
-
-    trace = go.Heatmap(z=requests_list, x=days, y=hours)
+    trace = go.Heatmap(z=heatmap_data, x=days, y=hours)
     return plotly.offline.plot(go.Figure(data=[trace], layout=layout), output_type='div', show_link=False)

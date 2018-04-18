@@ -15,7 +15,7 @@ def page_boxplot_per_version():
     colors = {}
     for result in get_times():
         colors[result.endpoint] = get_color(result.endpoint)
-    return render_template('dashboard/dashboard.html', graph=get_boxplot_per_version(), title='Time per version')
+    return render_template('dashboard/graph.html', graph=get_boxplot_per_version(), title='Time per version')
 
 
 def get_boxplot_per_version():

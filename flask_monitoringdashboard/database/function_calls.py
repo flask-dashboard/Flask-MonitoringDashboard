@@ -76,28 +76,46 @@ def get_times():
         return result
 
 
-def get_hits(date_from=None):
-    """ Return all entries of measurements with the number of execution times which are called after 'date_from'
+def get_hits(endpoint, date_from=datetime.datetime.utcfromtimestamp(0)):
+    """ Return the number of hits for a specific endpoint within a certain time interval.
+    If date_from is not specified, all results are counted
+    :param endpoint: name of the endpoint
     :param date_from: A datetime-object
     """
     with session_scope() as db_session:
-        result = db_session.query(FunctionCall.endpoint,
-                                  func.count(FunctionCall.execution_time).label('count')). \
-            filter(FunctionCall.time > date_from).group_by(FunctionCall.endpoint).all()
+        result = db_session.query(func.count(FunctionCall.execution_time).label('count')). \
+            filter(FunctionCall.endpoint == endpoint).filter(FunctionCall.time > date_from). \
+            group_by(FunctionCall.endpoint).first()
         db_session.expunge_all()
-        return result
+        if result:
+            return result[0]
+        return 0
 
 
-def get_average(date_from=None):
-    """ Return the average of execution times which are called after 'date_from' grouped per endpoint
+def get_median(endpoint, date_from=datetime.datetime.utcfromtimestamp(0)):
+    """ Return the median for a specific endpoint within a certain time interval.
+    If date_from is not specified, all results are counted
+    :param endpoint: name of the endpoint
     :param date_from: A datetime-object
     """
     with session_scope() as db_session:
-        result = db_session.query(FunctionCall.endpoint,
-                                  func.avg(FunctionCall.execution_time).label('average')). \
-            filter(FunctionCall.time > date_from).group_by(FunctionCall.endpoint).all()
-        db_session.expunge_all()
-        return result
+        result = db_session.query(FunctionCall.execution_time). \
+            filter(FunctionCall.endpoint == endpoint).filter(FunctionCall.time > date_from). \
+            order_by(FunctionCall.execution_time).all()
+        result_list = [r[0] for r in result]
+        return median_value(result_list)
+
+
+def median_value(result_list):
+    """ Takes the median value from a list.
+    Note that the given result_list must be sorted"""
+    count = len(result_list)
+    if count == 0:
+        return 0
+    if count % 2 == 1:
+        return result_list[count // 2]
+    else:
+        return (result_list[count // 2 - 1] + result_list[count // 2]) / 2
 
 
 def get_data_between(time_from, time_to=None):
@@ -147,8 +165,9 @@ def get_versions(end=None):
     with session_scope() as db_session:
         result = db_session.query(FunctionCall.version,
                                   func.min(FunctionCall.time).label('startedUsingOn')). \
-            filter((FunctionCall.endpoint == end) | (end is None)).group_by(FunctionCall.version).order_by(
-            asc('startedUsingOn')).all()
+            filter((FunctionCall.endpoint == end) | (end is None)). \
+            group_by(FunctionCall.version). \
+            order_by(asc('startedUsingOn')).all()
         db_session.expunge_all()
     return result
 
@@ -162,6 +181,14 @@ def get_data_per_endpoint(end):
 
 
 def get_endpoints():
+    """ Returns the name of all endpoints from the database """
+    with session_scope() as db_session:
+        result = db_session.query(FunctionCall.endpoint).distinct().all()
+        db_session.expunge_all()
+        return [r[0] for r in result]  # unpack tuple result
+
+
+def get_endpoints_with_count():
     with session_scope() as db_session:
         result = db_session.query(FunctionCall.endpoint,
                                   func.count(FunctionCall.endpoint).label('cnt')). \

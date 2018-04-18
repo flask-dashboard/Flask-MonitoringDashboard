@@ -1,7 +1,6 @@
-{% extends "dashboard/dashboard-base.html" %}
+{% extends "dashboard/graph.html" %}
 
-{% block subcontent %}
-
+{% block title %}
 {% set url_heatmap='dashboard.result_heatmap' %}
 {% set url_time_hour='dashboard.result_time_per_hour' %}
 {% set url_hits_hour='dashboard.result_hits_per_hour' %}
@@ -11,49 +10,30 @@
 {% set url_user='dashboard.result_time_per_user' %}
 {% set url_outliers='dashboard.result_outliers' %}
 
-<div class="card mb-3">
+{% macro menubar_item(endpoint, name) %}
+  <li class="nav-item">
+    <a class="nav-link {{ active_if_is(endpoint) }}" href="{{ url_for(endpoint, end=details.endpoint) }}">
+      <span class="nav-link-text">{{ name }}</span>
+    </a>
+  </li>
+{%- endmacro %}
 
-    {% macro menubar_item(endpoint, name) %}
-    <li class="nav-item">
-      <a class="nav-link {{ active_if_is(endpoint) }}" href="{{ url_for(endpoint, end=details.endpoint) }}">
-        <span class="nav-link-text">{{ name }}</span>
-      </a>
-    </li>
-    {%- endmacro %}
-
-    <div class="card-header">
-      <nav class="navbar navbar-expand-sm">
-        <div class="collapse navbar-collapse" id="nav-content">
-          <ul class="navbar-nav nav-pills">
-            {{ menubar_item(url_heatmap, 'Heatmap') }}
-            {{ menubar_item(url_time_hour, 'Time per hour') }}
-            {{ menubar_item(url_hits_hour, 'Hits per hour') }}
-            {{ menubar_item(url_version_user, 'Time per version per user') }}
-            {{ menubar_item(url_version_ip, 'Time per version per ip') }}
-            {{ menubar_item(url_version, 'Time per version') }}
-            {{ menubar_item(url_user, 'Time per user') }}
-            {{ menubar_item(url_outliers, 'Outliers') }}
-          </ul>
-        </div>
-      </nav>
-    </div>
-  <div class="card-body">
-
-    <div id="loading">
-      <div class="col-md-12 col-sm-12">
-        <br>
-        <div class="text-center">
-          <img src="{{ url_for('dashboard.static', filename='loading.gif') }}"
-               alt="Be patient..." align="center"/>
-        </div>
-      </div>
-    </div>
-
-    {% block graph_content %}
-    {% endblock %}
-
+<nav class="navbar navbar-expand-sm">
+  <div class="collapse navbar-collapse" id="nav-content">
+    <ul class="navbar-nav nav-pills">
+      {{ menubar_item(url_heatmap, 'Heatmap') }}
+      {{ menubar_item(url_time_hour, 'Time per hour') }}
+      {{ menubar_item(url_hits_hour, 'Hits per hour') }}
+      {{ menubar_item(url_version_user, 'Time per version per user') }}
+      {{ menubar_item(url_version_ip, 'Time per version per ip') }}
+      {{ menubar_item(url_version, 'Time per version') }}
+      {{ menubar_item(url_user, 'Time per user') }}
+      {{ menubar_item(url_outliers, 'Outliers') }}
+    </ul>
   </div>
-</div>
+</nav>
+{% endblock %}
+
 
 <div class="card mb-3">
   <div class="card-header"><h4>Summary of endpoint</h4></div>
@@ -86,7 +66,6 @@
     </div>
   </div>
 </div>
-{% endblock %}
 
 {% block script %}
 <script>

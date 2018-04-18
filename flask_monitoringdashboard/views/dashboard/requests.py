@@ -14,7 +14,7 @@ def page_number_of_requests_per_endpoint():
     colors = {}
     for result in get_times():
         colors[result.endpoint] = get_color(result.endpoint)
-    return render_template('dashboard/dashboard.html', graph=get_stacked_bar(), title='Requests per endpoint')
+    return render_template('dashboard/graph.html', graph=get_stacked_bar(), title='Requests per endpoint')
 
 
 def get_stacked_bar():

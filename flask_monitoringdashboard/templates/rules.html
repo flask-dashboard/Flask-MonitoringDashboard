@@ -18,26 +18,17 @@
             </tr>
           </thead>
           <tbody>
-            {% for rule in rules %}
+            {% for row in rules %}
               <tr>
-                <td style="background-color: {{ colors[rule.endpoint] }}"></td>
-                <td style="max-width: 200px; overflow: hidden; white-space: nowrap; text-overflow: ellipsis;">{{ rule.rule }}</td>
-                <td>{{ ", ".join(rule.methods) }}</td>
-                <td style="max-width: 200px; overflow: hidden; white-space: nowrap; text-overflow: ellipsis;">{{ rule.endpoint }}</td>
-                {% if access[0] %}
-                  {% for a in access %}
-                    {% if rule.endpoint == a.endpoint %}
-                      <td style="text-align: center;">{{ "{:%Y-%m-%d %H:%M:%S }".format(a.last_accessed) if a.last_accessed }}</td>
-                    {% endif %}
-                  {% endfor %}
-                {% else %}
-                  <td></td>
-                {% endif %}
+                <td style="background-color: {{ row.color }}"></td>
+                <td style="max-width: 200px; overflow: hidden; white-space: nowrap; text-overflow: ellipsis;">{{ row.rule }}</td>
+                <td>{{ ", ".join(row.methods) }}</td>
+                <td style="max-width: 200px; overflow: hidden; white-space: nowrap; text-overflow: ellipsis;">{{ row.endpoint }}</td>
+                <td style="text-align: center;">{{ "{:%Y-%m-%d %H:%M:%S }".format(row.last_accessed) if row.last_accessed }}</td>
                 <td>
-                  <input id="checkbox-{{ rule.endpoint }}" name="checkbox-{{ rule.endpoint }}"
-                         type="checkbox" {{ 'checked' if values[rule.endpoint] }}
-                         class="checkbox">
-                  <label for="checkbox-{{ rule.endpoint }}"></label>
+                  <input id="checkbox-{{ row.endpoint }}" name="checkbox-{{ row.endpoint }}"
+                         type="checkbox" {{ 'checked' if row.monitor }} class="checkbox">
+                  <label for="checkbox-{{ row.endpoint }}"></label>
                 </td>
               </tr>
             {% endfor %}

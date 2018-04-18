@@ -15,7 +15,7 @@ def page_boxplot_per_endpoint():
     colors = {}
     for result in get_times():
         colors[result.endpoint] = get_color(result.endpoint)
-    return render_template('dashboard/dashboard.html', graph=get_boxplot_per_endpoint(), title='Time per endpoint')
+    return render_template('dashboard/graph.html', graph=get_boxplot_per_endpoint(), title='Time per endpoint')
 
 
 def get_boxplot_per_endpoint():
@@ -23,7 +23,7 @@ def get_boxplot_per_endpoint():
     Creates a graph with the execution times per endpoint
     :return:
     """
-    endpoints = [str(e.endpoint) for e in get_endpoints()]
+    endpoints = get_endpoints()
 
     data = []
     for endpoint in endpoints:

@@ -11,7 +11,7 @@ from flask_monitoringdashboard.database.function_calls import get_versions, \
 @blueprint.route('/measurements/version_usage')
 @secure
 def version_usage():
-    return render_template('dashboard/dashboard.html', graph=get_version_usage(), title='Version Usage')
+    return render_template('dashboard/graph.html', graph=get_version_usage(), title='Version Usage')
 
 
 def get_version_usage():

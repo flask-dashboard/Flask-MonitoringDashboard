@@ -29,12 +29,12 @@
           <form class="form" method="POST">
               {{ form.hidden_tag() }}
             <div class="form-group">
-                {{ form.name.label }}
+                <i class="fa fa-user"></i> {{ form.name.label }}
                 {{ form.name(class_="form-control", placeholder="Username", autofocus=true, required=true) }}
             </div>
 
             <div class="form-group">
-              {{ form.password.label }}
+              <i class="fa fa-lock"></i>  {{ form.password.label }}
               {{ form.password(class_="form-control", placeholder="Password", required=true) }}
             </div>
 

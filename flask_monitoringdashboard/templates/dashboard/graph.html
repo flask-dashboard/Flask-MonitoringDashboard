@@ -1,0 +1,70 @@
+{% extends "dashboard/overview.html" %}
+
+{% block subcontent %}
+<div class="card mb-3">
+  <div class="card-header">
+    {% block title %}
+      <h4>{{ title }}</h4>
+    {% endblock %}
+  </div>
+  <div class="card-body">
+
+    <div id="loading">
+      <div class="col-md-12 col-sm-12">
+        <br>
+        <div class="text-center">
+          <img src="{{ url_for('dashboard.static', filename='loading.gif') }}"
+               alt="Be patient..." align="center"/>
+        </div>
+      </div>
+    </div>
+  {% if form %}
+        <div class="card">
+          <div class="card-header"><h6>Make a selection</h6></div>
+          <div class="card-body">
+            <form class="form" method="POST">
+              {{ form.hidden_tag() }}
+              <div class="row">
+                <div class="col-sm">
+                  <i class="fa fa-calendar"></i> {{ form.start_date.label }}
+                </div>
+                <div class="col-sm">
+                  <i class="fa fa-calendar"></i> {{ form.end_date.label }}
+                </div>
+                <div class="col-sm"></div>
+              </div>
+              <div class="row">
+                <div class="col-sm">
+                  {{ form.start_date(class_="form-control", required=true) }}
+                </div>
+                <div class="col-sm">
+                  {{ form.end_date(class_="form-control", required=true) }}
+                </div>
+                <div class="col-sm">
+                  {{ form.submit(class_="btn btn-primary btn-block") }}
+                </div>
+              </div>
+            </form>
+          </div>
+        </div>
+      {% endif %}
+    {% block graph_content %}
+      {% if graph %}
+        <div class="col-sm-12">
+          {{ graph|safe }}
+        </div>
+      {% else %}
+        <p>No data available.</p>
+      {% endif %}
+    {% endblock %}
+  </div>
+</div>
+
+{% endblock %}
+{% block script %}
+<script>
+  $(window).ready(function () {
+    $('#loading').hide();
+  });
+</script>
+{% endblock %}

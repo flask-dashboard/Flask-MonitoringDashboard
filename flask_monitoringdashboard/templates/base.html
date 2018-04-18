@@ -62,7 +62,7 @@
             <i class="fa fa-fw fa-dashboard"></i>
             <span class="nav-link-text">Dashboard</span>
           </a>
-          <ul class="sidenav-second-level {{ "collapse" if request.endpoint in exclude_list }}"
+          <ul class="sidenav-second-level collapse"
               id="collapseDashboard">
             {{ submenu('dashboard.overview', 'Overview') }}
             {{ submenu('dashboard.heatmap', 'Heatmap') }}
@@ -156,10 +156,6 @@
   <script src="{{ url_for('dashboard.static', filename='js/custom-datatables.js') }}"></script>
   {% block script %}
   {% endblock %}
-  <script>
-      $(document).ready(function () { console.log('{{ request.endpoint }}');
-      $("#{{request.endpoint}}").addClass("active"); })
-    </script>
 </div>
 </body>
 </html>
