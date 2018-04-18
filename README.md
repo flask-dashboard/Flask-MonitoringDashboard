@@ -1,4 +1,9 @@
 # Flask Monitoring Dashboard
+[![Build Status](https://travis-ci.org/flask-dashboard/Flask-MonitoringDashboard.svg?branch=master)](https://travis-ci.org/flask-dashboard/Flask-MonitoringDashboard.svg?branch=master)
+[![Documentation Status](https://readthedocs.org/projects/flask-monitoringdashboard/badge/?version=latest)](http://flask-monitoringdashboard.readthedocs.io/en/latest/?badge=latest)
+[![codecov](https://codecov.io/gh/flask-dashboard/Flask-MonitoringDashboard/branch/master/graph/badge.svg)](https://codecov.io/gh/flask-dashboard/Flask-MonitoringDashboard)
+
+
 Dashboard for automatic monitoring of Flask web-services.
 
 The Flask Monitoring Dashboard is an extension that offers four main functionalities with little effort from the Flask developer:
@@ -18,10 +23,6 @@ You can view the results by default using the default endpoint (this can be conf
     [/dashboard](http://localhost:5000/dashboard)
 
 For a more advanced documentation, take a look at the information on [this site](http://flask-monitoringdashboard.readthedocs.io/en/latest/functionality.html).
-
-### Status
-[![Build Status](https://travis-ci.org/flask-dashboard/Flask-MonitoringDashboard.svg?branch=master)](https://travis-ci.org/flask-dashboard/Flask-MonitoringDashboard.svg?branch=master)
-[![Documentation Status](https://readthedocs.org/projects/flask-monitoringdashboard/badge/?version=latest)](http://flask-monitoringdashboard.readthedocs.io/en/latest/?badge=latest)
 
 ## Installation
 To install from source, download the source code, then run this:
