@@ -6,7 +6,7 @@ from flask import render_template
 
 from flask_monitoringdashboard import blueprint
 from flask_monitoringdashboard.core.auth import secure
-from flask_monitoringdashboard.core.forms import get_daterange_form
+from flask_monitoringdashboard.core.forms import get_daterange_form, get_days
 from flask_monitoringdashboard.database.endpoint import get_num_requests
 
 
@@ -26,9 +26,7 @@ def get_heatmap(form, end=None):
     """
     # list of hours: 0:00 - 23:00
     hours = ['0{}:00'.format(h) for h in range(0, 10)] + ['{}:00'.format(h) for h in range(10, 24)]
-
-    delta = form.end_date.data - form.start_date.data
-    days = [form.start_date.data + datetime.timedelta(days=i) for i in range(delta.days + 1)]
+    days = get_days(form)
 
     # create empty 2D-list: [hour][day]
     heatmap_data = []

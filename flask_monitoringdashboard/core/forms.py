@@ -33,7 +33,7 @@ class SelectDateRangeForm(FlaskForm):
     submit = SubmitField('Submit')
 
 
-def get_daterange_form():
+def get_daterange_form(numdays=20):
     """
     :return: A SelectDateRangeForm object with the required logic
     """
@@ -43,5 +43,14 @@ def get_daterange_form():
             form.start_date.data, form.end_date.data = form.end_date.data, form.start_date.data
     else:
         form.end_date.data = datetime.date.today()
-        form.start_date.data = form.end_date.data - datetime.timedelta(days=20)
+        form.start_date.data = form.end_date.data - datetime.timedelta(days=numdays)
     return form
+
+
+def get_days(form):
+    """
+    :param form: must be the form that is obtained by get_datarange_form
+    :return: A list with datetime.date object from form.start_date to (including) form.end_date
+    """
+    delta = form.end_date.data - form.start_date.data
+    return [form.start_date.data + datetime.timedelta(days=i) for i in range(delta.days + 1)]

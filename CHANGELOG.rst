@@ -9,6 +9,8 @@ Unreleased
 ----------
 Changed
 
+- Removed two graphs: hits per hour and execution time per hour
+
 - New template
 
 - Refactored code

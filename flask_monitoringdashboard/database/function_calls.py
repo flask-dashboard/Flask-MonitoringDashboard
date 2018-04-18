@@ -5,7 +5,7 @@ Contains all functions that access any functionCall-object
 import datetime
 import time
 
-from sqlalchemy import func, desc, text, asc
+from sqlalchemy import func, desc, asc
 
 from flask_monitoringdashboard import config
 from flask_monitoringdashboard.database import session_scope, FunctionCall
@@ -13,17 +13,21 @@ from flask_monitoringdashboard.database import session_scope, FunctionCall
 PRIMITIVES = (bool, bytes, float, int, str)
 
 
-def get_reqs_endpoint_day():
-    """ Retrieves the number of requests per endpoint per day. """
+def get_requests_per_day(endpoint, list_of_days):
+    """
+    :param endpoint: name of the endpoint
+    :param list_of_days: a list with datetime.date objects
+    :return: A list of the amount of requests per day for a specific endpoint.
+    If no requests is made on that day, a value of 0 is returned.
+    """
+    result_list = []
     with session_scope() as db_session:
-        query = text("""SELECT strftime('%Y-%m-%d', time) AS newTime,
-                               count(endpoint) AS cnt,
-                               endpoint
-                        FROM functioncalls 
-                        GROUP BY newTime, endpoint""")
-        result = db_session.execute(query)
-        data = result.fetchall()
-        return data
+        for day in list_of_days:
+            result = db_session.query(FunctionCall.execution_time).\
+                filter(FunctionCall.endpoint == endpoint).\
+                filter(func.strftime('%Y-%m-%d', FunctionCall.time) == day.strftime('%Y-%m-%d')).count()
+            result_list.append(result)
+    return result_list
 
 
 def get_group_by(argument):
@@ -56,7 +60,6 @@ def add_function_call(time, endpoint, ip):
         try:
             if config.group_by:
                 group_by = get_group_by(config.group_by)
-                print(group_by)
         except Exception as e:
             print('Can\'t execute group_by function: {}'.format(e))
         call = FunctionCall(endpoint=endpoint, execution_time=time, version=config.version,

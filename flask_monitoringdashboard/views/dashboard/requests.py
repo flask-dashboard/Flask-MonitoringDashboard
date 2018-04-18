@@ -5,72 +5,46 @@ from flask import render_template
 from flask_monitoringdashboard import blueprint
 from flask_monitoringdashboard.colors import get_color
 from flask_monitoringdashboard.core.auth import secure
-from flask_monitoringdashboard.database.function_calls import get_times, get_reqs_endpoint_day
+from flask_monitoringdashboard.core.forms import get_daterange_form, get_days
+from flask_monitoringdashboard.database.function_calls import get_requests_per_day, get_endpoints
 
 
-@blueprint.route('/measurements/requests')
+@blueprint.route('/measurements/requests', methods=['GET', 'POST'])
 @secure
 def page_number_of_requests_per_endpoint():
-    colors = {}
-    for result in get_times():
-        colors[result.endpoint] = get_color(result.endpoint)
-    return render_template('dashboard/graph.html', graph=get_stacked_bar(), title='Requests per endpoint')
+    form = get_daterange_form(numdays=10)
+    return render_template('dashboard/graph.html', form=form, graph=get_stacked_bar(form),
+                           title='Requests per endpoint')
 
 
-def get_stacked_bar():
-    data = get_reqs_endpoint_day()
-
-    if len(data) == 0:
-        return None
-
-    labels = []
-    endpoints = []
-    # find labels and endpoints
-    for d in data:
-        if d.newTime not in labels:
-            labels.append(d.newTime)
-        if d.endpoint not in endpoints:
-            endpoints.append(d.endpoint)
-    labels.sort(reverse=True)
-
-    # create dictionary. graph_data is in the form of: graph_data[label][endpoint]
-    graph_data = {}
-    for label in labels:
-        graph_data[label] = {}
-        for endpoint in endpoints:
-            graph_data[label][endpoint] = 0
-
-    # put data in dictionary
-    for d in data:
-        graph_data[d.newTime][d.endpoint] = d.cnt
+def get_stacked_bar(form):
+    """
+    Returns a horizontal boxplot with the number of requests per day.
+    :param form: must be the form that is obtained by get_daterange_form
+    :return:
+    """
+    days = get_days(form)
 
     # create graph
     trace = []
-    for endpoint in endpoints:
-
-        lst = []
-        for label in labels:
-            lst.append(graph_data[label][endpoint])
-
+    for endpoint in get_endpoints():
         trace.append(go.Bar(
-            y=labels,
-            x=lst,
+            y=days,
+            x=get_requests_per_day(endpoint, days),
             name=endpoint,
             orientation='h',
-            marker=dict(
-                color=get_color(endpoint)
-            )
+            marker={'color': get_color(endpoint)}
         ))
 
     layout = go.Layout(
         barmode='stack',
         autosize=True,
-        height=350 + 40 * len(labels),
+        height=350 + 40 * len(days),
         plot_bgcolor='rgba(249,249,249,1)',
         showlegend=True,
         title='Number of requests per endpoint per day',
-        xaxis=dict(title='Number of requests'),
-        yaxis=dict(autorange='reversed')
+        xaxis={'title': 'Number of requests'},
+        yaxis={'autorange': 'reversed'}
     )
 
     return plotly.offline.plot(go.Figure(data=trace, layout=layout), output_type='div', show_link=False)

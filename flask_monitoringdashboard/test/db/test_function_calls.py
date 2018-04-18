@@ -18,16 +18,6 @@ class TestFunctionCall(unittest.TestCase):
         clear_db()
         add_fake_data()
 
-    def test_get_reqs_endpoint_day(self):
-        """
-            Test whether the function returns the right values.
-        """
-        from flask_monitoringdashboard.database.function_calls import get_reqs_endpoint_day
-        result = get_reqs_endpoint_day()
-        self.assertEqual(len(result), 1)
-        self.assertEqual(result[0].cnt, len(EXECUTION_TIMES))
-        self.assertEqual(result[0].endpoint, NAME)
-
     def test_add_function_call(self):
         """
             Test whether the function returns the right values.

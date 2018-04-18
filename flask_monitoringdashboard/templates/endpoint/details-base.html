@@ -2,8 +2,6 @@
 
 {% block title %}
 {% set url_heatmap='dashboard.result_heatmap' %}
-{% set url_time_hour='dashboard.result_time_per_hour' %}
-{% set url_hits_hour='dashboard.result_hits_per_hour' %}
 {% set url_version_user='dashboard.result_time_per_version_per_user' %}
 {% set url_version_ip='dashboard.result_time_per_version_per_ip' %}
 {% set url_version='dashboard.result_time_per_version' %}
@@ -22,8 +20,6 @@
   <div class="collapse navbar-collapse" id="nav-content">
     <ul class="navbar-nav nav-pills">
       {{ menubar_item(url_heatmap, 'Heatmap') }}
-      {{ menubar_item(url_time_hour, 'Time per hour') }}
-      {{ menubar_item(url_hits_hour, 'Hits per hour') }}
       {{ menubar_item(url_version_user, 'Time per version per user') }}
       {{ menubar_item(url_version_ip, 'Time per version per ip') }}
       {{ menubar_item(url_version, 'Time per version') }}
