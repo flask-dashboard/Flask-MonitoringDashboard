@@ -2,7 +2,6 @@
 branch = True
 include =
         ./flask_monitoringdashboard/*
-        ./flask_monitoringdashboard/test/*
 omit =
         *__init__*
         *docs*

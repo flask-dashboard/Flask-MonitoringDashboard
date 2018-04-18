@@ -19,10 +19,3 @@ def get_test_suite():
     test_loader = unittest.TestLoader()
     test_suite = test_loader.discover('flask_monitoringdashboard.test', pattern='test_*.py')
     return test_suite
-
-
-def run_tests():
-    """
-        Run all tests
-    """
-    unittest.TextTestRunner().run(get_test_suite())
