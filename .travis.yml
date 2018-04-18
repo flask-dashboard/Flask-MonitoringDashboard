@@ -8,7 +8,7 @@ python:
 
 script:
   - python setup.py test
-  - coverage run tests.py
+  - coverage run -m flask_monitoringdashboard.test
 
 install:
   - pip install codecov
