@@ -24,7 +24,7 @@ setuptools.setup(
     include_package_data=True,
     platforms='Any',
     zip_safe=False,
-    test_suite='flask_monitoringdashboard.test.start_testing',
+    test_suite='flask_monitoringdashboard.test.get_test_suite',
     url='https://github.com/flask-dashboard/Flask-MonitoringDashboard',
     author="Patrick Vogel & Thijs Klooster",
     author_email="p.p.vogel@student.rug.nl",

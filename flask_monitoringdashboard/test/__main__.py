@@ -1,4 +1,3 @@
-from flask_monitoringdashboard.test import start_testing
+from flask_monitoringdashboard.test import run_tests
 
-if __name__ == '__main__':
-    start_testing()
+run_tests()

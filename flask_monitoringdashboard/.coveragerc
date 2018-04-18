@@ -1,9 +1,9 @@
 [run]
 branch = True
 include =
-        ./*
+        ./flask_monitoringdashboard/*
+        ./flask_monitoringdashboard/test/*
 omit =
-        *tests*
         *__init__*
         *docs*
 [report]
