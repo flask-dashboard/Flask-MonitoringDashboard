@@ -29,14 +29,6 @@ class TestEndpoint(unittest.TestCase):
         self.assertEqual(result.max, max(EXECUTION_TIMES))
         self.assertEqual(result.count, len(EXECUTION_TIMES))
 
-    def test_get_num_requests(self):
-        """
-            Test whether the function returns the right values.
-        """
-        from flask_monitoringdashboard.database.endpoint import get_num_requests
-        result = get_num_requests(NAME)[0]
-        self.assertEqual(result.count, len(EXECUTION_TIMES))
-
     def test_get_endpoint_column(self):
         """
             Test whether the function returns the right values.
@@ -120,15 +112,6 @@ class TestEndpoint(unittest.TestCase):
             self.assertEqual(row.group_by, GROUP_BY)
             self.assertEqual(row.ip, IP)
 
-    def test_get_last_accessed_times(self):
-        """
-            Test whether the function returns the right values.
-        """
-        from flask_monitoringdashboard.database.endpoint import get_last_accessed_times
-        result = get_last_accessed_times()
-        self.assertEqual(len(result), 1)
-        self.assertEqual(result[0].endpoint, NAME)
-
     def test_update_last_accessed(self):
         """
             Test whether the function returns the right values.
@@ -137,7 +120,5 @@ class TestEndpoint(unittest.TestCase):
         time = datetime.datetime.now()
         from flask_monitoringdashboard.database.endpoint import update_last_accessed, get_last_accessed_times
         update_last_accessed(NAME, time)
-        result = get_last_accessed_times()
-        self.assertEqual(len(result), 1)
-        self.assertEqual(result[0].endpoint, NAME)
-        self.assertEqual(result[0].last_accessed, time)
+        result = get_last_accessed_times(NAME)
+        self.assertEqual(result, time)

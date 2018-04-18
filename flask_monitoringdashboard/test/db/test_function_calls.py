@@ -133,8 +133,7 @@ class TestFunctionCall(unittest.TestCase):
         from flask_monitoringdashboard.database.function_calls import get_endpoints
         result = get_endpoints()
         self.assertEqual(len(result), 1)
-        self.assertEqual(result[0].endpoint, NAME)
-        self.assertEqual(result[0].cnt, len(EXECUTION_TIMES))
+        self.assertEqual(result[0], NAME)
 
     def test_get_date_of_first_request(self):
         """

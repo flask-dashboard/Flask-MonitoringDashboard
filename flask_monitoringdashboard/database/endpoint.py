@@ -131,7 +131,9 @@ def get_last_accessed_times(endpoint):
     with session_scope() as db_session:
         result = db_session.query(MonitorRule.last_accessed).filter(MonitorRule.endpoint == endpoint).first()
         db_session.expunge_all()
-        return result[0]
+        if result:
+            return result[0]
+        return None
 
 
 def update_last_accessed(endpoint, value):
