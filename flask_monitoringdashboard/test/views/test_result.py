@@ -20,22 +20,6 @@ class TestResult(unittest.TestCase):
         login(self.app)
         self.assertEqual(200, self.app.get('dashboard/result/{}/heatmap'.format(NAME)).status_code)
 
-    def test_result_time_per_hour(self):
-        """
-            Just retrieve the content and check if nothing breaks
-        """
-        self.assertEqual(302, self.app.get('dashboard/result/{}/time_per_hour'.format(NAME)).status_code)
-        login(self.app)
-        self.assertEqual(200, self.app.get('dashboard/result/{}/time_per_hour'.format(NAME)).status_code)
-
-    def test_result_hits_per_hour(self):
-        """
-            Just retrieve the content and check if nothing breaks
-        """
-        self.assertEqual(302, self.app.get('dashboard/result/{}/hits_per_hour'.format(NAME)).status_code)
-        login(self.app)
-        self.assertEqual(200, self.app.get('dashboard/result/{}/hits_per_hour'.format(NAME)).status_code)
-
     def test_result_time_per_version_per_user(self):
         """
             Just retrieve the content and check if nothing breaks
