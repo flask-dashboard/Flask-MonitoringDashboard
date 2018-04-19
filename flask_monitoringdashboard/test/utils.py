@@ -12,10 +12,8 @@ GROUP_BY = '1'
 EXECUTION_TIMES = [1000, 2000, 3000, 4000, 50000]
 TIMES = [datetime.datetime.utcnow()] * 5
 for i in range(len(TIMES)):
-    TIMES[i] += datetime.timedelta(seconds=i)
+    TIMES[i] -= datetime.timedelta(seconds=len(EXECUTION_TIMES)-i)
 TEST_NAMES = ['test_name1', 'test_name2']
-print('Sleeping 10 seconds before executing tests')
-time.sleep(10)
 
 
 def set_test_environment():
