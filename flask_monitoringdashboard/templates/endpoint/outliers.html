@@ -1,7 +1,10 @@
 {% extends "endpoint/details-base.html" %}
 {% block form_content %}
 {% endblock %}
+
 {% block graph_content %}
+{{ pagination.info }}
+{{ pagination.links }}
 {% for row in table %}
 <div class="card">
   <div class="row">
@@ -43,4 +46,6 @@
 </div><br />
 
 {% endfor %}
+{{ pagination.info }}
+{{ pagination.links }}
 {% endblock %}

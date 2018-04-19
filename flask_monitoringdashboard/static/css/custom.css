@@ -503,3 +503,17 @@ footer.sticky-footer {
 .my-active>.nav-link-text {
   color: rgba(0, 0, 0, 0.7);
 }
+
+.pagination-page-info {
+  padding: .6em;
+  padding-left: 0;
+  width: 40em;
+  margin: .5em;
+  margin-left: 0;
+  font-size: 12px;
+}
+.pagination-page-info b {
+  color: black;
+  padding-left: 2px;
+  padding: .1em .25em;
+}

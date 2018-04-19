@@ -43,3 +43,11 @@ class TestSetup(unittest.TestCase):
         self.assertEqual(302, self.app.get('dashboard/testmonitor').status_code)
         login(self.app)
         self.assertEqual(200, self.app.get('dashboard/testmonitor').status_code)
+
+    def test_configuration(self):
+        """
+            Just retrieve the content and check if nothing breaks
+        """
+        self.assertEqual(302, self.app.get('dashboard/configuration').status_code)
+        login(self.app)
+        self.assertEqual(200, self.app.get('dashboard/configuration').status_code)
