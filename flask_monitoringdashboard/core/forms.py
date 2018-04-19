@@ -28,8 +28,8 @@ class RunTests(FlaskForm):
 
 class SelectDateRangeForm(FlaskForm):
     """ Used for selecting two dates, which together specify a range. """
-    start_date = DateField('Start date', format=DATE_FORMAT, validators=[validators.required()])
-    end_date = DateField('End date', format=DATE_FORMAT, validators=[validators.required()])
+    start_date = DateField('Start date', format=DATE_FORMAT, validators=[validators.data_required()])
+    end_date = DateField('End date', format=DATE_FORMAT, validators=[validators.data_required()])
     submit = SubmitField('Submit')
 
 
