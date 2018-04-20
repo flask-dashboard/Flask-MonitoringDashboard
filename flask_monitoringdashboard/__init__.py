@@ -14,7 +14,7 @@
 
 import os
 from flask import Blueprint
-from flask_monitoringdashboard.config import Config
+from flask_monitoringdashboard.core.config import Config
 
 config = Config()
 user_app = None

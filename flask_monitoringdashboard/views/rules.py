@@ -1,7 +1,7 @@
 from flask import request, render_template
 
 from flask_monitoringdashboard import blueprint, config, user_app
-from flask_monitoringdashboard.colors import get_color
+from flask_monitoringdashboard.core.colors import get_color
 from flask_monitoringdashboard.core.auth import admin_secure
 from flask_monitoringdashboard.core.forms import MonitorDashboard
 from flask_monitoringdashboard.core.measurement import track_performance

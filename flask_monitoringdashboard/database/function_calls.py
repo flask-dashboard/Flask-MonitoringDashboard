@@ -5,12 +5,11 @@ Contains all functions that access any functionCall-object
 import datetime
 import time
 
-from sqlalchemy import func, desc, asc
+from sqlalchemy import func, desc, asc, distinct
 
 from flask_monitoringdashboard import config
+from flask_monitoringdashboard.core.group_by import get_group_by
 from flask_monitoringdashboard.database import session_scope, FunctionCall
-
-PRIMITIVES = (bool, bytes, float, int, str)
 
 
 def get_requests_per_day(endpoint, list_of_days):
@@ -30,40 +29,11 @@ def get_requests_per_day(endpoint, list_of_days):
     return result_list
 
 
-def get_group_by(argument):
-    """ Returns the result of the given argument. The result is computed as:
-    - If the argument is a primitive (i.e. str, bool, int, ...) return its value.
-    - If the argument is a function, call the function.
-    - If the argument is iterable (i.e. list or tuple), compute the result by iterating over the argument
-    Return type is always a string"""
-
-    if type(argument) in PRIMITIVES:
-        return str(argument)
-
-    if callable(argument):
-        return get_group_by(argument())
-
-    # Try if the argument is iterable (i.e. tuple or list)
-    try:
-        result_list = [get_group_by(i) for i in argument]
-        result_string = ','.join(result_list)
-        return '({})'.format(result_string)
-    except TypeError:
-        # Cannot deal with this
-        return str(argument)
-
-
 def add_function_call(time, endpoint, ip):
     """ Add a measurement to the database. """
     with session_scope() as db_session:
-        group_by = None
-        try:
-            if config.group_by:
-                group_by = get_group_by(config.group_by)
-        except Exception as e:
-            print('Can\'t execute group_by function: {}'.format(e))
         call = FunctionCall(endpoint=endpoint, execution_time=time, version=config.version,
-                            time=datetime.datetime.now(), group_by=str(group_by), ip=ip)
+                            time=datetime.datetime.now(), group_by=get_group_by(), ip=ip)
         db_session.add(call)
 
 
@@ -164,15 +134,16 @@ def get_hits_per_version(version):
         return result
 
 
-def get_versions(end=None):
+def get_versions(end=None, limit=None):
     with session_scope() as db_session:
-        result = db_session.query(FunctionCall.version,
-                                  func.min(FunctionCall.time).label('startedUsingOn')). \
-            filter((FunctionCall.endpoint == end) | (end is None)). \
-            group_by(FunctionCall.version). \
-            order_by(asc('startedUsingOn')).all()
+        query = db_session.query(distinct(FunctionCall.version)).\
+            filter((FunctionCall.endpoint == end) | (end is None)).\
+            order_by(asc(FunctionCall.time))
+        if limit:
+            query = query.limit(limit)
+        result = query.all()
         db_session.expunge_all()
-    return result
+    return [row[0] for row in result]
 
 
 def get_data_per_endpoint(end):

@@ -54,24 +54,3 @@ def get_url(end):
         return url_for(end)
     except BuildError:
         return None
-
-
-def get_form(data):
-    # create a form to make a selection
-    choices = []
-    for d in list(data):
-        choices.append((d, d))
-
-    class SelectionForm(FlaskForm):
-        selection = SelectMultipleField(
-            'Pick Things!',
-            choices=choices,
-        )
-        submit = SubmitField('Render graph')
-
-    form = SelectionForm(request.form)
-    selection = []
-    if request.method == 'POST':
-        selection = [str(item) for item in form.data['selection']]
-
-    return form, selection

@@ -1,20 +1,16 @@
-import plotly
-import plotly.graph_objs as go
 from flask import render_template
 
 from flask_monitoringdashboard import blueprint
-from flask_monitoringdashboard.colors import get_color
+from flask_monitoringdashboard.core.colors import get_color
 from flask_monitoringdashboard.core.auth import secure
-from flask_monitoringdashboard.database.function_calls import get_times, get_versions, \
-    get_data_per_version
+from flask_monitoringdashboard.core.plot import boxplot, get_layout, get_figure, get_margin
+from flask_monitoringdashboard.database.function_calls import get_versions, get_data_per_version
+from flask_monitoringdashboard.database.versions import get_date_first_request
 
 
 @blueprint.route('/measurements/versions')
 @secure
 def page_boxplot_per_version():
-    colors = {}
-    for result in get_times():
-        colors[result.endpoint] = get_color(result.endpoint)
     return render_template('dashboard/graph.html', graph=get_boxplot_per_version(), title='Time per version')
 
 
@@ -25,29 +21,20 @@ def get_boxplot_per_version():
     """
     versions = get_versions()
 
-    if len(versions) == 0:
+    if not versions:
         return None
 
     data = []
-    for v in versions:
-        values = [c.execution_time for c in get_data_per_version(v.version)]
-        data.append(go.Box(
-            x=values,
-            marker=dict(
-                color=get_color(v.version)
-            ),
-            name="{0} {1}".format(v.version, v.startedUsingOn.strftime("%b %d %H:%M"))))
+    for version in versions:
+        values = [c.execution_time for c in get_data_per_version(version)]
+        name = "{} {}".format(version, get_date_first_request(version).strftime("%b %d %H:%M"))
+        data.append(boxplot(name=name, values=values, marker={'color': get_color(version)}))
 
-    layout = go.Layout(
-        autosize=True,
+    layout = get_layout(
         height=350 + 40 * len(versions),
-        plot_bgcolor='rgba(249,249,249,1)',
-        showlegend=False,
         title='Execution time for every version',
-        xaxis=dict(title='Execution time (ms)'),
-        yaxis=dict(autorange='reversed'),
-        margin=go.Margin(
-            l=200
-        )
+        xaxis={'title': 'Execution time (ms)'},
+        yaxis={'autorange': 'reversed'},
+        margin=get_margin()
     )
-    return plotly.offline.plot(go.Figure(data=data, layout=layout), output_type='div', show_link=False)
+    return get_figure(layout=layout, data=data)

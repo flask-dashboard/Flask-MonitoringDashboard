@@ -3,7 +3,7 @@ import plotly.graph_objs as go
 from flask import session, render_template
 
 from flask_monitoringdashboard import blueprint, config
-from flask_monitoringdashboard.colors import get_color
+from flask_monitoringdashboard.core.colors import get_color
 from flask_monitoringdashboard.database.monitor_rules import get_monitor_names
 from flask_monitoringdashboard.database.tests import get_res_current, get_measurements
 from flask_monitoringdashboard.database.tests import get_tests, get_results, get_suites, get_test_measurements

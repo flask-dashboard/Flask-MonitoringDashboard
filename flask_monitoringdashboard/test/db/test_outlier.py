@@ -37,4 +37,4 @@ class TestMonitorRule(unittest.TestCase):
             Test whether the function returns the right values.
         """
         from flask_monitoringdashboard.database.outlier import count_outliers
-        self.assertEqual(count_outliers(), 0)
+        self.assertEqual(count_outliers(NAME), 0)

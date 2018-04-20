@@ -98,8 +98,7 @@ class TestFunctionCall(unittest.TestCase):
         from flask_monitoringdashboard.database.function_calls import get_versions, config
         result = get_versions()
         self.assertEqual(len(result), 1)
-        self.assertEqual(result[0].version, config.version)
-        self.assertEqual(result[0].startedUsingOn, TIMES[0])
+        self.assertEqual(result[0], config.version)
 
     def test_get_data_per_endpoint(self):
         """

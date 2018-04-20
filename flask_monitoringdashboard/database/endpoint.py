@@ -3,7 +3,7 @@ Contains all functions that access a single endpoint
 """
 import datetime
 
-from sqlalchemy import func, text, asc
+from sqlalchemy import func, text, asc, distinct
 from sqlalchemy.orm.exc import NoResultFound
 
 from flask_monitoringdashboard import config
@@ -48,6 +48,45 @@ def get_num_requests(endpoint, start_date, end_date):
         return result
 
 
+def get_num_users(endpoint):
+    """
+    :param endpoint: filter on this endpoint
+    :return: The number of distinct users that have requested this endpoint
+    """
+    with session_scope() as db_session:
+        result = db_session.query(func.count(distinct(FunctionCall.group_by))).\
+            filter(FunctionCall.endpoint == endpoint).first()
+        if result:
+            return result[0]
+        return 0
+
+
+def get_num_ips(endpoint):
+    """
+    :param endpoint: filter on this endpoint
+    :return: The number of distinct users that have requested this endpoint
+    """
+    with session_scope() as db_session:
+        result = db_session.query(func.count(distinct(FunctionCall.ip))).\
+            filter(FunctionCall.endpoint == endpoint).first()
+        if result:
+            return result[0]
+        return 0
+
+
+def get_num_versions(endpoint):
+    """
+    :param endpoint: filter on this endpoint
+    :return: The number of distinct versions that are used for this endpoint
+    """
+    with session_scope() as db_session:
+        result = db_session.query(func.count(distinct(FunctionCall.version))).\
+            filter(FunctionCall.endpoint == endpoint).first()
+        if result:
+            return result[0]
+        return 0
+
+
 def get_endpoint_column(endpoint, column):
     """ Returns a list of entries from column in which the endpoint is involved. """
     with session_scope() as db_session:
@@ -59,12 +98,12 @@ def get_endpoint_column(endpoint, column):
         return result
 
 
-def get_endpoint_column_user_sorted(endpoint, column):
+def get_endpoint_column_user_sorted(endpoint, column, limit=100):
     """ Returns a list of entries from column in which the endpoint is involved. """
     with session_scope() as db_session:
         result = db_session.query(column). \
             filter(FunctionCall.endpoint == endpoint). \
-            group_by(column).order_by(asc(column)).all()
+            group_by(column).order_by(asc(column)).limit(limit).all()
         db_session.expunge_all()
         return result
 

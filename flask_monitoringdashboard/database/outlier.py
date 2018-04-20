@@ -30,12 +30,21 @@ def get_outliers_sorted(endpoint, sort_column, offset, per_page):
         return result
 
 
-def count_outliers():
+def count_outliers(endpoint):
     """
     :return: An integer with the number of rows in the Outlier-table.
     """
     with session_scope() as db_session:
-        result = db_session.query(func.count(Outlier.endpoint)).first()
+        result = db_session.query(func.count(Outlier.endpoint)).filter(Outlier.endpoint == endpoint).first()
         if result:
             return result[0]
         return 0
+
+
+def delete_outliers_without_stacktrace():
+    """
+        Remove the outliers which don't have a stacktrace.
+        This is possibly due to an error in the outlier functionality
+    """
+    with session_scope() as db_session:
+        db_session.query(Outlier).filter(Outlier.stacktrace == '').delete()

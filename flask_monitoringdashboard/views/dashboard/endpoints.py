@@ -1,10 +1,9 @@
-import plotly
-import plotly.graph_objs as go
 from flask import render_template
 
 from flask_monitoringdashboard import blueprint
-from flask_monitoringdashboard.colors import get_color
+from flask_monitoringdashboard.core.colors import get_color
 from flask_monitoringdashboard.core.auth import secure
+from flask_monitoringdashboard.core.plot import get_layout, get_figure, boxplot, get_margin
 from flask_monitoringdashboard.database.function_calls import get_endpoints, get_data_per_endpoint
 from flask_monitoringdashboard.database.function_calls import get_times
 
@@ -28,28 +27,16 @@ def get_boxplot_per_endpoint():
     data = []
     for endpoint in endpoints:
         values = [c.execution_time for c in get_data_per_endpoint(endpoint)]
-        if len(values) == 0:
-            continue
-        data.append(go.Box(
-            x=values,
-            name=endpoint,
-            marker=dict(
-                color=get_color(endpoint)
-            )
-        ))
+        if len(values) > 0:
+            data.append(boxplot(values, name=endpoint))
 
     if len(data) == 0:
         return None
 
-    layout = go.Layout(
-        autosize=True,
+    layout = get_layout(
         height=350 + 40 * len(endpoints),
-        plot_bgcolor='rgba(249,249,249,1)',
-        showlegend=False,
         title='Execution time for every endpoint',
         xaxis=dict(title='Execution time (ms)'),
-        margin=go.Margin(
-            l=200
-        )
+        margin=get_margin()
     )
-    return plotly.offline.plot(go.Figure(data=data, layout=layout), output_type='div', show_link=False)
+    return get_figure(layout, data)

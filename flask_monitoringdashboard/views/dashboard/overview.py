@@ -3,7 +3,7 @@ import datetime
 from flask import render_template
 
 from flask_monitoringdashboard import blueprint
-from flask_monitoringdashboard.colors import get_color
+from flask_monitoringdashboard.core.colors import get_color
 from flask_monitoringdashboard.core.auth import secure, is_admin
 from flask_monitoringdashboard.database.endpoint import get_last_accessed_times
 from flask_monitoringdashboard.database.function_calls import get_hits, get_median, get_endpoints

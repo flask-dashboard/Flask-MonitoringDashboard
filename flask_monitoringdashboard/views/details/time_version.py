@@ -1,49 +1,39 @@
-import plotly
-import plotly.graph_objs as go
 from flask import render_template
 
 from flask_monitoringdashboard import blueprint
-from flask_monitoringdashboard.colors import get_color
 from flask_monitoringdashboard.core.auth import secure
+from flask_monitoringdashboard.core.forms import get_slider_form
+from flask_monitoringdashboard.core.plot import boxplot, get_figure, get_layout, get_margin
 from flask_monitoringdashboard.database import FunctionCall
-from flask_monitoringdashboard.database.endpoint import get_all_measurement_per_column
+from flask_monitoringdashboard.database.endpoint import get_all_measurement_per_column, get_num_versions
+from flask_monitoringdashboard.database.versions import get_date_first_request
 from flask_monitoringdashboard.database.function_calls import get_versions
 from .utils import get_endpoint_details
 
 
-@blueprint.route('/result/<end>/time_per_version')
+@blueprint.route('/result/<end>/time_per_version', methods=['GET', 'POST'])
 @secure
 def result_time_per_version(end):
-    return render_template('endpoint/plotly.html', details=get_endpoint_details(end),
-                           graph=get_time_per_version(end, get_versions(end)))
+    form = get_slider_form(get_num_versions(end))
+    graph = get_time_per_version(end, form)
+    return render_template('endpoint/time_per_user.html', details=get_endpoint_details(end), form=form, graph=graph)
 
 
-def get_time_per_version(end, versions):
+def get_time_per_version(end, form):
+    limit = form.get_slider_value()
     data = []
-    for v in versions:
+    versions = get_versions(end=end, limit=limit)
+    for version in versions:
         values = [str(c.execution_time) for c in
-                  get_all_measurement_per_column(endpoint=end, column=FunctionCall.version, value=v.version)]
+                  get_all_measurement_per_column(endpoint=end, column=FunctionCall.version, value=version)]
+        name = "{} {}".format(version, get_date_first_request(version).strftime("%b %d %H:%M"))
+        data.append(boxplot(values=values, name=name))
 
-        data.append(go.Box(
-            x=values,
-            marker=dict(
-                color=get_color(end)
-            ),
-            name="{0} {1}".format(v.version, v.startedUsingOn.strftime("%b %d %H:%M"))))
-
-    layout = go.Layout(
-        autosize=True,
+    layout = get_layout(
         height=350 + 40 * len(versions),
-        plot_bgcolor='rgba(249,249,249,1)',
-        showlegend=False,
         title='Execution time for every version',
-        xaxis=dict(title='Execution time (ms)'),
-        yaxis=dict(
-            title='Version',
-            autorange='reversed'
-        ),
-        margin=go.Margin(
-            l=200
-        )
+        xaxis={'title': 'Execution time (ms)'},
+        yaxis={'title': 'Version', 'autorange': 'reversed'},
+        margin=get_margin()
     )
-    return plotly.offline.plot(go.Figure(data=data, layout=layout), output_type='div', show_link=False)
+    return get_figure(layout=layout, data=data)

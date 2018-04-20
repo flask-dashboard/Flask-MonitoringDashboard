@@ -1,7 +1,7 @@
 import configparser
 import os
 
-from flask_monitoringdashboard.parser import parse_string, parse_version, parse_bool, parse_literal
+from flask_monitoringdashboard.core.config.parser import parse_string, parse_version, parse_bool, parse_literal
 
 
 class Config(object):

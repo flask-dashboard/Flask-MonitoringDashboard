@@ -1,9 +1,8 @@
-import plotly
-import plotly.graph_objs as go
 from flask import render_template
 
 from flask_monitoringdashboard import blueprint
 from flask_monitoringdashboard.core.auth import secure
+from flask_monitoringdashboard.core.plot import get_layout, get_figure, get_margin, heatmap
 from flask_monitoringdashboard.database.function_calls import get_versions, \
     get_hits_per_version
 
@@ -20,7 +19,7 @@ def get_version_usage():
     :return:
     """
     all_endpoints = []
-    versions = [v.version for v in get_versions()]
+    versions = get_versions()
 
     hits_version = {}
     for version in versions:
@@ -38,9 +37,7 @@ def get_version_usage():
             data[endpoint][version] = 0
 
     for version in versions:
-        total_hits = sum([record.count for record in hits_version[version]])
-        if total_hits == 0:
-            total_hits = 1  # avoid division by zero
+        total_hits = max(1, sum([record.count for record in hits_version[version]]))
 
         for record in hits_version[version]:
             data[record.endpoint][version] = record.count / total_hits
@@ -50,30 +47,23 @@ def get_version_usage():
         for j in range(len(versions)):
             data_list[i].append(data[all_endpoints[i]][versions[j]])
 
-    layout = go.Layout(
-        autosize=True,
-        height=800,
-        plot_bgcolor='rgba(249,249,249,1)',
-        showlegend=False,
+    layout = get_layout(
         title='Heatmap of hits per endpoint per version',
-        xaxis=go.XAxis(title='Versions', type='category'),
-        yaxis=dict(type='category', autorange='reversed'),
-        margin=go.Margin(
-            l=200
-        )
+        xaxis={'title': 'Versions', 'type': 'category'},
+        yaxis={'type': 'category', 'autorange': 'reversed'},
+        margin=get_margin()
     )
 
-    trace = go.Heatmap(
+    trace = heatmap(
         z=data_list,
         x=versions,
         y=all_endpoints,
         colorscale=[[0, 'rgb(255, 255, 255)'], [0.01, 'rgb(240,240,240)'], [1, 'rgb(1, 1, 1)']],
-        colorbar=dict(
-            titleside='top',
-            tickmode='array',
-            tickvals=[1, 0],
-            ticktext=['100%', '0%'],
-            # ticks='outside'
-        )
+        colorbar={
+            'titleside': 'top',
+            'tickmode': 'array',
+            'tickvals': [1, 0],
+            'ticktext': ['100%', '0%']
+        }
     )
-    return plotly.offline.plot(go.Figure(data=[trace], layout=layout), output_type='div', show_link=False)
+    return get_figure(layout=layout, data=[trace])
