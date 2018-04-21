@@ -3,31 +3,11 @@ Contains all functions that access a single endpoint
 """
 import datetime
 
-from sqlalchemy import func, text, asc, distinct
+from sqlalchemy import func, asc
 from sqlalchemy.orm.exc import NoResultFound
 
 from flask_monitoringdashboard import config
 from flask_monitoringdashboard.database import session_scope, FunctionCall, MonitorRule
-
-
-def get_line_results(endpoint):
-    """
-    Returns simple statistics, such as average, minimum, maximum and count from a given endpoint
-    :param endpoint: the name of the endpoint
-    :return: simple statistics, as described above
-    """
-    with session_scope() as db_session:
-        query = text("""SELECT
-                datetime(CAST(strftime('%s', time)/3600 AS INT)*3600, 'unixepoch') AS newTime, 
-                avg(execution_time) AS avg,
-                min(execution_time) AS min,
-                max(execution_time) AS max,
-                count(execution_time) AS count
-            FROM functioncalls 
-            WHERE endpoint=:val GROUP BY newTime""")
-        result = db_session.execute(query, {'val': endpoint})
-        data = result.fetchall()
-        return data
 
 
 def get_num_requests(endpoint, start_date, end_date):
@@ -46,45 +26,6 @@ def get_num_requests(endpoint, start_date, end_date):
             group_by('newTime').all()
         db_session.expunge_all()
         return result
-
-
-def get_num_users(endpoint):
-    """
-    :param endpoint: filter on this endpoint
-    :return: The number of distinct users that have requested this endpoint
-    """
-    with session_scope() as db_session:
-        result = db_session.query(func.count(distinct(FunctionCall.group_by))).\
-            filter(FunctionCall.endpoint == endpoint).first()
-        if result:
-            return result[0]
-        return 0
-
-
-def get_num_ips(endpoint):
-    """
-    :param endpoint: filter on this endpoint
-    :return: The number of distinct users that have requested this endpoint
-    """
-    with session_scope() as db_session:
-        result = db_session.query(func.count(distinct(FunctionCall.ip))).\
-            filter(FunctionCall.endpoint == endpoint).first()
-        if result:
-            return result[0]
-        return 0
-
-
-def get_num_versions(endpoint):
-    """
-    :param endpoint: filter on this endpoint
-    :return: The number of distinct versions that are used for this endpoint
-    """
-    with session_scope() as db_session:
-        result = db_session.query(func.count(distinct(FunctionCall.version))).\
-            filter(FunctionCall.endpoint == endpoint).first()
-        if result:
-            return result[0]
-        return 0
 
 
 def get_endpoint_column(endpoint, column):

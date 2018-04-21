@@ -4,11 +4,11 @@
     See __init__.py for how to run the test-cases.
 """
 
-import unittest
 import time
+import unittest
 
-from flask_monitoringdashboard.test.utils import set_test_environment, clear_db, add_fake_data, mean, \
-    EXECUTION_TIMES, TIMES, NAME, GROUP_BY, IP
+from flask_monitoringdashboard.test.utils import set_test_environment, clear_db, add_fake_data, EXECUTION_TIMES, TIMES, \
+    NAME, GROUP_BY, IP
 
 
 class TestFunctionCall(unittest.TestCase):
@@ -33,17 +33,6 @@ class TestFunctionCall(unittest.TestCase):
         self.assertEqual(len(result2), 1)
         self.assertEqual(result2[0].endpoint, name2)
         self.assertEqual(result2[0].execution_time, execution_time)
-
-    def test_get_times(self):
-        """
-            Test whether the function returns the right values.
-        """
-        from flask_monitoringdashboard.database.function_calls import get_times
-        result = get_times()
-        self.assertEqual(len(result), 1)
-        self.assertEqual(result[0].endpoint, NAME)
-        self.assertEqual(result[0].count, len(EXECUTION_TIMES))
-        self.assertEqual(result[0].average, mean(EXECUTION_TIMES))
 
     def test_get_data_from(self):
         """

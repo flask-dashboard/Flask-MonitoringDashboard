@@ -2,12 +2,15 @@
     Creates the database. 
     For information about how to access the database via a session-variable, see: session_scope() 
 """
+import datetime
+from contextlib import contextmanager
 
 from sqlalchemy import Column, Integer, String, DateTime, create_engine, Float, Boolean
-from sqlalchemy.orm import sessionmaker
 from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.orm import sessionmaker
+
 from flask_monitoringdashboard import config
-from contextlib import contextmanager
+from flask_monitoringdashboard.core.group_by import get_group_by
 
 Base = declarative_base()
 
@@ -21,7 +24,7 @@ class MonitorRule(Base):
     monitor = Column(Boolean, default=False)
     # the time and version on which the endpoint is added
     time_added = Column(DateTime)
-    version_added = Column(String(100), nullable=False)
+    version_added = Column(String(100), default=config.version)
     # the timestamp of the last access time
     last_accessed = Column(DateTime)
 
@@ -64,11 +67,11 @@ class FunctionCall(Base):
     # execution_time in ms
     execution_time = Column(Float, nullable=False)
     # time of adding the result to the database
-    time = Column(DateTime)
+    time = Column(DateTime, default=datetime.datetime.utcnow)
     # version of the website at the moment of adding the result to the database
     version = Column(String(100), nullable=False)
     # which user is calling the function
-    group_by = Column(String(100), nullable=False)
+    group_by = Column(String(100), default=get_group_by)
     # ip address of remote user
     ip = Column(String(25), nullable=False)
 

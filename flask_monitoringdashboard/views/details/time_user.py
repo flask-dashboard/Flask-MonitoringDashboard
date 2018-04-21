@@ -6,14 +6,15 @@ from flask_monitoringdashboard.core.forms import get_slider_form
 from flask_monitoringdashboard.core.plot import get_layout, get_figure, boxplot
 from flask_monitoringdashboard.database import FunctionCall
 from flask_monitoringdashboard.database.endpoint import get_all_measurement_per_column, \
-    get_endpoint_column_user_sorted, get_num_users
+    get_endpoint_column_user_sorted
+from flask_monitoringdashboard.database.count import count_users
 from .utils import get_endpoint_details
 
 
 @blueprint.route('/result/<end>/time_per_user', methods=['GET', 'POST'])
 @secure
 def result_time_per_user(end):
-    form = get_slider_form(get_num_users(end))
+    form = get_slider_form(count_users(end))
     graph = get_time_per_user(end, form)
 
     return render_template('endpoint/time_per_user.html', details=get_endpoint_details(end), graph=graph, form=form)

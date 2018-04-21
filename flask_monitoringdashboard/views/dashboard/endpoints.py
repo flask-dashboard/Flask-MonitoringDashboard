@@ -1,20 +1,15 @@
 from flask import render_template
 
 from flask_monitoringdashboard import blueprint
-from flask_monitoringdashboard.core.colors import get_color
 from flask_monitoringdashboard.core.auth import secure
 from flask_monitoringdashboard.core.plot import get_layout, get_figure, boxplot, get_margin
 from flask_monitoringdashboard.database.function_calls import get_endpoints, get_data_per_endpoint
-from flask_monitoringdashboard.database.function_calls import get_times
 
 
 @blueprint.route('/measurements/endpoints')
 @secure
 def page_boxplot_per_endpoint():
-    colors = {}
-    for result in get_times():
-        colors[result.endpoint] = get_color(result.endpoint)
-    return render_template('dashboard/graph.html', graph=get_boxplot_per_endpoint(), title='Time per endpoint')
+    return render_template('dashboard/graph.html', graph=get_boxplot_per_endpoint())
 
 
 def get_boxplot_per_endpoint():

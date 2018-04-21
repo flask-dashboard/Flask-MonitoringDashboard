@@ -17,18 +17,6 @@ class TestEndpoint(unittest.TestCase):
         clear_db()
         add_fake_data()
 
-    def test_get_line_results(self):
-        """
-            Test whether the function returns the right values.
-            It should return the average, min and max and length (count).
-        """
-        from flask_monitoringdashboard.database.endpoint import get_line_results
-        result = get_line_results(NAME)[0]
-        self.assertEqual(result.avg, mean(EXECUTION_TIMES))
-        self.assertEqual(result.min, min(EXECUTION_TIMES))
-        self.assertEqual(result.max, max(EXECUTION_TIMES))
-        self.assertEqual(result.count, len(EXECUTION_TIMES))
-
     def test_get_endpoint_column(self):
         """
             Test whether the function returns the right values.

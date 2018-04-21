@@ -10,7 +10,8 @@ from flask_monitoringdashboard.core.colors import get_color
 from flask_monitoringdashboard.core.forms import get_slider_form
 from flask_monitoringdashboard.database import FunctionCall
 from flask_monitoringdashboard.database.endpoint import get_endpoint_column, get_endpoint_results, \
-    get_all_measurement, get_num_users
+    get_all_measurement
+from flask_monitoringdashboard.database.count import count_users
 from flask_monitoringdashboard.database.function_calls import get_versions
 from flask_monitoringdashboard.database.versions import get_date_first_request
 from .utils import get_endpoint_details, BUBBLE_SIZE_RATIO, formatter
@@ -19,7 +20,7 @@ from .utils import get_endpoint_details, BUBBLE_SIZE_RATIO, formatter
 @blueprint.route('/result/<end>/time_per_version_per_user', methods=['GET', 'POST'])
 @secure
 def result_time_per_version_per_user(end):
-    form = get_slider_form(get_num_users(end))
+    form = get_slider_form(count_users(end))
     graph = get_time_per_version_per_user(end, form)
     return render_template('endpoint/time_per_user.html', details=get_endpoint_details(end),
                            graph=graph, form=form)

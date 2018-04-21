@@ -5,7 +5,8 @@ from flask_monitoringdashboard.core.auth import secure
 from flask_monitoringdashboard.core.forms import get_slider_form
 from flask_monitoringdashboard.core.plot import boxplot, get_figure, get_layout, get_margin
 from flask_monitoringdashboard.database import FunctionCall
-from flask_monitoringdashboard.database.endpoint import get_all_measurement_per_column, get_num_versions
+from flask_monitoringdashboard.database.endpoint import get_all_measurement_per_column
+from flask_monitoringdashboard.database.count import count_versions
 from flask_monitoringdashboard.database.versions import get_date_first_request
 from flask_monitoringdashboard.database.function_calls import get_versions
 from .utils import get_endpoint_details
@@ -14,7 +15,7 @@ from .utils import get_endpoint_details
 @blueprint.route('/result/<end>/time_per_version', methods=['GET', 'POST'])
 @secure
 def result_time_per_version(end):
-    form = get_slider_form(get_num_versions(end))
+    form = get_slider_form(count_versions(end))
     graph = get_time_per_version(end, form)
     return render_template('endpoint/time_per_user.html', details=get_endpoint_details(end), form=form, graph=graph)
 
