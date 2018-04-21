@@ -5,7 +5,7 @@ Contains all functions that access any functionCall-object
 import datetime
 import time
 
-from sqlalchemy import func, asc, distinct
+from sqlalchemy import func
 
 from flask_monitoringdashboard import config
 from flask_monitoringdashboard.database import session_scope, FunctionCall
@@ -29,10 +29,10 @@ def get_requests_per_day(endpoint, list_of_days):
     return result_list
 
 
-def add_function_call(time, endpoint, ip):
+def add_function_call(execution_time, endpoint, ip):
     """ Add a measurement to the database. """
     with session_scope() as db_session:
-        db_session.add(FunctionCall(endpoint=endpoint, execution_time=time, version=config.version, ip=ip))
+        db_session.add(FunctionCall(endpoint=endpoint, execution_time=execution_time, version=config.version, ip=ip))
 
 
 def get_median(endpoint, date_from=datetime.datetime.utcfromtimestamp(0)):
@@ -79,30 +79,6 @@ def get_data_per_version(version):
             filter(FunctionCall.version == version).all()
         db_session.expunge_all()
         return result
-
-
-def get_hits_per_version(version):
-    """ Returns the hits per endpoint per version """
-    with session_scope() as db_session:
-        result = db_session.query(FunctionCall.endpoint,
-                                  FunctionCall.version,
-                                  func.count(FunctionCall.endpoint).label('count')). \
-            filter(FunctionCall.version == version). \
-            group_by(FunctionCall.endpoint).all()
-        db_session.expunge_all()
-        return result
-
-
-def get_versions(end=None, limit=None):
-    with session_scope() as db_session:
-        query = db_session.query(distinct(FunctionCall.version)). \
-            filter((FunctionCall.endpoint == end) | (end is None)). \
-            order_by(asc(FunctionCall.time))
-        if limit:
-            query = query.limit(limit)
-        result = query.all()
-        db_session.expunge_all()
-    return [row[0] for row in result]
 
 
 def get_data_per_endpoint(end):

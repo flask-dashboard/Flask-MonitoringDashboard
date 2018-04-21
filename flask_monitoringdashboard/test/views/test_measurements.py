@@ -15,6 +15,7 @@ class TestMeasurement(unittest.TestCase):
         """
             Just retrieve the content and check if nothing breaks
         """
+
         self.assertEqual(302, self.app.get('dashboard/measurements/overview').status_code)
         login(self.app)
         self.assertEqual(200, self.app.get('dashboard/measurements/overview').status_code)
@@ -58,4 +59,3 @@ class TestMeasurement(unittest.TestCase):
         self.assertEqual(302, self.app.get('dashboard/measurements/endpoints').status_code)
         login(self.app)
         self.assertEqual(200, self.app.get('dashboard/measurements/endpoints').status_code)
-

@@ -4,7 +4,7 @@ import jwt
 from flask import json
 
 from flask_monitoringdashboard.test.utils import set_test_environment, clear_db, add_fake_data, login, get_test_app, \
-    EXECUTION_TIMES, NAME, GROUP_BY, IP, TIMES
+    EXECUTION_TIMES, NAME, GROUP_BY, IP, TIMES, test_admin_secure
 
 
 class TestExportData(unittest.TestCase):
@@ -19,17 +19,13 @@ class TestExportData(unittest.TestCase):
         """
             Just retrieve the content and check if nothing breaks
         """
-        self.assertEqual(302, self.app.get('dashboard/download-csv').status_code)
-        login(self.app)
-        self.assertEqual(200, self.app.get('dashboard/download-csv').status_code)
+        test_admin_secure(self, 'download-csv')
 
     def test_export_data(self):
         """
             Just retrieve the content and check if nothing breaks
         """
-        self.assertEqual(302, self.app.get('dashboard/export-data').status_code)
-        login(self.app)
-        self.assertEqual(200, self.app.get('dashboard/export-data').status_code)
+        test_admin_secure(self, 'view-csv')
 
     def test_submit_test_results(self):
         """

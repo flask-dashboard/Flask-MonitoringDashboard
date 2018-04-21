@@ -7,8 +7,7 @@ from flask_monitoringdashboard.core.plot import boxplot, get_figure, get_layout,
 from flask_monitoringdashboard.database import FunctionCall
 from flask_monitoringdashboard.database.endpoint import get_all_measurement_per_column
 from flask_monitoringdashboard.database.count import count_versions
-from flask_monitoringdashboard.database.versions import get_date_first_request
-from flask_monitoringdashboard.database.function_calls import get_versions
+from flask_monitoringdashboard.database.versions import get_date_first_request, get_versions
 from .utils import get_endpoint_details
 
 

@@ -4,8 +4,8 @@ from flask_paginate import get_page_args, Pagination
 from flask_monitoringdashboard import blueprint
 from flask_monitoringdashboard.core.auth import secure
 from flask_monitoringdashboard.database import Outlier
-from flask_monitoringdashboard.database.outlier import get_outliers_sorted, count_outliers, \
-    delete_outliers_without_stacktrace
+from flask_monitoringdashboard.database.outlier import get_outliers_sorted, delete_outliers_without_stacktrace
+from flask_monitoringdashboard.database.count import count_outliers
 from .utils import get_endpoint_details
 
 OUTLIERS_PER_PAGE = 10

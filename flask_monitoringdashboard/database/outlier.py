@@ -1,6 +1,6 @@
 import datetime
 from flask import json
-from sqlalchemy import desc, func
+from sqlalchemy import desc
 from flask_monitoringdashboard.database import session_scope, Outlier
 
 
@@ -28,17 +28,6 @@ def get_outliers_sorted(endpoint, sort_column, offset, per_page):
             offset(offset).limit(per_page).all()
         db_session.expunge_all()
         return result
-
-
-def count_outliers(endpoint):
-    """
-    :return: An integer with the number of rows in the Outlier-table.
-    """
-    with session_scope() as db_session:
-        result = db_session.query(func.count(Outlier.endpoint)).filter(Outlier.endpoint == endpoint).first()
-        if result:
-            return result[0]
-        return 0
 
 
 def delete_outliers_without_stacktrace():

@@ -2,7 +2,7 @@ import datetime
 
 from sqlalchemy import func, distinct
 
-from flask_monitoringdashboard.database import session_scope, FunctionCall
+from flask_monitoringdashboard.database import session_scope, FunctionCall, Outlier
 
 
 def count_rows(column, *criterion):
@@ -50,3 +50,23 @@ def count_requests(endpoint, date_from=datetime.datetime.utcfromtimestamp(0)):
     :param date_from: A datetime-object
     """
     return count_rows(FunctionCall.id, FunctionCall.endpoint == endpoint, FunctionCall.time > date_from)
+
+
+def count_hits(version):
+    """ Returns the hits per endpoint per version """
+    # TODO: Refactor this function
+    with session_scope() as db_session:
+        result = db_session.query(FunctionCall.endpoint,
+                                  FunctionCall.version,
+                                  func.count(FunctionCall.endpoint).label('count')). \
+            filter(FunctionCall.version == version). \
+            group_by(FunctionCall.endpoint).all()
+        db_session.expunge_all()
+        return result
+
+
+def count_outliers(endpoint):
+    """
+    :return: An integer with the number of rows in the Outlier-table.
+    """
+    return count_rows(Outlier.id, Outlier.endpoint == endpoint)

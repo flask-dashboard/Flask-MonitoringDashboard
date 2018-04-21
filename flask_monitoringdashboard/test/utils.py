@@ -86,3 +86,14 @@ def login(test_app):
 
 def mean(numbers):
     return float(sum(numbers)) / max(len(numbers), 1)
+
+
+def test_admin_secure(test_case, page):
+    """
+    Test whether the page is only accessible with admin credentials.
+    :param test_case: test class, must be an instance of unittest.TestCase
+    :param page: str with the page of the dashboard
+    """
+    test_case.assertEqual(302, test_case.app.get('dashboard/{}'.format(page)).status_code)
+    login(test_case.app)
+    test_case.assertEqual(200, test_case.app.get('dashboard/{}'.format(page)).status_code)

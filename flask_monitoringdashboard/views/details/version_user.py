@@ -12,8 +12,7 @@ from flask_monitoringdashboard.database import FunctionCall
 from flask_monitoringdashboard.database.endpoint import get_endpoint_column, get_endpoint_results, \
     get_all_measurement
 from flask_monitoringdashboard.database.count import count_users
-from flask_monitoringdashboard.database.function_calls import get_versions
-from flask_monitoringdashboard.database.versions import get_date_first_request
+from flask_monitoringdashboard.database.versions import get_date_first_request, get_versions
 from .utils import get_endpoint_details, BUBBLE_SIZE_RATIO, formatter
 
 

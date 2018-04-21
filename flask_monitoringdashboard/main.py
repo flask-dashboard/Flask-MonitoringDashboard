@@ -28,9 +28,4 @@ def create_app():
 
 
 if __name__ == '__main__':
-    from flask_monitoringdashboard.database.function_calls import get_median
-    import datetime
-    today = datetime.datetime.now().replace(hour=0, minute=0, second=0, microsecond=0)
-
-    print(get_median('main', today))
     create_app().run(debug=True)

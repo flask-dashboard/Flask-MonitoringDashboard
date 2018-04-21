@@ -4,8 +4,8 @@ from flask_monitoringdashboard import blueprint
 from flask_monitoringdashboard.core.colors import get_color
 from flask_monitoringdashboard.core.auth import secure
 from flask_monitoringdashboard.core.plot import boxplot, get_layout, get_figure, get_margin
-from flask_monitoringdashboard.database.function_calls import get_versions, get_data_per_version
-from flask_monitoringdashboard.database.versions import get_date_first_request
+from flask_monitoringdashboard.database.function_calls import get_data_per_version
+from flask_monitoringdashboard.database.versions import get_date_first_request, get_versions
 
 
 @blueprint.route('/measurements/versions')

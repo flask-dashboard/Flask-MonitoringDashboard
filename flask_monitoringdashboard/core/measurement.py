@@ -67,7 +67,7 @@ def track_performance(func, endpoint):
 
         time2 = time.time()
         t = (time2 - time1) * 1000
-        add_function_call(time=t, endpoint=endpoint, ip=request.environ['REMOTE_ADDR'])
+        add_function_call(execution_time=t, endpoint=endpoint, ip=request.environ['REMOTE_ADDR'])
 
         # outlier detection
         endpoint_count[endpoint] = endpoint_count.get(endpoint, 0) + 1

@@ -3,8 +3,8 @@ from flask import render_template
 from flask_monitoringdashboard import blueprint
 from flask_monitoringdashboard.core.auth import secure
 from flask_monitoringdashboard.core.plot import get_layout, get_figure, get_margin, heatmap
-from flask_monitoringdashboard.database.function_calls import get_versions, \
-    get_hits_per_version
+from flask_monitoringdashboard.database.versions import get_versions
+from flask_monitoringdashboard.database.count import count_hits
 
 
 @blueprint.route('/measurements/version_usage')
@@ -23,7 +23,7 @@ def get_version_usage():
 
     hits_version = {}
     for version in versions:
-        hits_version[version] = get_hits_per_version(version)
+        hits_version[version] = count_hits(version)
         for record in hits_version[version]:
             if record.endpoint not in all_endpoints:
                 all_endpoints.append(record.endpoint)

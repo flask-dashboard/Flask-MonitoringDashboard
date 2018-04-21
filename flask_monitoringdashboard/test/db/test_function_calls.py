@@ -84,7 +84,8 @@ class TestFunctionCall(unittest.TestCase):
         """
             Test whether the function returns the right values.
         """
-        from flask_monitoringdashboard.database.function_calls import get_versions, config
+        from flask_monitoringdashboard.database.function_calls import config
+        from flask_monitoringdashboard.database.versions import get_versions
         result = get_versions()
         self.assertEqual(len(result), 1)
         self.assertEqual(result[0], config.version)

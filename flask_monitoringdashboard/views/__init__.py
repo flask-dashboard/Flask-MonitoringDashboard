@@ -10,7 +10,7 @@ from flask_monitoringdashboard import blueprint, loc
 from . import auth
 from . import dashboard
 from . import details
-from . import export_data
+from . import export
 from . import rules
 from . import configuration
 from . import testmonitor

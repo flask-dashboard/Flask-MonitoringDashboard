@@ -1,3 +1,5 @@
+from sqlalchemy import distinct, asc
+
 from flask_monitoringdashboard.database import session_scope, FunctionCall
 
 
@@ -12,3 +14,15 @@ def get_date_first_request(version=None):
         if result:
             return result[0]
         return None
+
+
+def get_versions(end=None, limit=None):
+    with session_scope() as db_session:
+        query = db_session.query(distinct(FunctionCall.version)). \
+            filter((FunctionCall.endpoint == end) | (end is None)). \
+            order_by(asc(FunctionCall.time))
+        if limit:
+            query = query.limit(limit)
+        result = query.all()
+        db_session.expunge_all()
+    return [row[0] for row in result]
