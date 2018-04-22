@@ -78,6 +78,10 @@ for endpoint_hit in endpoint_hits:
 
 # Send test results and endpoint_name/test_name combinations to the Dashboard if specified.
 if args.url:
+    if args.url[-1] == '/':
+        args.url += 'submit-test-results'
+    else:
+        args.url += '/submit-test-results'
     try:
         requests.post(args.url, json=data)
         print('Sent unit test results to the Dashboard at ', args.url)
