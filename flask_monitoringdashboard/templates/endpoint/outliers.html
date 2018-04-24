@@ -1,5 +1,6 @@
 {% extends "endpoint/main.html" %}
 {% block graph_content %}
+    <p> <strong>Mean CPU Percent: </strong>{{ mean }}</p>
     <br/>
     {% for row in table %}
         <div class="panel panel-default">
