@@ -60,6 +60,7 @@ the entry point of the app. The following things can be configured:
    GUEST_PASSWORD=['dashboardguest!', 'second_pw!']
    GIT=/<path to your project>/.git/
    OUTLIER_DETECTION_CONSTANT=2.5
+   DASHBOARD_ENABLED = True
    TEST_DIR=/<path to your project>/tests/
    N=5
    SUBMIT_RESULTS_URL=http://0.0.0.0:5000/dashboard/submit-test-results
@@ -89,6 +90,10 @@ This might look a bit overwhelming, but the following list explains everything i
 - **OUTLIER_DETECTION_CONSTANT:** When the execution time is more than this :math:`constant * average`,
   extra information is logged into the database.
   A default value for this variable is :math:`2.5`, but can be changed in the config-file.
+
+- **OUTLIERS_ENABLED:** Whether you want to collect information about outliers. If you set this to true,
+  the expected overhead is a bit larger, as you can find
+  `here <https://github.com/flask-dashboard/Testing-Dashboard-Overhead>`_.
 
 - **TEST_DIR**, **N**, **SUBMIT_RESULTS_URL:**
   To enable Travis to run your unit tests and send the results to the dashboard, you have to set those values:
