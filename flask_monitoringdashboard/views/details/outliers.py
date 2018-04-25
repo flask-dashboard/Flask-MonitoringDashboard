@@ -20,5 +20,5 @@ def result_outliers(end):
     pagination = Pagination(page=page, per_page=per_page, total=count_outliers(end), format_number=True,
                             css_framework='bootstrap4', format_total=True, record_name='outliers')
 
-    return render_template('endpoint/outliers.html', details=get_endpoint_details(end), table=table,
+    return render_template('dashboard/outliers.html', details=get_endpoint_details(end), table=table,
                            pagination=pagination)

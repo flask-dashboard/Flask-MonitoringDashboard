@@ -10,11 +10,14 @@ from flask_monitoringdashboard.core.plot import get_layout, get_figure, heatmap 
 from flask_monitoringdashboard.database.endpoint import get_num_requests
 
 
+TITLE = 'Heatmap of the number of requests'
+
+
 @blueprint.route('/measurements/heatmap', methods=['GET', 'POST'])
 @secure
 def heatmap():
     form = get_daterange_form()
-    return render_template('dashboard/graph.html', form=form, graph=get_heatmap(form), title='Heatmap')
+    return render_template('dashboard/graph.html', form=form, graph=get_heatmap(form), title=TITLE)
 
 
 def get_heatmap(form, end=None):
@@ -41,7 +44,7 @@ def get_heatmap(form, end=None):
         hour_index = int(parsed_time.strftime('%H'))
         heatmap_data[hour_index][day_index] = d.count
 
-    title = 'Heatmap of number of requests'
+    title = TITLE
     if end:
         title += ' for endpoint: {}'.format(end)
 

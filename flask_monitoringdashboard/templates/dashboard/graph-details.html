@@ -30,7 +30,7 @@
 </nav>
 {% endblock %}
 
-
+{% block summary %}
 <div class="card mb-3">
   <div class="card-header"><h4>Summary of endpoint</h4></div>
   <div class="card-body">
@@ -58,15 +58,12 @@
           <td><b>Last accessed</b></td>
           <td>{{ "{:%Y-%m-%d %H:%M:%S }".format(details.rule.last_accessed) }}</td>
         </tr>
+        <tr>
+          <td><b>Total number of hits</b></td>
+          <td>{{ "{:,d}".format(details.total_hits) }}</td>
+        </tr>
       </table>
     </div>
   </div>
 </div>
-
-{% block script %}
-<script>
-  $(window).ready(function () {
-    $('#loading').hide();
-  });
-</script>
 {% endblock %}

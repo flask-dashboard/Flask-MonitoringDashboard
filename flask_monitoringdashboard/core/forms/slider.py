@@ -10,6 +10,7 @@ class SliderForm(FlaskForm):
     """
     slider = IntegerRangeField()
     submit = SubmitField('Submit')
+    type = 'SliderForm'
 
     def get_slider_value(self):
         """
@@ -27,10 +28,10 @@ def get_slider_form(slider_max=100):
     :return: a SliderForm with the range (0 ... slider_max)
     """
     form = SliderForm(request.form)
-    form.min_value = 0
+    form.min_value = 1
     form.max_value = slider_max
     if 'slider' in request.form:
         form.start_value = request.form['slider']
     else:
-        form.start_value = min(max(1, form.min_value + (slider_max - form.min_value) // 2), form.max_value)
+        form.start_value = min(max(form.min_value, form.min_value + (slider_max - form.min_value) // 2), form.max_value)
     return form

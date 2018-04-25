@@ -13,6 +13,7 @@ def create_app():
 
     dashboard.config.outlier_detection_constant = 99
     dashboard.config.group_by = 'User', lambda: 3
+    dashboard.config.version = 2.0
 
     dashboard.bind(app=app)
 

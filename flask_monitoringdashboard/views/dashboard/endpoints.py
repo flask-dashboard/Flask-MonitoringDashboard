@@ -5,11 +5,13 @@ from flask_monitoringdashboard.core.auth import secure
 from flask_monitoringdashboard.core.plot import get_layout, get_figure, boxplot, get_margin
 from flask_monitoringdashboard.database.function_calls import get_endpoints, get_data_per_endpoint
 
+TITLE = 'Global execution time for every endpoint'
+
 
 @blueprint.route('/measurements/endpoints')
 @secure
 def page_boxplot_per_endpoint():
-    return render_template('dashboard/graph.html', graph=get_boxplot_per_endpoint())
+    return render_template('dashboard/graph.html', graph=get_boxplot_per_endpoint(), title=TITLE)
 
 
 def get_boxplot_per_endpoint():
@@ -25,13 +27,13 @@ def get_boxplot_per_endpoint():
         if len(values) > 0:
             data.append(boxplot(values, name=endpoint))
 
-    if len(data) == 0:
+    if not data:
         return None
 
     layout = get_layout(
         height=350 + 40 * len(endpoints),
-        title='Execution time for every endpoint',
-        xaxis=dict(title='Execution time (ms)'),
+        title=TITLE,
+        xaxis={'title': 'Execution time (ms)'},
         margin=get_margin()
     )
     return get_figure(layout, data)

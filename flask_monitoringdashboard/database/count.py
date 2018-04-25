@@ -52,17 +52,12 @@ def count_requests(endpoint, date_from=datetime.datetime.utcfromtimestamp(0)):
     return count_rows(FunctionCall.id, FunctionCall.endpoint == endpoint, FunctionCall.time > date_from)
 
 
-def count_hits(version):
-    """ Returns the hits per endpoint per version """
-    # TODO: Refactor this function
-    with session_scope() as db_session:
-        result = db_session.query(FunctionCall.endpoint,
-                                  FunctionCall.version,
-                                  func.count(FunctionCall.endpoint).label('count')). \
-            filter(FunctionCall.version == version). \
-            group_by(FunctionCall.endpoint).all()
-        db_session.expunge_all()
-        return result
+def count_hits(version, endpoint):
+    """
+    Same as count_requests, but now filter on version and endpoint
+    :return: the number of hits for a specific endpoint in a specific version
+    """
+    return count_rows(FunctionCall.id, FunctionCall.endpoint == endpoint, FunctionCall.version == version)
 
 
 def count_outliers(endpoint):

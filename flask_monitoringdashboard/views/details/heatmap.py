@@ -11,5 +11,5 @@ from .utils import get_endpoint_details
 @secure
 def result_heatmap(end):
     form = get_daterange_form()
-    return render_template('endpoint/details-base.html', form=form, details=get_endpoint_details(end),
-                           graph=get_heatmap(form, end), title=end)
+    return render_template('dashboard/graph-details.html', form=form, details=get_endpoint_details(end),
+                           graph=get_heatmap(form, end))

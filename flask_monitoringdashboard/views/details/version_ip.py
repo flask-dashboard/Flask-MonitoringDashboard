@@ -21,10 +21,11 @@ from .utils import get_endpoint_details, formatter
 def result_time_per_version_per_ip(end):
     form = get_slider_form(count_ip(end))
     graph = get_time_per_version_per_ip(end, form)
-    return render_template('endpoint/time_per_user.html', details=get_endpoint_details(end), graph=graph, form=form)
+    return render_template('dashboard/graph-details.html', details=get_endpoint_details(end), graph=graph, form=form)
 
 
 def get_time_per_version_per_ip(end, form):
+    # Todo: refactor this method
     ip_data = {}
     data = [t.execution_time for t in get_all_measurement(end)]
     # compute the average for determining the default size

@@ -9,10 +9,9 @@
     - Outliers/<end>: shows information about requests that take too long.
 """
 
-from . import heatmap
-from . import outliers
-from . import time_user
-from . import time_version
-from . import version_ip
-from . import version_user
-
+from flask_monitoringdashboard.views.details.heatmap import result_heatmap
+from flask_monitoringdashboard.views.details.outliers import result_outliers
+from flask_monitoringdashboard.views.details.time_user import result_time_per_user
+from flask_monitoringdashboard.views.details.time_version import result_time_per_version
+from flask_monitoringdashboard.views.details.version_ip import result_time_per_version_per_ip
+from flask_monitoringdashboard.views.details.version_user import result_time_per_version_per_user

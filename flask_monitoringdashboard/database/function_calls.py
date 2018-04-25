@@ -5,7 +5,7 @@ Contains all functions that access any functionCall-object
 import datetime
 import time
 
-from sqlalchemy import func
+from sqlalchemy import func, distinct
 
 from flask_monitoringdashboard import config
 from flask_monitoringdashboard.database import session_scope, FunctionCall
@@ -92,7 +92,7 @@ def get_data_per_endpoint(end):
 def get_endpoints():
     """ Returns the name of all endpoints from the database """
     with session_scope() as db_session:
-        result = db_session.query(FunctionCall.endpoint).distinct().all()
+        result = db_session.query(distinct(FunctionCall.endpoint)).order_by(FunctionCall.endpoint).all()
         db_session.expunge_all()
         return [r[0] for r in result]  # unpack tuple result
 

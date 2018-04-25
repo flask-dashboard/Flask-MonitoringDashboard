@@ -7,11 +7,13 @@ from flask_monitoringdashboard.core.plot import boxplot, get_layout, get_figure,
 from flask_monitoringdashboard.database.function_calls import get_data_per_version
 from flask_monitoringdashboard.database.versions import get_date_first_request, get_versions
 
+TITLE = 'Global execution time for every version'
+
 
 @blueprint.route('/measurements/versions')
 @secure
 def page_boxplot_per_version():
-    return render_template('dashboard/graph.html', graph=get_boxplot_per_version(), title='Time per version')
+    return render_template('dashboard/graph.html', graph=get_boxplot_per_version(), title=TITLE)
 
 
 def get_boxplot_per_version():
@@ -32,7 +34,7 @@ def get_boxplot_per_version():
 
     layout = get_layout(
         height=350 + 40 * len(versions),
-        title='Execution time for every version',
+        title=TITLE,
         xaxis={'title': 'Execution time (ms)'},
         yaxis={'autorange': 'reversed'},
         margin=get_margin()

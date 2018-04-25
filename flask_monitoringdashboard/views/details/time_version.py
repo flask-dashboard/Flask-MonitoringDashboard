@@ -16,7 +16,7 @@ from .utils import get_endpoint_details
 def result_time_per_version(end):
     form = get_slider_form(count_versions(end))
     graph = get_time_per_version(end, form)
-    return render_template('endpoint/time_per_user.html', details=get_endpoint_details(end), form=form, graph=graph)
+    return render_template('dashboard/graph-details.html', details=get_endpoint_details(end), form=form, graph=graph)
 
 
 def get_time_per_version(end, form):

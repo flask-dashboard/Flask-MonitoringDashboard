@@ -17,6 +17,12 @@ def get_date_first_request(version=None):
 
 
 def get_versions(end=None, limit=None):
+    """
+    Returns a list of length 'limit' with the versions that are used in the application
+    :param end: the versions that are used in a specific endpoint
+    :param limit: the maximum length of the returned list
+    :return: a list with the versions (as a string)
+    """
     with session_scope() as db_session:
         query = db_session.query(distinct(FunctionCall.version)). \
             filter((FunctionCall.endpoint == end) | (end is None)). \

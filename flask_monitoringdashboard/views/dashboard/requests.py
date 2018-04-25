@@ -6,13 +6,14 @@ from flask_monitoringdashboard.core.forms import get_daterange_form
 from flask_monitoringdashboard.core.plot import barplot, get_figure, get_layout
 from flask_monitoringdashboard.database.function_calls import get_requests_per_day, get_endpoints
 
+TITLE = 'Requests per endpoint per day'
+
 
 @blueprint.route('/measurements/requests', methods=['GET', 'POST'])
 @secure
 def page_number_of_requests_per_endpoint():
     form = get_daterange_form(num_days=10)
-    return render_template('dashboard/graph.html', form=form, graph=get_stacked_bar(form),
-                           title='Requests per endpoint')
+    return render_template('dashboard/graph.html', form=form, graph=get_stacked_bar(form), title=TITLE)
 
 
 def get_stacked_bar(form):
@@ -28,7 +29,7 @@ def get_stacked_bar(form):
         barmode='stack',
         height=350 + 40 * len(days),
         showlegend=True,
-        title='Number of requests per endpoint per day',
+        title=TITLE,
         xaxis={'title': 'Number of requests'},
         yaxis={'autorange': 'reversed'}
     )

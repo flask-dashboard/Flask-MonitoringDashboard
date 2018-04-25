@@ -3,7 +3,7 @@ Contains all functions that access a single endpoint
 """
 import datetime
 
-from sqlalchemy import func, asc
+from sqlalchemy import func, asc, desc
 from sqlalchemy.orm.exc import NoResultFound
 
 from flask_monitoringdashboard import config
@@ -39,14 +39,23 @@ def get_endpoint_column(endpoint, column):
         return result
 
 
-def get_endpoint_column_user_sorted(endpoint, column, limit=100):
-    """ Returns a list of entries from column in which the endpoint is involved. """
+def get_group_by_sorted(endpoint, limit=None):
+    """
+    Returns a list with the distinct group-by from a specific endpoint. The limit is used to filter the most used
+    distinct
+    :param endpoint: the endpoint to filter on
+    :param limit: the number of
+    :return: a list with the group_by as strings.
+    """
     with session_scope() as db_session:
-        result = db_session.query(column). \
-            filter(FunctionCall.endpoint == endpoint). \
-            group_by(column).order_by(asc(column)).limit(limit).all()
+        query = db_session.query(FunctionCall.group_by, func.count(FunctionCall.group_by)). \
+            filter(FunctionCall.endpoint == endpoint).group_by(FunctionCall.group_by).\
+            order_by(desc(func.count(FunctionCall.group_by)))
+        if limit:
+            query = query.limit(limit)
+        result = query.all()
         db_session.expunge_all()
-        return result
+        return [r[0] for r in result]
 
 
 def get_endpoint_results(endpoint, column):

@@ -31,12 +31,12 @@
               onclick="window.location='{{ url_for('dashboard.result_heatmap', end=record.name) }}';">
             <td style="background-color: {{ record.color }}"></td>
             <td style="max-width: 200px; overflow: hidden; white-space: nowrap; text-overflow: ellipsis;">{{ record.name }}</td>
-            <td style="text-align: right;">{{ record['hits-today'] }}</td>
-            <td style="text-align: right;">{{ record['hits-week'] }}</td>
-            <td style="text-align: right;">{{ record['hits-overall'] }}</td>
-            <td style="text-align: right;">{{ (record['median-today']*10)|round / 10 }}</td>
-            <td style="text-align: right;">{{ (record['median-week']*10)|round / 10 }}</td>
-            <td style="text-align: right;">{{ (record['median-overall']*10)|round / 10 }}</td>
+            <td style="text-align: right;">{{ "{:,d}".format(record['hits-today']) }}</td>
+            <td style="text-align: right;">{{ "{:,d}".format(record['hits-week']) }}</td>
+            <td style="text-align: right;">{{ "{:,d}".format(record['hits-overall']) }}</td>
+            <td style="text-align: right;">{{ "{:,.1f}".format(record['median-today']) }}</td>
+            <td style="text-align: right;">{{ "{:,.1f}".format(record['median-week']) }}</td>
+            <td style="text-align: right;">{{ "{:,.1f}".format(record['median-overall']) }}</td>
             <td style="text-align: center;">{{ "{:%Y-%m-%d %H:%M:%S }".format(record['last-accessed']) }}</td>
             <td><a href="{{ url_for('dashboard.result_heatmap', end=record.name) }}"
                    class="btn btn-primary btn-block">Details</a>

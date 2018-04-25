@@ -21,11 +21,12 @@ from .utils import get_endpoint_details, BUBBLE_SIZE_RATIO, formatter
 def result_time_per_version_per_user(end):
     form = get_slider_form(count_users(end))
     graph = get_time_per_version_per_user(end, form)
-    return render_template('endpoint/time_per_user.html', details=get_endpoint_details(end),
+    return render_template('dashboard/graph-details.html', details=get_endpoint_details(end),
                            graph=graph, form=form)
 
 
 def get_time_per_version_per_user(end, form):
+    # TODO: refactor this method
     user_data = {}
     data = [t.execution_time for t in get_all_measurement(end)]
     # compute the average for determining the size of the bubbles in the plot
