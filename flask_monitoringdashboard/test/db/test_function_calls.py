@@ -41,8 +41,7 @@ class TestFunctionCall(unittest.TestCase):
         from flask_monitoringdashboard.database.function_calls import get_data_between
         size = 2
         first = len(TIMES) - size - 1
-        last = len(TIMES) - 1
-        result = get_data_between(TIMES[first], TIMES[last])
+        result = get_data_between(TIMES[-size - 2], TIMES[-1])
         for i in range(size):
             self.assertEqual(result[i].endpoint, NAME)
             self.assertEqual(result[i].execution_time, EXECUTION_TIMES[first + i])
