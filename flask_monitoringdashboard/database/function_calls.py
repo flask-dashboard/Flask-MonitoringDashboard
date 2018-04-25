@@ -35,16 +35,16 @@ def add_function_call(execution_time, endpoint, ip):
         db_session.add(FunctionCall(endpoint=endpoint, execution_time=execution_time, version=config.version, ip=ip))
 
 
-def get_median(endpoint, date_from=datetime.datetime.utcfromtimestamp(0)):
+def get_median(endpoint, *where):
     """ Return the median for a specific endpoint within a certain time interval.
     If date_from is not specified, all results are counted
     :param endpoint: name of the endpoint
-    :param date_from: A datetime-object
+    :param where: additional where clause
     """
-    num_rows = count_requests(endpoint, date_from)
+    num_rows = count_requests(endpoint, *where)
     with session_scope() as db_session:
         result = db_session.query(FunctionCall.execution_time). \
-            filter(FunctionCall.endpoint == endpoint, FunctionCall.time > date_from). \
+            filter(FunctionCall.endpoint == endpoint, *where). \
             order_by(FunctionCall.execution_time).limit(2 - num_rows % 2).offset((num_rows - 1) / 2).all()
         values = [r[0] for r in result]
         return sum(values) / max(1, len(values))

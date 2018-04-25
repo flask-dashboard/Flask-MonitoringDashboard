@@ -28,8 +28,6 @@ def get_time_per_user(end, form):
     """
     data = []
     for group_by in get_group_by_sorted(end, form.get_slider_value()):
-        # TODO: refactor this line
-        print(group_by)
         values = [str(c.execution_time) for c in
                   get_all_measurement_per_column(endpoint=end, column=FunctionCall.group_by, value=group_by)]
         data.append(boxplot(values, name=str(group_by)))

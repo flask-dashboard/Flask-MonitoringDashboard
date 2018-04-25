@@ -3,7 +3,8 @@ from flask import render_template
 from flask_monitoringdashboard import blueprint
 from flask_monitoringdashboard.core.auth import secure
 from flask_monitoringdashboard.core.plot import get_layout, get_figure, get_margin, heatmap
-from flask_monitoringdashboard.database.count import count_hits
+from flask_monitoringdashboard.database import FunctionCall
+from flask_monitoringdashboard.database.count import count_requests
 from flask_monitoringdashboard.database.function_calls import get_endpoints
 from flask_monitoringdashboard.database.versions import get_versions
 
@@ -26,10 +27,7 @@ def get_version_usage():
 
     hits = []
     for endpoint in endpoints:
-        hits_endpoint = []
-        for version in versions:
-            hits_endpoint.append(count_hits(version, endpoint))
-        hits.append(hits_endpoint)
+        hits.append([count_requests(endpoint, FunctionCall.version == v) for v in versions])
 
     for i in range(len(versions)):  # compute the total number of hits in a specific version
         total_hits = max(1, sum([column[i] for column in hits]))

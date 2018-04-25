@@ -3,7 +3,7 @@ Contains all functions that access a single endpoint
 """
 import datetime
 
-from sqlalchemy import func, asc, desc
+from sqlalchemy import func, desc
 from sqlalchemy.orm.exc import NoResultFound
 
 from flask_monitoringdashboard import config
@@ -22,19 +22,8 @@ def get_num_requests(endpoint, start_date, end_date):
         if endpoint:
             query = query.filter(FunctionCall.endpoint == endpoint)
         result = query.filter(FunctionCall.time >= datetime.datetime.combine(start_date, datetime.time(0, 0, 0, 0))). \
-            filter(FunctionCall.time <= datetime.datetime.combine(end_date, datetime.time(23, 59, 59))).\
+            filter(FunctionCall.time <= datetime.datetime.combine(end_date, datetime.time(23, 59, 59))). \
             group_by('newTime').all()
-        db_session.expunge_all()
-        return result
-
-
-def get_endpoint_column(endpoint, column):
-    """ Returns a list of entries from column in which the endpoint is involved. """
-    with session_scope() as db_session:
-        result = db_session.query(column,
-                                  func.min(FunctionCall.time).label('startedUsingOn')). \
-            filter(FunctionCall.endpoint == endpoint). \
-            group_by(column).order_by(asc('startedUsingOn')).all()
         db_session.expunge_all()
         return result
 
@@ -49,7 +38,7 @@ def get_group_by_sorted(endpoint, limit=None):
     """
     with session_scope() as db_session:
         query = db_session.query(FunctionCall.group_by, func.count(FunctionCall.group_by)). \
-            filter(FunctionCall.endpoint == endpoint).group_by(FunctionCall.group_by).\
+            filter(FunctionCall.endpoint == endpoint).group_by(FunctionCall.group_by). \
             order_by(desc(func.count(FunctionCall.group_by)))
         if limit:
             query = query.limit(limit)
@@ -58,18 +47,23 @@ def get_group_by_sorted(endpoint, limit=None):
         return [r[0] for r in result]
 
 
-def get_endpoint_results(endpoint, column):
-    """ Returns a list of entries with measurements in which the endpoint is involved.
-    The entries are grouped by their version and the given column. """
+def get_ip_sorted(endpoint, limit=None):
+    """
+    Returns a list with the distinct group-by from a specific endpoint. The limit is used to filter the most used
+    distinct
+    :param endpoint: the endpoint to filter on
+    :param limit: the number of
+    :return: a list with the group_by as strings.
+    """
     with session_scope() as db_session:
-        result = db_session.query(FunctionCall.version,
-                                  column,
-                                  func.count(FunctionCall.execution_time).label('count'),
-                                  func.avg(FunctionCall.execution_time).label('average')
-                                  ).filter(FunctionCall.endpoint == endpoint). \
-            group_by(FunctionCall.version, column).all()
+        query = db_session.query(FunctionCall.ip, func.count(FunctionCall.ip)). \
+            filter(FunctionCall.endpoint == endpoint).group_by(FunctionCall.ip). \
+            order_by(desc(func.count(FunctionCall.ip)))
+        if limit:
+            query = query.limit(limit)
+        result = query.all()
         db_session.expunge_all()
-        return result
+        return [r[0] for r in result]
 
 
 def get_monitor_rule(endpoint):
@@ -96,14 +90,6 @@ def update_monitor_rule(endpoint, value):
     with session_scope() as db_session:
         db_session.query(MonitorRule).filter(MonitorRule.endpoint == endpoint). \
             update({MonitorRule.monitor: value})
-
-
-def get_all_measurement(endpoint):
-    """Return all entries with measurements from a given endpoint. Used for creating a histogram. """
-    with session_scope() as db_session:
-        result = db_session.query(FunctionCall).filter(FunctionCall.endpoint == endpoint).all()
-        db_session.expunge_all()
-        return result
 
 
 def get_all_measurement_per_column(endpoint, column, value):

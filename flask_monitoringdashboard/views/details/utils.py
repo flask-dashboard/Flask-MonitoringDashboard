@@ -7,8 +7,6 @@ from flask_monitoringdashboard.database.endpoint import get_monitor_rule
 from flask_monitoringdashboard.database.count import count_requests
 from flask_monitoringdashboard.database.function_calls import get_date_of_first_request
 
-BUBBLE_SIZE_RATIO = 1250
-
 
 def get_endpoint_details(endpoint):
     """ Return details about an endpoint"""

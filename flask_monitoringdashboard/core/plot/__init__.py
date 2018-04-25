@@ -5,7 +5,7 @@
 import plotly
 import plotly.graph_objs as go
 from flask_monitoringdashboard.core.plot.util import add_default_value
-from flask_monitoringdashboard.core.plot.plots import heatmap, boxplot, barplot
+from flask_monitoringdashboard.core.plot.plots import heatmap, boxplot, barplot, scatter, get_average_bubble_size
 
 
 def get_layout(**kwargs):

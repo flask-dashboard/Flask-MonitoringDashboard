@@ -1,5 +1,3 @@
-import datetime
-
 from sqlalchemy import func, distinct
 
 from flask_monitoringdashboard.database import session_scope, FunctionCall, Outlier
@@ -43,21 +41,12 @@ def count_versions(endpoint):
     return count_rows(FunctionCall.version, FunctionCall.endpoint == endpoint)
 
 
-def count_requests(endpoint, date_from=datetime.datetime.utcfromtimestamp(0)):
-    """ Return the number of hits for a specific endpoint within a certain time interval.
-    If date_from is not specified, all results are counted
+def count_requests(endpoint, *where):
+    """ Return the number of hits for a specific endpoint (possible with more filter arguments).
     :param endpoint: name of the endpoint
-    :param date_from: A datetime-object
+    :param where: additional arguments
     """
-    return count_rows(FunctionCall.id, FunctionCall.endpoint == endpoint, FunctionCall.time > date_from)
-
-
-def count_hits(version, endpoint):
-    """
-    Same as count_requests, but now filter on version and endpoint
-    :return: the number of hits for a specific endpoint in a specific version
-    """
-    return count_rows(FunctionCall.id, FunctionCall.endpoint == endpoint, FunctionCall.version == version)
+    return count_rows(FunctionCall.id, FunctionCall.endpoint == endpoint, *where)
 
 
 def count_outliers(endpoint):

@@ -6,8 +6,8 @@
 
 import unittest
 
-from flask_monitoringdashboard.test.utils import set_test_environment, clear_db, add_fake_data, mean, \
-    EXECUTION_TIMES, TIMES, NAME, GROUP_BY, IP
+from flask_monitoringdashboard.test.utils import set_test_environment, clear_db, add_fake_data, EXECUTION_TIMES, NAME, \
+    GROUP_BY, IP
 
 
 class TestEndpoint(unittest.TestCase):
@@ -16,27 +16,6 @@ class TestEndpoint(unittest.TestCase):
         set_test_environment()
         clear_db()
         add_fake_data()
-
-    def test_get_endpoint_column(self):
-        """
-            Test whether the function returns the right values.
-        """
-        from flask_monitoringdashboard.database.endpoint import get_endpoint_column
-        from flask_monitoringdashboard.database import FunctionCall
-        result = get_endpoint_column(NAME, FunctionCall.time)
-        self.assertEqual(len(result), len(EXECUTION_TIMES))
-        self.assertEqual(result[0].time, TIMES[0])
-
-    def test_get_endpoint_results(self):
-        """
-            Test whether the function returns the right values.
-        """
-        from flask_monitoringdashboard.database.endpoint import get_endpoint_results
-        from flask_monitoringdashboard.database import FunctionCall
-        result = get_endpoint_results(NAME, FunctionCall.group_by)
-        self.assertEqual(len(result), 1)
-        self.assertEqual(result[0].average, mean(EXECUTION_TIMES))
-        self.assertEqual(result[0].count, len(EXECUTION_TIMES))
 
     def test_get_monitor_rule(self):
         """
@@ -58,21 +37,6 @@ class TestEndpoint(unittest.TestCase):
         new_value = not current_value
         update_monitor_rule(NAME, new_value)
         self.assertEqual(get_monitor_rule(NAME).monitor, new_value)
-
-    def test_get_all_measurement(self):
-        """
-            Test whether the function returns the right values.
-        """
-        from flask_monitoringdashboard import config
-        from flask_monitoringdashboard.database.endpoint import get_all_measurement
-        result = get_all_measurement(NAME)
-        self.assertEqual(len(result), len(EXECUTION_TIMES))
-        for row in result:
-            self.assertIn(row.execution_time, EXECUTION_TIMES)
-            self.assertEqual(row.version, config.version)
-            self.assertEqual(row.endpoint, NAME)
-            self.assertEqual(row.group_by, GROUP_BY)
-            self.assertEqual(row.ip, IP)
 
     def test_get_all_measurement_per_column(self):
         """
