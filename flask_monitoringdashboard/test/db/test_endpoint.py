@@ -27,16 +27,6 @@ class TestEndpoint(unittest.TestCase):
         self.assertEqual(len(result), len(EXECUTION_TIMES))
         self.assertEqual(result[0].time, TIMES[0])
 
-    def test_get_endpoint_column_user_sorted(self):
-        """
-            Test whether the function returns the right values.
-        """
-        from flask_monitoringdashboard.database.endpoint import get_endpoint_column_user_sorted
-        from flask_monitoringdashboard.database import FunctionCall
-        result = get_endpoint_column_user_sorted(NAME, FunctionCall.time)
-        self.assertEqual(len(result), len(EXECUTION_TIMES))
-        self.assertEqual(result[0].time, TIMES[0])
-
     def test_get_endpoint_results(self):
         """
             Test whether the function returns the right values.
