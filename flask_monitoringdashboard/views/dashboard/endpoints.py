@@ -24,11 +24,8 @@ def get_boxplot_per_endpoint():
     data = []
     for endpoint in endpoints:
         values = [c.execution_time for c in get_data_per_endpoint(endpoint)]
-        if len(values) > 0:
+        if values:
             data.append(boxplot(values, name=endpoint))
-
-    if not data:
-        return None
 
     layout = get_layout(
         height=350 + 40 * len(endpoints),

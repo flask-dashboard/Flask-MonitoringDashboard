@@ -7,7 +7,7 @@ from flask_monitoringdashboard.core.plot import get_layout, get_figure, boxplot
 from flask_monitoringdashboard.database import FunctionCall
 from flask_monitoringdashboard.database.endpoint import get_all_measurement_per_column, get_group_by_sorted
 from flask_monitoringdashboard.database.count import count_users
-from .utils import get_endpoint_details
+from flask_monitoringdashboard.core.utils import get_endpoint_details
 
 
 @blueprint.route('/result/<end>/time_per_user', methods=['GET', 'POST'])
@@ -36,6 +36,6 @@ def get_time_per_user(end, form):
         height=350 + 40 * len(data),
         title='Execution time for every user for endpoint: ' + end,
         xaxis={'title': 'Execution time (ms)'},
-        yaxis={'title': 'User'}
+        yaxis={'type': 'category', 'title': 'User'}
     )
     return get_figure(layout, data)

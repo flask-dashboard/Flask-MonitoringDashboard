@@ -6,7 +6,7 @@ from flask import json, jsonify
 from flask_monitoringdashboard import blueprint, config
 from flask_monitoringdashboard.database.function_calls import get_data_between
 from flask_monitoringdashboard.database.monitor_rules import get_monitor_data
-from flask_monitoringdashboard.views.details.utils import get_details
+from flask_monitoringdashboard.core.utils import get_details
 
 
 @blueprint.route('/get_json_data', defaults={'time_from': 0})

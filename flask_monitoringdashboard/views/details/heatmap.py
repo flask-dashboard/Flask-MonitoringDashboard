@@ -4,7 +4,7 @@ from flask_monitoringdashboard import blueprint
 from flask_monitoringdashboard.core.auth import secure
 from flask_monitoringdashboard.core.forms import get_daterange_form
 from flask_monitoringdashboard.views.dashboard.heatmap import get_heatmap
-from .utils import get_endpoint_details
+from flask_monitoringdashboard.core.utils import get_endpoint_details
 
 
 @blueprint.route('/result/<end>/heatmap', methods=['GET', 'POST'])

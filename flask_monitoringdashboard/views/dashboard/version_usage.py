@@ -25,9 +25,7 @@ def get_version_usage():
     endpoints = get_endpoints()
     versions = get_versions()
 
-    hits = []
-    for endpoint in endpoints:
-        hits.append([count_requests(endpoint, FunctionCall.version == v) for v in versions])
+    hits = [[count_requests(e, FunctionCall.version == v) for v in versions] for e in endpoints]
 
     for i in range(len(versions)):  # compute the total number of hits in a specific version
         total_hits = max(1, sum([column[i] for column in hits]))
