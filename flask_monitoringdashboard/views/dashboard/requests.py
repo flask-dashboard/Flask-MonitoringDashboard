@@ -31,7 +31,7 @@ def get_stacked_bar(form):
         showlegend=True,
         title=TITLE,
         xaxis={'title': 'Number of requests'},
-        yaxis={'autorange': 'reversed'}
+        yaxis={'type': 'category', 'autorange': 'reversed'}
     )
 
     return get_figure(layout=layout, data=data)

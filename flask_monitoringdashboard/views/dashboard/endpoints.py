@@ -3,6 +3,7 @@ from flask import render_template
 from flask_monitoringdashboard import blueprint
 from flask_monitoringdashboard.core.auth import secure
 from flask_monitoringdashboard.core.plot import get_layout, get_figure, boxplot, get_margin
+from flask_monitoringdashboard.core.utils import simplify
 from flask_monitoringdashboard.database.function_calls import get_endpoints, get_data_per_endpoint
 
 TITLE = 'Global execution time for every endpoint'
@@ -25,7 +26,7 @@ def get_boxplot_per_endpoint():
     for endpoint in endpoints:
         values = [c.execution_time for c in get_data_per_endpoint(endpoint)]
         if values:
-            data.append(boxplot(values, name=endpoint))
+            data.append(boxplot(simplify(values, 10), name=endpoint))
 
     layout = get_layout(
         height=350 + 40 * len(endpoints),

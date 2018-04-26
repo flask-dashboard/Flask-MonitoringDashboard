@@ -1,6 +1,7 @@
 import pkg_resources
 from flask import url_for
 from werkzeug.routing import BuildError
+import numpy as np
 
 from flask_monitoringdashboard import config
 from flask_monitoringdashboard.database.endpoint import get_monitor_rule
@@ -52,3 +53,13 @@ def get_url(end):
         return url_for(end)
     except BuildError:
         return None
+
+
+def simplify(values, n=5):
+    """
+    Simplify a list of values. It returns a list that is representative for the input
+    :param values: list of values
+    :param n: length of the returned list
+    :return: list with n values: min, q1, median, q3, max
+    """
+    return [np.percentile(values, i * 100 // (n-1)) for i in range(n)]
