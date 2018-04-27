@@ -1,82 +1,69 @@
 """
 Contains all functions that access a single endpoint
 """
-from sqlalchemy import func, text, asc
-from sqlalchemy.orm.exc import NoResultFound
 import datetime
+
+from sqlalchemy import func, desc
+from sqlalchemy.orm.exc import NoResultFound
 
 from flask_monitoringdashboard import config
 from flask_monitoringdashboard.database import session_scope, FunctionCall, MonitorRule
 
 
-def get_line_results(endpoint):
-    """
-    Returns simple statistics, such as average, minimum, maximum and count from a given endpoint
-    :param endpoint: the name of the endpoint
-    :return: simple statistics, as described above
-    """
-    with session_scope() as db_session:
-        query = text("""select
-                datetime(CAST(strftime('%s', time)/3600 AS INT)*3600, 'unixepoch') as newTime, 
-                avg(execution_time) as avg,
-                min(execution_time) as min,
-                max(execution_time) as max,
-                count(execution_time) as count
-            from functioncalls 
-            where endpoint=:val group by newTime""")
-        result = db_session.execute(query, {'val': endpoint})
-        data = result.fetchall()
-        return data
-
-
-def get_num_requests(endpoint):
+def get_num_requests(endpoint, start_date, end_date):
     """ Returns a list with all dates on which an endpoint is accessed.
         :param endpoint: if None, the result is the sum of all endpoints
+        :param start_date: datetime.date object
+        :param end_date: datetime.date object
     """
     with session_scope() as db_session:
-        query = text("""select
-                datetime(CAST(strftime('%s', time)/3600 AS INT)*3600, 'unixepoch') AS newTime,
-                count(execution_time) as count
-                from functioncalls
-                where (endpoint=:val OR :val='None') group by newTime""")
-        result = db_session.execute(query, {'val': str(endpoint)})
-        data = result.fetchall()
-        return data
-
-
-def get_endpoint_column(endpoint, column):
-    """ Returns a list of entries from column in which the endpoint is involved. """
-    with session_scope() as db_session:
-        result = db_session.query(column,
-                                  func.min(FunctionCall.time).label('startedUsingOn')). \
-            filter(FunctionCall.endpoint == endpoint). \
-            group_by(column).order_by(asc('startedUsingOn')).all()
+        query = db_session.query(func.strftime('%Y-%m-%d %H:00:00', FunctionCall.time).label('newTime'),
+                                 func.count(FunctionCall.execution_time).label('count'))
+        if endpoint:
+            query = query.filter(FunctionCall.endpoint == endpoint)
+        result = query.filter(FunctionCall.time >= datetime.datetime.combine(start_date, datetime.time(0, 0, 0, 0))). \
+            filter(FunctionCall.time <= datetime.datetime.combine(end_date, datetime.time(23, 59, 59))). \
+            group_by('newTime').all()
         db_session.expunge_all()
         return result
 
 
-def get_endpoint_column_user_sorted(endpoint, column):
-    """ Returns a list of entries from column in which the endpoint is involved. """
+def get_group_by_sorted(endpoint, limit=None):
+    """
+    Returns a list with the distinct group-by from a specific endpoint. The limit is used to filter the most used
+    distinct
+    :param endpoint: the endpoint to filter on
+    :param limit: the number of
+    :return: a list with the group_by as strings.
+    """
     with session_scope() as db_session:
-        result = db_session.query(column). \
-            filter(FunctionCall.endpoint == endpoint). \
-            group_by(column).order_by(asc(column)).all()
+        query = db_session.query(FunctionCall.group_by, func.count(FunctionCall.group_by)). \
+            filter(FunctionCall.endpoint == endpoint).group_by(FunctionCall.group_by). \
+            order_by(desc(func.count(FunctionCall.group_by)))
+        if limit:
+            query = query.limit(limit)
+        result = query.all()
         db_session.expunge_all()
-        return result
+        return [r[0] for r in result]
 
 
-def get_endpoint_results(endpoint, column):
-    """ Returns a list of entries with measurements in which the endpoint is involved.
-    The entries are grouped by their version and the given column. """
+def get_ip_sorted(endpoint, limit=None):
+    """
+    Returns a list with the distinct group-by from a specific endpoint. The limit is used to filter the most used
+    distinct
+    :param endpoint: the endpoint to filter on
+    :param limit: the number of
+    :return: a list with the group_by as strings.
+    """
     with session_scope() as db_session:
-        result = db_session.query(FunctionCall.version,
-                                  column,
-                                  func.count(FunctionCall.execution_time).label('count'),
-                                  func.avg(FunctionCall.execution_time).label('average')
-                                  ).filter(FunctionCall.endpoint == endpoint). \
-            group_by(FunctionCall.version, column).all()
+        query = db_session.query(FunctionCall.ip, func.count(FunctionCall.ip)). \
+            filter(FunctionCall.endpoint == endpoint).group_by(FunctionCall.ip). \
+            order_by(desc(func.count(FunctionCall.ip)))
+        if limit:
+            query = query.limit(limit)
+        result = query.all()
         db_session.expunge_all()
-        return result
+        return [r[0] for r in result]
 
 
 def get_monitor_rule(endpoint):
@@ -105,14 +92,6 @@ def update_monitor_rule(endpoint, value):
             update({MonitorRule.monitor: value})
 
 
-def get_all_measurement(endpoint):
-    """Return all entries with measurements from a given endpoint. Used for creating a histogram. """
-    with session_scope() as db_session:
-        result = db_session.query(FunctionCall).filter(FunctionCall.endpoint == endpoint).all()
-        db_session.expunge_all()
-        return result
-
-
 def get_all_measurement_per_column(endpoint, column, value):
     """Return all entries with measurements from a given endpoint for which the column has a specific value.
     Used for creating a box plot. """
@@ -122,12 +101,14 @@ def get_all_measurement_per_column(endpoint, column, value):
         return result
 
 
-def get_last_accessed_times():
+def get_last_accessed_times(endpoint):
     """ Returns a list of all endpoints and their last accessed time. """
     with session_scope() as db_session:
-        result = db_session.query(MonitorRule.endpoint, MonitorRule.last_accessed).all()
+        result = db_session.query(MonitorRule.last_accessed).filter(MonitorRule.endpoint == endpoint).first()
         db_session.expunge_all()
-        return result
+        if result:
+            return result[0]
+        return None
 
 
 def update_last_accessed(endpoint, value):

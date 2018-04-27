@@ -1,0 +1,51 @@
+{% extends "dashboard/graph-details.html" %}
+{% block form_content %}
+{% endblock %}
+
+{% block graph_content %}
+{{ pagination.info }}
+{{ pagination.links }}
+{% for row in table %}
+<div class="card">
+  <div class="row">
+    <div class="col-sm-6">
+      <div class="well-sm"><strong>Request url: </strong>{{ row.request_url }}</div>
+    </div>
+    <div class="col-sm-6">
+      <div class="well-sm"><strong>Request time: </strong>{{ row.time }}</div>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-sm-6">
+      <div class="well-sm"><strong>Request Headers</strong></div>
+    </div>
+    <div class="col-sm-6">
+      <div class="well-sm"><strong>Request Environment</strong></div>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-sm-6">
+      <div class="well-sm scrollable">{{ row.request_headers }}</div>
+    </div>
+    <div class="col-sm-6">
+      <div class="well-sm scrollable">{{ row.request_environment }}</div>
+    </div>
+  </div>
+  <div class="row"><div class="col-sm-12"><div class="well-sm">
+    <strong>CPU Percent: </strong>{{ row.cpu_percent }}
+  </div></div></div>
+  <div class="row"><div class="col-sm-12"><div class="well-sm">
+    <strong>Memory: </strong>{{ row.memory }}
+  </div></div></div>
+  <div class="row"><div class="col-sm-12">
+    <div class="well-sm"><strong>Stack Trace</strong></div>
+  </div></div>
+  <div class="row"><div class="col-sm-12">
+    <div class="well-sm scrollable">{{ row.stacktrace|safe }}</div>
+  </div></div>
+</div><br />
+
+{% endfor %}
+{{ pagination.info }}
+{{ pagination.links }}
+{% endblock %}

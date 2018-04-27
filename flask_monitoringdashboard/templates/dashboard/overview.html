@@ -1,0 +1,67 @@
+{% extends "base.html" %}
+{% block content %}
+
+{% block subcontent %}
+<div class="card mb-3">
+  <div class="card-header"><h4>{{ title }}</h4></div>
+  <div class="card-body">
+    <div class="table-responsive">
+      <table class="table table-striped table-bordered" id="dataTable" width="100%" cellspacing="0" data-page-length="25">
+        <thead>
+          <tr>
+            <th rowspan="2"></th>
+            <th rowspan="2">Endpoint</th>
+            <th colspan="3" style="text-align: center;">Number of hits</th>
+            <th colspan="3" style="text-align: center;">Median execution time (ms)</th>
+            <th rowspan="2">Last accessed</th>
+            <th rowspan="2">Details</th>
+          </tr>
+          <tr>
+            <th>Today</th>
+            <th>Last 7 days</th>
+            <th>Overall</th>
+            <th>Today</th>
+            <th>Last 7 days</th>
+            <th>Overall</th>
+          </tr>
+        </thead>
+        <tbody>
+        {% for record in result %}
+          <tr style="cursor: pointer"
+              onclick="window.location='{{ url_for('dashboard.result_heatmap', end=record.name) }}';">
+            <td style="background-color: {{ record.color }}"></td>
+            <td style="max-width: 200px; overflow: hidden; white-space: nowrap; text-overflow: ellipsis;">{{ record.name }}</td>
+            <td style="text-align: right;">{{ "{:,d}".format(record['hits-today']) }}</td>
+            <td style="text-align: right;">{{ "{:,d}".format(record['hits-week']) }}</td>
+            <td style="text-align: right;">{{ "{:,d}".format(record['hits-overall']) }}</td>
+            <td style="text-align: right;">{{ "{:,.1f}".format(record['median-today']) }}</td>
+            <td style="text-align: right;">{{ "{:,.1f}".format(record['median-week']) }}</td>
+            <td style="text-align: right;">{{ "{:,.1f}".format(record['median-overall']) }}</td>
+            <td style="text-align: center;">{{ "{:%Y-%m-%d %H:%M:%S }".format(record['last-accessed']) }}</td>
+            <td><a href="{{ url_for('dashboard.result_heatmap', end=record.name) }}"
+                   class="btn btn-primary btn-block">Details</a>
+            </td>
+          </tr>
+        {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+{% if is_admin %}
+  <div class="card mb-3">
+    <div class="card-header">Export data</div>
+    <div class="card-body">
+      <div class="panel-heading">
+        <a href="{{ url_for('dashboard.download_csv') }}"
+           class="btn btn-primary btn-sm">Download CSV</a>
+        <a href="{{ url_for('dashboard.view_csv') }}"
+           class="btn btn-primary btn-sm">View CSV</a>
+      </div>
+    </div>
+  </div>
+{% endif %}
+
+{% endblock %}
+{% endblock %}

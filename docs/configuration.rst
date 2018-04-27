@@ -62,8 +62,6 @@ the entry point of the app. The following things can be configured:
    OUTLIER_DETECTION_CONSTANT=2.5
    DASHBOARD_ENABLED = True
    TEST_DIR=/<path to your project>/tests/
-   N=5
-   SUBMIT_RESULTS_URL=http://0.0.0.0:5000/dashboard/submit-test-results
    COLORS={'main':[0,97,255], 'static':[255,153,0]}
 
 This might look a bit overwhelming, but the following list explains everything in detail:
@@ -95,15 +93,7 @@ This might look a bit overwhelming, but the following list explains everything i
   the expected overhead is a bit larger, as you can find
   `here <https://github.com/flask-dashboard/Testing-Dashboard-Overhead>`_.
 
-- **TEST_DIR**, **N**, **SUBMIT_RESULTS_URL:**
-  To enable Travis to run your unit tests and send the results to the dashboard, you have to set those values:
-
-    - **TEST_DIR** specifies where the unit tests reside.
-
-    - **SUBMIT_RESULTS_URL** specifies where Travis should upload the test results to. When left out, the results will
-      not be sent anywhere, but the performance collection process will still run.
-
-    - **N** specifies the number of times Travis should run each unit test.
+- **TEST_DIR:** Specifies where the unit tests reside. This will show up in the configuration in the Dashboard.
 
 - **COLORS:** The endpoints are automatically hashed into a color.
   However, if you want to specify a different color for an endpoint, you can set this variable.

@@ -13,8 +13,10 @@
 """
 
 import os
+
 from flask import Blueprint
-from flask_monitoringdashboard.config import Config
+
+from flask_monitoringdashboard.core.config import Config
 
 config = Config()
 user_app = None
@@ -49,22 +51,20 @@ def bind(app, blue_print=None):
         import os
         import datetime
         from flask import request
-        log_dir = os.getenv('DASHBOARD_LOG_DIR')
 
         @blue_print.after_request
         def after_request(response):
-            if log_dir:
-                t1 = str(datetime.datetime.now())
-                log = open(log_dir + "endpoint_hits.log", "a")
-                log.write("\"{}\",\"{}\"\n".format(t1, request.endpoint))
-                log.close()
+            hit_time_stamp = str(datetime.datetime.now())
+            log = open("endpoint_hits.log", "a")
+            log.write('"{}","{}"\n'.format(hit_time_stamp, request.endpoint))
+            log.close()
             return response
 
     # Add all route-functions to the blueprint
-    import flask_monitoringdashboard.routings
+    import flask_monitoringdashboard.views
 
     # Add wrappers to the endpoints that have to be monitored
-    from flask_monitoringdashboard.measurement import init_measurement
+    from flask_monitoringdashboard.core.measurement import init_measurement
     blueprint.before_app_first_request(init_measurement)
 
     # register the blueprint to the app

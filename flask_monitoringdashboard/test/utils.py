@@ -12,10 +12,8 @@ GROUP_BY = '1'
 EXECUTION_TIMES = [1000, 2000, 3000, 4000, 50000]
 TIMES = [datetime.datetime.utcnow()] * 5
 for i in range(len(TIMES)):
-    TIMES[i] += datetime.timedelta(seconds=i)
+    TIMES[i] -= datetime.timedelta(seconds=len(EXECUTION_TIMES)-i)
 TEST_NAMES = ['test_name1', 'test_name2']
-print('Sleeping 10 seconds before executing tests')
-time.sleep(10)
 
 
 def set_test_environment():
@@ -67,6 +65,8 @@ def get_test_app():
     user_app = Flask(__name__)
     user_app.config['SECRET_KEY'] = flask_monitoringdashboard.config.security_token
     user_app.testing = True
+    user_app.config['WTF_CSRF_ENABLED'] = False
+    user_app.config['WTF_CSRF_METHODS'] = []
     flask_monitoringdashboard.config.get_group_by = lambda: '12345'
     flask_monitoringdashboard.bind(app=user_app)
     return user_app.test_client()
@@ -86,3 +86,14 @@ def login(test_app):
 
 def mean(numbers):
     return float(sum(numbers)) / max(len(numbers), 1)
+
+
+def test_admin_secure(test_case, page):
+    """
+    Test whether the page is only accessible with admin credentials.
+    :param test_case: test class, must be an instance of unittest.TestCase
+    :param page: str with the page of the dashboard
+    """
+    test_case.assertEqual(302, test_case.app.get('dashboard/{}'.format(page)).status_code)
+    login(test_case.app)
+    test_case.assertEqual(200, test_case.app.get('dashboard/{}'.format(page)).status_code)

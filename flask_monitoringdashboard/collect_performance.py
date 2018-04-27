@@ -1,103 +1,89 @@
-import requests
-import configparser
-import time
-import datetime
-import os
-import sys
+import argparse
 import csv
+import datetime
+import time
 from unittest import TestLoader
 
-# Abort if config file is not specified.
-config = os.getenv('DASHBOARD_CONFIG')
-if config is None:
-    print('You must specify a config file for the dashboard to be able to use the unit test monitoring functionality.')
-    print('Please set an environment variable \'DASHBOARD_CONFIG\' specifying the absolute path to your config file.')
-    sys.exit(0)
+import requests
 
-# Abort if log directory is not specified.
-log_dir = os.getenv('DASHBOARD_LOG_DIR')
-if log_dir is None:
-    print('You must specify a log directory for the dashboard to be able to use the unit test monitoring '
-          'functionality.')
-    print('Please set an environment variable \'DASHBOARD_LOG_DIR\' specifying the absolute path where you want the '
-          'log files to be placed.')
-    sys.exit(0)
+# Parsing the arguments.
+parser = argparse.ArgumentParser(description='Collecting performance results from the unit tests of a project.')
+parser.add_argument('--test_folder', dest='test_folder', required=True,
+                    help='folder in which the unit tests can be found (example: ./tests)')
+parser.add_argument('--times', dest='times', default=5,
+                    help='number of times to execute every unit test (default: 5)')
+parser.add_argument('--url', dest='url', default=None,
+                    help='url of the Dashboard to submit the performance results to')
+args = parser.parse_args()
+print('Starting the collection of performance results with the following settings:')
+print('  - folder containing unit tests: ', args.test_folder)
+print('  - number of times to run tests: ', args.times)
+print('  - url to submit the results to: ', args.url)
+if not args.url:
+    print('The performance results will not be submitted.')
 
-n = 1
-url = None
-sys.path.insert(0, os.getcwd())
-parser = configparser.RawConfigParser()
-try:
-    parser.read(config)
-    if parser.has_option('dashboard', 'N'):
-        n = int(parser.get('dashboard', 'N'))
-    if parser.has_option('dashboard', 'TEST_DIR'):
-        test_dir = parser.get('dashboard', 'TEST_DIR')
-    else:
-        print('No test directory specified in your config file. Please do so.')
-        sys.exit(0)
-    if parser.has_option('dashboard', 'SUBMIT_RESULTS_URL'):
-        url = parser.get('dashboard', 'SUBMIT_RESULTS_URL')
-    else:
-        print('No url specified in your config file for submitting test results. Please do so.')
-except configparser.Error as e:
-    print("Something went wrong while parsing the configuration file:\n{}".format(e))
-
+# Initialize result dictionary and logs.
 data = {'test_runs': [], 'grouped_tests': []}
-log = open(log_dir + "endpoint_hits.log", "w")
-log.write("\"time\",\"endpoint\"\n")
+log = open('endpoint_hits.log', 'w')
+log.write('"time","endpoint"\n')
 log.close()
-log = open(log_dir + "test_runs.log", "w")
-log.write("\"start_time\",\"stop_time\",\"test_name\"\n")
+log = open('test_runs.log', 'w')
+log.write('"start_time","stop_time","test_name"\n')
 
-if test_dir:
-    suites = TestLoader().discover(test_dir, pattern="*test*.py")
-    for i in range(n):
-        for suite in suites:
-            for case in suite:
-                for test in case:
-                    result = None
-                    t1 = str(datetime.datetime.now())
-                    time1 = time.time()
-                    result = test.run(result)
-                    time2 = time.time()
-                    t2 = str(datetime.datetime.now())
-                    log.write("\"{}\",\"{}\",\"{}\"\n".format(t1, t2, str(test)))
-                    t = (time2 - time1) * 1000
-                    data['test_runs'].append({'name': str(test), 'exec_time': t, 'time': str(datetime.datetime.now()),
-                                              'successful': result.wasSuccessful(), 'iter': i + 1})
-
+# Find the tests and execute them the specified number of times.
+# Add the performance results to the result dictionary.
+suites = TestLoader().discover(args.test_folder, pattern="*test*.py")
+for iteration in range(args.times):
+    for suite in suites:
+        for case in suite:
+            for test in case:
+                test_result = None
+                start_time_stamp = str(datetime.datetime.now())
+                time_before = time.time()
+                test_result = test.run(test_result)
+                time_after = time.time()
+                end_time_stamp = str(datetime.datetime.now())
+                log.write('"{}","{}","{}"\n'.format(start_time_stamp, end_time_stamp, str(test)))
+                execution_time = (time_after - time_before) * 1000
+                data['test_runs'].append(
+                    {'name': str(test), 'exec_time': execution_time, 'time': str(datetime.datetime.now()),
+                     'successful': test_result.wasSuccessful(), 'iter': iteration + 1})
 log.close()
 
-# Read and parse the log containing the test runs
-runs = []
-with open(log_dir + 'test_runs.log') as log:
+# Read and parse the log containing the test runs into an array for processing.
+test_runs = []
+with open('test_runs.log') as log:
     reader = csv.DictReader(log)
     for row in reader:
-        runs.append([datetime.datetime.strptime(row["start_time"], "%Y-%m-%d %H:%M:%S.%f"),
-                     datetime.datetime.strptime(row["stop_time"], "%Y-%m-%d %H:%M:%S.%f"),
-                     row['test_name']])
+        test_runs.append([datetime.datetime.strptime(row["start_time"], "%Y-%m-%d %H:%M:%S.%f"),
+                          datetime.datetime.strptime(row["stop_time"], "%Y-%m-%d %H:%M:%S.%f"),
+                          row['test_name']])
 
-# Read and parse the log containing the endpoint hits
-hits = []
-with open(log_dir + 'endpoint_hits.log') as log:
+# Read and parse the log containing the endpoint hits into an array for processing.
+endpoint_hits = []
+with open('endpoint_hits.log') as log:
     reader = csv.DictReader(log)
     for row in reader:
-        hits.append([datetime.datetime.strptime(row["time"], "%Y-%m-%d %H:%M:%S.%f"),
-                     row['endpoint']])
+        endpoint_hits.append([datetime.datetime.strptime(row["time"], "%Y-%m-%d %H:%M:%S.%f"),
+                              row['endpoint']])
 
-# Analyze logs to find out which endpoints are hit by which unit tests
-for h in hits:
-    for r in runs:
-        if r[0] <= h[0] <= r[1]:
-            if {'endpoint': h[1], 'test_name': r[2]} not in data['grouped_tests']:
-                data['grouped_tests'].append({'endpoint': h[1], 'test_name': r[2]})
+# Analyze the two arrays to find out which endpoints were hit by which unit tests.
+# Add the endpoint_name/test_name combination to the result dictionary.
+for endpoint_hit in endpoint_hits:
+    for test_run in test_runs:
+        if test_run[0] <= endpoint_hit[0] <= test_run[1]:
+            if {'endpoint': endpoint_hit[1], 'test_name': test_run[2]} not in data['grouped_tests']:
+                data['grouped_tests'].append({'endpoint': endpoint_hit[1], 'test_name': test_run[2]})
             break
 
-# Try to send test results and endpoint-grouped unit tests to the flask_monitoringdashboard
-if url:
+# Send test results and endpoint_name/test_name combinations to the Dashboard if specified.
+if args.url:
+    if args.url[-1] == '/':
+        args.url += 'submit-test-results'
+    else:
+        args.url += '/submit-test-results'
     try:
-        requests.post(url, json=data)
-        print('Sent unit test results to the dashboard.')
+        requests.post(args.url, json=data)
+        print('Sent unit test results to the Dashboard at ', args.url)
     except Exception as e:
         print('Sending unit test results to the dashboard failed:\n{}'.format(e))

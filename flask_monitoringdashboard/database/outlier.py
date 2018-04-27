@@ -15,9 +15,25 @@ def add_outlier(endpoint, execution_time, stack_info, request):
         db_session.add(outlier)
 
 
-def get_outliers_sorted(endpoint, sort_column):
-    """ Returns a list of all outliers of a specific endpoint. The list is sorted based on the column that is given."""
+def get_outliers_sorted(endpoint, sort_column, offset, per_page):
+    """
+    :param endpoint: only get outliers from this endpoint
+    :param sort_column: column used for sorting the result
+    :param offset: number of items to skip
+    :param per_page: number of items to return
+    :return: a list of all outliers of a specific endpoint. The list is sorted based on the column that is given.
+    """
     with session_scope() as db_session:
-        result = db_session.query(Outlier).filter(Outlier.endpoint == endpoint).order_by(desc(sort_column)).all()
+        result = db_session.query(Outlier).filter(Outlier.endpoint == endpoint).order_by(desc(sort_column)).\
+            offset(offset).limit(per_page).all()
         db_session.expunge_all()
         return result
+
+
+def delete_outliers_without_stacktrace():
+    """
+        Remove the outliers which don't have a stacktrace.
+        This is possibly due to an error in the outlier functionality
+    """
+    with session_scope() as db_session:
+        db_session.query(Outlier).filter(Outlier.stacktrace == '').delete()

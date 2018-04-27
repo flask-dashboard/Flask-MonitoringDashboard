@@ -1,0 +1,69 @@
+{% extends "dashboard/graph.html" %}
+
+{% block title %}
+{% set url_heatmap='dashboard.result_heatmap' %}
+{% set url_version_user='dashboard.result_time_per_version_per_user' %}
+{% set url_version_ip='dashboard.result_time_per_version_per_ip' %}
+{% set url_version='dashboard.result_time_per_version' %}
+{% set url_user='dashboard.result_time_per_user' %}
+{% set url_outliers='dashboard.result_outliers' %}
+
+{% macro menubar_item(endpoint, name) %}
+  <li class="nav-item">
+    <a class="nav-link {{ active_if_is(endpoint) }}" href="{{ url_for(endpoint, end=details.endpoint) }}">
+      <span class="nav-link-text">{{ name }}</span>
+    </a>
+  </li>
+{%- endmacro %}
+
+<nav class="navbar navbar-expand-sm">
+  <div class="collapse navbar-collapse" id="nav-content">
+    <ul class="navbar-nav nav-pills">
+      {{ menubar_item(url_heatmap, 'Heatmap') }}
+      {{ menubar_item(url_version_user, 'Time per version per user') }}
+      {{ menubar_item(url_version_ip, 'Time per version per ip') }}
+      {{ menubar_item(url_version, 'Time per version') }}
+      {{ menubar_item(url_user, 'Time per user') }}
+      {{ menubar_item(url_outliers, 'Outliers') }}
+    </ul>
+  </div>
+</nav>
+{% endblock %}
+
+{% block summary %}
+<div class="card mb-3">
+  <div class="card-header"><h4>Summary of endpoint</h4></div>
+  <div class="card-body">
+    <div class="table-responsive">
+      <table class="table table-striped table-bordered table-hover">
+        <tr>
+          <td><b>Endpoint</b></td>
+          <td>{{ details.endpoint }}</td>
+        </tr>
+        <tr>
+          <td><b>Added since app version</b></td>
+          <td>{{ details.rule.version_added }}</td>
+        </tr>
+        <tr>
+          <td><b>Date added to app</b></td>
+          <td>{{ "{:%Y-%m-%d %H:%M:%S }".format(details.rule.time_added) }}</td>
+        </tr>
+        {% if url %}
+          <tr>
+            <td><b>Link to endpoint</b></td>
+            <td><a href="{{ details.url }}">{{ details.url }}</a></td>
+          </tr>
+        {% endif %}
+        <tr>
+          <td><b>Last accessed</b></td>
+          <td>{{ "{:%Y-%m-%d %H:%M:%S }".format(details.rule.last_accessed) }}</td>
+        </tr>
+        <tr>
+          <td><b>Total number of hits</b></td>
+          <td>{{ "{:,d}".format(details.total_hits) }}</td>
+        </tr>
+      </table>
+    </div>
+  </div>
+</div>
+{% endblock %}

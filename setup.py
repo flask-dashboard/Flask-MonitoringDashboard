@@ -3,15 +3,11 @@ import os
 loc = os.path.dirname(os.path.abspath(__file__))
 
 
-def desc():
-    try:
-        with open(loc + '/README.md') as readme:
-            info = readme.read()
-        with open(loc + '/CHANGELOG.rst') as changelog:
-            return info + '\n\n' + changelog.read()
-    except Exception as e:
-        print('Unable to retrieve description: {}'.format(e))
-        return 'long_description'
+def get_description():
+    with open(loc + '/README.md') as readme:
+        info = readme.read()
+    with open(loc + '/CHANGELOG.rst') as changelog:
+        return info + '\n\n' + changelog.read()
 
 
 with open(loc + '/requirements.txt') as f:
@@ -19,17 +15,17 @@ with open(loc + '/requirements.txt') as f:
 
 setuptools.setup(
     name="Flask-MonitoringDashboard",
-    version='1.11.5',
+    version='1.12.0',
     packages=setuptools.find_packages(),
     include_package_data=True,
     platforms='Any',
     zip_safe=False,
-    test_suite='flask_monitoringdashboard.test.start_testing',
+    test_suite='flask_monitoringdashboard.test.get_test_suite',
     url='https://github.com/flask-dashboard/Flask-MonitoringDashboard',
     author="Patrick Vogel & Thijs Klooster",
     author_email="p.p.vogel@student.rug.nl",
     description="A dashboard for automatic monitoring of Flask web-services",
-    long_description=desc(),
+    long_description=get_description(),
     install_requires=required,
     classifiers=[
         'Environment :: Web Environment',

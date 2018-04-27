@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% set title=name %}
+{% block content %}
+
+<div class="card mb-3">
+  <div class="card-header">{{ name }}</div>
+  <div class="card-body">
+
+    <div id="loading">
+      <div class="col-md-12 col-sm-12">
+        <br>
+        <div class="text-center">
+          <img src="{{ url_for('dashboard.static', filename='loading.gif') }}"
+               alt="Be patient..." align="center"/>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-12 col-sm-12">
+        {{ boxplot|safe }}
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block script %}
+<script>
+  $(window).ready(function () {
+    $('#loading').hide();
+  });
+</script>
+{% endblock %}

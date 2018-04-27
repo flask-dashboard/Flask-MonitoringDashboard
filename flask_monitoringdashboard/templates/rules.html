@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="card mb-3">
+  <div class="card-header"><h4>Rules</h4></div>
+  <div class="card-body">
+    <div class="table-responsive">
+      <form id="myForm">
+        {{ form.hidden_tag() }}
+        <table class="table table-striped table-bordered" id="dataTable" width="100%" cellspacing="0" data-page-length="25">
+          <thead>
+            <tr>
+              <th>Color</th>
+              <th>Rule</th>
+              <th>HTTP Method</th>
+              <th>Endpoint</th>
+              <th>Last accessed</th>
+              <th>Monitor</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for row in rules %}
+              <tr>
+                <td style="background-color: {{ row.color }}"></td>
+                <td style="max-width: 200px; overflow: hidden; white-space: nowrap; text-overflow: ellipsis;">{{ row.rule }}</td>
+                <td>{{ ", ".join(row.methods) }}</td>
+                <td style="max-width: 200px; overflow: hidden; white-space: nowrap; text-overflow: ellipsis;">{{ row.endpoint }}</td>
+                <td style="text-align: center;">{{ "{:%Y-%m-%d %H:%M:%S }".format(row.last_accessed) if row.last_accessed }}</td>
+                <td>
+                  <input id="checkbox-{{ row.endpoint }}" name="checkbox-{{ row.endpoint }}"
+                         type="checkbox" {{ 'checked' if row.monitor }} class="checkbox">
+                  <label for="checkbox-{{ row.endpoint }}"></label>
+                </td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </form>
+    </div>
+  </div>
+</div>
+
+{% endblock %}
+
+{% block script %}
+<script>
+  $(document).ready(function () {
+    $('.checkbox').click(function () {
+      var formData = $('#myForm').serialize();
+
+      $.ajax({
+        url: '#',
+        data: formData,
+        type: 'post',
+        dataType: 'json'
+      });
+    });
+  });
+</script>
+{% endblock %}

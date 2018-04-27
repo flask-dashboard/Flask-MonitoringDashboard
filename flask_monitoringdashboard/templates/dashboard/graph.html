@@ -1,0 +1,107 @@
+{% extends "dashboard/overview.html" %}
+
+{% block subcontent %}
+<div class="card mb-3">
+  <div class="card-header">
+    {% block title %}
+      <h4>{{ title }}</h4>
+    {% endblock %}
+  </div>
+  <div class="card-body">
+
+    {% block form_content %}
+    {% if form %}
+      {% if form.type == 'SelectDateRangeForm' %}
+        <div class="card">
+          <div class="card-header"><h6>Select two dates for reducing the size of the graph</h6></div>
+          <div class="card-body">
+            <form class="form" method="POST">
+              {{ form.hidden_tag() }}
+              <div class="row">
+                <div class="col-sm">
+                  <i class="fa fa-calendar"></i> {{ form.start_date.label }}
+                </div>
+                <div class="col-sm">
+                  <i class="fa fa-calendar"></i> {{ form.end_date.label }}
+                </div>
+              <div class="col-sm"></div>
+              </div>
+              <div class="row">
+                <div class="col-sm">
+                  {{ form.start_date(class_="form-control", required=true) }}
+                </div>
+                <div class="col-sm">
+                  {{ form.end_date(class_="form-control", required=true) }}
+                </div>
+                <div class="col-sm">
+                  {{ form.submit(class_="btn btn-primary btn-block") }}
+                </div>
+              </div>
+            </form>
+          </div>
+        </div>
+      {% elif form.type == 'SliderForm' %}
+        <div class="card">
+          <div class="card-header"><h6>Select a number below for reducing the size of the graph</h6></div>
+          <div class="card-body">
+            <form class="form" method="POST">
+              {{ form.hidden_tag() }}
+              <div class="row">
+                <div class="col-sm-3">
+                  <span>{{ form.min_value }}</span>
+                </div>
+                <div class="col-sm-3" style="text-align: center">
+                  <output id="outputValue">{{ form.start_value }}</output>
+                </div>
+                <div class="col-sm-3" style="text-align: right">
+                  <span>{{ form.max_value }}</span>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-sm-9">
+                  {{ form.slider(style="width: 100%;", oninput="outputValue.value=this.value", min=form.min_value,
+                                 max=form.max_value, value=form.start_value) }}
+                </div>
+                <div class="col-sm-3">
+                  {{ form.submit(class_="btn btn-primary btn-block") }}
+                </div>
+              </div>
+            </form>
+          </div>
+        </div>
+      {% endif %}
+    {% endif %}
+    {% endblock %}
+
+    <div id="loading">
+      <div class="col-md-12 col-sm-12">
+        <br>
+        <div class="text-center">
+          <img src="{{ url_for('dashboard.static', filename='loading.gif') }}"
+               alt="Be patient..." align="center"/>
+        </div>
+      </div>
+    </div>
+
+    {% block graph_content %}
+      {% if graph %}
+        <div class="col-sm-12">
+          {{ graph|safe }}
+        </div>
+      {% else %}
+        <p>No data available.</p>
+      {% endif %}
+    {% endblock %}
+  </div>
+</div>
+{% block summary %}
+{% endblock %}
+{% endblock %}
+
+{% block script %}
+<script>
+  $(window).ready(function () {
+    $('#loading').hide();
+  });
+</script>
+{% endblock %}

@@ -1,0 +1,110 @@
+{% extends "base.html" %}
+{% set title="Testmonitor" %}
+{% block content %}
+
+<div class="card mb-3">
+  <div class="card-header"><h4>Grouped Test Results</h4></div>
+  <div class="card-body">
+    {% for group in groups %}
+      {% if group in endpoints %}
+        <div class="panel panel-default">
+          <div class="panel-heading" style="background-color: {{ colors[group] }}">
+            <h4 class="panel-title">
+              <a data-toggle="collapse" data-parent="#accordion" href="{{ "#" + group|replace(".", "-") }}"
+                 class="collapsed" style="background-color: #ffffff">&#9654; {{ group + " ..." }}</a>
+            </h4>
+          </div>
+          <div id="{{ group|replace(".", "-") }}" class="panel-collapse collapse" style="height: auto;">
+            <div class="panel-body">
+
+              <div class="table-responsive">
+                <table class="table table-striped table-bordered table-hover">
+                  <tr>
+                    <th>Name: <i>functionName (fileName.className)</i></th>
+                    <th>Run .. times</th>
+                    <th>Average run time (ms)</th>
+                    <th>Run .. times [current version]</th>
+                    <th>Average run time [current version] (ms)</th>
+                    <th>Last run</th>
+                  </tr>
+                  {% for test in tests %}
+                    {% if test.name in groups[group] %}
+                      <tr>
+                        <td>
+                          <a href="{{ url_for('dashboard.test_result', test=test.name) }}">{{ test.name }}</a>
+                          <br>
+                          <b style="color:green;">{{ " Succeeded" if test.succeeded }}</b>
+                          <b style="color:red;">{{ " Failed" if test.succeeded == False }}</b>
+                          <b style="color:black;">{{ " Never run" if test.succeeded == None }}</b>
+                        </td>
+                        {% if results[0] %}
+                          {% for result in results %}
+                            {% if result.name == test.name %}
+                              <td style="text-align: right;">{{ result.count if result.count else "" }}</td>
+                              <td style="text-align: right;">{{ ((result.average*10)|round)/10 if result.average else "" }}</td>
+                            {% endif %}
+                          {% endfor %}
+                        {% else %}
+                          <td></td>
+                          <td></td>
+                        {% endif %}
+
+                        {% if res_current_version[0] %}
+                          {% for res in res_current_version %}
+                            {% if res.name == test.name %}
+                              <td style="text-align: right;">{{ res.count if res.count else "" }}</td>
+                              <td style="text-align: right;">{{ ((res.average*10)|round)/10 if res.average else "" }}</td>
+                            {% endif %}
+                          {% endfor %}
+                        {% else %}
+                          <td></td>
+                          <td></td>
+                        {% endif %}
+                        <td style="text-align: center;">
+                          {{ "{:%Y-%m-%d %H:%M:%S }".format(test.lastRun) if test.lastRun != None else "" }}
+                        </td>
+                      </tr>
+                    {% endif %}
+                  {% endfor %}
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+      {% endif %}
+    {% endfor %}
+  </div>
+</div>
+
+<div class="card mb-3">
+  <div class="card-header"><h4>Overall execution time</h4></div>
+  <div class="card-body">
+
+    <div id="loading">
+      <div class="col-md-12 col-sm-12">
+        <br>
+        <div class="text-center">
+          <img src="{{ url_for('dashboard.static', filename='loading.gif') }}"
+               alt="Be patient..." align="center"/>
+        </div>
+      </div>
+    </div>
+
+    {% if boxplot %}
+      <div class="col-md-12 col-sm-12">
+        {{ boxplot|safe }}
+      </div>
+    {% else %}
+      <p>No data available.</p>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}
+
+{% block script %}
+<script>
+  $(window).ready(function () {
+    $('#loading').hide();
+  });
+</script>
+{% endblock %}

@@ -93,18 +93,9 @@ Using the collected data, a number of observations can be made:
 
 Test-Coverage Monitoring
 ------------------------
-To enable Travis to run your unit tests and send the results to the dashboard, four steps have to be taken:
+To enable Travis to run your unit tests and send the results to the dashboard, three steps have to be taken:
 
-1. Update the config file ('config.cfg') to include three additional values, `TEST_DIR`, `SUBMIT_RESULTS_URL` and `N`.
-
-    - **TEST_DIR** specifies where the unit tests reside.
-
-    - **SUBMIT_RESULTS_URL** specifies where Travis should upload the test results to. When left out, the results will
-      not be sent anywhere, but the performance collection process will still run.
-
-    - **N** specifies the number of times Travis should run each unit test.
-
-2. The installation requirement for the dashboard has to be added to the `setup.py` file of your app:
+1. The installation requirement for the dashboard has to be added to the `setup.py` file of your app:
 
     .. code-block:: python
 
@@ -112,19 +103,18 @@ To enable Travis to run your unit tests and send the results to the dashboard, f
 
        install_requires=('flask_monitoringdashboard')
 
-3. In your `.travis.yml` file, three script commands should be added:
+2. In your `.travis.yml` file, one script command should be added:
 
     .. code-block:: bash
 
-       export DASHBOARD_CONFIG=./config.cfg
-       export DASHBOARD_LOG_DIR=./logs/
-       python -m flask_monitoringdashboard.collect_performance
+       python -m flask_monitoringdashboard.collect_performance --test_folder=./tests --times=5 --url=https://yourdomain.org/dashboard
 
-  The config environment variable specifies where the performance collection process can find the config file.
-  The log directory environment variable specifies where the performance collection process should place the logs it uses.
-  The third command will start the actual performance collection process.
+  The `test_folder` argument specifies where the performance collection process can find the unit tests to use.
+  The `times` argument (optional, default: 5) specifies how many times to run each of the unit tests.
+  The `url` argument (optional) specifies where the dashboard is that needs to receive the performance results.
+  When the last argument is omitted, the performance testing will run, but without publishing the results.
 
-4. A method that is executed after every request should be added to the blueprint of your app.
+3. A method that is executed after every request should be added to the blueprint of your app.
    This is done by the dashboard automatically when the blueprint is passed to the binding function like so:
 
    .. code-block:: python

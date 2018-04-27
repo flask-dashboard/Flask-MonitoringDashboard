@@ -7,7 +7,19 @@ Please note that the changes before version 1.10.0 have not been documented.
 
 Unreleased
 ----------
+Changed
 
+- Removed two graphs: hits per hour and execution time per hour
+
+- New template
+
+- Refactored code
+
+Fixed issues:
+- #63
+- #80
+- #89
+-
 
 v1.11.0
 -------

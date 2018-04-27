@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+{% block body %}
+<body>
+<div class="container py-5">
+  <div class="row">
+    <div class="col-md-8 offset-md-2">
+      <div class="text-center" style="margin-bottom: 50px;">
+        <h1>Flask Monitoring Dashboard</h1>
+        <span>Automatically monitor the evolving performance of Flask/Python web services</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-md-4 offset-md-4">
+      <span class="anchor" id="formLogin"></span>
+      <div class="card card-outline-secondary">
+        <div class="card-header">
+          <h3>Login</h3>
+        </div>
+
+        <div class="card-body">
+          {% for error in form.errors %}
+            <div class="alert alert-danger">
+              {{ form.errors[error][0] }}
+            </div>
+          {% endfor %}
+
+          <form class="form" method="POST">
+              {{ form.hidden_tag() }}
+            <div class="form-group">
+                <i class="fa fa-user"></i> {{ form.name.label }}
+                {{ form.name(class_="form-control", placeholder="Username", autofocus=true, required=true) }}
+            </div>
+
+            <div class="form-group">
+              <i class="fa fa-lock"></i>  {{ form.password.label }}
+              {{ form.password(class_="form-control", placeholder="Password", required=true) }}
+            </div>
+
+            {{ form.submit(class_="btn btn-primary btn-block") }}
+          </form>
+          <hr />
+
+          <div class="text-center">
+            For advanced documentation, see <a href="http://flask-monitoringdashboard.readthedocs.io">this site</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock %}

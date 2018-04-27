@@ -4,10 +4,11 @@
     See __init__.py for how to run the test-cases.
 """
 
+import time
 import unittest
 
-from flask_monitoringdashboard.test.utils import set_test_environment, clear_db, add_fake_data, mean, \
-    EXECUTION_TIMES, TIMES, NAME, GROUP_BY, IP
+from flask_monitoringdashboard.test.utils import set_test_environment, clear_db, add_fake_data, EXECUTION_TIMES, TIMES, \
+    NAME, GROUP_BY, IP
 
 
 class TestFunctionCall(unittest.TestCase):
@@ -16,16 +17,6 @@ class TestFunctionCall(unittest.TestCase):
         set_test_environment()
         clear_db()
         add_fake_data()
-
-    def test_get_reqs_endpoint_day(self):
-        """
-            Test whether the function returns the right values.
-        """
-        from flask_monitoringdashboard.database.function_calls import get_reqs_endpoint_day
-        result = get_reqs_endpoint_day()
-        self.assertEqual(len(result), 1)
-        self.assertEqual(result[0].cnt, len(EXECUTION_TIMES))
-        self.assertEqual(result[0].endpoint, NAME)
 
     def test_add_function_call(self):
         """
@@ -43,29 +34,20 @@ class TestFunctionCall(unittest.TestCase):
         self.assertEqual(result2[0].endpoint, name2)
         self.assertEqual(result2[0].execution_time, execution_time)
 
-    def test_get_times(self):
-        """
-            Test whether the function returns the right values.
-        """
-        from flask_monitoringdashboard.database.function_calls import get_times
-        result = get_times()
-        self.assertEqual(len(result), 1)
-        self.assertEqual(result[0].endpoint, NAME)
-        self.assertEqual(result[0].count, len(EXECUTION_TIMES))
-        self.assertEqual(result[0].average, mean(EXECUTION_TIMES))
-
     def test_get_data_from(self):
         """
             Test whether the function returns the right values.
         """
         from flask_monitoringdashboard.database.function_calls import get_data_between
-        result = get_data_between(TIMES[len(TIMES)-1], TIMES[len(TIMES)-1])
-        self.assertEqual(len(result), 1)
-        self.assertEqual(result[0].endpoint, NAME)
-        self.assertEqual(result[0].execution_time, EXECUTION_TIMES[len(TIMES)-1])
-        self.assertEqual(result[0].time, TIMES[len(TIMES)-1])
-        self.assertEqual(result[0].group_by, GROUP_BY)
-        self.assertEqual(result[0].ip, IP)
+        size = 2
+        first = len(TIMES) - size - 1
+        result = get_data_between(TIMES[-size - 2], TIMES[-1])
+        for i in range(size):
+            self.assertEqual(result[i].endpoint, NAME)
+            self.assertEqual(result[i].execution_time, EXECUTION_TIMES[first + i])
+            self.assertEqual(result[i].time, TIMES[first + i])
+            self.assertEqual(result[i].group_by, GROUP_BY)
+            self.assertEqual(result[i].ip, IP)
 
     def test_get_data(self):
         """
@@ -101,11 +83,11 @@ class TestFunctionCall(unittest.TestCase):
         """
             Test whether the function returns the right values.
         """
-        from flask_monitoringdashboard.database.function_calls import get_versions, config
+        from flask_monitoringdashboard.database.function_calls import config
+        from flask_monitoringdashboard.database.versions import get_versions
         result = get_versions()
         self.assertEqual(len(result), 1)
-        self.assertEqual(result[0].version, config.version)
-        self.assertEqual(result[0].startedUsingOn, TIMES[0])
+        self.assertEqual(result[0], config.version)
 
     def test_get_data_per_endpoint(self):
         """
@@ -129,5 +111,11 @@ class TestFunctionCall(unittest.TestCase):
         from flask_monitoringdashboard.database.function_calls import get_endpoints
         result = get_endpoints()
         self.assertEqual(len(result), 1)
-        self.assertEqual(result[0].endpoint, NAME)
-        self.assertEqual(result[0].cnt, len(EXECUTION_TIMES))
+        self.assertEqual(result[0], NAME)
+
+    def test_get_date_of_first_request(self):
+        """
+            Test whether the function returns the right values.
+        """
+        from flask_monitoringdashboard.database.function_calls import get_date_of_first_request
+        self.assertEqual(get_date_of_first_request(), int(time.mktime(TIMES[0].timetuple())))
