@@ -6,6 +6,7 @@
 
 import unittest
 
+from flask_monitoringdashboard.database import session_scope
 from flask_monitoringdashboard.test.utils import set_test_environment, clear_db, add_fake_data, NAME
 
 
@@ -20,7 +21,7 @@ class TestMonitorRule(unittest.TestCase):
         """
             Test whether the function returns the right values.
         """
-        from flask_monitoringdashboard.database.outlier import session_scope, Outlier
+        from flask_monitoringdashboard.database.outlier import Outlier
         with session_scope() as db_session:
             self.assertEqual(db_session.query(Outlier).all(), [])
         # TODO: Complete function
@@ -30,11 +31,13 @@ class TestMonitorRule(unittest.TestCase):
             Test whether the function returns the right values.
         """
         from flask_monitoringdashboard.database.outlier import get_outliers_sorted, Outlier
-        self.assertEqual(get_outliers_sorted(NAME, Outlier.time, offset=0, per_page=10), [])
+        with session_scope() as db_session:
+            self.assertEqual(get_outliers_sorted(db_session, NAME, Outlier.time, offset=0, per_page=10), [])
 
     def test_count_outliers(self):
         """
             Test whether the function returns the right values.
         """
         from flask_monitoringdashboard.database.count import count_outliers
-        self.assertEqual(count_outliers(NAME), 0)
+        with session_scope() as db_session:
+            self.assertEqual(count_outliers(db_session, NAME), 0)

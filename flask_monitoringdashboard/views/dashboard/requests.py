@@ -4,6 +4,7 @@ from flask_monitoringdashboard import blueprint
 from flask_monitoringdashboard.core.auth import secure
 from flask_monitoringdashboard.core.forms import get_daterange_form
 from flask_monitoringdashboard.core.plot import barplot, get_figure, get_layout
+from flask_monitoringdashboard.database import session_scope
 from flask_monitoringdashboard.database.function_calls import get_requests_per_day, get_endpoints
 
 TITLE = 'Requests per endpoint per day'
@@ -23,7 +24,9 @@ def get_stacked_bar(form):
     :return:
     """
     days = form.get_days()
-    data = [barplot(x=get_requests_per_day(end, days), y=days, name=end) for end in get_endpoints()]
+    with session_scope() as db_session:
+        data = [barplot(x=get_requests_per_day(db_session, end, days), y=days, name=end) for end in
+                get_endpoints(db_session)]
 
     layout = get_layout(
         barmode='stack',

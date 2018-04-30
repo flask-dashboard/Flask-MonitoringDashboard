@@ -7,6 +7,8 @@ import datetime
 from flask import request
 from functools import wraps
 from flask_monitoringdashboard import user_app, config
+from flask_monitoringdashboard.core.rules import get_rules
+from flask_monitoringdashboard.database import session_scope
 from flask_monitoringdashboard.database.monitor_rules import get_monitor_rules
 from flask_monitoringdashboard.database.endpoint import update_last_accessed
 from flask_monitoringdashboard.database.function_calls import add_function_call
@@ -24,17 +26,16 @@ def init_measurement():
     This function is used in the config-method in __init__ of this folder
     It adds wrappers to the endpoints for tracking their performance and last access times.
     """
-    for rule in get_monitor_rules():
-        # add a wrapper for every endpoint
-        if rule.endpoint in user_app.view_functions:
-            user_app.view_functions[rule.endpoint] = track_performance(user_app.view_functions[rule.endpoint],
-                                                                       endpoint=rule.endpoint)
+    with session_scope() as db_session:
+        for rule in get_monitor_rules(db_session):
+            # add a wrapper for every endpoint
+            if rule.endpoint in user_app.view_functions:
+                user_app.view_functions[rule.endpoint] = track_performance(user_app.view_functions[rule.endpoint],
+                                                                           endpoint=rule.endpoint)
 
     # filter dashboard rules
-    rules = user_app.url_map.iter_rules()
-    rules = [r for r in rules if not r.rule.startswith('/' + config.link)
-             and not r.rule.startswith('/static-' + config.link)]
-    for rule in rules:
+
+    for rule in get_rules():
         user_app.view_functions[rule.endpoint] = track_last_accessed(user_app.view_functions[rule.endpoint],
                                                                      endpoint=rule.endpoint)
 
@@ -67,14 +68,16 @@ def track_performance(func, endpoint):
 
         time2 = time.time()
         t = (time2 - time1) * 1000
-        add_function_call(execution_time=t, endpoint=endpoint, ip=request.environ['REMOTE_ADDR'])
+        with session_scope() as db_session:
+            add_function_call(db_session, execution_time=t, endpoint=endpoint, ip=request.environ['REMOTE_ADDR'])
 
         # outlier detection
         endpoint_count[endpoint] = endpoint_count.get(endpoint, 0) + 1
         endpoint_sum[endpoint] = endpoint_sum.get(endpoint, 0) + t
 
         if stack_info:
-            add_outlier(endpoint, t, stack_info, request)
+            with session_scope() as db_session:
+                add_outlier(db_session, endpoint, t, stack_info, request)
 
         return result
 
@@ -91,7 +94,8 @@ def track_last_accessed(func, endpoint):
 
     @wraps(func)
     def wrapper(*args, **kwargs):
-        update_last_accessed(endpoint=endpoint, value=datetime.datetime.now())
+        with session_scope() as db_session:
+            update_last_accessed(db_session, endpoint=endpoint, value=datetime.datetime.now())
         return func(*args, **kwargs)
 
     return wrapper

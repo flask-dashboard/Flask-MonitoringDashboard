@@ -4,6 +4,7 @@ import jwt
 from flask import json, jsonify
 
 from flask_monitoringdashboard import blueprint, config
+from flask_monitoringdashboard.database import session_scope
 from flask_monitoringdashboard.database.function_calls import get_data_between
 from flask_monitoringdashboard.database.monitor_rules import get_monitor_data
 from flask_monitoringdashboard.core.utils import get_details
@@ -24,20 +25,21 @@ def get_json_data_from(time_from, time_to=None):
     """
     data = []
     try:
-        time1 = datetime.datetime.utcfromtimestamp(int(time_from))
-        time2 = None
-        if time_to:
-            time2 = datetime.datetime.utcfromtimestamp(int(time_to))
-        for entry in get_data_between(time1, time2):
-            # nice conversion to json-object
-            data.append({
-                'endpoint': entry.endpoint,
-                'execution_time': entry.execution_time,
-                'time': str(entry.time),
-                'version': entry.version,
-                'group_by': entry.group_by,
-                'ip': entry.ip
-            })
+        with session_scope() as db_session:
+            time1 = datetime.datetime.utcfromtimestamp(int(time_from))
+            time2 = None
+            if time_to:
+                time2 = datetime.datetime.utcfromtimestamp(int(time_to))
+            for entry in get_data_between(db_session, time1, time2):
+                # nice conversion to json-object
+                data.append({
+                    'endpoint': entry.endpoint,
+                    'execution_time': entry.execution_time,
+                    'time': str(entry.time),
+                    'version': entry.version,
+                    'group_by': entry.group_by,
+                    'ip': entry.ip
+                })
         return jwt.encode({'data': json.dumps(data)}, config.security_token, algorithm='HS256')
     except ValueError as e:
         return 'ValueError: {}'.format(e)
@@ -52,16 +54,17 @@ def get_json_monitor_rules():
     """
     data = []
     try:
-        for entry in get_monitor_data():
-            # nice conversion to json-object
-            data.append({
-                'endpoint': entry.endpoint,
-                'last_accessed': str(entry.last_accessed),
-                'monitor': entry.monitor,
-                'time_added': str(entry.time_added),
-                'version_added': entry.version_added
-            })
-        return jwt.encode({'data': json.dumps(data)}, config.security_token, algorithm='HS256')
+        with session_scope() as db_session:
+            for entry in get_monitor_data(db_session):
+                # nice conversion to json-object
+                data.append({
+                    'endpoint': entry.endpoint,
+                    'last_accessed': str(entry.last_accessed),
+                    'monitor': entry.monitor,
+                    'time_added': str(entry.time_added),
+                    'version_added': entry.version_added
+                })
+            return jwt.encode({'data': json.dumps(data)}, config.security_token, algorithm='HS256')
     except ValueError as e:
         return 'ValueError: {}'.format(e)
 
@@ -72,4 +75,5 @@ def get_json_details():
     Some details about the deployment, such as the current version, etc...
     :return: a json-object with the details.
     """
-    return jsonify(get_details())
+    with session_scope() as db_session:
+        return jsonify(get_details(db_session))

@@ -144,5 +144,4 @@ def session_scope():
 
 
 def get_tables():
-    """ Returns a list of Base-objects. This are all tables in the database"""
     return [MonitorRule, Tests, TestRun, FunctionCall, Outlier, TestsGrouped]
