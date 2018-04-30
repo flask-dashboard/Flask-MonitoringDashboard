@@ -30,6 +30,16 @@ def get_outliers_sorted(db_session, endpoint, sort_column, offset, per_page):
     return result
 
 
+def get_outliers_cpus(db_session, endpoint):
+    """
+    :param db_session: the session containing the query
+    :param endpoint: only get outliers from this endpoint
+    :return: a list of all cpu percentages for outliers of a specific endpoint
+    """
+    result = db_session.query(Outlier.cpu_percent).filter(Outlier.endpoint == endpoint).all()
+    return result
+
+
 def delete_outliers_without_stacktrace(db_session):
     """
         Remove the outliers which don't have a stacktrace.
