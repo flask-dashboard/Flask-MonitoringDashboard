@@ -9,23 +9,23 @@ from flask_monitoringdashboard.database.count import count_requests
 from flask_monitoringdashboard.database.function_calls import get_date_of_first_request
 
 
-def get_endpoint_details(endpoint):
+def get_endpoint_details(db_session, endpoint):
     """ Return details about an endpoint"""
     return {
         'endpoint': endpoint,
-        'rule': get_monitor_rule(endpoint),
+        'rule': get_monitor_rule(db_session, endpoint),
         'url': get_url(endpoint),
-        'total_hits': count_requests(endpoint)
+        'total_hits': count_requests(db_session, endpoint)
     }
 
 
-def get_details():
+def get_details(db_session):
     """ Return details about the deployment """
     return {
         'link': config.link,
         'dashboard-version': pkg_resources.require("Flask-MonitoringDashboard")[0].version,
         'config-version': config.version,
-        'first-request': get_date_of_first_request()
+        'first-request': get_date_of_first_request(db_session)
     }
 
 

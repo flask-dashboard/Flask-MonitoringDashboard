@@ -11,7 +11,7 @@ def create_app():
 
     app = Flask(__name__)
 
-    dashboard.config.outlier_detection_constant = 99
+    dashboard.config.outlier_detection_constant = 0
     dashboard.config.group_by = 'User', lambda: 3
     dashboard.config.version = 2.0
 

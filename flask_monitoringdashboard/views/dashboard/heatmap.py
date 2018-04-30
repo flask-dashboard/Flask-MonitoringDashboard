@@ -7,6 +7,7 @@ from flask_monitoringdashboard import blueprint
 from flask_monitoringdashboard.core.auth import secure
 from flask_monitoringdashboard.core.forms import get_daterange_form
 from flask_monitoringdashboard.core.plot import get_layout, get_figure, heatmap as plot_heatmap
+from flask_monitoringdashboard.database import session_scope
 from flask_monitoringdashboard.database.endpoint import get_num_requests
 
 
@@ -38,11 +39,12 @@ def get_heatmap(form, end=None):
         [heatmap_data[i].append(0) for _ in days]
 
     # add data from database to heatmap_data
-    for d in get_num_requests(end, form.start_date.data, form.end_date.data):
-        parsed_time = datetime.datetime.strptime(d.newTime, '%Y-%m-%d %H:%M:%S')
-        day_index = (parsed_time - datetime.datetime.combine(form.start_date.data, datetime.time(0, 0, 0, 0))).days
-        hour_index = int(parsed_time.strftime('%H'))
-        heatmap_data[hour_index][day_index] = d.count
+    with session_scope() as db_session:
+        for d in get_num_requests(db_session, end, form.start_date.data, form.end_date.data):
+            parsed_time = datetime.datetime.strptime(d.newTime, '%Y-%m-%d %H:%M:%S')
+            day_index = (parsed_time - datetime.datetime.combine(form.start_date.data, datetime.time(0, 0, 0, 0))).days
+            hour_index = int(parsed_time.strftime('%H'))
+            heatmap_data[hour_index][day_index] = d.count
 
     title = TITLE
     if end:
