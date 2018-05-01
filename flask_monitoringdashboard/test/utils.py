@@ -11,6 +11,7 @@ IP = '127.0.0.1'
 GROUP_BY = '1'
 EXECUTION_TIMES = [1000, 2000, 3000, 4000, 50000]
 TIMES = [datetime.datetime.utcnow()] * 5
+OUTLIER_COUNT = 3
 for i in range(len(TIMES)):
     TIMES[i] -= datetime.timedelta(seconds=len(EXECUTION_TIMES)-i)
 TEST_NAMES = ['test_name1', 'test_name2']
@@ -32,7 +33,8 @@ def clear_db():
 
 def add_fake_data():
     """ Adds data to the database for testing purposes. Module dashboard must be imported locally. """
-    from flask_monitoringdashboard.database import session_scope, FunctionCall, MonitorRule, Tests, TestsGrouped
+    from flask_monitoringdashboard.database import session_scope, FunctionCall, MonitorRule, Outlier, Tests,\
+        TestsGrouped
     from flask_monitoringdashboard import config
 
     # Add functionCalls
@@ -47,6 +49,11 @@ def add_fake_data():
         db_session.add(MonitorRule(endpoint=NAME, monitor=True, time_added=datetime.datetime.utcnow(),
                                    version_added=config.version, last_accessed=TIMES[0]))
 
+    # Add Outliers
+    with session_scope() as db_session:
+        for i in range(OUTLIER_COUNT):
+            db_session.add(Outlier(endpoint=NAME, cpu_percent='[%d, %d, %d, %d]' % (i, i + 1, i + 2, i + 3),
+                                   execution_time = 100 * (i + 1), time = TIMES[i]))
     # Add Tests
     with session_scope() as db_session:
         db_session.add(Tests(name=NAME, succeeded=True))

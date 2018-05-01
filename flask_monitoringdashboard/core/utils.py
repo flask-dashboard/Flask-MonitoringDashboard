@@ -2,6 +2,7 @@ import pkg_resources
 from flask import url_for
 from werkzeug.routing import BuildError
 import numpy as np
+import ast
 
 from flask_monitoringdashboard import config
 from flask_monitoringdashboard.database.endpoint import get_monitor_rule
@@ -63,3 +64,26 @@ def simplify(values, n=5):
     :return: list with n values: min, q1, median, q3, max
     """
     return [np.percentile(values, i * 100 // (n-1)) for i in range(n)]
+
+
+def get_mean_cpu(cpu_percentages):
+    """
+    Returns a list containing mean CPU percentages per core for all given CPU percentages.
+    :param cpu_percentages: list of CPU percentages
+    """
+    if not cpu_percentages:
+        return None
+
+    count = 0  # some outliers have no CPU info
+    values = []  # list of lists that stores the CPU info
+
+    for cpu in cpu_percentages:
+        if not cpu:
+            continue
+        x = ast.literal_eval(cpu[0])
+        values.append(x)
+        count += 1
+
+    sums = [sum(x) for x in zip(*values)]
+    means = list(map(lambda x: round(x / count), sums))
+    return means
