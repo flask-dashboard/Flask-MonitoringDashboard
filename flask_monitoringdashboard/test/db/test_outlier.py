@@ -33,12 +33,12 @@ class TestMonitorRule(unittest.TestCase):
         from flask_monitoringdashboard.database.outlier import get_outliers_sorted, Outlier
         with session_scope() as db_session:
             outliers = get_outliers_sorted(db_session, NAME, Outlier.time, offset=0, per_page=10)
-            self.assertEqual(len(outliers), OUTLIER_COUNT)
-            for i, outlier in enumerate(outliers):
-                self.assertEqual(outlier.endpoint, NAME)
-                if i == 0:
-                    continue
-                self.assertTrue(outlier.time <= outliers[i - 1].time)
+        self.assertEqual(len(outliers), OUTLIER_COUNT)
+        for i, outlier in enumerate(outliers):
+            self.assertEqual(outlier.endpoint, NAME)
+            if i == 0:
+                continue
+            self.assertTrue(outlier.time <= outliers[i - 1].time)
 
     def test_count_outliers(self):
         """
