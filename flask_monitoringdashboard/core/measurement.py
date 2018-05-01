@@ -6,7 +6,7 @@ import time
 import datetime
 from flask import request
 from functools import wraps
-from flask_monitoringdashboard import user_app, config
+from flask_monitoringdashboard import config
 from flask_monitoringdashboard.core.rules import get_rules
 from flask_monitoringdashboard.database import session_scope
 from flask_monitoringdashboard.database.monitor_rules import get_monitor_rules
@@ -19,6 +19,8 @@ from flask_monitoringdashboard.core.outlier import StackInfo
 endpoint_count = {}
 endpoint_sum = {}
 
+MIN_NUM_REQUESTS = 10
+
 
 def init_measurement():
     """
@@ -26,14 +28,13 @@ def init_measurement():
     This function is used in the config-method in __init__ of this folder
     It adds wrappers to the endpoints for tracking their performance and last access times.
     """
+    from flask_monitoringdashboard import user_app
     with session_scope() as db_session:
         for rule in get_monitor_rules(db_session):
             # add a wrapper for every endpoint
             if rule.endpoint in user_app.view_functions:
                 user_app.view_functions[rule.endpoint] = track_performance(user_app.view_functions[rule.endpoint],
                                                                            endpoint=rule.endpoint)
-
-    # filter dashboard rules
 
     for rule in get_rules():
         user_app.view_functions[rule.endpoint] = track_last_accessed(user_app.view_functions[rule.endpoint],
@@ -106,7 +107,7 @@ def get_average(endpoint):
         return None
 
     if endpoint in endpoint_count:
-        if endpoint_count[endpoint] < 10:
+        if endpoint_count[endpoint] < MIN_NUM_REQUESTS:
             return None
     else:
         # initialize endpoint

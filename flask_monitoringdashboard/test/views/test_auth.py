@@ -15,26 +15,30 @@ class TestLogin(unittest.TestCase):
         """
             Just retrieve the content and check if nothing breaks
         """
-        self.assertEqual(200, self.app.get('dashboard/login').status_code)
-        login(self.app)
-        self.assertEqual(302, self.app.get('dashboard/login').status_code)
+        with self.app.test_client() as c:
+            self.assertEqual(200, c.get('dashboard/login').status_code)
+            login(c)
+            self.assertEqual(302, c.get('dashboard/login').status_code)
 
     def test_incorrect_login(self):
         """
             Try whether logging with incorrect credentials returns the login page
         """
         args = {'name': 'admin', 'password': 'wrong'}
-        self.assertIn('formLogin', self.app.post('dashboard/login', data=args).data.decode())
+        with self.app.test_client() as c:
+            self.assertIn('formLogin', c.post('dashboard/login', data=args).data.decode())
 
     def test_correct_login(self):
         """
             Try whether logging with correct credentials does not return the login page
         """
         args = {'name': 'admin', 'password': 'admin'}
-        self.assertNotIn('formLogin', self.app.post('dashboard/login', data=args).data.decode())
+        with self.app.test_client() as c:
+            self.assertNotIn('formLogin', c.post('dashboard/login', data=args).data.decode())
 
     def test_logout(self):
         """
             Just retrieve the content and check if nothing breaks
         """
-        self.assertEqual(302, self.app.get('dashboard/logout').status_code)
+        with self.app.test_client() as c:
+            self.assertEqual(302, c.get('dashboard/logout').status_code)
