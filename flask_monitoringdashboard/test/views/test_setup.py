@@ -1,7 +1,7 @@
 import unittest
 
 from flask_monitoringdashboard.test.utils import set_test_environment, clear_db, add_fake_data, get_test_app, login, \
-    NAME
+    NAME, test_admin_secure
 
 
 class TestSetup(unittest.TestCase):
@@ -12,45 +12,29 @@ class TestSetup(unittest.TestCase):
         add_fake_data()
         self.app = get_test_app()
 
-    def test_settings(self):
+    def test_configuration(self):
         """
             Just retrieve the content and check if nothing breaks
         """
-        self.assertEqual(302, self.app.get('dashboard/configuration').status_code)
-        login(self.app)
-        self.assertEqual(200, self.app.get('dashboard/configuration').status_code)
+        test_admin_secure(self, 'configuration')
 
     def test_rules(self):
         """
             Just retrieve the content and check if nothing breaks
         """
-        self.assertEqual(302, self.app.get('dashboard/rules').status_code)
-        login(self.app)
-        self.assertEqual(200, self.app.get('dashboard/rules').status_code)
+        test_admin_secure(self, 'rules')
 
     def test_test_result(self):
         """
             Just retrieve the content and check if nothing breaks
         """
-        self.assertEqual(302, self.app.get('dashboard/testmonitor/{}'.format(NAME)).status_code)
-        login(self.app)
-        self.assertEqual(200, self.app.get('dashboard/testmonitor/{}'.format(NAME)).status_code)
+        test_admin_secure(self, 'testmonitor/{}'.format(NAME))
 
     def test_testmonitor(self):
         """
             Just retrieve the content and check if nothing breaks
         """
-        self.assertEqual(302, self.app.get('dashboard/testmonitor').status_code)
-        login(self.app)
-        self.assertEqual(200, self.app.get('dashboard/testmonitor').status_code)
-
-    def test_configuration(self):
-        """
-            Just retrieve the content and check if nothing breaks
-        """
-        self.assertEqual(302, self.app.get('dashboard/configuration').status_code)
-        login(self.app)
-        self.assertEqual(200, self.app.get('dashboard/configuration').status_code)
+        test_admin_secure(self, 'testmonitor')
 
     def test_monitor_rule(self):
         """

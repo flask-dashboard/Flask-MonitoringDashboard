@@ -3,7 +3,7 @@ import unittest
 import jwt
 from flask import json
 
-from flask_monitoringdashboard.test.utils import set_test_environment, clear_db, add_fake_data, login, get_test_app, \
+from flask_monitoringdashboard.test.utils import set_test_environment, clear_db, add_fake_data, get_test_app, \
     EXECUTION_TIMES, NAME, GROUP_BY, IP, TIMES, test_admin_secure
 
 
