@@ -15,7 +15,6 @@
 </head>
 
 {% macro active_if_is(name) -%}
-    {{ request.endpoint }}
   {{ "my-active" if request.endpoint == name }}
 {%- endmacro %}
 
