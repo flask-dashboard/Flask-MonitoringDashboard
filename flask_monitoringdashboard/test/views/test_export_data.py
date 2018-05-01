@@ -39,7 +39,8 @@ class TestExportData(unittest.TestCase):
             Test whether the response is as it should be.
         """
         from flask_monitoringdashboard import config
-        result = self.app.get('dashboard/get_json_data').data
+        with self.app.test_client() as c:
+            result = c.get('dashboard/get_json_data').data
         decoded = jwt.decode(result, config.security_token, algorithms=['HS256'])
         data = json.loads(decoded['data'])
         self.assertEqual(len(data), len(EXECUTION_TIMES))
@@ -55,7 +56,8 @@ class TestExportData(unittest.TestCase):
             Test whether the response is as it should be.
         """
         from flask_monitoringdashboard import config
-        result = self.app.get('dashboard/get_json_monitor_rules').data
+        with self.app.test_client() as c:
+            result = c.get('dashboard/get_json_monitor_rules').data
         decoded = jwt.decode(result, config.security_token, algorithms=['HS256'])
         data = json.loads(decoded['data'])
         self.assertEqual(len(data), 1)
@@ -69,7 +71,8 @@ class TestExportData(unittest.TestCase):
         """
             Test whether the response is as it should be.
         """
-        result = self.app.get('dashboard/get_json_details').data
+        with self.app.test_client() as c:
+            result = c.get('dashboard/get_json_details').data
         data = json.loads(result)
         import pkg_resources
         self.assertEqual(data['dashboard-version'], pkg_resources.require("Flask-MonitoringDashboard")[0].version)
