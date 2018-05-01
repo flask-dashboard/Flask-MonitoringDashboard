@@ -65,6 +65,7 @@ def get_test_app():
     user_app = Flask(__name__)
     user_app.config['SECRET_KEY'] = flask_monitoringdashboard.config.security_token
     user_app.testing = True
+    flask_monitoringdashboard.user_app = user_app
     user_app.config['WTF_CSRF_ENABLED'] = False
     user_app.config['WTF_CSRF_METHODS'] = []
     flask_monitoringdashboard.config.get_group_by = lambda: '12345'

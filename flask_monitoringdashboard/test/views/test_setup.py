@@ -51,3 +51,11 @@ class TestSetup(unittest.TestCase):
         self.assertEqual(302, self.app.get('dashboard/configuration').status_code)
         login(self.app)
         self.assertEqual(200, self.app.get('dashboard/configuration').status_code)
+
+    def test_monitor_rule(self):
+        """
+            Test whether it is possible to monitor a rule
+        """
+        login(self.app)
+        data = {'checkbox-static': True}
+        self.assertEqual(200, self.app.post('dashboard/rules', data=data).status_code)
