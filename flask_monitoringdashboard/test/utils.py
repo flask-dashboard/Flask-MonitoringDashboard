@@ -78,7 +78,7 @@ def get_test_app():
     user_app.config['WTF_CSRF_METHODS'] = []
     flask_monitoringdashboard.config.get_group_by = lambda: '12345'
     flask_monitoringdashboard.bind(app=user_app)
-    return user_app.test_client()
+    return user_app
 
 
 def login(test_app):
@@ -87,10 +87,9 @@ def login(test_app):
     :param test_app:
     """
     from flask_monitoringdashboard import config
-    with test_app as c:
-        with c.session_transaction() as sess:
-            sess[config.link + '_logged_in'] = True
-            sess[config.link + '_admin'] = True
+    with test_app.session_transaction() as sess:
+        sess[config.link + '_logged_in'] = True
+        sess[config.link + '_admin'] = True
 
 
 def mean(numbers):
@@ -103,6 +102,7 @@ def test_admin_secure(test_case, page):
     :param test_case: test class, must be an instance of unittest.TestCase
     :param page: str with the page of the dashboard
     """
-    test_case.assertEqual(302, test_case.app.get('dashboard/{}'.format(page)).status_code)
-    login(test_case.app)
-    test_case.assertEqual(200, test_case.app.get('dashboard/{}'.format(page)).status_code)
+    with test_case.app.test_client() as c:
+        test_case.assertEqual(302, c.get('dashboard/{}'.format(page)).status_code)
+        login(c)
+        test_case.assertEqual(200, c.get('dashboard/{}'.format(page)).status_code)
