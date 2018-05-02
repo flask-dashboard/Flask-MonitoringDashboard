@@ -13,7 +13,7 @@ TITLE = 'Global execution time for every endpoint'
 @blueprint.route('/measurements/endpoints')
 @secure
 def page_boxplot_per_endpoint():
-    return render_template('dashboard/graph.html', graph=get_boxplot_per_endpoint(), title=TITLE)
+    return render_template('fmd_dashboard/graph.html', graph=get_boxplot_per_endpoint(), title=TITLE)
 
 
 def get_boxplot_per_endpoint():

@@ -25,4 +25,4 @@ def result_outliers(end):
         pagination = Pagination(page=page, per_page=per_page, total=count_outliers(db_session, end), format_number=True,
                                 css_framework='bootstrap4', format_total=True, record_name='outliers')
 
-    return render_template('dashboard/outliers.html', details=details, table=table, pagination=pagination, mean=mean)
+    return render_template('fmd_dashboard/outliers.html', details=details, table=table, pagination=pagination, mean=mean)

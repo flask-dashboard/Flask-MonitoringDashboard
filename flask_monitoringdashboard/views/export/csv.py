@@ -31,4 +31,4 @@ def view_csv():
     with session_scope() as db_session:
         for entry in get_data(db_session):
             csv.append(','.join([str(entry.__getattribute__(c)) for c in CSV_COLUMNS]) + '\n')
-    return render_template('export-data.html', data=csv)
+    return render_template('fmd_export-data.html', data=csv)

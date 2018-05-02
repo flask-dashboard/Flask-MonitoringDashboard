@@ -14,7 +14,7 @@ TITLE = 'Requests per endpoint per day'
 @secure
 def page_number_of_requests_per_endpoint():
     form = get_daterange_form(num_days=10)
-    return render_template('dashboard/graph.html', form=form, graph=get_stacked_bar(form), title=TITLE)
+    return render_template('fmd_dashboard/graph.html', form=form, graph=get_stacked_bar(form), title=TITLE)
 
 
 def get_stacked_bar(form):

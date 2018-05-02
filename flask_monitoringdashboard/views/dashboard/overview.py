@@ -32,5 +32,5 @@ def overview():
                 'last-accessed': get_last_accessed_times(db_session, endpoint)
             })
 
-    return render_template('dashboard/overview.html', result=result, is_admin=is_admin(),
+    return render_template('fmd_dashboard/overview.html', result=result, is_admin=is_admin(),
                            title='Dashboard Overview')

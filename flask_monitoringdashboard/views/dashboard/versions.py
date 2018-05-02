@@ -15,7 +15,7 @@ TITLE = 'Global execution time for every version'
 @blueprint.route('/measurements/versions')
 @secure
 def page_boxplot_per_version():
-    return render_template('dashboard/graph.html', graph=get_boxplot_per_version(), title=TITLE)
+    return render_template('fmd_dashboard/graph.html', graph=get_boxplot_per_version(), title=TITLE)
 
 
 def get_boxplot_per_version():
