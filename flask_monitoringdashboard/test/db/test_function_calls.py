@@ -1,6 +1,6 @@
 """
     This file contains all unit tests for the endpoint-table in the database. (Corresponding to the file:
-    'dashboard/database/function_calls.py')
+    'fmd_dashboard/database/function_calls.py')
     See __init__.py for how to run the test-cases.
 """
 

@@ -14,4 +14,4 @@ def result_heatmap(end):
     form = get_daterange_form()
     with session_scope() as db_session:
         details = get_endpoint_details(db_session, end)
-    return render_template('dashboard/graph-details.html', form=form, details=details, graph=get_heatmap(form, end))
+    return render_template('fmd_dashboard/graph-details.html', form=form, details=details, graph=get_heatmap(form, end))

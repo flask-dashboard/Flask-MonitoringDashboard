@@ -15,7 +15,7 @@ def result_time_per_version(end):
     with session_scope() as db_session:
         details = get_endpoint_details(db_session, end)
     graph = get_time_per_version(end)
-    return render_template('dashboard/graph-details.html', details=details, graph=graph)
+    return render_template('fmd_dashboard/graph-details.html', details=details, graph=graph)
 
 
 def get_time_per_version(end):

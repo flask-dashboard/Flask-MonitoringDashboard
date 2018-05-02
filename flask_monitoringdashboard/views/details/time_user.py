@@ -18,7 +18,7 @@ def result_time_per_user(end):
         form = get_slider_form(count_users(db_session, end))
     graph = get_time_per_user(end, form)
 
-    return render_template('dashboard/graph-details.html', details=details, graph=graph, form=form)
+    return render_template('fmd_dashboard/graph-details.html', details=details, graph=graph, form=form)
 
 
 def get_time_per_user(end, form):

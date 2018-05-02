@@ -23,7 +23,7 @@ def login():
             form.name.errors.append('Incorrect username or password')
         else:
             return redirect(url_for(MAIN_PAGE))
-    return render_template('login.html', form=form)
+    return render_template('fmd_login.html', form=form)
 
 
 @blueprint.route('/logout')

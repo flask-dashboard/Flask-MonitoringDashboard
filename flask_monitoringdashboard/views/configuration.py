@@ -14,6 +14,6 @@ def configuration():
     with session_scope() as db_session:
         details = get_details(db_session)
     details['first-request'] = datetime.datetime.utcfromtimestamp(details['first-request'])
-    return render_template('config.html', details=details, config=config)
+    return render_template('fmd_config.html', details=details, config=config)
 
 

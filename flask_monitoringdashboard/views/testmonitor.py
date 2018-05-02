@@ -15,7 +15,7 @@ from flask_monitoringdashboard.database.tests_grouped import get_tests_grouped
 @blueprint.route('/testmonitor/<test>')
 @secure
 def test_result(test):
-    return render_template('testmonitor/testresult.html', link=config.link, session=session, name=test,
+    return render_template('fmd_testmonitor/testresult.html', link=config.link, session=session, name=test,
                            boxplot=get_boxplot(test))
 
 
@@ -35,7 +35,7 @@ def testmonitor():
             if t.test_name not in grouped[t.endpoint]:
                 grouped[t.endpoint].append(t.test_name)
 
-        return render_template('testmonitor/testmonitor.html', tests=get_tests(db_session), endpoints=endp_names,
+        return render_template('fmd_testmonitor/testmonitor.html', tests=get_tests(db_session), endpoints=endp_names,
                                results=get_results(db_session), groups=grouped, colors=cols,
                                res_current_version=get_res_current(db_session, config.version),
                                boxplot=get_boxplot(None))

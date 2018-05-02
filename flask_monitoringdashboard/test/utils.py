@@ -18,13 +18,13 @@ TEST_NAMES = ['test_name1', 'test_name2']
 
 
 def set_test_environment():
-    """ Override the config-object for a new testing environment. Module dashboard must be imported locally. """
+    """ Override the config-object for a new testing environment. Module fmd_dashboard must be imported locally. """
     import flask_monitoringdashboard
     flask_monitoringdashboard.config.database_name = 'sqlite:///test-database.db'
 
 
 def clear_db():
-    """ Drops and creates the tables in the database. Module dashboard must be imported locally. """
+    """ Drops and creates the tables in the database. Module fmd_dashboard must be imported locally. """
     from flask_monitoringdashboard.database import get_tables, engine
     for table in get_tables():
         table.__table__.drop(engine)
@@ -32,7 +32,7 @@ def clear_db():
 
 
 def add_fake_data():
-    """ Adds data to the database for testing purposes. Module dashboard must be imported locally. """
+    """ Adds data to the database for testing purposes. Module fmd_dashboard must be imported locally. """
     from flask_monitoringdashboard.database import session_scope, FunctionCall, MonitorRule, Outlier, Tests,\
         TestsGrouped
     from flask_monitoringdashboard import config
@@ -82,7 +82,7 @@ def get_test_app():
 
 def login(test_app):
     """
-    Used for setting the sessions, such that you have a fake login to the dashboard.
+    Used for setting the sessions, such that you have a fake login to the fmd_dashboard.
     :param test_app:
     """
     from flask_monitoringdashboard import config
@@ -99,7 +99,7 @@ def test_admin_secure(test_case, page):
     """
     Test whether the page is only accessible with admin credentials.
     :param test_case: test class, must be an instance of unittest.TestCase
-    :param page: str with the page of the dashboard
+    :param page: str with the page of the fmd_dashboard
     """
     with test_case.app.test_client() as c:
         test_case.assertEqual(302, c.get('dashboard/{}'.format(page)).status_code)

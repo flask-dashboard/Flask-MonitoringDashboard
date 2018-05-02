@@ -14,7 +14,7 @@ TITLE = 'Heatmap of the distribution of the hits per endpoint per version'
 @blueprint.route('/measurements/version_usage')
 @secure
 def version_usage():
-    return render_template('dashboard/graph.html', graph=get_version_usage(), title=TITLE)
+    return render_template('fmd_dashboard/graph.html', graph=get_version_usage(), title=TITLE)
 
 
 def get_version_usage():
