@@ -64,15 +64,18 @@ class Config(object):
             :param envvar: a string specifying which environment variable holds the config file location
         """
 
+        # Only initialize unit test logging when running on Travis.
+        on_travis = '/home/travis/build/' in os.getcwd()
+        if on_travis:
+            create_log_file()
+
         if envvar:
             file = os.getenv(envvar)
         if not file:
+            if on_travis:
+                return
             print("No configuration file specified. Please do so.")
             return
-
-        # Only initialize unit test logging when running on Travis.
-        if '/home/travis/build/' in os.getcwd():
-            create_log_file()
 
         parser = configparser.RawConfigParser()
         try:
