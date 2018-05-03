@@ -102,8 +102,6 @@ def create_log_file():
     """
     Create a file and put some content in it. Used for unit test performance results.
     """
-    log_dir = os.getenv('DASHBOARD_LOG_DIR')
-    if log_dir:
-        log = open(log_dir + "endpoint_hits.log", "w")
-        log.write("\"time\",\"endpoint\"\n")
-        log.close()
+    log = open("endpoint_hits.log", "w")
+    log.write('"time","endpoint"\n')
+    log.close()
