@@ -64,15 +64,11 @@ class Config(object):
             :param envvar: a string specifying which environment variable holds the config file location
         """
 
-        # Only initialize unit test logging when running on Travis.
-        on_travis = '/home/travis/build/' in os.getcwd()
-        if on_travis:
-            create_log_file()
-
         if envvar:
             file = os.getenv(envvar)
         if not file:
-            if on_travis:
+            # Travis does not need a config file.
+            if '/home/travis/build/' in os.getcwd():
                 return
             print("No configuration file specified. Please do so.")
             return
@@ -96,12 +92,3 @@ class Config(object):
             self.guest_password = parse_literal(parser, 'GUEST_PASSWORD', self.guest_password)
         except configparser.Error:
             raise
-
-
-def create_log_file():
-    """
-    Create a file and put some content in it. Used for unit test performance results.
-    """
-    log = open("endpoint_hits.log", "w")
-    log.write('"time","endpoint"\n')
-    log.close()

@@ -58,7 +58,8 @@ def bind(app, blue_print=None):
             @blue_print.after_request
             def after_request(response):
                 hit_time_stamp = str(datetime.datetime.now())
-                log = open("endpoint_hits.log", "a")
+                home = os.path.expanduser("~")
+                log = open(home + '/endpoint_hits.log', 'a')
                 log.write('"{}","{}"\n'.format(hit_time_stamp, request.endpoint))
                 log.close()
                 return response

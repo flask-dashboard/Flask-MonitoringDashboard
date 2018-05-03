@@ -1,5 +1,6 @@
 import argparse
 import csv
+import os
 import datetime
 import time
 from unittest import TestLoader
@@ -24,10 +25,11 @@ if not args.url:
 
 # Initialize result dictionary and logs.
 data = {'test_runs': [], 'grouped_tests': []}
-log = open('endpoint_hits.log', 'w')
+home = os.path.expanduser("~")
+log = open(home + '/endpoint_hits.log', 'w')
 log.write('"time","endpoint"\n')
 log.close()
-log = open('test_runs.log', 'w')
+log = open(home + '/test_runs.log', 'w')
 log.write('"start_time","stop_time","test_name"\n')
 
 # Find the tests and execute them the specified number of times.
@@ -52,7 +54,7 @@ log.close()
 
 # Read and parse the log containing the test runs into an array for processing.
 test_runs = []
-with open('test_runs.log') as log:
+with open(home + '/test_runs.log') as log:
     reader = csv.DictReader(log)
     for row in reader:
         test_runs.append([datetime.datetime.strptime(row["start_time"], "%Y-%m-%d %H:%M:%S.%f"),
@@ -61,7 +63,7 @@ with open('test_runs.log') as log:
 
 # Read and parse the log containing the endpoint hits into an array for processing.
 endpoint_hits = []
-with open('endpoint_hits.log') as log:
+with open(home + '/endpoint_hits.log') as log:
     reader = csv.DictReader(log)
     for row in reader:
         endpoint_hits.append([datetime.datetime.strptime(row["time"], "%Y-%m-%d %H:%M:%S.%f"),
