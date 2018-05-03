@@ -70,7 +70,9 @@ class Config(object):
             print("No configuration file specified. Please do so.")
             return
 
-        create_log_file()
+        # Only initialize unit test logging when running on Travis.
+        if '/home/travis/build/' in os.getcwd():
+            create_log_file()
 
         parser = configparser.RawConfigParser()
         try:

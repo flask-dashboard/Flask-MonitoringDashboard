@@ -47,18 +47,23 @@ def bind(app, blue_print=None):
         print('WARNING: You should provide a security key.')
         user_app.secret_key = 'my-secret-key'
 
-    if blue_print:
-        import os
-        import datetime
-        from flask import request
+    import os
+    # Only initialize unit test logging when running on Travis.
+    if '/home/travis/build/' in os.getcwd():
+        print('Detected running on Travis.')
+        if blue_print:
+            import datetime
+            from flask import request
 
-        @blue_print.after_request
-        def after_request(response):
-            hit_time_stamp = str(datetime.datetime.now())
-            log = open("endpoint_hits.log", "a")
-            log.write('"{}","{}"\n'.format(hit_time_stamp, request.endpoint))
-            log.close()
-            return response
+            @blue_print.after_request
+            def after_request(response):
+                hit_time_stamp = str(datetime.datetime.now())
+                log = open("endpoint_hits.log", "a")
+                log.write('"{}","{}"\n'.format(hit_time_stamp, request.endpoint))
+                log.close()
+                return response
+        else:
+            print('No blueprint specified to bind the unit test logging to.\nPlease do so.')
 
     # Add all route-functions to the blueprint
     import flask_monitoringdashboard.views
