@@ -7,7 +7,6 @@
 # http://www.sphinx-doc.org/en/stable/config
 import pkg_resources
 from email import message_from_string
-data = message_from_string(pkg_resources.require("Flask-MonitoringDashboard")[0].get_metadata('PKG-INFO'))
 # -- Path setup --------------------------------------------------------------
 
 # If extensions (or modules to document with autodoc) are in another directory,
@@ -17,7 +16,7 @@ data = message_from_string(pkg_resources.require("Flask-MonitoringDashboard")[0]
 import os
 import sys
 sys.path.insert(0, os.path.abspath('../flask-monitoringdashboard'))	
-
+data = message_from_string(pkg_resources.require("Flask-MonitoringDashboard")[0].get_metadata('PKG-INFO'))
 
 # -- Project information -----------------------------------------------------
 
