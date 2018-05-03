@@ -55,7 +55,7 @@ def bind(app, blue_print=None):
             import datetime
             from flask import request
 
-            @blue_print.after_request
+            @user_app.after_request
             def after_request(response):
                 hit_time_stamp = str(datetime.datetime.now())
                 home = os.path.expanduser("~")
