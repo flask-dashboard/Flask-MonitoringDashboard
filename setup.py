@@ -6,7 +6,7 @@ loc = os.path.dirname(os.path.abspath(__file__))
 def get_description():
     with open(loc + '/README.md') as readme:
         info = readme.read()
-    with open(loc + '/CHANGELOG.rst') as changelog:
+    with open(loc + '/docs/changelog.rst') as changelog:
         return info + '\n\n' + changelog.read()
 
 
@@ -22,7 +22,7 @@ setuptools.setup(
     zip_safe=False,
     test_suite='flask_monitoringdashboard.test.get_test_suite',
     url='https://github.com/flask-dashboard/Flask-MonitoringDashboard',
-    author="Patrick Vogel & Thijs Klooster",
+    author="Patrick Vogel, Thijs Klooster & Bogdan Petre",
     author_email="p.p.vogel@student.rug.nl",
     description="A dashboard for automatic monitoring of Flask web-services",
     long_description=get_description(),

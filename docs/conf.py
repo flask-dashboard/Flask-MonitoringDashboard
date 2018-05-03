@@ -20,8 +20,9 @@ sys.path.insert(0, os.path.abspath('../flask-monitoringdashboard'))
 # -- Project information -----------------------------------------------------
 
 project = 'Flask-MonitoringDashboard'
-copyright = '2018, Patrick Vogel & Thijs Klooster'
-author = 'Patrick Vogel & Thijs Klooster'
+author = 'Patrick Vogel, Thijs Klooster & Bodgan Petre'
+copyright = '2018, ' + author
+
 
 version = pkg_resources.require("Flask-MonitoringDashboard")[0].version
 release = pkg_resources.require("Flask-MonitoringDashboard")[0].version

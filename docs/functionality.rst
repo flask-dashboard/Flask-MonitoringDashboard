@@ -1,15 +1,15 @@
 Detailed Functionality
 ======================
-The functionality of the dashboard is divided into 4 main components.
-You can find detailed information about every comopont below:
+The functionality of the Dashboard is divided into 4 main components.
+You can find detailed information about every component below:
 
 Endpoint Monitoring
 -------------------
 The core functionality of the Dashboard is monitoring which Endpoints are heavily used and which are not.
-If you have successfully configured the dashboard from `this page <configuration.html>`_, then you are ready to use it.
+If you have successfully configured the Dashboard from `this page <configuration.html>`_, then you are ready to use it.
 In order to monitor a number of endpoints, you have to do the following:
 
-1. Log into the dashboard at: http://localhost:5000/dashboard/login
+1. Log into the Dashboard at: http://localhost:5000/dashboard/login
 
 2. Go to the Rules-tab in the left menu: http://localhost:5000/dashboard/rules
 
@@ -17,16 +17,13 @@ In order to monitor a number of endpoints, you have to do the following:
 
 4. Wait until a request to this endpoint is being made.
 
-5. Go to the Measurements-tab in the left menu: http://localhost:5000/measurements/overview
-
-As you can see on the last page (http://localhost:5000/measurements/overview) there are a number of tabs available.
-All tabs are explained in the `Visualisations-tab <#visualisations>`_.
+5. Go to the Dashboard Overview in the left menu: http://localhost:5000/measurements/overview
 
 Collected data
 ~~~~~~~~~~~~~~
-For each request that is being to a monitored-endpoint, the following data is recorded:
+For each request that is being to a monitored endpoint, the following data is recorded:
 
-- **Exeuction time:** measured in ms.
+- **Execution time:** measured in ms.
 
 - **Time:** the current timestamp of when the request is being made.
 
@@ -42,11 +39,11 @@ For each request that is being to a monitored-endpoint, the following data is re
   .. code-block:: python
 
      def get_user_id():
-         return '1234'  # replace with a function to retrieve the id of the
+         return 1234  # replace with a function to retrieve the id of the
                         # user within a request.
 
-     dashboard.config.get_group_by = get_session_id
-     # Note that the function-pointer is passed, not the function itself.
+     dashboard.config.group_by = get_user_id
+     # Note that the function itself is passed, not the result of the function.
 
   Thus, it becomes:
 
@@ -62,7 +59,7 @@ For each request that is being to a monitored-endpoint, the following data is re
          return '1234'  # replace with a function to retrieve the id of the
                         # user within a request.
 
-     dashboard.config.get_group_by = get_session_id
+     dashboard.config.group_by = get_user_id
      dashboard.bind(app)
 
      @app.route('/')
@@ -72,7 +69,32 @@ For each request that is being to a monitored-endpoint, the following data is re
      if __name__ == '__main__':
          app.run(debug=True)
 
-- **IP:** The IP-address from which the request is made.
+  The group_by-function must be a function that either returns a primitive (bool, bytes, float, int, str), or a function, or a tuple/list. Below is a list with a few valid examples:
+
+  +---------------------------------------------------------------------------------------------+--------------------------------+
+  | Code                                                                                        | Result                         |
+  +=============================================================================================+================================+
+  | dashboard.config.group_by = lambda: 3                                                       | 3                              |
+  +---------------------------------------------------------------------------------------------+--------------------------------+
+  | dashboard.config.group_by = lambda: ('User', 3)                                             | (User,3)                       |
+  +---------------------------------------------------------------------------------------------+--------------------------------+
+  | dashboard.config.group_by = lambda: lambda: 3                                               | 3                              |
+  +---------------------------------------------------------------------------------------------+--------------------------------+
+  | dashboard.config.group_by = ('User', lambda: 3)                                             | (User,3)                       |
+  +---------------------------------------------------------------------------------------------+--------------------------------+
+  | dashboard.config.group_by = lambda: 'username'                                              | username                       |
+  +---------------------------------------------------------------------------------------------+--------------------------------+
+  | dashboard.config.group_by = lambda: ['Username', 'username']                                | (Username,username)            |
+  +---------------------------------------------------------------------------------------------+--------------------------------+
+  | dashboard.config.group_by = lambda: [('User', lambda: 3), ('Username', lambda: 'username')] | ((User,3),(Username,username)) |
+  +---------------------------------------------------------------------------------------------+--------------------------------+
+
+- **IP:** The IP-address from which the request is made. The IP is retrieved by the following code:
+
+.. code-block:: python
+
+     from flask import request
+     print(request.environ['REMOTE_ADDR'])
 
 Observations
 ~~~~~~~~~~~~
@@ -93,9 +115,9 @@ Using the collected data, a number of observations can be made:
 
 Test-Coverage Monitoring
 ------------------------
-To enable Travis to run your unit tests and send the results to the dashboard, two steps have to be taken:
+To enable Travis to run your unit tests and send the results to the Dashboard, two steps have to be taken:
 
-1. The installation requirement for the dashboard has to be added to the `setup.py` file of your app:
+1. The installation requirement for the Dashboard has to be added to the `setup.py` file of your app:
 
     .. code-block:: python
 
@@ -111,23 +133,23 @@ To enable Travis to run your unit tests and send the results to the dashboard, t
 
   The `test_folder` argument specifies where the performance collection process can find the unit tests to use.
   The `times` argument (optional, default: 5) specifies how many times to run each of the unit tests.
-  The `url` argument (optional) specifies where the dashboard is that needs to receive the performance results.
+  The `url` argument (optional) specifies where the Dashboard is that needs to receive the performance results.
   When the last argument is omitted, the performance testing will run, but without publishing the results.
 
 Outliers
 --------
-It is always useful to investigate why certain requests take way longer to process than other requests.
-If this is the case, it is seen as an outlier.
+It is useful to investigate why certain requests take way longer to process than other requests.
+If this is the case, a request is seen as an outlier.
 Mathematically an outlier is determined if the execution of the request is longer than:
 
 :math:`> average * constant`
 
-Where `average` is the average execution time per endpoint, and `constant` is given in the configuration-file
-(otherwise its default value is :math:`2.5`).
+Where `average` is the average execution time per endpoint, and `constant` is given in the configuration by OUTLIER_DETECTION_CONSTANT
+(its default value is :math:`2.5`).
 
-When a request is an outlier, the dashboard stores more information, such as:
+When a request is an outlier, the Dashboard stores more information, such as:
 
-- The stacktrace in which it got stuck.
+- The stack-trace in which it got stuck.
 
 - The percentage of the CPU's that are in use.
 
@@ -141,55 +163,54 @@ When a request is an outlier, the dashboard stores more information, such as:
 
 The data that is collected from outliers, can be seen by the following procedure:
 
-1. Go to the Measurements-tab in the left menu: http://localhost:5000/measurements/overview
+1. Go to the Dashboard Overview: http://localhost:5000/measurements/overview
 
-2. Click on the Details-button (on the right side) for which endpoint you want to see the outliers-information.
+2. Click on the Details-button (on the right side) for which endpoint you want to see the Outlier information.
 
-3. Go to the outliers-tab: http://localhost:5000/dashboard/<endpoint-name>/main/outliers
+3. Go to the Outliers-tab: http://localhost:5000/dashboard/<endpoint-name>/main/outliers
 
-Visualisations
+Visualizations
 --------------
-There are a number of visualisation generated to view the results that have been collected in (Endpoint-Monitoring)
+There are a number of visualization generated to view the results that have been collected in (Endpoint-Monitoring)
 and (Test-Coverage Monitoring).
 
-The main difference is that visualisations from (Endpoint-Monitoring) can be found in the tab 'Measurements' (in the
-left menu), while visualisations from (Test-Coverage Monitoring) can be found in the tab 'Test Monitor' (below the
-'Measurements'-tab).
+The main difference is that visualizations from (Endpoint-Monitoring) can be found in the menu 'Dashboard' (in the
+left menu), while visualizations from (Test-Coverage Monitoring) can be found in the menu 'Test Monitor' (below the
+'Dashboard'-menu).
 
-The 'Measurements'-tab contains the following content:
+The 'Dashboard'-menu contains the following content:
 
 1. **Overview:** A table with the all the endpoints that are being monitored (or have been monitored in the past).
-   This table provides information about when the endpoint is last being requested, and the average execution time.
-   Furthermore, it has a 'Details' button on the right. This is explained further in (6.).
+   This table provides information about when the endpoint is last being requested, how often it is requested and what 
+   the median execution time is. Furthermore, it has a 'Details' button on the right. This is explained further in (7.).
 
-2. **Heatmap of number of requests:** This graph provides information for each hour of the day about how often
-   the endpoint is being requested. In this graph it is possible to detect popular hours during the day.
+2. **Heatmap:** This graph provides information for each hour of the day of how often the endpoint is being requested. In 
+   this graph it is possible to detect popular hours during the day.
 
-3. **Requests per endpoint:** This graph provides a row of information per day. In this graph, you can find
+3. **Version Usage**: This graph provides information about the distribution of the utilization of the requests per version.
+   That is, how often (in percentages) is a certain endpoint requested in a certain version.
+
+4. **Requests per endpoint:** This graph provides a row of information per day. In this graph, you can find
    whether the total number of requests grows over days.
 
-4. **Time per version:** This graph provides a row of information per application-version. In this graph, you can
+5. **Time per version:** This graph provides a row of information per application-version. In this graph, you can
    find whether the execution time for all requests grows over the versions of the application.
 
-5. **Time per endpoint:** This graph provides a row of information per endpoint. In that row, you can find all the
+6. **Time per endpoint:** This graph provides a row of information per endpoint. In that row, you can find all the
    requests for that endpoint. This provides information whether certain endpoints perform better (in terms of
    execution time) than other endpoints.
 
-6. For each endpoint, there is a 'Details'-button. This provides the following information (thus, all information
-   below is specific for a single endpoint):
+7. For each endpoint, there is a 'Details'-button (alternatively, you can click on the row itself). This provides the following 
+   information (thus, all information below is specific for a single endpoint):
 
    - **Heatmap:** The same heatmap as explained in (2.), but this time it is focused on the data of that particular
      endpoint only.
-
-   - **Time per hour:** A vertical bar plot with the execution time (minimum, average and maximum) for each hour.
-
-   - **Hits per hour:** A vertical bar plot with the number of requests for that endpoint.
 
    - **Time per version per user:** A circle plot with the average execution time per user per version. Thus, this
      graph consists of 3 dimensions (execution time, users, versions). A larger circle represents a higher execution
      time.
 
-   - **Time per version per ip:** The same type of plot as (Time per version per user), but now that users are replaced
+   - **Time per version per ip:** The same type of plot as 'Time per version per user', but now that users are replaced
      by IP-addresses.
 
    - **Time per version:** A horizontal box plot with the execution times for a specific version. This graph is

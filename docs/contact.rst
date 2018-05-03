@@ -1,6 +1,33 @@
 Contact
 =======
-In this file, you can find information to find us.
+This page provides information about how to ask a question, or post an issue.
+
+Developing-team
+---------------
+Currently, the team consists of three active developers:
+
++------------+----------------------------------------------------------------------+
+| |Picture1| | | **Patrick Vogel**                                                  |
+|            | |                                                                    |
+|            | | Core developer                                                     |
+|            | |                                                                    |
+|            | | **E-mail:** `patrickvogel@live.nl <mailto:patrickvogel@live.nl>`_. |
++------------+----------------------------------------------------------------------+
+| |Picture2| | | **Thijs Klooster**                                                 |
+|            | |                                                                    |
+|            | | Test Monitor Specialist                                            |
++------------+----------------------------------------------------------------------+
+| |Picture3| | | **Bogdan Petre**                                                   |
+|            | |                                                                    |
+|            | | Outlier Specialist                                                 |
++------------+----------------------------------------------------------------------+
+
+.. |Picture1| image:: https://avatars2.githubusercontent.com/u/17162650?s=460&v=4
+
+.. |Picture2| image:: https://avatars3.githubusercontent.com/u/17165311?s=400&v=4
+
+.. |Picture3| image:: https://avatars2.githubusercontent.com/u/7281856?s=400&v=4
+
 
 Found a bug?
 ------------
