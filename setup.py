@@ -23,7 +23,7 @@ setuptools.setup(
     test_suite='flask_monitoringdashboard.test.get_test_suite',
     url='https://github.com/flask-dashboard/Flask-MonitoringDashboard',
     author="Patrick Vogel, Thijs Klooster & Bogdan Petre",
-    author_email="p.p.vogel@student.rug.nl",
+    author_email="patrickvogel@live.nl",
     description="A dashboard for automatic monitoring of Flask web-services",
     long_description=get_description(),
     install_requires=required,
