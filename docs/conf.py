@@ -6,6 +6,7 @@
 # full list see the documentation:
 # http://www.sphinx-doc.org/en/stable/config
 import pkg_resources
+import datetime
 from email import message_from_string
 # -- Path setup --------------------------------------------------------------
 
@@ -22,7 +23,7 @@ data = message_from_string(pkg_resources.require("Flask-MonitoringDashboard")[0]
 
 project = 'Flask-MonitoringDashboard'
 author = data['Author']
-copyright = '2018, ' + author
+copyright = '{}, {}'.format(datetime.datetime.now().year, author)
 
 
 version = pkg_resources.require("Flask-MonitoringDashboard")[0].version
