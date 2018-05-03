@@ -1,13 +1,13 @@
 Configuration
 =============
-Once you have successfully installed the Flask Monitoring Dashboard from `this page <installation.html>`_,
-you can use the advanced features by correctly configuration the dashboard.
+Once you have successfully installed the Flask Monitoring Dashboard with information from 
+`this page <installation.html>`_, you can use the advanced features by correctly configuring the Dashboard.
 
 Using a configuration file
 --------------------------
-You can use a configuration file for all options below.
+You can use a single configuration file for all options below.
 This is explained in the following section.
-In order to configure the dashboard with the configuration-file, you can use the following function:
+In order to configure the Dashboard with a configuration-file, you can use the following function:
 
 .. code-block:: python
 
@@ -41,12 +41,12 @@ The line should then be:
 
    dashboard.config.init_from(envvar='DASHBOARD_CONFIG')
 
-This will configure the dashboard based on the file provided in the environment variable called `DASHBOARD_CONFIG`.
+This will configure the Dashboard based on the file provided in the environment variable called `DASHBOARD_CONFIG`.
 
 The content of the configuration file
 -------------------------------------
-Once the setup is done, a configuration file ('config.cfg') should be set next to the python file that contains
-the entry point of the app. The following things can be configured:
+Once the setup is complete, a configuration file (e.g. 'config.cfg') should be set next to the python file that 
+contains the entry point of the app. The following things can be configured:
 
 .. code-block:: python
 
@@ -62,19 +62,20 @@ the entry point of the app. The following things can be configured:
    OUTLIER_DETECTION_CONSTANT=2.5
    DASHBOARD_ENABLED = True
    TEST_DIR=/<path to your project>/tests/
-   COLORS={'main':[0,97,255], 'static':[255,153,0]}
+   COLORS={'main':'[0,97,255]',
+           'static':'[255,153,0]'}
 
 This might look a bit overwhelming, but the following list explains everything in detail:
 
-- **APP_VERSION:** The version of the app that you use.
+- **APP_VERSION:** The version of the application that you use.
   Updating the version helps in showing differences in execution times of a function over a period of time.
 
-- **CUSTOM_LINK:** The dashboard can be visited at localhost:5000/{{CUSTOM_LINK}}.
+- **CUSTOM_LINK:** The Dashboard can be visited at localhost:5000/{{CUSTOM_LINK}}.
 
 - **DATABASE:** Suppose you have multiple projects where you're working on and want to separate the results.
   Then you can specify different database_names, such that the result of each project is stored in its own database.
 
-- **USERNAME** and **PASSWORD:** Must be used for logging into the dashboard.
+- **USERNAME** and **PASSWORD:** Must be used for logging into the Dashboard.
   Thus both are required.
 
 - **GUEST_USERNAME** and **GUEST_PASSWORD:** A guest can only see the results, but cannot configure/download any data.
@@ -87,10 +88,10 @@ This might look a bit overwhelming, but the following list explains everything i
 
 - **OUTLIER_DETECTION_CONSTANT:** When the execution time is more than this :math:`constant * average`,
   extra information is logged into the database.
-  A default value for this variable is :math:`2.5`, but can be changed in the config-file.
+  A default value for this variable is :math:`2.5`.
 
 - **OUTLIERS_ENABLED:** Whether you want to collect information about outliers. If you set this to true,
-  the expected overhead is a bit larger, as you can find
+  the expected overhead of the Dashboard is a bit larger, as you can find
   `here <https://github.com/flask-dashboard/Testing-Dashboard-Overhead>`_.
 
 - **TEST_DIR:** Specifies where the unit tests reside. This will show up in the configuration in the Dashboard.
@@ -101,9 +102,10 @@ This might look a bit overwhelming, but the following list explains everything i
 
   .. code-block:: python
 
-     COLORS={'main':[0,97,255], 'static':[255,153,0]}
+     COLORS={'main':'[0,97,255]', 
+             'static':'[255,153,0]'}
 
 What have you configured?
 -------------------------
-A lot of configuration options, but you might wonder what functionality is now supported in your Flask Monitoring Dashboard?
+A lot of configuration options, but you might wonder what functionality is now supported in your Flask application?
 Have a look at `this file <functionality.html>`_ to find the answer.

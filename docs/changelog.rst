@@ -5,21 +5,32 @@ All notable changes to this project will be documented in this file.
 This project adheres to `Semantic Versioning <http://semver.org/>`_.
 Please note that the changes before version 1.10.0 have not been documented.
 
+
 Unreleased
 ----------
 Changed
 
+- Added mean CPU
+
+- Updated documentation
+
+- Updated the Test-Monitoring initialization
+
+
+v1.12.0
+-------
+Changed
+
 - Removed two graphs: hits per hour and execution time per hour
 
-- New template
+- New template design
 
-- Refactored code
+- Refactored backhand of the code
 
-Fixed issues:
-- #63
-- #80
-- #89
--
+- Updated Bootstrap 3.0 to 4.0
+
+- Setup of Code coverage
+
 
 v1.11.0
 -------
@@ -38,6 +49,7 @@ Changed
 - Updated functionality to retrieve the stacktrace of an Outlier
 
 - Fixed bug with white colors from the config option
+
 
 v1.10.0
 ----------
