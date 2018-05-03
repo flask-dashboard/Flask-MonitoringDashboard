@@ -18,7 +18,7 @@ TITLE = 'Heatmap of the number of requests'
 @secure
 def heatmap():
     form = get_daterange_form()
-    return render_template('dashboard/graph.html', form=form, graph=get_heatmap(form), title=TITLE)
+    return render_template('fmd_dashboard/graph.html', form=form, graph=get_heatmap(form), title=TITLE)
 
 
 def get_heatmap(form, end=None):

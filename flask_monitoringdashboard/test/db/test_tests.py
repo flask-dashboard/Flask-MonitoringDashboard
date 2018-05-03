@@ -1,6 +1,6 @@
 """
     This file contains all unit tests for the monitor-rules-table in the database. (Corresponding to the file:
-    'dashboard/database/monitor-rules.py')
+    'flask_monitoringdashboard/database/tests.py')
     See __init__.py for how to run the test-cases.
 """
 

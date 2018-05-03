@@ -15,7 +15,7 @@ from flask_monitoringdashboard.database.monitor_rules import reset_monitor_endpo
 @admin_secure
 def rules():
     """
-    Renders a table with all rules from the user_app. The dashboard rules are excluded
+    Renders a table with all rules from the user_app. The fmd_dashboard rules are excluded
     In case of the POST request, the data from the form is validated and processed, such that the required rules are
     monitored
     :return:
@@ -54,4 +54,4 @@ def rules():
                 'monitor': get_monitor_rule(db_session, rule.endpoint).monitor
             })
 
-    return render_template('rules.html', rules=all_rules, form=form)
+    return render_template('fmd_rules.html', rules=all_rules, form=form)

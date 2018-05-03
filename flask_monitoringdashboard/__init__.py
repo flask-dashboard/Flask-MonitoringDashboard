@@ -31,12 +31,11 @@ def loc():
 blueprint = Blueprint('dashboard', __name__, template_folder=loc() + 'templates')
 
 
-def bind(app, blue_print=None):
+def bind(app):
     """
         Binding the app to this object should happen before importing the routing-
         methods below. Thus, the importing statement is part of this function.
         :param app: the app for which the performance has to be tracked
-        :param blue_print: the blueprint that contains the endpoints to be monitored
     """
     assert app is not None
     global user_app, blueprint
@@ -47,15 +46,18 @@ def bind(app, blue_print=None):
         print('WARNING: You should provide a security key.')
         user_app.secret_key = 'my-secret-key'
 
-    if blue_print:
-        import os
+    import os
+    # Only initialize unit test logging when running on Travis.
+    if '/home/travis/build/' in os.getcwd():
+        print('Detected running on Travis.')
         import datetime
         from flask import request
 
-        @blue_print.after_request
+        @user_app.after_request
         def after_request(response):
             hit_time_stamp = str(datetime.datetime.now())
-            log = open("endpoint_hits.log", "a")
+            home = os.path.expanduser("~")
+            log = open(home + '/endpoint_hits.log', 'a')
             log.write('"{}","{}"\n'.format(hit_time_stamp, request.endpoint))
             log.close()
             return response

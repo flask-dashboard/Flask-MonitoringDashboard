@@ -5,7 +5,7 @@
 import datetime
 from contextlib import contextmanager
 
-from sqlalchemy import Column, Integer, String, DateTime, create_engine, Float, Boolean
+from sqlalchemy import Column, Integer, String, DateTime, create_engine, Float, Boolean, TEXT, Text
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 
@@ -83,21 +83,21 @@ class Outlier(Base):
     endpoint = Column(String(250), nullable=False)
 
     # request-values, GET, POST, PUT
-    request_values = Column(String(10000))
+    request_values = Column(TEXT)
     # request headers
-    request_headers = Column(String(10000))
+    request_headers = Column(TEXT)
     # request environment
-    request_environment = Column(String(10000))
+    request_environment = Column(TEXT)
     # request url
     request_url = Column(String(1000))
 
     # cpu_percent in use
     cpu_percent = Column(String(100))
     # memory
-    memory = Column(String(10000))
+    memory = Column(TEXT)
 
     # stacktrace
-    stacktrace = Column(String(100000))
+    stacktrace = Column(TEXT)
 
     # execution_time in ms
     execution_time = Column(Float, nullable=False)
