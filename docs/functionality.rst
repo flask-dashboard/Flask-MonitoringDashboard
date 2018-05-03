@@ -93,7 +93,7 @@ Using the collected data, a number of observations can be made:
 
 Test-Coverage Monitoring
 ------------------------
-To enable Travis to run your unit tests and send the results to the dashboard, three steps have to be taken:
+To enable Travis to run your unit tests and send the results to the dashboard, two steps have to be taken:
 
 1. The installation requirement for the dashboard has to be added to the `setup.py` file of your app:
 
@@ -113,15 +113,6 @@ To enable Travis to run your unit tests and send the results to the dashboard, t
   The `times` argument (optional, default: 5) specifies how many times to run each of the unit tests.
   The `url` argument (optional) specifies where the dashboard is that needs to receive the performance results.
   When the last argument is omitted, the performance testing will run, but without publishing the results.
-
-3. A method that is executed after every request should be added to the blueprint of your app.
-   This is done by the dashboard automatically when the blueprint is passed to the binding function like so:
-
-   .. code-block:: python
-
-      dashboard.bind(app=app, blue_print=api)
-
-   This extra method is needed for the logging, and without it, the unit test results cannot be grouped by endpoint that they test.
 
 Outliers
 --------
