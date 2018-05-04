@@ -19,4 +19,4 @@ deploy:
   on:
     distributions: sdist bdist_wheel
     repo: flask-dashboard/Flask-MonitoringDashboard
-    branch: development
+    branch: master
