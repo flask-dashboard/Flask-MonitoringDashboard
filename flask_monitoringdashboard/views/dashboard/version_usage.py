@@ -45,7 +45,6 @@ def get_version_usage():
         z=hits,
         x=versions,
         y=['{} '.format(e) for e in endpoints],
-        colorscale=[[0, 'rgb(255, 255, 255)'], [0.01, 'rgb(240,240,240)'], [1, 'rgb(1, 1, 1)']],
         colorbar={
             'titleside': 'top',
             'tickmode': 'array',

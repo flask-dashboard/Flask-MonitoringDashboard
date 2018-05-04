@@ -15,7 +15,7 @@ with open(loc + '/requirements.txt') as f:
 
 setuptools.setup(
     name="Flask-MonitoringDashboard",
-    version='1.12.1',
+    version='1.12.2',
     packages=setuptools.find_packages(),
     include_package_data=True,
     platforms='Any',
