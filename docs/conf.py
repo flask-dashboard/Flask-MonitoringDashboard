@@ -5,9 +5,7 @@
 # This file does only contain a selection of the most common options. For a
 # full list see the documentation:
 # http://www.sphinx-doc.org/en/stable/config
-import pkg_resources
 import datetime
-from email import message_from_string
 # -- Path setup --------------------------------------------------------------
 
 # If extensions (or modules to document with autodoc) are in another directory,
@@ -17,21 +15,20 @@ from email import message_from_string
 import os
 import sys
 sys.path.insert(0, os.path.abspath('../flask-monitoringdashboard'))
+from flask_monitoringdashboard.core import constants
 
 # -- Project information -----------------------------------------------------
 
 project = 'Flask-MonitoringDashboard'
 try:
-    data = message_from_string(pkg_resources.require(project)[0].get_metadata('PKG-INFO'))
-    author = data['Author']
-    version = pkg_resources.require(project)[0].version
-    release = pkg_resources.require(project)[0].version
+    author = constants.AUTHOR
+    version = constants.VERSION
 except Exception as e:
     print(e)
     author = 'Patrick Vogel'
     version = '1.12.2'
-    release = version
 
+release = version
 copyright = '{}, {}'.format(datetime.datetime.now().year, author)
 
 # -- General configuration ---------------------------------------------------

@@ -22,9 +22,11 @@ def get_endpoint_details(db_session, endpoint):
 
 def get_details(db_session):
     """ Return details about the deployment """
+    from flask_monitoringdashboard.core import constants
+
     return {
         'link': config.link,
-        'dashboard-version': pkg_resources.require("Flask-MonitoringDashboard")[0].version,
+        'dashboard-version': constants.VERSION,
         'config-version': config.version,
         'first-request': get_date_of_first_request(db_session)
     }
