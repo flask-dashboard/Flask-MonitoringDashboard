@@ -1,16 +1,22 @@
 language: python
 python:
-  - "2.7"
-  - "3.3"
-  - "3.4"
-  - "3.5"
-  - "3.6"
-
+- '2.7'
+- '3.3'
+- '3.4'
+- '3.5'
+- '3.6'
 install:
-  - pip install codecov
-
+- pip install codecov
 script:
-  - coverage run setup.py test
-
+- coverage run setup.py test
 after_success:
-  - codecov
+- codecov
+deploy:
+  provider: pypi
+  user: flyingbird95
+  password:
+    secure: U2YhyZx8bYb1DF0B3jRbO4JpuWD0MxIPX5vzC/Wr5lAkRHEJC5Wl9K2vWLaZ/Ts4ATjgvjAXfXS24QeFxqLevRTHxdk62LRgbzobz8HUz6KhAUwCP6f3TSAtBVtF/64KpNfFGZ74ezGoqueHLRxrvTkYAgBEU8V8gHF5x9k2UYJiZM6ZweZMQaSstVptGQnLuQsGtDnzXIQ1LzBli+jj9Vks1XNKcZ3/j0gNjEEfVcmNWgP+gDTBmIJLdDbfMXX41jAWJXUTU7eV6OTZ7P2qRZbwa/YvS6jLpv2sv8wRjwVm0DGUPdgE2k6PlMM+GTD5QY6uEYQWb9e868hen7XbrzP1aKSFDDaXxHk5LiS2yypkj+K5tl9/OWeGDLQtw2yzCddgdEYCQjxqG/qTyMrzynNJh3404h9L3tHXN8rADXakMf7iQBZWbCHOoVtASaQW9GGje9cFcZ8fvbEYXeD9qFzK7K4mOp7oG3M22s9rxFtlZss3YJI07ybKie6KHWAsUn7E8FP51Q9bEJYk2vUXApzem/KNPhRxmPbstwpa2J9ph3kxz8RhKeWMDdYf5nTqebPpWpawoF+Kr4Rao/WgHx4s3uOteJbDe0xWyPE7YzXeigXw893QV/brnl1/Gy/nwkdZVrXIevcE3vvkC/7N4yOF1A5d1VMqojIotD6SDDc=
+  on:
+    distributions: sdist bdist_wheel
+    repo: flask-dashboard/Flask-MonitoringDashboard
+    branch: development
