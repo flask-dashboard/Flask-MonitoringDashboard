@@ -16,14 +16,15 @@ from email import message_from_string
 
 import os
 import sys
-sys.path.insert(0, os.path.abspath('../flask-monitoringdashboard'))	
+sys.path.insert(0, os.path.abspath('../flask-monitoringdashboard'))
 
 # -- Project information -----------------------------------------------------
 
 project = 'Flask-MonitoringDashboard'
+print(os.system("pip list"))
 data = message_from_string(pkg_resources.require(project)[0].get_metadata('PKG-INFO'))
-
 author = data['Author']
+print(author)
 copyright = '{}, {}'.format(datetime.datetime.now().year, author)
 
 
