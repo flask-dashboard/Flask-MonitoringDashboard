@@ -17,17 +17,18 @@ from email import message_from_string
 import os
 import sys
 sys.path.insert(0, os.path.abspath('../flask-monitoringdashboard'))	
-data = message_from_string(pkg_resources.require("Flask-MonitoringDashboard")[0].get_metadata('PKG-INFO'))
 
 # -- Project information -----------------------------------------------------
 
 project = 'Flask-MonitoringDashboard'
+data = message_from_string(pkg_resources.require(project)[0].get_metadata('PKG-INFO'))
+
 author = data['Author']
 copyright = '{}, {}'.format(datetime.datetime.now().year, author)
 
 
-version = pkg_resources.require("Flask-MonitoringDashboard")[0].version
-release = pkg_resources.require("Flask-MonitoringDashboard")[0].version
+version = pkg_resources.require(project)[0].version
+release = pkg_resources.require(project)[0].version
 
 
 # -- General configuration ---------------------------------------------------
@@ -125,7 +126,7 @@ latex_elements = {
 
     # The font size ('10pt', '11pt' or '12pt').
     #
-    'pointsize': '10pt',
+    'pointsize': '11pt',
 
     # Additional stuff for the LaTeX preamble.
     #
