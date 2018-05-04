@@ -21,16 +21,18 @@ sys.path.insert(0, os.path.abspath('../flask-monitoringdashboard'))
 # -- Project information -----------------------------------------------------
 
 project = 'Flask-MonitoringDashboard'
-print(os.system("pip list"))
-data = message_from_string(pkg_resources.require(project)[0].get_metadata('PKG-INFO'))
-author = data['Author']
-print(author)
+try:
+    data = message_from_string(pkg_resources.require(project)[0].get_metadata('PKG-INFO'))
+    author = data['Author']
+    version = pkg_resources.require(project)[0].version
+    release = pkg_resources.require(project)[0].version
+except Exception as e:
+    print(e)
+    author = 'Patrick Vogel'
+    version = '1.12.2'
+    release = version
+
 copyright = '{}, {}'.format(datetime.datetime.now().year, author)
-
-
-version = pkg_resources.require(project)[0].version
-release = pkg_resources.require(project)[0].version
-
 
 # -- General configuration ---------------------------------------------------
 
