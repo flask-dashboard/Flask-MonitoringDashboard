@@ -1,6 +1,6 @@
 import setuptools
 import os
-from flask_monitoringdashboard.core import constants
+import flask_monitoringdashboard.core.constants as constants
 loc = os.path.dirname(os.path.abspath(__file__))
 
 

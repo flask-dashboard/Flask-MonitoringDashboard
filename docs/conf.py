@@ -14,8 +14,8 @@ import datetime
 
 import os
 import sys
+import flask_monitoringdashboard.core.constants as constants
 sys.path.insert(0, os.path.abspath('../flask-monitoringdashboard'))
-from flask_monitoringdashboard.core import constants
 
 # -- Project information -----------------------------------------------------
 
