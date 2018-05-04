@@ -4,6 +4,7 @@ from flask import make_response, render_template, session
 
 from flask_monitoringdashboard import blueprint, config
 from flask_monitoringdashboard.core.auth import admin_secure
+from flask_monitoringdashboard.database import session_scope
 from flask_monitoringdashboard.database.function_calls import get_data
 
 CSV_COLUMNS = ['endpoint', 'execution_time', 'time', 'version', 'group_by', 'ip']
@@ -13,8 +14,9 @@ CSV_COLUMNS = ['endpoint', 'execution_time', 'time', 'version', 'group_by', 'ip'
 @admin_secure
 def download_csv():
     csv = ','.join(CSV_COLUMNS) + '\n'
-    for entry in get_data():
-        csv += ','.join([str(entry.__getattribute__(c)) for c in CSV_COLUMNS]) + '\n'
+    with session_scope() as db_session:
+        for entry in get_data(db_session):
+            csv += ','.join([str(entry.__getattribute__(c)) for c in CSV_COLUMNS]) + '\n'
 
     response = make_response(csv)
     response.headers["Content-Disposition"] = "attachment; filename=measurements_{0}.csv".format(
@@ -26,6 +28,7 @@ def download_csv():
 @admin_secure
 def view_csv():
     csv = [','.join(CSV_COLUMNS)]
-    for entry in get_data():
-        csv.append(','.join([str(entry.__getattribute__(c)) for c in CSV_COLUMNS]) + '\n')
-    return render_template('export-data.html', link=config.link, session=session, data=csv)
+    with session_scope() as db_session:
+        for entry in get_data(db_session):
+            csv.append(','.join([str(entry.__getattribute__(c)) for c in CSV_COLUMNS]) + '\n')
+    return render_template('fmd_export-data.html', data=csv)

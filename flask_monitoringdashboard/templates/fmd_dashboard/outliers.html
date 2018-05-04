@@ -1,8 +1,9 @@
-{% extends "dashboard/graph-details.html" %}
+{% extends "fmd_dashboard/graph-details.html" %}
 {% block form_content %}
 {% endblock %}
 
 {% block graph_content %}
+<p> <strong>Mean CPU Percentages: </strong>{{ mean }}</p>
 {{ pagination.info }}
 {{ pagination.links }}
 {% for row in table %}
@@ -31,7 +32,8 @@
       <div class="well-sm scrollable">{{ row.request_environment }}</div>
     </div>
   </div>
-  <div class="row"><div class="col-sm-12"><div class="well-sm">
+
+  <div class="row" style="margin-top: 10px"><div class="col-sm-12"><div class="well-sm">
     <strong>CPU Percent: </strong>{{ row.cpu_percent }}
   </div></div></div>
   <div class="row"><div class="col-sm-12"><div class="well-sm">

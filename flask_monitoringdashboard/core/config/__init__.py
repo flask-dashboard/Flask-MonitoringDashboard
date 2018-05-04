@@ -67,10 +67,11 @@ class Config(object):
         if envvar:
             file = os.getenv(envvar)
         if not file:
+            # Travis does not need a config file.
+            if '/home/travis/build/' in os.getcwd():
+                return
             print("No configuration file specified. Please do so.")
             return
-
-        create_log_file()
 
         parser = configparser.RawConfigParser()
         try:
@@ -91,14 +92,3 @@ class Config(object):
             self.guest_password = parse_literal(parser, 'GUEST_PASSWORD', self.guest_password)
         except configparser.Error:
             raise
-
-
-def create_log_file():
-    """
-    Create a file and put some content in it. Used for unit test performance results.
-    """
-    log_dir = os.getenv('DASHBOARD_LOG_DIR')
-    if log_dir:
-        log = open(log_dir + "endpoint_hits.log", "w")
-        log.write("\"time\",\"endpoint\"\n")
-        log.close()

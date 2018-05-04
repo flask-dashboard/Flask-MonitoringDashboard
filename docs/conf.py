@@ -6,6 +6,8 @@
 # full list see the documentation:
 # http://www.sphinx-doc.org/en/stable/config
 import pkg_resources
+import datetime
+from email import message_from_string
 # -- Path setup --------------------------------------------------------------
 
 # If extensions (or modules to document with autodoc) are in another directory,
@@ -15,13 +17,14 @@ import pkg_resources
 import os
 import sys
 sys.path.insert(0, os.path.abspath('../flask-monitoringdashboard'))	
-
+data = message_from_string(pkg_resources.require("Flask-MonitoringDashboard")[0].get_metadata('PKG-INFO'))
 
 # -- Project information -----------------------------------------------------
 
 project = 'Flask-MonitoringDashboard'
-copyright = '2018, Patrick Vogel & Thijs Klooster'
-author = 'Patrick Vogel & Thijs Klooster'
+author = data['Author']
+copyright = '{}, {}'.format(datetime.datetime.now().year, author)
+
 
 version = pkg_resources.require("Flask-MonitoringDashboard")[0].version
 release = pkg_resources.require("Flask-MonitoringDashboard")[0].version
@@ -138,7 +141,7 @@ latex_elements = {
 #  author, documentclass [howto, manual, or own class]).
 latex_documents = [
     (master_doc, 'Flask-MonitoringDashboard.tex', 'Flask-MonitoringDashboard Documentation',
-     'Patrick Vogel \\& Thijs Klooster', 'manual'),
+     author, 'manual'),
 ]
 
 

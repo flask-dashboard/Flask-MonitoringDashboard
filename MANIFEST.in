@@ -3,4 +3,4 @@ recursive-include flask_monitoringdashboard/templates *
 recursive-include flask_monitoringdashboard/test *
 include requirements.txt
 include README.md
-include CHANGELOG.rst
+include docs/changelog.rst
