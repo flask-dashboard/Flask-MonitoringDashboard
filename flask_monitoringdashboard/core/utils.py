@@ -1,12 +1,12 @@
-import pkg_resources
-from flask import url_for
-from werkzeug.routing import BuildError
-import numpy as np
 import ast
 
+import numpy as np
+from flask import url_for
+from werkzeug.routing import BuildError
+
 from flask_monitoringdashboard import config
-from flask_monitoringdashboard.database.endpoint import get_monitor_rule
 from flask_monitoringdashboard.database.count import count_requests
+from flask_monitoringdashboard.database.endpoint import get_monitor_rule
 from flask_monitoringdashboard.database.function_calls import get_date_of_first_request
 
 
@@ -22,11 +22,11 @@ def get_endpoint_details(db_session, endpoint):
 
 def get_details(db_session):
     """ Return details about the deployment """
-    from flask_monitoringdashboard.core import constants
+    from constants import VERSION
 
     return {
         'link': config.link,
-        'dashboard-version': constants.VERSION,
+        'dashboard-version': VERSION,
         'config-version': config.version,
         'first-request': get_date_of_first_request(db_session)
     }
@@ -65,7 +65,7 @@ def simplify(values, n=5):
     :param n: length of the returned list
     :return: list with n values: min, q1, median, q3, max
     """
-    return [np.percentile(values, i * 100 // (n-1)) for i in range(n)]
+    return [np.percentile(values, i * 100 // (n - 1)) for i in range(n)]
 
 
 def get_mean_cpu(cpu_percentages):
