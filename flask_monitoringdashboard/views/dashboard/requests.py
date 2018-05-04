@@ -32,7 +32,6 @@ def get_stacked_bar(form):
         barmode='stack',
         height=350 + 40 * len(days),
         showlegend=True,
-        title=TITLE,
         xaxis={'title': 'Number of requests'},
         yaxis={'type': 'category', 'autorange': 'reversed'}
     )

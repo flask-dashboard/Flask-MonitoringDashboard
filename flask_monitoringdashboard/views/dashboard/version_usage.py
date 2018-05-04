@@ -8,7 +8,7 @@ from flask_monitoringdashboard.database.count import count_requests
 from flask_monitoringdashboard.database.function_calls import get_endpoints
 from flask_monitoringdashboard.database.versions import get_versions
 
-TITLE = 'Heatmap of the distribution of the hits per endpoint per version'
+TITLE = 'Distribution of the load per endpoint per version'
 
 
 @blueprint.route('/measurements/version_usage')
@@ -35,7 +35,6 @@ def get_version_usage():
                 hits[j][i] = hits[j][i] * 100 / total_hits
 
     layout = get_layout(
-        title=TITLE,
         xaxis={'title': 'Versions', 'type': 'category'},
         yaxis={'type': 'category', 'autorange': 'reversed'},
         margin=get_margin()
@@ -48,8 +47,6 @@ def get_version_usage():
         colorbar={
             'titleside': 'top',
             'tickmode': 'array',
-            'tickvals': [100, 0],
-            'ticktext': ['100%', '0%']
         }
     )
     return get_figure(layout=layout, data=[trace])

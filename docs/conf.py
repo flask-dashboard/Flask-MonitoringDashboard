@@ -5,9 +5,7 @@
 # This file does only contain a selection of the most common options. For a
 # full list see the documentation:
 # http://www.sphinx-doc.org/en/stable/config
-import pkg_resources
 import datetime
-from email import message_from_string
 # -- Path setup --------------------------------------------------------------
 
 # If extensions (or modules to document with autodoc) are in another directory,
@@ -16,19 +14,22 @@ from email import message_from_string
 
 import os
 import sys
-sys.path.insert(0, os.path.abspath('../flask-monitoringdashboard'))	
-data = message_from_string(pkg_resources.require("Flask-MonitoringDashboard")[0].get_metadata('PKG-INFO'))
+sys.path.insert(0, os.path.abspath('../flask-monitoringdashboard'))
+from flask_monitoringdashboard.core import constants
 
 # -- Project information -----------------------------------------------------
 
 project = 'Flask-MonitoringDashboard'
-author = data['Author']
+try:
+    author = constants.AUTHOR
+    version = constants.VERSION
+except Exception as e:
+    print(e)
+    author = 'Patrick Vogel'
+    version = '1.12.2'
+
+release = version
 copyright = '{}, {}'.format(datetime.datetime.now().year, author)
-
-
-version = pkg_resources.require("Flask-MonitoringDashboard")[0].version
-release = pkg_resources.require("Flask-MonitoringDashboard")[0].version
-
 
 # -- General configuration ---------------------------------------------------
 
@@ -125,7 +126,7 @@ latex_elements = {
 
     # The font size ('10pt', '11pt' or '12pt').
     #
-    'pointsize': '10pt',
+    'pointsize': '11pt',
 
     # Additional stuff for the LaTeX preamble.
     #
