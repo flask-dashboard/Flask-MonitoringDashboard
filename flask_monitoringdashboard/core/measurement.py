@@ -2,18 +2,21 @@
     Contains all functions that are used to track the performance of the flask-application.
     See init_measurement() for more detailed info.
 """
-import time
 import datetime
-from flask import request
+import time
+import traceback
 from functools import wraps
+
+from flask import request
+
 from flask_monitoringdashboard import config
+from flask_monitoringdashboard.core.outlier import StackInfo
 from flask_monitoringdashboard.core.rules import get_rules
 from flask_monitoringdashboard.database import session_scope
-from flask_monitoringdashboard.database.monitor_rules import get_monitor_rules
 from flask_monitoringdashboard.database.endpoint import update_last_accessed
 from flask_monitoringdashboard.database.function_calls import add_function_call
+from flask_monitoringdashboard.database.monitor_rules import get_monitor_rules
 from flask_monitoringdashboard.database.outlier import add_outlier
-from flask_monitoringdashboard.core.outlier import StackInfo
 
 # count and sum are dicts and used for calculating the averages
 endpoint_count = {}
@@ -50,39 +53,45 @@ def track_performance(func, endpoint):
 
     @wraps(func)
     def wrapper(*args, **kwargs):
-        # compute average
-        average = get_average(endpoint)
+        try:
+            # compute average
+            average = get_average(endpoint)
 
-        stack_info = None
+            stack_info = None
 
-        if average:
-            average *= config.outlier_detection_constant
+            if average:
+                average *= config.outlier_detection_constant
 
-            # start a thread to log the stacktrace after 'average' ms
-            stack_info = StackInfo(average)
+                # start a thread to log the stacktrace after 'average' ms
+                stack_info = StackInfo(average)
 
-        time1 = time.time()
-        result = func(*args, **kwargs)
+            time1 = time.time()
+            result = func(*args, **kwargs)
 
-        if stack_info:
-            stack_info.stop()
+            if stack_info:
+                stack_info.stop()
 
-        time2 = time.time()
-        t = (time2 - time1) * 1000
-        with session_scope() as db_session:
-            add_function_call(db_session, execution_time=t, endpoint=endpoint, ip=request.environ['REMOTE_ADDR'])
-
-        # outlier detection
-        endpoint_count[endpoint] = endpoint_count.get(endpoint, 0) + 1
-        endpoint_sum[endpoint] = endpoint_sum.get(endpoint, 0) + t
-
-        if stack_info:
+            time2 = time.time()
+            t = (time2 - time1) * 1000
             with session_scope() as db_session:
-                add_outlier(db_session, endpoint, t, stack_info, request)
+                add_function_call(db_session, execution_time=t, endpoint=endpoint, ip=request.environ['REMOTE_ADDR'])
 
-        return result
+            # outlier detection
+            endpoint_count[endpoint] = endpoint_count.get(endpoint, 0) + 1
+            endpoint_sum[endpoint] = endpoint_sum.get(endpoint, 0) + t
+
+            if stack_info:
+                with session_scope() as db_session:
+                    add_outlier(db_session, endpoint, t, stack_info, request)
+
+            return result
+        except:
+            traceback.print_exc()
+            # Execute the endpoint that was called, even if the tracking fails.
+            return func(*args, **kwargs)
 
     wrapper.original = func
+
     return wrapper
 
 
@@ -95,8 +104,13 @@ def track_last_accessed(func, endpoint):
 
     @wraps(func)
     def wrapper(*args, **kwargs):
-        with session_scope() as db_session:
-            update_last_accessed(db_session, endpoint=endpoint, value=datetime.datetime.now())
+        try:
+            with session_scope() as db_session:
+                update_last_accessed(db_session, endpoint=endpoint, value=datetime.datetime.now())
+        except:
+            traceback.print_exc()
+
+        # Execute the endpoint that was called, even if the tracking fails.
         return func(*args, **kwargs)
 
     return wrapper
