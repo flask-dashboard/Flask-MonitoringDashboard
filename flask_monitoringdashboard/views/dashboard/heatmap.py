@@ -47,6 +47,8 @@ def get_heatmap(form, end=None, title=None):
             heatmap_data[hour_index][day_index] = d.count
 
     if end:
+        if not title:
+            title = ''
         title += ' for endpoint: {}'.format(end)
 
     layout = get_layout(
