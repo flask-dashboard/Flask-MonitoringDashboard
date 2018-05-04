@@ -15,7 +15,7 @@ def get_num_requests(db_session, endpoint, start_date, end_date):
         :param endpoint: if None, the result is the sum of all endpoints
         :param start_date: datetime.date object
         :param end_date: datetime.date object
-    """s
+    """
     query = db_session.query(func.strftime('%Y-%m-%d %H:00:00', FunctionCall.time).label('newTime'),
                              func.count(FunctionCall.execution_time).label('count'))
     if endpoint:
