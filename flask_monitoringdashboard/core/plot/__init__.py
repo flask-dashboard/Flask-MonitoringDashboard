@@ -16,7 +16,7 @@ def get_layout(**kwargs):
     kwargs = add_default_value('showlegend', False, **kwargs)
     kwargs = add_default_value('autosize', True, **kwargs)
     kwargs = add_default_value('plot_bgcolor', 'rgba(249,249,249,1)', **kwargs)
-    kwargs = add_default_value('height', 800, **kwargs)
+    kwargs = add_default_value('height', 700, **kwargs)
     return go.Layout(**kwargs)
 
 

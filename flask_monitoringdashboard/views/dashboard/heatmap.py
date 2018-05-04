@@ -21,7 +21,7 @@ def heatmap():
     return render_template('fmd_dashboard/graph.html', form=form, graph=get_heatmap(form), title=TITLE)
 
 
-def get_heatmap(form, end=None):
+def get_heatmap(form, end=None, title=None):
     """
     Return HTML string for generating a Heatmap.
     :param form: A SelectDateRangeForm, which is used to filter the selection
@@ -46,15 +46,15 @@ def get_heatmap(form, end=None):
             hour_index = int(parsed_time.strftime('%H'))
             heatmap_data[hour_index][day_index] = d.count
 
-    title = TITLE
     if end:
+        if not title:
+            title = ''
         title += ' for endpoint: {}'.format(end)
 
     layout = get_layout(
         title=title,
         xaxis=go.XAxis(range=[(form.start_date.data - datetime.timedelta(days=1, hours=6)).
-                       strftime('%Y-%m-%d 12:00:00'), form.end_date.data.strftime('%Y-%m-%d 12:00:00')],
-                       title='Date'),
-        yaxis={'title': 'Time', 'autorange': 'reversed'}
+                       strftime('%Y-%m-%d 12:00:00'), form.end_date.data.strftime('%Y-%m-%d 12:00:00')]),
+        yaxis={'autorange': 'reversed'}
     )
     return get_figure(layout, [plot_heatmap(x=days, y=hours, z=heatmap_data)])
