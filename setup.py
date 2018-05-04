@@ -1,6 +1,6 @@
 import setuptools
 import os
-from flask_monitoringdashboard.core import constants
+from constants import VERSION, AUTHOR, EMAIL
 loc = os.path.dirname(os.path.abspath(__file__))
 
 
@@ -16,16 +16,16 @@ with open(loc + '/requirements.txt') as f:
 
 setuptools.setup(
     name="Flask-MonitoringDashboard",
-    version=constants.VERSION,
+    version=VERSION,
     packages=setuptools.find_packages(),
     include_package_data=True,
     platforms='Any',
     zip_safe=False,
     test_suite='flask_monitoringdashboard.test.get_test_suite',
     url='https://github.com/flask-dashboard/Flask-MonitoringDashboard',
-    author=constants.AUTHOR,
-    author_email=constants.EMAIL,
-    description="A dashboard for automatic monitoring of Flask web-services",
+    author=AUTHOR,
+    author_email=EMAIL,
+    description="Automatically monitor the evolving performance of Flask/Python web services.",
     long_description=get_description(),
     install_requires=required,
     classifiers=[

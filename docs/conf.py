@@ -14,19 +14,16 @@ import datetime
 
 import os
 import sys
+sys.path.insert(0, os.path.abspath('..'))
 sys.path.insert(0, os.path.abspath('../flask-monitoringdashboard'))
-from flask_monitoringdashboard.core import constants
+
+from constants import VERSION, AUTHOR
 
 # -- Project information -----------------------------------------------------
 
 project = 'Flask-MonitoringDashboard'
-try:
-    author = constants.AUTHOR
-    version = constants.VERSION
-except Exception as e:
-    print(e)
-    author = 'Patrick Vogel'
-    version = '1.12.2'
+author = AUTHOR
+version = VERSION
 
 release = version
 copyright = '{}, {}'.format(datetime.datetime.now().year, author)
