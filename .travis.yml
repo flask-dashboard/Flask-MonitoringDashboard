@@ -1,16 +1,18 @@
 language: python
 python:
-  - "2.7"
-  - "3.3"
-  - "3.4"
-  - "3.5"
-  - "3.6"
-
+- '2.7'
+- '3.3'
+- '3.4'
+- '3.5'
+- '3.6'
 install:
-  - pip install codecov
-
+- pip install codecov
 script:
-  - coverage run setup.py test
-
+- coverage run setup.py test
 after_success:
-  - codecov
+- codecov
+deploy:
+  provider: pypi
+  user: flyingbird95
+  password:
+    secure: P3BqSjdTww+I9tnpurGTPSTEQUvl9ki3BxvV3ndpLqvd+4rE5njjuaWuinSSjNqNDUmWhV9PfxfzMoXuRJZHPUCEfF5PrJ3aH4tQcuP/83PAdjGAokzHeByLJsYhbcPKWqon/j1syynAQtOpM//ow8qK4c/tE3I1mP1YQujp3R0SAA4KMHtZ+ZhMcyXFwMprX6dfcdv7w/H0zxcQhVJn5vZmiPMmkwRXhNEQ7jif8PVpGdGYBtX/hySaV2WTEZNaKyUvrvK6vxzPjoaT7JBrHrCcasefUy3/9oVX+bZHoUTd1OgrwCYehAWr59l5Mk+LJMgcMb6DaVu6KXDJSQ5NNFonpIJLl+HIGyz+EXsdb3ZgPwq395RNDYX1VrKA1JOKBN/a6mlWPpV4JyNeTyYFIGJdbZYbaLgc080pA/IN8K3EdAO1Ulze9gVFcOdLYbUWWEy4JHcKoaL9+FIPw+02HI980r8X9XdYdeMBll+hGiyIoV4OGisacjdb3CNbOCc9MmsKCieJJe6ee1VjUYgFEFcqr6cFXDH5rFgLwjNL2ofcrItic30kdmf/Pk31cj8aPMmR/hFYPiOGx+mpMI94vdRhfU89JQqAvvFWFJp5+fA+TBRnP+4APrCEcvgr95Wp0S+GLP6t0MGcQp7EaloedKbWi0qvVRaaLU6X2NwenpM=
