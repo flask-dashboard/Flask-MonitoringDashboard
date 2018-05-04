@@ -17,6 +17,8 @@ def heatmap(x, y, z, **kwargs):
     :param kwargs: additional arguments for the heatmap
     :return: a Heatmap that can be used for generating a Plotly figure :func:`get_figure`
     """
+    kwargs = add_default_value('colorscale',
+                               [[0, 'rgb(255, 255, 255)'], [0.01, 'rgb(240,240,240)'], [1, 'rgb(1, 1, 1)']], **kwargs)
     return go.Heatmap(x=x, y=y, z=z, **kwargs)
 
 
