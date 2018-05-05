@@ -12,25 +12,41 @@ from flask_monitoringdashboard.database import FunctionCall, MonitorRule
 
 def get_num_requests(db_session, endpoint, start_date, end_date):
     """ Returns a list with all dates on which an endpoint is accessed.
+        :param db_session: session containing the query
         :param endpoint: if None, the result is the sum of all endpoints
         :param start_date: datetime.date object
         :param end_date: datetime.date object
     """
-    query = db_session.query(func.strftime('%Y-%m-%d %H:00:00', FunctionCall.time).label('newTime'),
-                             func.count(FunctionCall.execution_time).label('count'))
+    query = db_session.query(FunctionCall.time)
     if endpoint:
         query = query.filter(FunctionCall.endpoint == endpoint)
-    result = query.filter(FunctionCall.time >= datetime.datetime.combine(start_date, datetime.time(0, 0, 0, 0))). \
-        filter(FunctionCall.time <= datetime.datetime.combine(end_date, datetime.time(23, 59, 59))). \
-        group_by('newTime').all()
+    query = query.filter(FunctionCall.time >= datetime.datetime.combine(start_date, datetime.time(0, 0, 0, 0))). \
+        filter(FunctionCall.time <= datetime.datetime.combine(end_date, datetime.time(23, 59, 59)))
+
+    raw_times = query.all()
+    result = group_execution_times(raw_times)
     db_session.expunge_all()
     return result
+
+
+def group_execution_times(times):
+    """
+    Returns a list of tuples containing the number of hits per hour
+    :param times: list of datetime objects
+    :return: list of tuples ('%Y-%m-%d %H:00:00', count)
+    """
+    hours_dict = {}
+    for time in times:
+        round_time = time.time.strftime('%Y-%m-%d %H:00:00')
+        hours_dict[round_time] = hours_dict.get(round_time, 0) + 1
+    return hours_dict.items()
 
 
 def get_group_by_sorted(db_session, endpoint, limit=None):
     """
     Returns a list with the distinct group-by from a specific endpoint. The limit is used to filter the most used
-    distinct
+    distinct.
+    :param db_session: session containing the query
     :param endpoint: the endpoint to filter on
     :param limit: the number of
     :return: a list with the group_by as strings.
@@ -48,7 +64,8 @@ def get_group_by_sorted(db_session, endpoint, limit=None):
 def get_ip_sorted(db_session, endpoint, limit=None):
     """
     Returns a list with the distinct group-by from a specific endpoint. The limit is used to filter the most used
-    distinct
+    distinct.
+    :param db_session: session containing the query
     :param endpoint: the endpoint to filter on
     :param limit: the number of
     :return: a list with the group_by as strings.

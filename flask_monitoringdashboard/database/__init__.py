@@ -5,7 +5,7 @@
 import datetime
 from contextlib import contextmanager
 
-from sqlalchemy import Column, Integer, String, DateTime, create_engine, Float, Boolean, TEXT, Text
+from sqlalchemy import Column, Integer, String, DateTime, create_engine, Float, Boolean, TEXT
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 
