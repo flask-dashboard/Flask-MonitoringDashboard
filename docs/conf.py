@@ -18,7 +18,7 @@ import json
 sys.path.insert(0, os.path.abspath('..'))
 sys.path.insert(0, os.path.abspath('../flask-monitoringdashboard'))
 
-with open('flask_monitoringdashboard/constants.json', 'r') as f:
+with open('../flask_monitoringdashboard/constants.json', 'r') as f:
     constants = json.load(f)
 
 # -- Project information -----------------------------------------------------

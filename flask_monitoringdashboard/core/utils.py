@@ -22,11 +22,13 @@ def get_endpoint_details(db_session, endpoint):
 
 def get_details(db_session):
     """ Return details about the deployment """
-    from constants import VERSION
+    import json
+    with open('flask_monitoringdashboard/constants.json', 'r') as f:
+        constants = json.load(f)
 
     return {
         'link': config.link,
-        'dashboard-version': VERSION,
+        'dashboard-version': constants['version'],
         'config-version': config.version,
         'first-request': get_date_of_first_request(db_session)
     }
