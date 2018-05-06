@@ -14,16 +14,18 @@ import datetime
 
 import os
 import sys
+import json
 sys.path.insert(0, os.path.abspath('..'))
 sys.path.insert(0, os.path.abspath('../flask-monitoringdashboard'))
 
-from constants import VERSION, AUTHOR
+with open('flask_monitoringdashboard/constants.json', 'r') as f:
+    constants = json.load(f)
 
 # -- Project information -----------------------------------------------------
 
 project = 'Flask-MonitoringDashboard'
-author = AUTHOR
-version = VERSION
+author = constants['author']
+version = constants['version']
 
 release = version
 copyright = '{}, {}'.format(datetime.datetime.now().year, author)
