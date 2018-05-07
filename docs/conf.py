@@ -5,7 +5,7 @@
 # This file does only contain a selection of the most common options. For a
 # full list see the documentation:
 # http://www.sphinx-doc.org/en/stable/config
-import pkg_resources
+import datetime
 # -- Path setup --------------------------------------------------------------
 
 # If extensions (or modules to document with autodoc) are in another directory,
@@ -14,18 +14,19 @@ import pkg_resources
 
 import os
 import sys
-sys.path.insert(0, os.path.abspath('../flask-monitoringdashboard'))	
+sys.path.insert(0, os.path.abspath('..'))
+sys.path.insert(0, os.path.abspath('../flask-monitoringdashboard'))
 
+from constants import VERSION, AUTHOR
 
 # -- Project information -----------------------------------------------------
 
 project = 'Flask-MonitoringDashboard'
-copyright = '2018, Patrick Vogel & Thijs Klooster'
-author = 'Patrick Vogel & Thijs Klooster'
+author = AUTHOR
+version = VERSION
 
-version = pkg_resources.require("Flask-MonitoringDashboard")[0].version
-release = pkg_resources.require("Flask-MonitoringDashboard")[0].version
-
+release = version
+copyright = '{}, {}'.format(datetime.datetime.now().year, author)
 
 # -- General configuration ---------------------------------------------------
 
@@ -122,7 +123,7 @@ latex_elements = {
 
     # The font size ('10pt', '11pt' or '12pt').
     #
-    'pointsize': '10pt',
+    'pointsize': '11pt',
 
     # Additional stuff for the LaTeX preamble.
     #
@@ -138,7 +139,7 @@ latex_elements = {
 #  author, documentclass [howto, manual, or own class]).
 latex_documents = [
     (master_doc, 'Flask-MonitoringDashboard.tex', 'Flask-MonitoringDashboard Documentation',
-     'Patrick Vogel \\& Thijs Klooster', 'manual'),
+     author, 'manual'),
 ]
 
 

@@ -1,6 +1,6 @@
 Installation
 ============
-This is the complete overview of installing the Flask Monitoring Dashboard.
+This page provides an overview of installing the Flask Monitoring Dashboard.
 It starts from the very basic, but it is likely that you can directly go to
 `Installing the Flask Monitoring Dashboard Package <#id1>`_.
 
@@ -10,10 +10,10 @@ You can check if you have Python installed by opening a terminal and execution t
 
 .. code-block:: bash
 
-   python3 --version
+   python --version
 
-It should return something like 'Python 3.6.3', if not,
-you probably see something like 'bash: python3: command not found'.
+It should return something like :code:`Python 3.6.3`, if not,
+you probably see something like :code:`bash: python3: command not found`.
 In the former case, you're ok. In the latter, you can follow
 `this link <http://docs.python-guide.org/en/latest/starting/installation/>`_ to install Python.
 
@@ -114,6 +114,6 @@ Together, it becomes:
 
 Further configuration
 ---------------------
-You are now ready for using the Flask Monitoring Dashboard, and you can already view the dashboard at: `dashboard <http://localhost:5000/dashboard>`_.
+You are now ready for using the Flask Monitoring Dashboard, and you can already view the Dashboard at: `dashboard <http://localhost:5000/dashboard>`_.
 
-However, the Dashboard offers many functionality which have to be configured. This is explained on `the configuration page <configuration.html>`_.
+However, the Dashboard offers many functionality which has to be configured. This is explained on `the configuration page <configuration.html>`_.
