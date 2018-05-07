@@ -7,6 +7,7 @@ from flask_monitoringdashboard.core.auth import secure
 from flask_monitoringdashboard.core.colors import get_color
 from flask_monitoringdashboard.core.forms import get_slider_form
 from flask_monitoringdashboard.core.plot import get_average_bubble_size, scatter, get_layout, get_margin, get_figure
+from flask_monitoringdashboard.core.plot.util import get_information
 from flask_monitoringdashboard.core.utils import get_endpoint_details, formatter
 from flask_monitoringdashboard.database import FunctionCall, session_scope
 from flask_monitoringdashboard.database.count import count_ip
@@ -15,17 +16,29 @@ from flask_monitoringdashboard.database.function_calls import get_median
 from flask_monitoringdashboard.database.versions import get_date_first_request, get_versions
 
 
-@blueprint.route('/result/<end>/time_per_version_per_ip', methods=['GET', 'POST'])
+TITLE = 'Median execution time for every unique user per ip'
+
+AXES_INFO = '''In this graph, the X-axis presents the versions that are used. The Y-axis presents
+(a subset of) all IP-addresses. You can use the slider to select a subset of the all IP-addresses.'''
+
+CONTENT_INFO = '''A circle represents the median execution time of the requests from a unique IP-
+address in a certain version. A larger execution time is presented by a larger circle. With this 
+graph you don\'t need any configuration to see a difference between the performance of different 
+IP-addresses.'''
+
+
+@blueprint.route('/endpoint/<end>/version_ip', methods=['GET', 'POST'])
 @secure
-def result_time_per_version_per_ip(end):
+def version_ip(end):
     with session_scope() as db_session:
         details = get_endpoint_details(db_session, end)
         form = get_slider_form(count_ip(db_session, end))
-    graph = get_time_per_version_per_ip(end, form)
-    return render_template('fmd_dashboard/graph-details.html', details=details, graph=graph, form=form)
+    graph = version_ip_graph(end, form)
+    return render_template('fmd_dashboard/graph-details.html', details=details, graph=graph, form=form,
+                           title=TITLE, information=get_information(AXES_INFO, CONTENT_INFO))
 
 
-def get_time_per_version_per_ip(end, form):
+def version_ip_graph(end, form):
     with session_scope() as db_session:
         ip_list = get_ip_sorted(db_session, end, form.get_slider_value())
         versions = get_versions(db_session, end)
@@ -56,7 +69,6 @@ def get_time_per_version_per_ip(end, form):
 
     layout = get_layout(
         height=350 + 40 * len(trace),
-        title='Median execution time for every user per version',
         xaxis={'title': 'Versions', 'type': 'category'},
         yaxis={'type': 'category', 'autorange': 'reversed'},
         margin=get_margin(b=200)

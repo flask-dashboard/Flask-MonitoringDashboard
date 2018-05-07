@@ -4,3 +4,4 @@ recursive-include flask_monitoringdashboard/test *
 include requirements.txt
 include README.md
 include docs/changelog.rst
+include flask_monitoringdashboard/constants.json

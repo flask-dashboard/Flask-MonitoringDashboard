@@ -11,7 +11,7 @@ from flask_monitoringdashboard.database.function_calls import get_median, get_en
 from flask_monitoringdashboard.database.count import count_requests
 
 
-@blueprint.route('/measurements/overview')
+@blueprint.route('/overview')
 @secure
 def overview():
     week_ago = datetime.datetime.utcnow() - datetime.timedelta(days=7)

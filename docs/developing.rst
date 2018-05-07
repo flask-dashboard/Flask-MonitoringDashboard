@@ -44,15 +44,14 @@ and views. Together this forms a Model-View-Controller-pattern:
     - **fmd_dashboard/overview.html**: For rendering the `Overview-page`_.
     - **fmd_dashboard/graph.html**: For rendering the following graphs:
 
-      - Heatmap
+      - Hourly load
       - Version Usage
       - Requests per endpoint
-      - Time per version
       - Time per endpoint
 
     - **fmd_dashboard/graph-details.html**: For rendering the following graphs:
 
-      - Heatmap
+      - Hourly load
       - Time per version per user
       - Time per version per ip
       - Time per version
@@ -67,7 +66,7 @@ and views. Together this forms a Model-View-Controller-pattern:
     .. _`Configuration-page`: http://localhost:5000/dashboard/configuration
     .. _`Login-page`: http://localhost:5000/dashboard/login
     .. _`Rules-page`: http://localhost:5000/dashboard/rules
-    .. _`Overview-page`: http://localhost:5000/dashboard/measurements/overview
+    .. _`Overview-page`: http://localhost:5000/dashboard/overview
     .. _`Testmonitor-page`: http://localhost:5000/dashboard/testmonitor
 
   - **views**: Contains all Flask route-functions that the Dashboard defines.

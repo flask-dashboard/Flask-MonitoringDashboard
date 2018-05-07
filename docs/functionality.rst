@@ -129,7 +129,10 @@ To enable Travis to run your unit tests and send the results to the Dashboard, t
 
     .. code-block:: bash
 
-       python -m flask_monitoringdashboard.collect_performance --test_folder=./tests --times=5 --url=https://yourdomain.org/dashboard
+       python -m flask_monitoringdashboard.collect_performance \
+       --test_folder=./tests \
+       --times=5 \
+       --url=https://yourdomain.org/dashboard
 
   The `test_folder` argument specifies where the performance collection process can find the unit tests to use.
   The `times` argument (optional, default: 5) specifies how many times to run each of the unit tests.
@@ -182,9 +185,9 @@ The 'Dashboard'-menu contains the following content:
 
 1. **Overview:** A table with the all the endpoints that are being monitored (or have been monitored in the past).
    This table provides information about when the endpoint is last being requested, how often it is requested and what 
-   the median execution time is. Furthermore, it has a 'Details' button on the right. This is explained further in (7.).
+   the median execution time is. Furthermore, it has a 'Details' button on the right. This is explained further in (6).
 
-2. **Heatmap:** This graph provides information for each hour of the day of how often the endpoint is being requested. In 
+2. **Hourly load:** This graph provides information for each hour of the day of how often the endpoint is being requested. In 
    this graph it is possible to detect popular hours during the day.
 
 3. **Version Usage**: This graph provides information about the distribution of the utilization of the requests per version.
@@ -193,17 +196,14 @@ The 'Dashboard'-menu contains the following content:
 4. **Requests per endpoint:** This graph provides a row of information per day. In this graph, you can find
    whether the total number of requests grows over days.
 
-5. **Time per version:** This graph provides a row of information per application-version. In this graph, you can
-   find whether the execution time for all requests grows over the versions of the application.
-
-6. **Time per endpoint:** This graph provides a row of information per endpoint. In that row, you can find all the
+5. **Time per endpoint:** This graph provides a row of information per endpoint. In that row, you can find all the
    requests for that endpoint. This provides information whether certain endpoints perform better (in terms of
    execution time) than other endpoints.
 
-7. For each endpoint, there is a 'Details'-button (alternatively, you can click on the row itself). This provides the following 
+6. For each endpoint, there is a 'Details'-button (alternatively, you can click on the row itself). This provides the following 
    information (thus, all information below is specific for a single endpoint):
 
-   - **Heatmap:** The same heatmap as explained in (2.), but this time it is focused on the data of that particular
+   - **Hourly load:** The same hourly load as explained in (2), but this time it is focused on the data of that particular
      endpoint only.
 
    - **Time per version per user:** A circle plot with the average execution time per user per version. Thus, this
