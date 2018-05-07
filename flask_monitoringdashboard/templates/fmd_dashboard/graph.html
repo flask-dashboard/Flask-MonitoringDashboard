@@ -1,7 +1,7 @@
 {% extends "fmd_dashboard/overview.html" %}
 
 {% block subcontent %}
-<div class="card mb-3">
+<div class="card">
   <div class="card-header">
     {% block title %}
       <h4>{{ title }}</h4>
@@ -18,6 +18,8 @@
       {% endif %}
     {% endblock %}
 
+    <div class="row">
+    <div class="col-7">
     {% block form_content %}
     {% if form %}
       {% if form.type == 'SelectDateRangeForm' %}
@@ -27,22 +29,22 @@
             <form class="form" method="POST">
               {{ form.hidden_tag() }}
               <div class="row">
-                <div class="col-sm">
+                <div class="col-sm-4">
                   <i class="fa fa-calendar"></i> {{ form.start_date.label }}
                 </div>
-                <div class="col-sm">
+                <div class="col-sm-4">
                   <i class="fa fa-calendar"></i> {{ form.end_date.label }}
                 </div>
-              <div class="col-sm"></div>
+              <div class="col-sm-4"></div>
               </div>
               <div class="row">
-                <div class="col-sm">
+                <div class="col-sm-4">
                   {{ form.start_date(class_="form-control", required=true) }}
                 </div>
-                <div class="col-sm">
+                <div class="col-sm-4">
                   {{ form.end_date(class_="form-control", required=true) }}
                 </div>
-                <div class="col-sm">
+                <div class="col-sm-4">
                   {{ form.submit(class_="btn btn-primary btn-block") }}
                 </div>
               </div>
@@ -81,6 +83,17 @@
       {% endif %}
     {% endif %}
     {% endblock %}
+    </div>
+    {% if information %}
+        <div class="col-5" style="float: right">
+        <div class="card">
+            <div class="card-header"><h6>Information</h6></div>
+            <div class="card-body">{{ information|safe }}</div>
+        </div>
+        </div>
+
+    {% endif %}
+    </div>
 
     <div id="loading">
       <div class="col-md-12 col-sm-12">

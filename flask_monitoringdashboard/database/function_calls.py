@@ -68,14 +68,6 @@ def get_data(db_session):
     return get_data_between(db_session, datetime.date(1970, 1, 1), datetime.datetime.utcnow())
 
 
-def get_data_per_version(db_session, version):
-    """ Returns all data in the FunctionCall table, grouped by their version. """
-    result = db_session.query(FunctionCall.execution_time, FunctionCall.version). \
-        filter(FunctionCall.version == version).all()
-    db_session.expunge_all()
-    return result
-
-
 def get_data_per_endpoint(db_session, end):
     result = db_session.query(FunctionCall.execution_time, FunctionCall.endpoint). \
         filter(FunctionCall.endpoint == end).all()

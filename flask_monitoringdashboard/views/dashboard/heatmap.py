@@ -7,21 +7,29 @@ from flask_monitoringdashboard import blueprint
 from flask_monitoringdashboard.core.auth import secure
 from flask_monitoringdashboard.core.forms import get_daterange_form
 from flask_monitoringdashboard.core.plot import get_layout, get_figure, heatmap as plot_heatmap
+from flask_monitoringdashboard.core.plot.util import get_information
 from flask_monitoringdashboard.database import session_scope
 from flask_monitoringdashboard.database.endpoint import get_num_requests
 
+TITLE = 'Hourly load of the number of requests'
 
-TITLE = 'Heatmap of the number of requests'
+AXES_INFO = '''The X-axis presents a number of days. The Y-axis presents every hour of 
+the day.'''
+
+CONTENT_INFO = '''The color of the cell presents the number of requests that the application received 
+in a single hour. The darker the cell, the more requests it has processed. This information can be used 
+to validate on which moment of the day the Flask application processes to most requests.'''
 
 
-@blueprint.route('/measurements/heatmap', methods=['GET', 'POST'])
+@blueprint.route('/hourly_load', methods=['GET', 'POST'])
 @secure
-def heatmap():
+def hourly_load():
     form = get_daterange_form()
-    return render_template('fmd_dashboard/graph.html', form=form, graph=get_heatmap(form), title=TITLE)
+    return render_template('fmd_dashboard/graph.html', form=form, graph=hourly_load_graph(form), title=TITLE,
+                           information=get_information(AXES_INFO, CONTENT_INFO))
 
 
-def get_heatmap(form, end=None, title=None):
+def hourly_load_graph(form, end=None):
     """
     Return HTML string for generating a Heatmap.
     :param form: A SelectDateRangeForm, which is used to filter the selection
@@ -46,13 +54,7 @@ def get_heatmap(form, end=None, title=None):
             hour_index = int(parsed_time.strftime('%H'))
             heatmap_data[hour_index][day_index] = d.count
 
-    if end:
-        if not title:
-            title = ''
-        title += ' for endpoint: {}'.format(end)
-
     layout = get_layout(
-        title=title,
         xaxis=go.XAxis(range=[(form.start_date.data - datetime.timedelta(days=1, hours=6)).
                        strftime('%Y-%m-%d 12:00:00'), form.end_date.data.strftime('%Y-%m-%d 12:00:00')]),
         yaxis={'autorange': 'reversed'}

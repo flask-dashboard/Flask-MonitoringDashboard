@@ -68,22 +68,6 @@ class TestFunctionCall(unittest.TestCase):
                 self.assertEqual(result[i].version, config.version)
                 self.assertEqual(result[i].ip, IP)
 
-    def test_get_data_per_version(self):
-        """
-            Test whether the function returns the right values.
-        """
-        from flask_monitoringdashboard.database.function_calls import get_data_per_version, config
-        new_version = 1.1
-        self.assertNotEqual(config.version, new_version)
-        with session_scope() as db_session:
-            self.assertEqual(get_data_per_version(db_session, new_version), [])
-
-            result = get_data_per_version(db_session, config.version)
-            self.assertEqual(len(result), len(EXECUTION_TIMES))
-            for i in range(len(EXECUTION_TIMES)):
-                self.assertEqual(result[i].execution_time, EXECUTION_TIMES[i])
-                self.assertEqual(result[i].version, config.version)
-
     def test_get_versions(self):
         """
             Test whether the function returns the right values.

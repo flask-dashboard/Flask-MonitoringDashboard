@@ -1,33 +1,35 @@
 {% extends "fmd_dashboard/graph.html" %}
 
-{% block title %}
-{% set url_heatmap='dashboard.result_heatmap' %}
-{% set url_version_user='dashboard.result_time_per_version_per_user' %}
-{% set url_version_ip='dashboard.result_time_per_version_per_ip' %}
-{% set url_version='dashboard.result_time_per_version' %}
-{% set url_user='dashboard.result_time_per_user' %}
-{% set url_outliers='dashboard.result_outliers' %}
+{% block endpoint_menu %}
+  {% macro endpoint_submenu(endpoint, name) -%}
+    <li><a class="{{ active_if_is(endpoint) }}" href="{{ url_for(endpoint, end=details.endpoint) }}">{{ name }}</a></li>
+  {%- endmacro %}
 
-{% macro menubar_item(endpoint, name) %}
-  <li class="nav-item">
-    <a class="nav-link {{ active_if_is(endpoint) }}" href="{{ url_for(endpoint, end=details.endpoint) }}">
-      <span class="nav-link-text">{{ name }}</span>
+  {% set url_heatmap='dashboard.endpoint_hourly_load' %}
+  {% set url_version_user='dashboard.version_user' %}
+  {% set url_version_ip='dashboard.version_ip' %}
+  {% set url_version='dashboard.versions' %}
+  {% set url_user='dashboard.users' %}
+  {% set url_outliers='dashboard.outliers' %}
+  {% set endpoint_list=[url_heatmap, url_version_user, url_version_ip, url_version, url_user,
+  url_outliers] %}
+
+  <li class="nav-item" data-toggle="tooltip" data-placement="right" title="{{ details.endpoint }}">
+    <a class="nav-link nav-link-collapse {{ "my-active" if request.endpoint in endpoint_list }}"
+       data-toggle="collapse" href="#collapseEndpoint" >
+      <i class="fa fa-fw fa-asterisk"></i>
+      <span class="nav-link-text">{{ details.endpoint }}</span>
     </a>
-  </li>
-{%- endmacro %}
-
-<nav class="navbar navbar-expand-sm">
-  <div class="collapse navbar-collapse" id="nav-content">
-    <ul class="navbar-nav nav-pills">
-      {{ menubar_item(url_heatmap, 'Heatmap') }}
-      {{ menubar_item(url_version_user, 'Time per version per user') }}
-      {{ menubar_item(url_version_ip, 'Time per version per ip') }}
-      {{ menubar_item(url_version, 'Time per version') }}
-      {{ menubar_item(url_user, 'Time per user') }}
-      {{ menubar_item(url_outliers, 'Outliers') }}
+    <ul class="sidenav-second-level show"
+        id="collapseEndpoint">
+      {{ endpoint_submenu(url_heatmap, 'Hourly load') }}
+      {{ endpoint_submenu(url_version_user, 'Time per version per user') }}
+      {{ endpoint_submenu(url_version_ip, 'Time per version per ip') }}
+      {{ endpoint_submenu(url_version, 'Time per version') }}
+      {{ endpoint_submenu(url_user, 'Time per user') }}
+      {{ endpoint_submenu(url_outliers, 'Outliers') }}
     </ul>
-  </div>
-</nav>
+  </li>
 {% endblock %}
 
 {% block summary %}

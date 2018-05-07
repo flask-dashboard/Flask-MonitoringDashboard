@@ -16,34 +16,28 @@ class TestMeasurement(unittest.TestCase):
         """
             Just retrieve the content and check if nothing breaks
         """
-        test_admin_secure(self, 'measurements/overview')
+        test_admin_secure(self, 'overview')
 
     def test_version_usage(self):
         """
             Just retrieve the content and check if nothing breaks
         """
-        test_admin_secure(self, 'measurements/version_usage')
+        test_admin_secure(self, 'version_usage')
 
     def test_heatmap(self):
         """
             Just retrieve the content and check if nothing breaks
         """
-        test_admin_secure(self, 'measurements/heatmap')
+        test_admin_secure(self, 'hourly_load')
 
     def test_page_number_of_requests_per_endpoint(self):
         """
             Just retrieve the content and check if nothing breaks
         """
-        test_admin_secure(self, 'measurements/requests')
-
-    def test_page_boxplot_per_version(self):
-        """
-            Just retrieve the content and check if nothing breaks
-        """
-        test_admin_secure(self, 'measurements/versions')
+        test_admin_secure(self, 'requests')
 
     def test_page_boxplot_per_endpoint(self):
         """
             Just retrieve the content and check if nothing breaks
         """
-        test_admin_secure(self, 'measurements/endpoints')
+        test_admin_secure(self, 'endpoints')

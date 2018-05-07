@@ -23,7 +23,8 @@ def get_endpoint_details(db_session, endpoint):
 def get_details(db_session):
     """ Return details about the deployment """
     import json
-    with open('flask_monitoringdashboard/constants.json', 'r') as f:
+    from flask_monitoringdashboard import loc
+    with open(loc() + 'constants.json', 'r') as f:
         constants = json.load(f)
 
     return {
