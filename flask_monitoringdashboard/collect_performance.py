@@ -1,7 +1,7 @@
 import argparse
 import csv
-import os
 import datetime
+import os
 import time
 from unittest import TestLoader
 

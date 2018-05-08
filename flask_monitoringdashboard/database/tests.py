@@ -61,6 +61,7 @@ def get_res_current(db_session, version):
 
 
 def get_line_results(db_session):
+    """ Return test performance result statistics. """
     return db_session.query(TestRun.version,
                             func.avg(TestRun.execution_time).label('avg'),
                             func.min(TestRun.execution_time).label('min'),
@@ -70,14 +71,15 @@ def get_line_results(db_session):
 
 
 def get_suites(db_session):
+    """ Returns all test suites that have been run. """
     return db_session.query(TestRun.suite).group_by(TestRun.suite).all()
 
 
 def get_measurements(db_session, suite):
-    """Return all measurements for some Travis build. Used for creating a box plot. """
+    """ Return all measurements for some Travis build. Used for creating a box plot. """
     return db_session.query(TestRun).filter(TestRun.suite == suite).all()
 
 
 def get_test_measurements(db_session, name, suite):
-    """Return all measurements for some test of some Travis build. Used for creating a box plot. """
+    """ Return all measurements for some test of some Travis build. Used for creating a box plot. """
     return db_session.query(TestRun).filter(TestRun.name == name, TestRun.suite == suite).all()

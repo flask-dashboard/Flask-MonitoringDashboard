@@ -55,6 +55,11 @@ def bind(app):
 
         @user_app.after_request
         def after_request(response):
+            """
+            Add after_request function that logs the endpoint hits.
+            :param response: the response object that the actual endpoint returns
+            :return: the unchanged response of the original endpoint
+            """
             hit_time_stamp = str(datetime.datetime.now())
             home = os.path.expanduser("~")
             log = open(home + '/endpoint_hits.log', 'a')

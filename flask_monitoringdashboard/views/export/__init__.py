@@ -12,6 +12,10 @@ from flask_monitoringdashboard.database.tests_grouped import reset_tests_grouped
 
 @blueprint.route('/submit-test-results', methods=['POST'])
 def submit_test_results():
+    """
+    Endpoint for letting Travis submit its unit test performance results to the Dashboard.
+    :return: nothing, 204 (No Content)
+    """
     content = request.get_json()['test_runs']
     with session_scope() as db_session:
         suite = get_suite_nr(db_session)
