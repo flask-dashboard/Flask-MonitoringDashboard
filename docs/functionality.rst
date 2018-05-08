@@ -113,19 +113,22 @@ Using the collected data, a number of observations can be made:
 
 - Do users experience different execution times in different version of the application?
 
-Test-Coverage Monitoring
+Monitoring Unit Test Performance
 ------------------------
-To enable Travis to run your unit tests and send the results to the Dashboard, two steps have to be taken:
+In addition to monitoring the performance of a live deployed version of some web service,
+the performance of such a web service can also be monitored by making use of its unit tests.
+This of course assumes that several unit tests were written for the web service project it concerns.
+Also, since this monitoring should be done in an automated way, a Travis setup for the project is a prerequisite.
 
-1. The installation requirement for the Dashboard has to be added to the `setup.py` file of your app:
+To enable Travis to run your unit tests and send the obtained results to the Dashboard, two steps have to be taken:
+
+1. In the `setup.py` file of your web service, the Dashboard has to be added as a requirement:
 
     .. code-block:: python
 
-       dependency_links=["https://github.com/flask-dashboard/Flask-MonitoringDashboard/tarball/master#egg=flask_monitoringdashboard"]
-
        install_requires=('flask_monitoringdashboard')
 
-2. In your `.travis.yml` file, one script command should be added:
+2. In the `.travis.yml` file, a script command has to be added:
 
     .. code-block:: bash
 
