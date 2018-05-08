@@ -21,7 +21,7 @@ def get_versions(db_session, end=None):
     :param end: the versions that are used in a specific endpoint
     :return: a list with the versions (as a string)
     """
-    result = db_session.query(distinct(FunctionCall.version)). \
+    result = db_session.query(FunctionCall). \
         filter((FunctionCall.endpoint == end) | (end is None)). \
         order_by(asc(FunctionCall.time)).all()
-    return [row[0] for row in result]
+    return list(set([row.version for row in result]))
