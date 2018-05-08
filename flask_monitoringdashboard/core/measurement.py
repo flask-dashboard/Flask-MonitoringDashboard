@@ -106,7 +106,7 @@ def track_last_accessed(func, endpoint):
     def wrapper(*args, **kwargs):
         try:
             with session_scope() as db_session:
-                update_last_accessed(db_session, endpoint=endpoint, value=datetime.datetime.utcnow())
+                update_last_accessed(db_session, endpoint=endpoint, value=datetime.datetime.now())
         except:
             traceback.print_exc()
 
