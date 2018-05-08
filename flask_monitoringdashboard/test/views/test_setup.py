@@ -40,7 +40,7 @@ class TestSetup(unittest.TestCase):
         """
             Test whether it is possible to monitor a rule
         """
-        data = {'checkbox-static': True}
+        data = {'name': 'checkbox-static', 'value': 'true'}
         with self.app.test_client() as c:
             login(c)
             self.assertEqual(200, c.post('dashboard/rules', data=data).status_code)
