@@ -65,7 +65,7 @@ def get_data(db_session):
     Equivalent function to get_data_from, but returns all data.
     :return: all data from the database in the Endpoint-table.
     """
-    return get_data_between(db_session, datetime.date(1970, 1, 1), datetime.datetime.utcnow())
+    return get_data_between(db_session, datetime.date(1970, 1, 1), datetime.datetime.now())
 
 
 def get_data_per_endpoint(db_session, end):

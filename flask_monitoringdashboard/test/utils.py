@@ -9,7 +9,7 @@ NAME = 'main'
 IP = '127.0.0.1'
 GROUP_BY = '1'
 EXECUTION_TIMES = [1000, 2000, 3000, 4000, 50000]
-TIMES = [datetime.datetime.utcnow()] * 5
+TIMES = [datetime.datetime.now()] * 5
 OUTLIER_COUNT = 3
 for i in range(len(TIMES)):
     TIMES[i] -= datetime.timedelta(seconds=len(EXECUTION_TIMES)-i)
@@ -46,7 +46,7 @@ def add_fake_data():
 
     # Add MonitorRule
     with session_scope() as db_session:
-        db_session.add(MonitorRule(endpoint=NAME, monitor=True, time_added=datetime.datetime.utcnow(),
+        db_session.add(MonitorRule(endpoint=NAME, monitor=True, time_added=datetime.datetime.now(),
                                    version_added=config.version, last_accessed=TIMES[0]))
 
     # Add Outliers
