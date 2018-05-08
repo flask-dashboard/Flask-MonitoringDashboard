@@ -23,7 +23,7 @@ def get_requests_per_day(db_session, endpoint, list_of_days):
     for day in list_of_days:
         result = db_session.query(FunctionCall.execution_time). \
             filter(FunctionCall.endpoint == endpoint). \
-            filter(func.strftime('%Y-%m-%d', FunctionCall.time) == day.strftime('%Y-%m-%d')).count()
+            filter(func.date(FunctionCall.time) == day).count()
         result_list.append(result)
     return result_list
 
