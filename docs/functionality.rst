@@ -137,10 +137,17 @@ To enable Travis to run your unit tests and send the obtained results to the Das
        --times=5 \
        --url=https://yourdomain.org/dashboard
 
-  The `test_folder` argument specifies where the performance collection process can find the unit tests to use.
-  The `times` argument (optional, default: 5) specifies how many times to run each of the unit tests.
-  The `url` argument (optional) specifies where the Dashboard is that needs to receive the performance results.
-  When the last argument is omitted, the performance testing will run, but without publishing the results.
+The `test_folder` argument specifies where the performance collection process can find the unit tests to use.
+The `times` argument (optional, default: 5) specifies how many times to run each of the unit tests.
+The `url` argument (optional) specifies where the Dashboard is that needs to receive the performance results.
+When the last argument is omitted, the performance testing will run, but without publishing the results.
+
+Now Travis will monitor the performance of the unit tests automatically after every commit that is made.
+These results will then show up in the Dashboard, under 'Testmonitor'.
+Here, all tests that have been run will show up, along with the endpoints of the web service that they test.
+Visualizations of the performance evolution of the unit tests are also available here.
+This may give the developer of the web service insight in the expected performance change when the new version of the
+web service should be deployed.
 
 Outliers
 --------

@@ -15,7 +15,7 @@ def create_app():
     dashboard.config.group_by = 'User', lambda: 3
     dashboard.config.version = 2.0
     # dashboard.config.database_name = 'sqlite:///flask_monitoringdashboard.db'
-    dashboard.config.database_name = 'mysql+pymysql://root:admin@localhost/flask_test'
+    dashboard.config.database_name = 'mysql+pymysql://root@localhost/flask_test'
     dashboard.bind(app=app)
 
     @app.route('/')
