@@ -22,8 +22,6 @@ def get_versions(db_session, end=None):
     :return: a list with the versions (as a string)
     """
     result = db_session.query(FunctionCall). \
-        distinct(FunctionCall.version). \
-        group_by(FunctionCall.version). \
         filter((FunctionCall.endpoint == end) | (end is None)). \
         order_by(asc(FunctionCall.time)).all()
-    return [row.version for row in result]
+    return list(set([row.version for row in result]))
