@@ -39,12 +39,13 @@ def version_usage_graph():
 
         requests = [count_requests_group(db_session, FunctionCall.version == v) for v in versions]
         total_hits = []
-        hits = [[] for _ in endpoints]
+        hits = [[]] * len(endpoints)
+
         for hits_version in requests:
             total_hits.append(max(1, sum([value for key, value in hits_version])))
 
         for j in range(len(endpoints)):
-            hits[j] = [0 for _ in versions]
+            hits[j] = [0] * len(versions)
             for i in range(len(versions)):
                 hits[j][i] = get_value(requests[i], endpoints[j]) * 100 / total_hits[i]
 

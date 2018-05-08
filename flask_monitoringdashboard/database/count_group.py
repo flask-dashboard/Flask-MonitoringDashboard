@@ -36,3 +36,10 @@ def count_requests_group(db_session, *where):
     """
     return count_rows_group(db_session, FunctionCall.id, *where)
 
+
+def count_requests_per_day(db_session, list_of_days):
+    """ Return the number of hits for all endpoints per day.
+    :param db_session: session for the database
+    :param list_of_days: list with datetime.datetime objects. """
+    return [count_rows_group(db_session, FunctionCall.id, func.date(FunctionCall.time) == day)
+            for day in list_of_days]
