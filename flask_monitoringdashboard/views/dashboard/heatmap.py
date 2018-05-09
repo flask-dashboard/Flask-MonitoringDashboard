@@ -11,7 +11,7 @@ from flask_monitoringdashboard.core.plot.util import get_information
 from flask_monitoringdashboard.database import session_scope
 from flask_monitoringdashboard.database.endpoint import get_num_requests
 
-TITLE = 'Hourly load of the number of requests'
+TITLE = 'Hourly API Utilization'
 
 AXES_INFO = '''The X-axis presents a number of days. The Y-axis presents every hour of 
 the day.'''

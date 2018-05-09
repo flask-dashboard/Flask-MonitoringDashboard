@@ -16,7 +16,7 @@ from flask_monitoringdashboard.database.function_calls import get_median
 from flask_monitoringdashboard.database.versions import get_date_first_request, get_versions
 
 
-TITLE = 'Median execution time for every unique user per ip'
+TITLE = 'IP-Focused Multi-Version Performance'
 
 AXES_INFO = '''In this graph, the X-axis presents the versions that are used. The Y-axis presents
 (a subset of) all IP-addresses. You can use the slider to select a subset of the all IP-addresses.'''
@@ -35,7 +35,8 @@ def version_ip(end):
         form = get_slider_form(count_ip(db_session, end))
     graph = version_ip_graph(end, form)
     return render_template('fmd_dashboard/graph-details.html', details=details, graph=graph, form=form,
-                           title=TITLE, information=get_information(AXES_INFO, CONTENT_INFO))
+                           title='{} for {}'.format(TITLE, end),
+                           information=get_information(AXES_INFO, CONTENT_INFO))
 
 
 def version_ip_graph(end, form):

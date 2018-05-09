@@ -15,7 +15,7 @@ from flask_monitoringdashboard.database.endpoint import get_group_by_sorted
 from flask_monitoringdashboard.database.function_calls import get_median
 from flask_monitoringdashboard.database.versions import get_date_first_request, get_versions
 
-TITLE = 'Median execution time for every unique user per version'
+TITLE = 'User-Focused Multi-Version Performance'
 
 AXES_INFO = '''In this graph, the X-axis presents the versions that are used. The Y-axis presents
 (a subset of) all unique users, as specified by "dashboard.config.group_by". You can use the slider
@@ -34,7 +34,8 @@ def version_user(end):
         form = get_slider_form(count_users(db_session, end))
     graph = version_user_graph(end, form)
     return render_template('fmd_dashboard/graph-details.html', details=details, graph=graph, form=form,
-                           information=get_information(AXES_INFO, CONTENT_INFO), title=TITLE)
+                           title='{} for {}'.format(TITLE, end),
+                           information=get_information(AXES_INFO, CONTENT_INFO))
 
 
 def version_user_graph(end, form):
