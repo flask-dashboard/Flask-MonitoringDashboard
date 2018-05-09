@@ -17,6 +17,7 @@ def get_layout(**kwargs):
     kwargs = add_default_value('autosize', True, **kwargs)
     kwargs = add_default_value('plot_bgcolor', 'rgba(249,249,249,1)', **kwargs)
     kwargs = add_default_value('height', 700, **kwargs)
+    kwargs = add_default_value('hovermode', 'closest', **kwargs)
     return go.Layout(**kwargs)
 
 

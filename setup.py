@@ -1,6 +1,6 @@
 import setuptools
 import os
-from constants import VERSION, AUTHOR, EMAIL
+import json
 loc = os.path.dirname(os.path.abspath(__file__))
 
 
@@ -14,17 +14,20 @@ def get_description():
 with open(loc + '/requirements.txt') as f:
     required = f.read().splitlines()
 
+with open('flask_monitoringdashboard/constants.json', 'r') as f:
+    constants = json.load(f)
+
 setuptools.setup(
     name="Flask-MonitoringDashboard",
-    version=VERSION,
+    version=constants['version'],
     packages=setuptools.find_packages(),
     include_package_data=True,
     platforms='Any',
     zip_safe=False,
     test_suite='flask_monitoringdashboard.test.get_test_suite',
     url='https://github.com/flask-dashboard/Flask-MonitoringDashboard',
-    author=AUTHOR,
-    author_email=EMAIL,
+    author=constants['author'],
+    author_email=constants['email'],
     description="Automatically monitor the evolving performance of Flask/Python web services.",
     long_description=get_description(),
     install_requires=required,

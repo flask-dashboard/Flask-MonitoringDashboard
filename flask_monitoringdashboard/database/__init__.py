@@ -67,7 +67,7 @@ class FunctionCall(Base):
     # execution_time in ms
     execution_time = Column(Float, nullable=False)
     # time of adding the result to the database
-    time = Column(DateTime, default=datetime.datetime.utcnow)
+    time = Column(DateTime, default=datetime.datetime.now)
     # version of the website at the moment of adding the result to the database
     version = Column(String(100), nullable=False)
     # which user is calling the function

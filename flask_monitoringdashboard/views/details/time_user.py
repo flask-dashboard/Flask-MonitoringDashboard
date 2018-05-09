@@ -4,24 +4,36 @@ from flask_monitoringdashboard import blueprint
 from flask_monitoringdashboard.core.auth import secure
 from flask_monitoringdashboard.core.forms import get_slider_form
 from flask_monitoringdashboard.core.plot import get_layout, get_figure, boxplot
+from flask_monitoringdashboard.core.plot.util import get_information
 from flask_monitoringdashboard.core.utils import get_endpoint_details
 from flask_monitoringdashboard.database import FunctionCall, session_scope
 from flask_monitoringdashboard.database.count import count_users
 from flask_monitoringdashboard.database.endpoint import get_all_measurement_per_column, get_group_by_sorted
 
 
-@blueprint.route('/result/<end>/time_per_user', methods=['GET', 'POST'])
+TITLE = 'Execution time (ms) for every user'
+
+AXES_INFO = '''The X-axis presents the execution time in ms. The Y-axis presents (a subset of) 
+all unique users.'''
+
+CONTENT_INFO = '''This graph shows a horizontal boxplot for the unique users that uses the application.
+With this graph you can found out whether the performance is different across different users.'''
+
+
+@blueprint.route('/endpoint/<end>/users', methods=['GET', 'POST'])
 @secure
-def result_time_per_user(end):
+def users(end):
     with session_scope() as db_session:
         details = get_endpoint_details(db_session, end)
         form = get_slider_form(count_users(db_session, end))
-    graph = get_time_per_user(end, form)
+    graph = users_graph(end, form)
 
-    return render_template('fmd_dashboard/graph-details.html', details=details, graph=graph, form=form)
+    return render_template('fmd_dashboard/graph-details.html', details=details, graph=graph, form=form,
+                           title='{} for {}'.format(TITLE, end), information=
+                           get_information(AXES_INFO, CONTENT_INFO))
 
 
-def get_time_per_user(end, form):
+def users_graph(end, form):
     """
     Return an HTML box plot with a specific number of
     :param end: get the data for this endpoint only
@@ -38,7 +50,6 @@ def get_time_per_user(end, form):
 
     layout = get_layout(
         height=350 + 40 * len(data),
-        title='Execution time for every user for endpoint: ' + end,
         xaxis={'title': 'Execution time (ms)'},
         yaxis={'type': 'category', 'title': 'User'}
     )
