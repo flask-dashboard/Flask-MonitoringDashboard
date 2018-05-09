@@ -3,6 +3,13 @@
 {% endblock %}
 
 {% block graph_content %}
+          {% if graph %}
+        <div class="col-sm-12">
+          {{ graph|safe }}
+        </div>
+      {% else %}
+        <p>No data available.</p>
+      {% endif %}
 <p> <strong>Mean CPU Percentages: </strong>{{ mean }}</p>
 {{ pagination.info }}
 {{ pagination.links }}

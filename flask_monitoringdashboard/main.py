@@ -12,22 +12,23 @@ def create_app():
     app = Flask(__name__)
 
     dashboard.config.outlier_detection_constant = 0
-    dashboard.config.group_by = 'User', 1
-    dashboard.config.version = 1.0
-    dashboard.config.database_name = 'mysql+pymysql://root@localhost/flask_test'
-    dashboard.bind(app)
-
-    @app.route('/endpoint1')
-    def endpoint1():
-        return redirect(url_for('dashboard.index'))
-
-    @app.route('/endpoint2')
-    def endpoint2():
-        return redirect(url_for('dashboard.index'))
+    dashboard.config.group_by = 'User', lambda: 4
+    dashboard.config.version = 2.0
+    dashboard.config.database_name = 'sqlite:///flask_monitoringdashboard.db'
+    # dashboard.config.database_name = 'mysql+pymysql://root:admin@localhost/flask_test'
+    dashboard.bind(app=app)
 
     @app.route('/')
     def main():
         return redirect(url_for('dashboard.index'))
+
+    @app.route('/endpoint')
+    def endpoint():
+        return redirect(url_for('dashboard.index'))
+
+    @app.route('/outl')
+    def outl():
+        return 'sfsef'
 
     return app
 
