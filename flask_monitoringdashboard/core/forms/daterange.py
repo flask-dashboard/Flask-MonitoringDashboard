@@ -2,16 +2,26 @@ import datetime
 
 from flask import request
 from flask_wtf import FlaskForm
-from wtforms import validators, SubmitField
+from wtforms import validators, SubmitField, SelectField
 from wtforms.fields.html5 import DateField
+import pytz
+
 
 DATE_FORMAT = '%Y-%m-%d'
+
+
+class timezone_select_field(SelectField):
+    def __init__(self, *args, **kwargs):
+        super(timezone_select_field, self).__init__(*args, **kwargs)
+        self.choices = [(tz, tz) for tz in pytz.common_timezones]
+        self.default = pytz.timezone('UTC')
 
 
 class SelectDateRangeForm(FlaskForm):
     """ Used for selecting two dates, which together specify a range. """
     start_date = DateField('Start date', format=DATE_FORMAT, validators=[validators.data_required()])
     end_date = DateField('End date', format=DATE_FORMAT, validators=[validators.data_required()])
+    timezone = timezone_select_field('Timezone')
     submit = SubmitField('Submit')
     type = 'SelectDateRangeForm'
 

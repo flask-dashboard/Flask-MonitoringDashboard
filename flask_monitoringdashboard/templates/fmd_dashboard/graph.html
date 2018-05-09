@@ -33,6 +33,9 @@
                 <div class="col-sm">
                   <i class="fa fa-calendar"></i> {{ form.end_date.label }}
                 </div>
+		<div class="col-sm">
+			<i class="fa fa-clock-o" aria-hidden="true"></i>
+		</div>
               <div class="col-sm"></div>
               </div>
               <div class="row">
@@ -42,6 +45,9 @@
                 <div class="col-sm">
                   {{ form.end_date(class_="form-control", required=true) }}
                 </div>
+		<div class="col-sm">
+		  {{ form.timezone(class_="form-control") }}
+		</div>
                 <div class="col-sm">
                   {{ form.submit(class_="btn btn-primary btn-block") }}
                 </div>
