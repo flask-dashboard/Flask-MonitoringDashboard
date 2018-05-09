@@ -11,9 +11,11 @@ from flask_monitoringdashboard.core.plot.util import get_information
 from flask_monitoringdashboard.core.utils import get_endpoint_details, formatter
 from flask_monitoringdashboard.database import FunctionCall, session_scope
 from flask_monitoringdashboard.database.count import count_users
+from flask_monitoringdashboard.database.count_group import get_value
 from flask_monitoringdashboard.database.endpoint import get_group_by_sorted
 from flask_monitoringdashboard.database.function_calls import get_median
-from flask_monitoringdashboard.database.versions import get_date_first_request, get_versions
+from flask_monitoringdashboard.database.versions import get_versions, get_first_requests
+from flask_monitoringdashboard.views.details.time_version import format_version
 
 TITLE = 'User-Focused Multi-Version Performance'
 
@@ -32,42 +34,47 @@ def version_user(end):
     with session_scope() as db_session:
         details = get_endpoint_details(db_session, end)
         form = get_slider_form(count_users(db_session, end))
-    graph = version_user_graph(end, form)
+        graph = version_user_graph(db_session, end, form)
     return render_template('fmd_dashboard/graph-details.html', details=details, graph=graph, form=form,
                            title='{} for {}'.format(TITLE, end),
                            information=get_information(AXES_INFO, CONTENT_INFO))
 
 
-def version_user_graph(end, form):
-    with session_scope() as db_session:
-        group_by_list = get_group_by_sorted(db_session, end, form.get_slider_value())
-        versions = get_versions(db_session, end)
+def version_user_graph(db_session, end, form):
+    """
+    :param db_session: session for the database
+    :param end: the endpoint to filter the data on
+    :param form: form for reducing the size of the graph
+    :return: an HTML bubble plot
+    """
+    group_by_list = get_group_by_sorted(db_session, end, form.get_slider_value())
+    versions = get_versions(db_session, end)
+    used = get_first_requests(db_session)
 
-        data = []
-        for group_by in group_by_list:
-            data.append(
-                [get_median(db_session, end, FunctionCall.version == v, FunctionCall.group_by == group_by) for v in
-                 versions])
-        average = get_average_bubble_size(data)
+    data = []
+    for group_by in group_by_list:
+        data.append(
+            [get_median(db_session, end, FunctionCall.version == v, FunctionCall.group_by == group_by) for v in
+             versions])
+    average = get_average_bubble_size(data)
 
-        trace = []
-        for i in range(len(group_by_list)):
-            hovertext = ['Version: {}<br>Time: {}'.format(versions[j], formatter(data[i][j])) for j in
-                         range(len(versions))]
-            trace.append(scatter(
-                x=['{}<br>{}'.format(v, get_date_first_request(db_session, v).strftime('%b %d %H:%M')) for v in
-                   versions],
-                hovertext=hovertext,
-                y=[group_by_list[i]] * len(versions),
-                name=group_by_list[i],
-                mode='markers',
-                marker={
-                    'color': [get_color(group_by_list[i])] * len(versions),
-                    'size': [math.sqrt(d) for d in data[i]],
-                    'sizeref': average,
-                    'sizemode': 'area'
-                }
-            ))
+    trace = []
+    for i in range(len(group_by_list)):
+        hovertext = ['Version: {}<br>Time: {}'.format(versions[j], formatter(data[i][j])) for j in
+                     range(len(versions))]
+        trace.append(scatter(
+            x=[format_version(v, get_value(used, v)) for v in versions],
+            hovertext=hovertext,
+            y=[group_by_list[i]] * len(versions),
+            name=group_by_list[i],
+            mode='markers',
+            marker={
+                'color': [get_color(group_by_list[i])] * len(versions),
+                'size': [math.sqrt(d) for d in data[i]],
+                'sizeref': average,
+                'sizemode': 'area'
+            }
+        ))
 
     layout = get_layout(
         height=350 + 40 * len(trace),

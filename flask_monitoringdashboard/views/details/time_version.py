@@ -25,10 +25,10 @@ graph you can found out whether the performance changes across different version
 def versions(end):
     with session_scope() as db_session:
         details = get_endpoint_details(db_session, end)
-    graph = versions_graph(end)
-    return render_template('fmd_dashboard/graph-details.html', details=details, graph=graph,
-                           title='{} for {}'.format(TITLE, end),
-                           information=get_information(AXES_INFO, CONTENT_INFO))
+        graph = versions_graph(db_session, end)
+        return render_template('fmd_dashboard/graph-details.html', details=details, graph=graph,
+                               title='{} for {}'.format(TITLE, end),
+                               information=get_information(AXES_INFO, CONTENT_INFO))
 
 
 def format_version(version, first_used):
@@ -42,14 +42,13 @@ def format_version(version, first_used):
     return '{}<br>{}'.format(version, first_used.strftime('%Y-%m-%d %H:%M'))
 
 
-def versions_graph(end):
-    with session_scope() as db_session:
-        versions = get_versions(db_session, end=end)
-        times = get_version_data_grouped(db_session, lambda x: simplify(x, 10), FunctionCall.endpoint == end)
-        used = get_first_requests(db_session)
-        data = [boxplot(name=format_version(v, get_value(used, v)), values=get_value(times, v),
-                        marker={'color': get_color(v)})
-                for v in versions]
+def versions_graph(db_session, end):
+    versions = get_versions(db_session, end=end)
+    times = get_version_data_grouped(db_session, lambda x: simplify(x, 10), FunctionCall.endpoint == end)
+    used = get_first_requests(db_session)
+    data = [boxplot(name=format_version(v, get_value(used, v)), values=get_value(times, v),
+                    marker={'color': get_color(v)})
+            for v in versions]
 
     layout = get_layout(
         height=350 + 40 * len(versions),
