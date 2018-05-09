@@ -29,28 +29,28 @@
             <form class="form" method="POST">
               {{ form.hidden_tag() }}
               <div class="row">
-                <div class="col-sm-4">
+                <div class="col-sm-3">
                   <i class="fa fa-calendar"></i> {{ form.start_date.label }}
                 </div>
-                <div class="col-sm-4">
+                <div class="col-sm-3">
                   <i class="fa fa-calendar"></i> {{ form.end_date.label }}
                 </div>
-		<div class="col-sm-4">
-			<i class="fa fa-clock-o" aria-hidden="true"></i>
+		<div class="col-sm-3">
+			<i class="fa fa-clock-o" aria-hidden="true"></i> {{ form.timezone.label }}
 		</div>
-              <div class="col-sm-4"></div>
+              <div class="col-sm-3"></div>
               </div>
               <div class="row">
-                <div class="col-sm-4">
+                <div class="col-sm-3">
                   {{ form.start_date(class_="form-control", required=true) }}
                 </div>
-                <div class="col-sm-4">
+                <div class="col-sm-3">
                   {{ form.end_date(class_="form-control", required=true) }}
                 </div>
-		<div class="col-sm-4">
+		<div class="col-sm-3">
 		  {{ form.timezone(class_="form-control") }}
 		</div>
-                <div class="col-sm-4">
+                <div class="col-sm-3">
                   {{ form.submit(class_="btn btn-primary btn-block") }}
                 </div>
               </div>
