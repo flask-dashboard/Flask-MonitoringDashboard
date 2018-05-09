@@ -41,23 +41,6 @@ class TestEndpoint(unittest.TestCase):
             update_monitor_rule(db_session, NAME, new_value)
             self.assertEqual(get_monitor_rule(db_session, NAME).monitor, new_value)
 
-    def test_get_all_measurement_per_column(self):
-        """
-            Test whether the function returns the right values.
-        """
-        from flask_monitoringdashboard.database.endpoint import get_all_measurement_per_column
-        from flask_monitoringdashboard.database import FunctionCall
-        from flask_monitoringdashboard import config
-        with session_scope() as db_session:
-            result = get_all_measurement_per_column(db_session, endpoint=NAME, column=FunctionCall.ip, value=IP)
-            self.assertEqual(len(result), len(EXECUTION_TIMES))
-            for row in result:
-                self.assertIn(row.execution_time, EXECUTION_TIMES)
-                self.assertEqual(row.version, config.version)
-                self.assertEqual(row.endpoint, NAME)
-                self.assertEqual(row.group_by, GROUP_BY)
-                self.assertEqual(row.ip, IP)
-
     def test_update_last_accessed(self):
         """
             Test whether the function returns the right values.
@@ -65,7 +48,8 @@ class TestEndpoint(unittest.TestCase):
         import datetime
         time = datetime.datetime.utcnow()
         from flask_monitoringdashboard.database.endpoint import update_last_accessed, get_last_accessed_times
+        from flask_monitoringdashboard.database.count_group import get_value
         with session_scope() as db_session:
             update_last_accessed(db_session, NAME, time)
-            result = get_last_accessed_times(db_session, NAME)
+            result = get_value(get_last_accessed_times(db_session), NAME)
             self.assertEqual(result, time)

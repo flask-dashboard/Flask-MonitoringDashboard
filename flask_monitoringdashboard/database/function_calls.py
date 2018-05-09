@@ -17,20 +17,6 @@ def add_function_call(db_session, execution_time, endpoint, ip):
     db_session.add(FunctionCall(endpoint=endpoint, execution_time=execution_time, version=config.version, ip=ip))
 
 
-def get_median(db_session, endpoint, *where):
-    """ Return the median for a specific endpoint within a certain time interval.
-    If date_from is not specified, all results are counted
-    :param endpoint: name of the endpoint
-    :param where: additional where clause
-    """
-    num_rows = count_requests(db_session, endpoint, *where)
-    result = db_session.query(FunctionCall.execution_time). \
-        filter(FunctionCall.endpoint == endpoint, *where). \
-        order_by(FunctionCall.execution_time).limit(2 - num_rows % 2).offset((num_rows - 1) / 2).all()
-    values = [r[0] for r in result]
-    return sum(values) / max(1, len(values))
-
-
 def get_data_between(db_session, time_from, time_to=None):
     """
         Returns all data in the FunctionCall table, for the export data option.
@@ -39,9 +25,7 @@ def get_data_between(db_session, time_from, time_to=None):
     query = db_session.query(FunctionCall).filter(FunctionCall.time > time_from)
     if time_to:
         query = query.filter(FunctionCall.time <= time_to)
-    result = query.all()
-    db_session.expunge_all()
-    return result
+    return query.all()
 
 
 def get_data(db_session):
@@ -50,13 +34,6 @@ def get_data(db_session):
     :return: all data from the database in the Endpoint-table.
     """
     return get_data_between(db_session, datetime.date(1970, 1, 1), datetime.datetime.utcnow())
-
-
-def get_data_per_endpoint(db_session, end):
-    result = db_session.query(FunctionCall.execution_time, FunctionCall.endpoint). \
-        filter(FunctionCall.endpoint == end).all()
-    db_session.expunge_all()
-    return result
 
 
 def get_endpoints(db_session):

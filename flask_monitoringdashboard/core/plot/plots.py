@@ -1,8 +1,10 @@
 """
     Contains all plots that are visible in the Dashboard
 """
+import math
 
 import plotly.graph_objs as go
+
 from flask_monitoringdashboard.core.colors import get_color
 from flask_monitoringdashboard.core.plot.util import add_default_value
 
@@ -66,12 +68,4 @@ def get_average_bubble_size(data):
     :param data: a list with lists: [[a, b, c], [d, e, f]]
     :return: a constant for the bubble size
     """
-    def get_max(my_list):
-        m = None
-        for item in my_list:
-            if isinstance(item, list):
-                item = get_max(item)
-            if not m or m < item:
-                m = item
-        return m
-    return get_max(data) / BUBBLE_SIZE_RATIO
+    return max([max([math.sqrt(r) for r in row]) for row in data]) / BUBBLE_SIZE_RATIO

@@ -41,10 +41,7 @@ def hourly_load_graph(form, end=None):
     days = form.get_days()
 
     # create empty 2D-list: [hour][day]
-    heatmap_data = []
-    for i in range(len(hours)):
-        heatmap_data.append([])
-        [heatmap_data[i].append(0) for _ in days]
+    heatmap_data = [[0] * len(days)] * len(hours)
 
     # add data from database to heatmap_data
     with session_scope() as db_session:

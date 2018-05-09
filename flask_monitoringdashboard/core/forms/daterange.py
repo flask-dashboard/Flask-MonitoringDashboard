@@ -13,7 +13,6 @@ class SelectDateRangeForm(FlaskForm):
     start_date = DateField('Start date', format=DATE_FORMAT, validators=[validators.data_required()])
     end_date = DateField('End date', format=DATE_FORMAT, validators=[validators.data_required()])
     submit = SubmitField('Submit')
-    type = 'SelectDateRangeForm'
     title = 'Select two dates for reducing the size of the graph'
 
     def get_days(self):
