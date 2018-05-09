@@ -15,8 +15,8 @@ from flask_monitoringdashboard.database.data_grouped import get_data_grouped
 @blueprint.route('/overview')
 @secure
 def overview():
-    week_ago = datetime.datetime.now() - datetime.timedelta(days=7)
-    today = datetime.datetime.now().replace(hour=0, minute=0, second=0, microsecond=0)
+    week_ago = datetime.datetime.utcnow() - datetime.timedelta(days=7)
+    today = datetime.datetime.utcnow().replace(hour=0, minute=0, second=0, microsecond=0)
 
     result = []
     with session_scope() as db_session:

@@ -51,7 +51,7 @@ class TestDBTests(unittest.TestCase):
         with session_scope() as db_session:
             self.test_add_test()  # adds a new test
             self.assertEqual(NAME2, get_tests(db_session)[1].name)
-            time = datetime.datetime.now()
+            time = datetime.datetime.utcnow()
             succeeded = True
             add_or_update_test(db_session, NAME2, time, succeeded)
             result = get_tests(db_session)
@@ -70,7 +70,7 @@ class TestDBTests(unittest.TestCase):
         with session_scope() as db_session:
             self.assertEqual(get_results(db_session), [])
             for exec_time in EXECUTION_TIMES:
-                add_test_result(db_session, NAME, exec_time, datetime.datetime.now(), config.version, SUITE, 2)
+                add_test_result(db_session, NAME, exec_time, datetime.datetime.utcnow(), config.version, SUITE, 2)
             result = get_results(db_session)
             self.assertEqual(len(result), 1)
             self.assertEqual(result[0].name, NAME)
@@ -86,7 +86,7 @@ class TestDBTests(unittest.TestCase):
         import datetime
         with session_scope() as db_session:
             self.assertEqual(get_suite_nr(db_session), 1)
-            add_test_result(db_session, NAME, 1234, datetime.datetime.now(), config.version, SUITE, 2)
+            add_test_result(db_session, NAME, 1234, datetime.datetime.utcnow(), config.version, SUITE, 2)
             self.assertEqual(get_suite_nr(db_session), SUITE+1)
 
     def test_get_results(self):
