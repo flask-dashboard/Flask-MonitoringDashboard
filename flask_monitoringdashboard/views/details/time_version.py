@@ -11,7 +11,7 @@ from flask_monitoringdashboard.database.count_group import get_value
 from flask_monitoringdashboard.database.data_grouped import get_version_data_grouped
 from flask_monitoringdashboard.database.versions import get_versions, get_first_requests
 
-TITLE = 'Execution time (ms) for every version'
+TITLE = 'Per-Version Performance'
 
 AXES_INFO = '''The X-axis presents the execution time in ms. The Y-axis presents the versions 
 that are used.'''
@@ -26,7 +26,8 @@ def versions(end):
     with session_scope() as db_session:
         details = get_endpoint_details(db_session, end)
     graph = versions_graph(end)
-    return render_template('fmd_dashboard/graph-details.html', details=details, graph=graph, title=TITLE,
+    return render_template('fmd_dashboard/graph-details.html', details=details, graph=graph,
+                           title='{} for {}'.format(TITLE, end),
                            information=get_information(AXES_INFO, CONTENT_INFO))
 
 

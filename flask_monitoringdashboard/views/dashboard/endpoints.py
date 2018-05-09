@@ -10,7 +10,7 @@ from flask_monitoringdashboard.database.count_group import get_value
 from flask_monitoringdashboard.database.data_grouped import get_endpoint_data_grouped
 from flask_monitoringdashboard.database.function_calls import get_endpoints
 
-TITLE = 'Global execution time for every endpoint'
+TITLE = 'API Performance'
 
 AXES_INFO = '''The X-axis presents the execution time in ms. The Y-axis presents every
 endpoint of the Flask application.'''

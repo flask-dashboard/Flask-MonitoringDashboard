@@ -12,7 +12,7 @@ from flask_monitoringdashboard.database.count_group import get_value
 from flask_monitoringdashboard.database.data_grouped import get_user_data_grouped
 from flask_monitoringdashboard.database.endpoint import get_group_by_sorted
 
-TITLE = 'Execution time (ms) for every user'
+TITLE = 'Per-User Performance'
 
 AXES_INFO = '''The X-axis presents the execution time in ms. The Y-axis presents (a subset of) 
 all unique users.'''
