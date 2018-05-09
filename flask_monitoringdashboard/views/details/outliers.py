@@ -12,9 +12,9 @@ from flask_monitoringdashboard.database.outlier import get_outliers_sorted, dele
 OUTLIERS_PER_PAGE = 10
 
 
-@blueprint.route('/result/<end>/outliers')
+@blueprint.route('/endpoint/<end>/outliers')
 @secure
-def result_outliers(end):
+def outliers(end):
     with session_scope() as db_session:
         details = get_endpoint_details(db_session, end)
         delete_outliers_without_stacktrace(db_session)
@@ -25,4 +25,5 @@ def result_outliers(end):
         pagination = Pagination(page=page, per_page=per_page, total=count_outliers(db_session, end), format_number=True,
                                 css_framework='bootstrap4', format_total=True, record_name='outliers')
 
-    return render_template('fmd_dashboard/outliers.html', details=details, table=table, pagination=pagination, mean=mean)
+    return render_template('fmd_dashboard/outliers.html', details=details, table=table, pagination=pagination,
+                           mean=mean, title='Outliers for {}'.format(end))

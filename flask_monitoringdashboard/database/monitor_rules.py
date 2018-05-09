@@ -18,11 +18,6 @@ def get_monitor_names(db_session):
     return result
 
 
-def reset_monitor_endpoints(db_session):
-    """ Update all monitor rules in the database and set them to false. """
-    db_session.query(MonitorRule).update({MonitorRule.monitor: False})
-
-
 def get_monitor_data(db_session):
     """
     Returns all data in the rules-table. This table contains which endpoints are being

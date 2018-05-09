@@ -112,12 +112,17 @@ def get_all_measurement_per_column(db_session, endpoint, column, value):
 
 
 def get_last_accessed_times(db_session, endpoint):
-    """ Returns a list of all endpoints and their last accessed time. """
+    """ Returns the accessed time of a single endpoint. """
     result = db_session.query(MonitorRule.last_accessed).filter(MonitorRule.endpoint == endpoint).first()
     db_session.expunge_all()
     if result:
         return result[0]
     return None
+
+
+def get_last_accessed_times_grouped(db_session):
+    """ Returns a list of all endpoints and their last accessed time. """
+    return db_session.query(MonitorRule.endpoint, MonitorRule.last_accessed).all()
 
 
 def update_last_accessed(db_session, endpoint, value):

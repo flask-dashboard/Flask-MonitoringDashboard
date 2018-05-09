@@ -22,14 +22,11 @@
   {{ "my-active" if request.endpoint in list }}
 {%- endmacro %}
 
-{% macro active_if_not_in(list) -%}
-  {{ "my-active" if not request.endpoint in list }}
-{%- endmacro %}
-
 {% set rules_endpoint='dashboard.rules' %}
 {% set testmonitor_list=['dashboard.testmonitor', 'dashboard.testresult'] %}
 {% set config_endpoint='dashboard.configuration' %}
-{% set exclude_list=[rules_endpoint, config_endpoint] + testmonitor_list %}
+{% set dashboard_list=['dashboard.overview', 'dashboard.hourly_load', 'dashboard.version_usage',
+       'dashboard.requests', 'dashboard.endpoints'] %}
 
 {% macro submenu(endpoint, name) -%}
 <li><a class="{{ active_if_is(endpoint) }}" href="{{ url_for(endpoint) }}">{{ name }}</a></li>
@@ -56,21 +53,22 @@
           </a>
         </li>
         <li class="nav-item" data-toggle="tooltip" data-placement="right" title="Dashboard">
-          <a class="nav-link nav-link-collapse {{ "my-active" if request.endpoint not in exclude_list }}"
+          <a class="nav-link nav-link-collapse {{ "my-active" if request.endpoint in dashboard_list else "collapsed" }}"
              data-toggle="collapse" href="#collapseDashboard" >
             <i class="fa fa-fw fa-dashboard"></i>
             <span class="nav-link-text">Dashboard</span>
           </a>
-          <ul class="sidenav-second-level collapse"
+          <ul class="sidenav-second-level {{ "show" if request.endpoint in dashboard_list else "collapse" }}"
               id="collapseDashboard">
             {{ submenu('dashboard.overview', 'Overview') }}
-            {{ submenu('dashboard.heatmap', 'Hourly load') }}
+            {{ submenu('dashboard.hourly_load', 'Hourly load') }}
             {{ submenu('dashboard.version_usage', 'Version usage') }}
-            {{ submenu('dashboard.page_number_of_requests_per_endpoint', 'Request per endpoint') }}
-            {{ submenu('dashboard.page_boxplot_per_version', 'Time per version') }}
-            {{ submenu('dashboard.page_boxplot_per_endpoint', 'Time per endpoint') }}
+            {{ submenu('dashboard.requests', 'Request per endpoint') }}
+            {{ submenu('dashboard.endpoints', 'Time per endpoint') }}
           </ul>
         </li>
+        {% block endpoint_menu %}
+        {% endblock %}
         <li class="nav-item" data-toggle="tooltip" data-placement="right" title="Testmonitor">
           <a class="nav-link {{ active_if_in(testmonitor_list) }}" href="{{ url_for(testmonitor_list[0]) }}">
             <i class="fa fa-fw fa-desktop"></i>

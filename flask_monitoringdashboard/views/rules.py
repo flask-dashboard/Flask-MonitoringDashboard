@@ -8,7 +8,6 @@ from flask_monitoringdashboard.core.measurement import track_performance
 from flask_monitoringdashboard.core.rules import get_rules
 from flask_monitoringdashboard.database import session_scope
 from flask_monitoringdashboard.database.endpoint import get_monitor_rule, update_monitor_rule, get_last_accessed_times
-from flask_monitoringdashboard.database.monitor_rules import reset_monitor_endpoints
 
 
 @blueprint.route('/rules', methods=['GET', 'POST'])
@@ -24,25 +23,21 @@ def rules():
 
     with session_scope() as db_session:
 
-        if request.method == 'POST' and form.validate():
-            # Remove the monitor endpoints from the database
-            reset_monitor_endpoints(db_session)
+        if request.method == 'POST':
+            name = request.form['name']
+            endpoint = name.rsplit('-', 1)[1]
+            value = request.form['value']
 
-            for rule in get_rules():
-                # Remove existing wrappers
-                original = getattr(user_app.view_functions[rule.endpoint], 'original', None)
+            if value == 'true':  # add wrapper
+                update_monitor_rule(db_session, endpoint, value=True)
+                user_app.view_functions[endpoint] = track_performance(user_app.view_functions[endpoint], endpoint)
+            else:  # remove wrapper
+                update_monitor_rule(db_session, endpoint, value=False)
+                original = getattr(user_app.view_functions[endpoint], 'original', None)
                 if original:
-                    user_app.view_functions[rule.endpoint] = original
+                    user_app.view_functions[endpoint] = original
+            return 'OK'
 
-            # request.form only contains checkboxes that are checked
-            for data in request.form:
-                if data.startswith('checkbox-'):
-                    endpoint = data.rsplit('-', 1)[1]
-                    update_monitor_rule(db_session, endpoint, value=True)
-                    rule = get_monitor_rule(db_session, endpoint)
-                    # Add wrappers to the existing functions
-                    user_app.view_functions[rule.endpoint] = track_performance(user_app.view_functions[rule.endpoint],
-                                                                               rule.endpoint)
         all_rules = []
         for rule in get_rules():
             all_rules.append({

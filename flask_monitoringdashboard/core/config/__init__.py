@@ -76,7 +76,7 @@ class Config(object):
         parser = configparser.RawConfigParser()
         try:
             parser.read(file)
-            parse_version(parser, self.version)
+            self.version = parse_version(parser, self.version)
 
             self.link = parse_string(parser, 'CUSTOM_LINK', self.link)
             self.database_name = parse_string(parser, 'DATABASE', self.database_name)
