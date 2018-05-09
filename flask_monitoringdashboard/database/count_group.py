@@ -11,9 +11,8 @@ def count_rows_group(db_session, column, *criterion):
     :param criterion: where-clause of the query
     :return: list with the number of rows per endpoint
     """
-    result = db_session.query(FunctionCall.endpoint, func.count(column)).\
+    return db_session.query(FunctionCall.endpoint, func.count(column)).\
         filter(*criterion).group_by(FunctionCall.endpoint).all()
-    return result
 
 
 def get_value(list, name, default=0):

@@ -12,7 +12,7 @@ def create_app():
     app = Flask(__name__)
 
     dashboard.config.outlier_detection_constant = 0
-    dashboard.config.group_by = 'User', lambda: 3
+    dashboard.config.group_by = 'User', 1
     dashboard.config.version = 1.0
     dashboard.config.database_name = 'sqlite:///flask_monitoringdashboard.db'
     # dashboard.config.database_name = 'mysql+pymysql://root@localhost/flask_test'
