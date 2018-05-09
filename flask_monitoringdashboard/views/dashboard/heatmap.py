@@ -1,9 +1,12 @@
 import datetime
 
+import numpy
 import plotly.graph_objs as go
+import pytz
+
 from flask import render_template
 
-from flask_monitoringdashboard import blueprint
+from flask_monitoringdashboard import blueprint, config
 from flask_monitoringdashboard.core.auth import secure
 from flask_monitoringdashboard.core.forms import get_daterange_form
 from flask_monitoringdashboard.core.plot import get_layout, get_figure, heatmap as plot_heatmap
@@ -41,7 +44,7 @@ def hourly_load_graph(form, end=None):
     days = form.get_days()
 
     # create empty 2D-list: [hour][day]
-    heatmap_data = [[0] * len(days)] * len(hours)
+    heatmap_data = numpy.zeros((len(hours), len(days)))
 
     # add data from database to heatmap_data
     with session_scope() as db_session:
