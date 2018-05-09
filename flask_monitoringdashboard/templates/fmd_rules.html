@@ -27,7 +27,7 @@
                 <td style="text-align: center;">{{ "{:%Y-%m-%d %H:%M:%S }".format(row.last_accessed) if row.last_accessed }}</td>
                 <td>
                   <input id="checkbox-{{ row.endpoint }}" name="checkbox-{{ row.endpoint }}"
-                         type="checkbox" {{ 'checked' if row.monitor }} class="checkbox">
+                         type="checkbox" {{ 'checked' if row.monitor }} class="checkbox" onchange="sendForm(this)">
                   <label for="checkbox-{{ row.endpoint }}"></label>
                 </td>
               </tr>
@@ -43,17 +43,16 @@
 
 {% block script %}
 <script>
-  $(document).ready(function () {
-    $('.checkbox').click(function () {
-      var formData = $('#myForm').serialize();
-
+  function sendForm(checkbox){
       $.ajax({
         url: '#',
-        data: formData,
+        data: {
+            'name': checkbox.name,
+            'value': checkbox.checked
+        },
         type: 'post',
         dataType: 'json'
       });
-    });
-  });
+    }
 </script>
 {% endblock %}

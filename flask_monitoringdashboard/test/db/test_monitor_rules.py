@@ -41,17 +41,6 @@ class TestMonitorRule(unittest.TestCase):
             self.assertEqual(len(result), 1)
             self.assertEqual(result[0].endpoint, NAME)
 
-    def test_reset_monitor_endpoints(self):
-        """
-            Test whether the function returns the right values.
-        """
-        from flask_monitoringdashboard.database.monitor_rules import reset_monitor_endpoints
-        from flask_monitoringdashboard.database.monitor_rules import get_monitor_rules
-        with session_scope() as db_session:
-            self.test_get_monitor_rules()
-            reset_monitor_endpoints(db_session)
-            self.assertEqual(get_monitor_rules(db_session), [])
-
     def test_get_monitor_data(self):
         """
             Test whether the function returns the right values.

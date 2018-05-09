@@ -63,7 +63,7 @@ class TestEndpoint(unittest.TestCase):
             Test whether the function returns the right values.
         """
         import datetime
-        time = datetime.datetime.now()
+        time = datetime.datetime.utcnow()
         from flask_monitoringdashboard.database.endpoint import update_last_accessed, get_last_accessed_times
         with session_scope() as db_session:
             update_last_accessed(db_session, NAME, time)

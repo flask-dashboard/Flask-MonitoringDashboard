@@ -91,7 +91,7 @@ def get_monitor_rule(db_session, endpoint):
         return result
     except NoResultFound:
         db_session.add(
-            MonitorRule(endpoint=endpoint, version_added=config.version, time_added=datetime.datetime.now()))
+            MonitorRule(endpoint=endpoint, version_added=config.version, time_added=datetime.datetime.utcnow()))
 
     # return new added row
     return get_monitor_rule(db_session, endpoint)

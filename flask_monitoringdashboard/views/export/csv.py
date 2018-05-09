@@ -20,7 +20,7 @@ def download_csv():
 
     response = make_response(csv)
     response.headers["Content-Disposition"] = "attachment; filename=measurements_{0}.csv".format(
-        str(datetime.datetime.now()).replace(" ", "_").replace(":", "-")[:19])
+        str(datetime.datetime.utcnow()).replace(" ", "_").replace(":", "-")[:19])
     return response
 
 
