@@ -12,6 +12,13 @@ from sqlalchemy.orm import sessionmaker
 from flask_monitoringdashboard import config
 from flask_monitoringdashboard.core.group_by import get_group_by
 
+from tzlocal import get_localzone
+import pytz
+
+
+# get local timezone
+local_tz = get_localzone()
+
 Base = declarative_base()
 
 
@@ -114,6 +121,29 @@ class TestsGrouped(Base):
     test_name = Column(String(250), primary_key=True)
 
 
+class Timezone(Base):
+    """ Table for storing user's last timezone info """
+    __tablename__ = 'timezones'
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    # timezone
+    timezone = Column(String(50), default=str(local_tz), nullable=False)
+
+    @staticmethod
+    def insert_timezone(tz):
+        """
+        function insert_timezone to insert timezone info into database
+        :param tz: timezone info in scope of pytz.common_timezones
+        :return: None
+        """
+        session = DBSession()
+        timezone = session.query(Timezone).first()
+        if timezone is None:
+            timezone = Timezone(timezone=str(local_tz))
+        timezone.timezone = tz
+        session.add(timezone)
+        session.commit()
+
+
 # define the database
 engine = create_engine(config.database_name)
 
@@ -144,4 +174,4 @@ def session_scope():
 
 
 def get_tables():
-    return [MonitorRule, Tests, TestRun, FunctionCall, Outlier, TestsGrouped]
+    return [MonitorRule, Tests, TestRun, FunctionCall, Outlier, TestsGrouped, Timezone]
