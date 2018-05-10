@@ -10,3 +10,4 @@ requests              # for submitting unit test results
 PyJWT                 # for json encryption/decryption
 flask_paginate        # for paginating the result
 numpy                 # for computing median and other stats
+pytz                  # for timezone info

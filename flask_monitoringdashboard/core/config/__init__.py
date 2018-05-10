@@ -1,6 +1,8 @@
 import configparser
 import os
 
+import pytz
+
 from flask_monitoringdashboard.core.config.parser import parse_string, parse_version, parse_bool, parse_literal
 
 
@@ -27,6 +29,7 @@ class Config(object):
         self.colors = {}
         self.security_token = 'cc83733cb0af8b884ff6577086b87909'
         self.outliers_enabled = True
+        self.timezone = pytz.timezone('Europe/Amsterdam')
 
         # define a custom function to retrieve the session_id or username
         self.group_by = None
@@ -58,6 +61,9 @@ class Config(object):
                 average, extra information is logged into the database. A default value for this
                 variable is 2.5, but can be changed in the config-file.
 
+            TIMEZONE: The timezone for converting a UTC timestamp to a locale timestamp.
+                for a list of all timezones, use the following: print(pytz.all_timezones)
+
             SECURITY_TOKEN: Used for getting the data in /get_json_data/<security_token>
 
             OUTLIERS_ENABLED: Whether you want the Dashboard to collect extra information about outliers.
@@ -88,6 +94,7 @@ class Config(object):
             self.security_token = parse_string(parser, 'SECURITY_TOKEN', self.security_token)
             self.outliers_enabled = parse_bool(parser, 'OUTLIERS_ENABLED', self.outliers_enabled)
             self.colors = parse_literal(parser, 'COLORS', self.colors)
+            self.timezone = pytz.timezone(parse_string(parser, 'TIMEZONE', self.timezone.zone))
             self.outlier_detection_constant = parse_literal(parser, 'OUTlIER_DETECTION_CONSTANT',
                                                             self.outlier_detection_constant)
             self.username = parse_string(parser, 'USERNAME', self.username)
