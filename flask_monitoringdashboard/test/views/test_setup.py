@@ -62,5 +62,5 @@ class TestSetup(unittest.TestCase):
 
     def test_collect_performance(self):
         """ Tests the collect_performance script. """
-        test_dir = os.getcwd()[0:-5] + 'db'  # Finds the database tests of the Dashboard.
+        test_dir = os.getcwd() + '/flask_monitoringdashboard/test/db'  # Finds the database tests of the Dashboard.
         os.system('python -m flask_monitoringdashboard.collect_performance --test_folder={} --times=1'.format(test_dir))
