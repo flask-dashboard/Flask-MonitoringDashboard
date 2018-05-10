@@ -10,7 +10,7 @@ class SliderForm(FlaskForm):
     """
     slider = IntegerRangeField()
     submit = SubmitField('Submit')
-    type = 'SliderForm'
+    title = 'Select a number below for reducing the size of the graph'
 
     def get_slider_value(self):
         """
@@ -19,6 +19,21 @@ class SliderForm(FlaskForm):
         if 'slider' in request.form:
             return request.form['slider']
         return self.start_value
+
+    def content(self):
+        return '''
+          <div class="row">
+            <div class="col-sm-3"><span>{}</span></div>
+            <div class="col-sm-3" style="text-align: center"><output id="outputValue">{}</output></div>
+            <div class="col-sm-3" style="text-align: right"><span>{}</span></div>
+          </div>
+          <div class="row">
+            <div class="col-sm-9">{}</div>
+            <div class="col-sm-3">{}</div>
+          </div>'''.format(self.min_value, self.start_value, self.max_value,
+                           self.slider(style="width: 100%;", oninput="outputValue.value=this.value",
+                                       min=self.min_value, max=self.max_value, value=self.start_value),
+                           self.submit(class_="btn btn-primary btn-block"))
 
 
 def get_slider_form(slider_max=100):

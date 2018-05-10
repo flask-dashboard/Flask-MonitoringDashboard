@@ -5,13 +5,14 @@ from flask_monitoringdashboard.core.auth import secure
 from flask_monitoringdashboard.core.forms import get_slider_form
 from flask_monitoringdashboard.core.plot import get_layout, get_figure, boxplot
 from flask_monitoringdashboard.core.plot.util import get_information
-from flask_monitoringdashboard.core.utils import get_endpoint_details
+from flask_monitoringdashboard.core.utils import get_endpoint_details, simplify
 from flask_monitoringdashboard.database import FunctionCall, session_scope
 from flask_monitoringdashboard.database.count import count_users
-from flask_monitoringdashboard.database.endpoint import get_all_measurement_per_column, get_group_by_sorted
+from flask_monitoringdashboard.database.count_group import get_value
+from flask_monitoringdashboard.database.data_grouped import get_user_data_grouped
+from flask_monitoringdashboard.database.endpoint import get_users
 
-
-TITLE = 'Execution time (ms) for every user'
+TITLE = 'Per-User Performance'
 
 AXES_INFO = '''The X-axis presents the execution time in ms. The Y-axis presents (a subset of) 
 all unique users.'''
@@ -29,8 +30,8 @@ def users(end):
     graph = users_graph(end, form)
 
     return render_template('fmd_dashboard/graph-details.html', details=details, graph=graph, form=form,
-                           title='{} for {}'.format(TITLE, end), information=
-                           get_information(AXES_INFO, CONTENT_INFO))
+                           title='{} for {}'.format(TITLE, end),
+                           information=get_information(AXES_INFO, CONTENT_INFO))
 
 
 def users_graph(end, form):
@@ -40,13 +41,10 @@ def users_graph(end, form):
     :param form: instance of SliderForm
     :return:
     """
-    data = []
     with session_scope() as db_session:
-        for group_by in get_group_by_sorted(db_session, end, form.get_slider_value()):
-            values = [str(c.execution_time) for c in
-                      get_all_measurement_per_column(db_session, endpoint=end, column=FunctionCall.group_by,
-                                                     value=group_by)]
-            data.append(boxplot(values, name=str(group_by)))
+        users = get_users(db_session, end, form.get_slider_value())
+        times = get_user_data_grouped(db_session, lambda x: simplify(x, 10), FunctionCall.endpoint == end)
+        data = [boxplot(name=u, values=get_value(times, u)) for u in users]
 
     layout = get_layout(
         height=350 + 40 * len(data),

@@ -3,10 +3,10 @@ from flask import request, render_template
 from flask_monitoringdashboard import blueprint, user_app
 from flask_monitoringdashboard.core.auth import admin_secure
 from flask_monitoringdashboard.core.colors import get_color
-from flask_monitoringdashboard.core.forms import MonitorDashboard
 from flask_monitoringdashboard.core.measurement import track_performance
 from flask_monitoringdashboard.core.rules import get_rules
 from flask_monitoringdashboard.database import session_scope
+from flask_monitoringdashboard.database.count_group import get_value
 from flask_monitoringdashboard.database.endpoint import get_monitor_rule, update_monitor_rule, get_last_accessed_times
 
 
@@ -19,10 +19,7 @@ def rules():
     monitored
     :return:
     """
-    form = MonitorDashboard(request.form)
-
     with session_scope() as db_session:
-
         if request.method == 'POST':
             name = request.form['name']
             endpoint = name.rsplit('-', 1)[1]
@@ -38,15 +35,13 @@ def rules():
                     user_app.view_functions[endpoint] = original
             return 'OK'
 
-        all_rules = []
-        for rule in get_rules():
-            all_rules.append({
-                'color': get_color(rule.endpoint),
-                'rule': rule.rule,
-                'endpoint': rule.endpoint,
-                'methods': rule.methods,
-                'last_accessed': get_last_accessed_times(db_session, rule.endpoint),
-                'monitor': get_monitor_rule(db_session, rule.endpoint).monitor
-            })
-
-    return render_template('fmd_rules.html', rules=all_rules, form=form)
+        last_accessed = get_last_accessed_times(db_session)
+        all_rules = [{
+            'color': get_color(rule.endpoint),
+            'rule': rule.rule,
+            'endpoint': rule.endpoint,
+            'methods': rule.methods,
+            'last_accessed': get_value(last_accessed, rule.endpoint, default=None),
+            'monitor': get_monitor_rule(db_session, rule.endpoint).monitor
+        } for rule in get_rules()]
+    return render_template('fmd_rules.html', rules=all_rules)

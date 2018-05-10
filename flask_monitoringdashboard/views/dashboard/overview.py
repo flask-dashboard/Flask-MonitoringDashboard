@@ -7,9 +7,9 @@ from flask_monitoringdashboard.core.auth import secure, is_admin
 from flask_monitoringdashboard.core.colors import get_color
 from flask_monitoringdashboard.database import FunctionCall, session_scope
 from flask_monitoringdashboard.database.count_group import count_requests_group, get_value
-from flask_monitoringdashboard.database.endpoint import get_last_accessed_times_grouped
+from flask_monitoringdashboard.database.endpoint import get_last_accessed_times
 from flask_monitoringdashboard.database.function_calls import get_endpoints
-from flask_monitoringdashboard.database.data_grouped import get_data_grouped
+from flask_monitoringdashboard.database.data_grouped import get_endpoint_data_grouped
 
 
 @blueprint.route('/overview')
@@ -25,10 +25,10 @@ def overview():
         hits = count_requests_group(db_session)
         from numpy import median
 
-        median_today = get_data_grouped(db_session, median, FunctionCall.time > today)
-        median_week = get_data_grouped(db_session, median, FunctionCall.time > week_ago)
-        median = get_data_grouped(db_session, median)
-        access_times = get_last_accessed_times_grouped(db_session)
+        median_today = get_endpoint_data_grouped(db_session, median, FunctionCall.time > today)
+        median_week = get_endpoint_data_grouped(db_session, median, FunctionCall.time > week_ago)
+        median = get_endpoint_data_grouped(db_session, median)
+        access_times = get_last_accessed_times(db_session)
 
         for endpoint in get_endpoints(db_session):
             result.append({

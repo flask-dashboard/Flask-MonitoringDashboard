@@ -9,12 +9,12 @@ from flask_monitoringdashboard.database.count_group import count_requests_group,
 from flask_monitoringdashboard.database.function_calls import get_endpoints
 from flask_monitoringdashboard.database.versions import get_versions
 
-TITLE = 'Distribution of the load per endpoint per version'
+TITLE = 'Multi Version API Utilization'
 
 AXES_INFO = '''The X-axis presents the versions that are used. The Y-axis presents the 
 endpoints that are found in the Flask application.'''
 
-CONTENT_INFO = '''The color of the cell presents the distribution of the number of requests that the 
+CONTENT_INFO = '''The color of the cell presents the distribution of the amount of requests that the 
 application received in a single version for a single endpoint. The darker the cell, the more requests 
 a certain endpoint has processed in that version. Since it displays the distribution of the load, each 
 column sums up to 100%. This information can be used to validate which endpoints processes the most 

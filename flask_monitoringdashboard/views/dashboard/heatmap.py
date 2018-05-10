@@ -11,7 +11,7 @@ from flask_monitoringdashboard.core.plot.util import get_information
 from flask_monitoringdashboard.database import session_scope
 from flask_monitoringdashboard.database.endpoint import get_num_requests
 
-TITLE = 'Hourly load of the number of requests'
+TITLE = 'Hourly API Utilization'
 
 AXES_INFO = '''The X-axis presents a number of days. The Y-axis presents every hour of 
 the day.'''
@@ -41,10 +41,7 @@ def hourly_load_graph(form, end=None):
     days = form.get_days()
 
     # create empty 2D-list: [hour][day]
-    heatmap_data = []
-    for i in range(len(hours)):
-        heatmap_data.append([])
-        [heatmap_data[i].append(0) for _ in days]
+    heatmap_data = [[0] * len(days)] * len(hours)
 
     # add data from database to heatmap_data
     with session_scope() as db_session:
