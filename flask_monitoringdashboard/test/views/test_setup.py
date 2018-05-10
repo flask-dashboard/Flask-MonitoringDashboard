@@ -61,5 +61,5 @@ class TestSetup(unittest.TestCase):
 
     def test_collect_performance(self):
         """ Tests the collect_performance script. """
-        import flask_monitoringdashboard.collect_performance as cp
-        self.assertGreater(len(cp.data), 0)
+        import flask_monitoringdashboard.collect_performance
+        self.assertGreater(len(flask_monitoringdashboard.collect_performance.data), 0)
