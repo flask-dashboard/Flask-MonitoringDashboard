@@ -34,19 +34,6 @@ def get_details(db_session):
     }
 
 
-def formatter(ms):
-    """
-    formats the ms into seconds and ms
-    :param ms: the number of ms
-    :return: a string representing the same amount, but now represented in seconds and ms.
-    """
-    sec = int(ms) // 1000
-    ms = int(ms) % 1000
-    if sec == 0:
-        return '{0}ms'.format(ms)
-    return '{0}.{1}s'.format(sec, ms)
-
-
 def get_url(end):
     """
     Returns the URL if possible.

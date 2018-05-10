@@ -10,9 +10,9 @@ from flask_monitoringdashboard.database import FunctionCall, session_scope
 from flask_monitoringdashboard.database.count import count_users
 from flask_monitoringdashboard.database.count_group import get_value
 from flask_monitoringdashboard.database.data_grouped import get_user_data_grouped
-from flask_monitoringdashboard.database.endpoint import get_group_by_sorted
+from flask_monitoringdashboard.database.endpoint import get_users
 
-TITLE = 'Execution time (ms) for every user'
+TITLE = 'Per-User Performance'
 
 AXES_INFO = '''The X-axis presents the execution time in ms. The Y-axis presents (a subset of) 
 all unique users.'''
@@ -30,8 +30,8 @@ def users(end):
     graph = users_graph(end, form)
 
     return render_template('fmd_dashboard/graph-details.html', details=details, graph=graph, form=form,
-                           title='{} for {}'.format(TITLE, end), information=
-                           get_information(AXES_INFO, CONTENT_INFO))
+                           title='{} for {}'.format(TITLE, end),
+                           information=get_information(AXES_INFO, CONTENT_INFO))
 
 
 def users_graph(end, form):
@@ -42,7 +42,7 @@ def users_graph(end, form):
     :return:
     """
     with session_scope() as db_session:
-        users = get_group_by_sorted(db_session, end, form.get_slider_value())
+        users = get_users(db_session, end, form.get_slider_value())
         times = get_user_data_grouped(db_session, lambda x: simplify(x, 10), FunctionCall.endpoint == end)
         data = [boxplot(name=u, values=get_value(times, u)) for u in users]
 

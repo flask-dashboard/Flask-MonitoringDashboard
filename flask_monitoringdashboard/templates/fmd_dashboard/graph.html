@@ -19,80 +19,29 @@
     {% endblock %}
 
     <div class="row">
-    <div class="col-7">
-    {% block form_content %}
-    {% if form %}
-      {% if form.type == 'SelectDateRangeForm' %}
-        <div class="card">
-          <div class="card-header"><h6>Select two dates for reducing the size of the graph</h6></div>
-          <div class="card-body">
-            <form class="form" method="POST">
-              {{ form.hidden_tag() }}
-              <div class="row">
-                <div class="col-sm-4">
-                  <i class="fa fa-calendar"></i> {{ form.start_date.label }}
-                </div>
-                <div class="col-sm-4">
-                  <i class="fa fa-calendar"></i> {{ form.end_date.label }}
-                </div>
-              <div class="col-sm-4"></div>
+      <div class="col-7">
+        {% block form_content %}
+          {% if form %}
+            <div class="card">
+              <div class="card-header"><h6>{{ form.title }}</h6></div>
+              <div class="card-body">
+                <form class="form" method="POST">
+                  {{ form.hidden_tag() }}
+                  {{ form.content()|safe }}
+                </form>
               </div>
-              <div class="row">
-                <div class="col-sm-4">
-                  {{ form.start_date(class_="form-control", required=true) }}
-                </div>
-                <div class="col-sm-4">
-                  {{ form.end_date(class_="form-control", required=true) }}
-                </div>
-                <div class="col-sm-4">
-                  {{ form.submit(class_="btn btn-primary btn-block") }}
-                </div>
-              </div>
-            </form>
-          </div>
-        </div>
-      {% elif form.type == 'SliderForm' %}
-        <div class="card">
-          <div class="card-header"><h6>Select a number below for reducing the size of the graph</h6></div>
-          <div class="card-body">
-            <form class="form" method="POST">
-              {{ form.hidden_tag() }}
-              <div class="row">
-                <div class="col-sm-3">
-                  <span>{{ form.min_value }}</span>
-                </div>
-                <div class="col-sm-3" style="text-align: center">
-                  <output id="outputValue">{{ form.start_value }}</output>
-                </div>
-                <div class="col-sm-3" style="text-align: right">
-                  <span>{{ form.max_value }}</span>
-                </div>
-              </div>
-              <div class="row">
-                <div class="col-sm-9">
-                  {{ form.slider(style="width: 100%;", oninput="outputValue.value=this.value", min=form.min_value,
-                                 max=form.max_value, value=form.start_value) }}
-                </div>
-                <div class="col-sm-3">
-                  {{ form.submit(class_="btn btn-primary btn-block") }}
-                </div>
-              </div>
-            </form>
+            </div>
+          {% endif %}
+        {% endblock %}
+      </div>
+      {% if information %}
+        <div class="col-5" style="float: right">
+          <div class="card">
+            <div class="card-header"><h6>Information</h6></div>
+            <div class="card-body">{{ information|safe }}</div>
           </div>
         </div>
       {% endif %}
-    {% endif %}
-    {% endblock %}
-    </div>
-    {% if information %}
-        <div class="col-5" style="float: right">
-        <div class="card">
-            <div class="card-header"><h6>Information</h6></div>
-            <div class="card-body">{{ information|safe }}</div>
-        </div>
-        </div>
-
-    {% endif %}
     </div>
 
     <div id="loading">

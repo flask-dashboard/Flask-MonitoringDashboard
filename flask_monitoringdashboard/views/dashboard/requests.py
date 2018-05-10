@@ -9,7 +9,7 @@ from flask_monitoringdashboard.database import session_scope
 from flask_monitoringdashboard.database.count_group import count_requests_per_day, get_value
 from flask_monitoringdashboard.database.function_calls import get_endpoints
 
-TITLE = 'Requests per endpoint per day'
+TITLE = 'Daily API Utilization'
 
 AXES_INFO = '''The X-axis presents the amount of requests. The Y-axis presents a number 
 of days'''

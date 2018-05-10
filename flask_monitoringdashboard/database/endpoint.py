@@ -42,7 +42,7 @@ def group_execution_times(times):
     return hours_dict.items()
 
 
-def get_group_by_sorted(db_session, endpoint, limit=None):
+def get_users(db_session, endpoint, limit=None):
     """
     Returns a list with the distinct group-by from a specific endpoint. The limit is used to filter the most used
     distinct.
@@ -61,7 +61,7 @@ def get_group_by_sorted(db_session, endpoint, limit=None):
     return [r[0] for r in result]
 
 
-def get_ip_sorted(db_session, endpoint, limit=None):
+def get_ips(db_session, endpoint, limit=None):
     """
     Returns a list with the distinct group-by from a specific endpoint. The limit is used to filter the most used
     distinct.
@@ -91,7 +91,7 @@ def get_monitor_rule(db_session, endpoint):
         return result
     except NoResultFound:
         db_session.add(
-            MonitorRule(endpoint=endpoint, version_added=config.version, time_added=datetime.datetime.now()))
+            MonitorRule(endpoint=endpoint, version_added=config.version, time_added=datetime.datetime.utcnow()))
 
     # return new added row
     return get_monitor_rule(db_session, endpoint)
@@ -103,25 +103,8 @@ def update_monitor_rule(db_session, endpoint, value):
         update({MonitorRule.monitor: value})
 
 
-def get_all_measurement_per_column(db_session, endpoint, column, value):
-    """Return all entries with measurements from a given endpoint for which the column has a specific value.
-    Used for creating a box plot. """
-    result = db_session.query(FunctionCall).filter(FunctionCall.endpoint == endpoint, column == value).all()
-    db_session.expunge_all()
-    return result
-
-
-def get_last_accessed_times(db_session, endpoint):
+def get_last_accessed_times(db_session):
     """ Returns the accessed time of a single endpoint. """
-    result = db_session.query(MonitorRule.last_accessed).filter(MonitorRule.endpoint == endpoint).first()
-    db_session.expunge_all()
-    if result:
-        return result[0]
-    return None
-
-
-def get_last_accessed_times_grouped(db_session):
-    """ Returns a list of all endpoints and their last accessed time. """
     return db_session.query(MonitorRule.endpoint, MonitorRule.last_accessed).all()
 
 

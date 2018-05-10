@@ -40,15 +40,15 @@ for iteration in range(int(args.times)):
         for case in suite:
             for test in case:
                 test_result = None
-                start_time_stamp = str(datetime.datetime.now())
+                start_time_stamp = str(datetime.datetime.utcnow())
                 time_before = time.time()
                 test_result = test.run(test_result)
                 time_after = time.time()
-                end_time_stamp = str(datetime.datetime.now())
+                end_time_stamp = str(datetime.datetime.utcnow())
                 log.write('"{}","{}","{}"\n'.format(start_time_stamp, end_time_stamp, str(test)))
                 execution_time = (time_after - time_before) * 1000
                 data['test_runs'].append(
-                    {'name': str(test), 'exec_time': execution_time, 'time': str(datetime.datetime.now()),
+                    {'name': str(test), 'exec_time': execution_time, 'time': str(datetime.datetime.utcnow()),
                      'successful': test_result.wasSuccessful(), 'iter': iteration + 1})
 log.close()
 
