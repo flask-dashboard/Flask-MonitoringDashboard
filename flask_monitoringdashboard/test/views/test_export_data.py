@@ -1,10 +1,11 @@
+import datetime
 import unittest
 
 import jwt
 from flask import json
 
 from flask_monitoringdashboard.test.utils import set_test_environment, clear_db, add_fake_data, get_test_app, \
-    EXECUTION_TIMES, NAME, GROUP_BY, IP, TIMES, test_admin_secure
+    EXECUTION_TIMES, NAME, GROUP_BY, IP, TIMES, test_admin_secure, test_post_data
 
 
 class TestExportData(unittest.TestCase):
@@ -29,10 +30,13 @@ class TestExportData(unittest.TestCase):
 
     def test_submit_test_results(self):
         """
-            Just retrieve the content and check if nothing breaks
+            Submit some collect_performance data.
         """
-        pass
-        # TODO: Implement function
+        test_results = {'test_runs': [], 'grouped_tests': []}
+        test_results['test_runs'].append(
+            {'name': 'test_1', 'exec_time': 50, 'time': str(datetime.datetime.now()), 'successful': True, 'iter': 1})
+        test_results['grouped_tests'].append({'endpoint': 'endpoint_1', 'test_name': 'test_1'})
+        test_post_data(self, 'submit-test-results', test_results)
 
     def test_get_json_data_from(self):
         """
