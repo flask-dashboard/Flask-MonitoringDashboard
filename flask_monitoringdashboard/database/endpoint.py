@@ -8,6 +8,7 @@ from sqlalchemy.orm.exc import NoResultFound
 
 from flask_monitoringdashboard import config
 from flask_monitoringdashboard.database import FunctionCall, MonitorRule
+import pytz
 
 
 def get_num_requests(db_session, endpoint, start_date, end_date):
@@ -24,9 +25,7 @@ def get_num_requests(db_session, endpoint, start_date, end_date):
         filter(FunctionCall.time <= datetime.datetime.combine(end_date, datetime.time(23, 59, 59)))
 
     raw_times = query.all()
-    result = group_execution_times(raw_times)
-    db_session.expunge_all()
-    return result
+    return group_execution_times(raw_times)
 
 
 def group_execution_times(times):
@@ -37,7 +36,7 @@ def group_execution_times(times):
     """
     hours_dict = {}
     for time in times:
-        round_time = time.time.strftime('%Y-%m-%d %H:00:00')
+        round_time = time.time.replace(tzinfo=pytz.timezone('UTC')).astimezone(tz=config.timezone).strftime('%Y-%m-%d %H:00:00')
         hours_dict[round_time] = hours_dict.get(round_time, 0) + 1
     return hours_dict.items()
 
