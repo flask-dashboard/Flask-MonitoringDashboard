@@ -48,7 +48,7 @@ def hourly_load_graph(form, end=None):
     # add data from database to heatmap_data
     with session_scope() as db_session:
         for d in get_num_requests(db_session, end, form.start_date.data, form.end_date.data):
-            parsed_time = datetime.datetime.strptime(d[0], '%Y-%m-%d %H:%M:%S').astimezone(config.timezone)
+            parsed_time = config.timezone.localize(datetime.datetime.strptime(d[0], '%Y-%m-%d %H:%M:%S'))
             day_index = (parsed_time - datetime.datetime.combine(form.start_date.data, datetime.time(0, 0, 0, 0)).
                          replace(tzinfo=pytz.utc)).days
             hour_index = int(parsed_time.strftime('%H'))
