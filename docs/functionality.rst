@@ -137,7 +137,8 @@ To enable Travis to run your unit tests and send the obtained results to the Das
        --times=5 \
        --url=https://yourdomain.org/dashboard
 
-The `test_folder` argument specifies where the performance collection process can find the unit tests to use.
+The `test_folder` argument (optional, default: ./) specifies where the performance collection process can find
+the unit tests to use. When omitted, the current working directory is used.
 The `times` argument (optional, default: 5) specifies how many times to run each of the unit tests.
 The `url` argument (optional) specifies where the Dashboard is that needs to receive the performance results.
 When the last argument is omitted, the performance testing will run, but without publishing the results.

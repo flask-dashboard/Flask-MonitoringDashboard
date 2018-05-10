@@ -58,3 +58,8 @@ class TestSetup(unittest.TestCase):
         with self.app.test_client() as c:
             login(c)
             self.assertEqual(200, c.post('dashboard/rules', data=data).status_code)
+
+    def test_collect_performance(self):
+        """ Tests the collect_performance script. """
+        import flask_monitoringdashboard.collect_performance as cp
+        self.assertGreater(len(cp.data), 0)

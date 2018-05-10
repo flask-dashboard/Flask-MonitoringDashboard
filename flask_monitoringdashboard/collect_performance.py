@@ -9,8 +9,8 @@ import requests
 
 # Parsing the arguments.
 parser = argparse.ArgumentParser(description='Collecting performance results from the unit tests of a project.')
-parser.add_argument('--test_folder', dest='test_folder', required=True,
-                    help='folder in which the unit tests can be found (example: ./tests)')
+parser.add_argument('--test_folder', dest='test_folder', default='./',
+                    help='folder in which the unit tests can be found (default: ./)')
 parser.add_argument('--times', dest='times', default=5,
                     help='number of times to execute every unit test (default: 5)')
 parser.add_argument('--url', dest='url', default=None,
