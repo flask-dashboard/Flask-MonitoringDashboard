@@ -34,7 +34,7 @@ def clear_db():
 def add_fake_data():
     """ Adds data to the database for testing purposes. Module flask_monitoringdashboard must be imported locally. """
     from flask_monitoringdashboard.database import session_scope, FunctionCall, MonitorRule, Outlier, Tests, \
-        TestRun, TestsGrouped
+        TestsGrouped
     from flask_monitoringdashboard import config
 
     # Add functionCalls
@@ -58,18 +58,23 @@ def add_fake_data():
     with session_scope() as db_session:
         db_session.add(Tests(name=NAME, succeeded=True))
 
-    # Add TestRun
+    # Add TestsGrouped
+    with session_scope() as db_session:
+        for test_name in TEST_NAMES:
+            db_session.add(TestsGrouped(endpoint=NAME, test_name=test_name))
+
+
+def add_fake_test_runs():
+    """ Adds test run data to the database for testing purposes. """
+    from flask_monitoringdashboard.database import session_scope, TestRun
+    from flask_monitoringdashboard import config
+
     with session_scope() as db_session:
         for test_name in TEST_NAMES:
             for i in range(len(EXECUTION_TIMES)):
                 db_session.add(
                     TestRun(name=test_name, execution_time=EXECUTION_TIMES[i], time=datetime.datetime.utcnow(),
                             version=config.version, suite=1, run=i))
-
-    # Add TestsGrouped
-    with session_scope() as db_session:
-        for test_name in TEST_NAMES:
-            db_session.add(TestsGrouped(endpoint=NAME, test_name=test_name))
 
 
 def get_test_app():
