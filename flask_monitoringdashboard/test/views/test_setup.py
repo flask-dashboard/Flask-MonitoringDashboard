@@ -1,8 +1,7 @@
 import unittest
 
 from flask_monitoringdashboard.test.utils import set_test_environment, clear_db, add_fake_data, add_fake_test_runs, \
-    get_test_app, login, \
-    NAME, test_admin_secure
+    get_test_app, login, NAME, test_admin_secure, test_get_ok, test_get_redirect
 
 
 class TestSetup(unittest.TestCase):
@@ -17,13 +16,13 @@ class TestSetup(unittest.TestCase):
         """
             Just retrieve the content and check if nothing breaks
         """
-        test_admin_secure(self, '')
+        test_get_redirect(self, '')
 
     def test_static(self):
         """
             Just retrieve the content and check if nothing breaks
         """
-        test_admin_secure(self, 'static/css/custom.css')
+        test_get_ok(self, 'static/css/custom.css')
 
     def test_configuration(self):
         """

@@ -120,6 +120,26 @@ def test_admin_secure(test_case, page):
         test_case.assertEqual(200, c.get('dashboard/{}'.format(page)).status_code)
 
 
+def test_get_redirect(test_case, page):
+    """
+    Test whether the page returns a redirection.
+    :param test_case: test class, must be an instance of unittest.TestCase
+    :param page: str with the page of the flask_monitoringdashboard
+    """
+    with test_case.app.test_client() as c:
+        test_case.assertEqual(302, c.get('dashboard/{}'.format(page)).status_code)
+
+
+def test_get_ok(test_case, page):
+    """
+    Test whether the page returns a 200 OK.
+    :param test_case: test class, must be an instance of unittest.TestCase
+    :param page: str with the page of the flask_monitoringdashboard
+    """
+    with test_case.app.test_client() as c:
+        test_case.assertEqual(200, c.get('dashboard/{}'.format(page)).status_code)
+
+
 def test_post_data(test_case, page, data):
     """
     Test whether a post request can successfully be made to the page.
