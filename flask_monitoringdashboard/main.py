@@ -27,6 +27,10 @@ def create_app():
     def endpoint2():
         return redirect(url_for('dashboard.index'))
 
+    @app.route('/outl')
+    def outl():
+        return 'sfsef'
+
     @app.route('/')
     def main():
         import time

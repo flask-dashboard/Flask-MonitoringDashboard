@@ -1,5 +1,4 @@
 import ast
-
 import numpy as np
 from flask import url_for
 from werkzeug.routing import BuildError
