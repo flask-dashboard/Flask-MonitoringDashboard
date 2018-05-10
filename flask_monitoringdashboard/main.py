@@ -26,8 +26,8 @@ def create_app():
     def main():
         return redirect(url_for('dashboard.index'))
 
-    @app.route('/endpoint')
-    def endpoint():
+    @app.route('/endpoint2')
+    def endpoint2():
         return redirect(url_for('dashboard.index'))
 
     @app.route('/outl')
