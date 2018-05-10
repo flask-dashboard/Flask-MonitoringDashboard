@@ -21,15 +21,18 @@ def create_app():
     def endpoint1():
         import time
         time.sleep(2)
-        return redirect(url_for('dashboard.index'))
-
-    @app.route('/endpoint2')
-    def endpoint2():
-        return redirect(url_for('dashboard.index'))
 
     @app.route('/')
     def main():
         return redirect(url_for('dashboard.index'))
+
+    @app.route('/endpoint')
+    def endpoint():
+        return redirect(url_for('dashboard.index'))
+
+    @app.route('/outl')
+    def outl():
+        return 'sfsef'
 
     return app
 
