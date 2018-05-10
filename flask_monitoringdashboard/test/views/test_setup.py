@@ -1,3 +1,4 @@
+import os
 import unittest
 
 from flask_monitoringdashboard.test.utils import set_test_environment, clear_db, add_fake_data, add_fake_test_runs, \
@@ -61,5 +62,4 @@ class TestSetup(unittest.TestCase):
 
     def test_collect_performance(self):
         """ Tests the collect_performance script. """
-        import flask_monitoringdashboard.collect_performance
-        self.assertGreater(len(flask_monitoringdashboard.collect_performance.data), 0)
+        os.system('python -m flask_monitoringdashboard.collect_performance --test_folder=../db --times=1')
