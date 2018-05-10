@@ -14,7 +14,7 @@ def create_app():
     dashboard.config.outlier_detection_constant = 0
     dashboard.config.group_by = 'User', 2
     dashboard.config.version = 1.0
-    dashboard.config.database_name = 'sqlite:///flask_monitoringdashboard.db'
+    dashboard.config.database_name = 'sqlite:///flask_monitoringdashboard6.db'
     dashboard.bind(app)
 
     @app.route('/endpoint1')
@@ -29,8 +29,6 @@ def create_app():
 
     @app.route('/')
     def main():
-        import time
-        time.sleep(2)
         return redirect(url_for('dashboard.index'))
 
     return app

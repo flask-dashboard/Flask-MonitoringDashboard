@@ -13,9 +13,8 @@ from flask_monitoringdashboard import config
 from flask_monitoringdashboard.core.outlier import StackInfo
 from flask_monitoringdashboard.core.rules import get_rules
 from flask_monitoringdashboard.database import session_scope
-from flask_monitoringdashboard.database.endpoint import update_last_accessed
+from flask_monitoringdashboard.database.endpoint import update_last_accessed, get_monitor_rule
 from flask_monitoringdashboard.database.function_calls import add_function_call
-from flask_monitoringdashboard.database.monitor_rules import get_monitor_rules
 from flask_monitoringdashboard.database.outlier import add_outlier
 
 # count and sum are dicts and used for calculating the averages
@@ -33,15 +32,12 @@ def init_measurement():
     """
     from flask_monitoringdashboard import user_app
     with session_scope() as db_session:
-        for rule in get_monitor_rules(db_session):
-            # add a wrapper for every endpoint
-            if rule.endpoint in user_app.view_functions:
-                user_app.view_functions[rule.endpoint] = track_performance(user_app.view_functions[rule.endpoint],
-                                                                           endpoint=rule.endpoint)
-
-    for rule in get_rules():
-        user_app.view_functions[rule.endpoint] = track_last_accessed(user_app.view_functions[rule.endpoint],
-                                                                     endpoint=rule.endpoint)
+        for rule in get_rules():
+            end = rule.endpoint
+            db_rule = get_monitor_rule(db_session, end)
+            user_app.view_functions[end] = track_last_accessed(user_app.view_functions[end], end)
+            if db_rule.monitor:
+                user_app.view_functions[end] = track_performance(user_app.view_functions[end], end)
 
 
 def track_performance(func, endpoint):
