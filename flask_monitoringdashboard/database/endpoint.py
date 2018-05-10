@@ -104,7 +104,12 @@ def update_monitor_rule(db_session, endpoint, value):
 
 def get_last_accessed_times(db_session):
     """ Returns the accessed time of a single endpoint. """
-    return db_session.query(MonitorRule.endpoint, MonitorRule.last_accessed).all()
+    result = db_session.query(MonitorRule.endpoint, MonitorRule.last_accessed).all()
+    values = []
+    for end, time in result:
+        if time:
+            values.append((end, time.replace(tzinfo=pytz.utc).astimezone(config.timezone)))
+    return values
 
 
 def update_last_accessed(db_session, endpoint, value):

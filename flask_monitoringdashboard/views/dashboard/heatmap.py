@@ -3,7 +3,6 @@ import datetime
 import numpy
 import plotly.graph_objs as go
 import pytz
-
 from flask import render_template
 
 from flask_monitoringdashboard import blueprint, config
@@ -15,8 +14,6 @@ from flask_monitoringdashboard.database import session_scope
 from flask_monitoringdashboard.database.endpoint import get_num_requests
 
 TITLE = 'Hourly API Utilization'
-
-utc = pytz.timezone('UTC')
 
 AXES_INFO = '''The X-axis presents a number of days. The Y-axis presents every hour of 
 the day.'''
@@ -51,10 +48,9 @@ def hourly_load_graph(form, end=None):
     # add data from database to heatmap_data
     with session_scope() as db_session:
         for d in get_num_requests(db_session, end, form.start_date.data, form.end_date.data):
-            parsed_time = datetime.datetime.strptime(d[0], '%Y-%m-%d %H:%M:%S').\
-                replace(tzinfo=utc).astimezone(pytz.timezone(str(config.timezone)))
-            day_index = (parsed_time - datetime.datetime.combine(form.start_date.data, datetime.time(0, 0, 0, 0)).\
-            replace(tzinfo=utc)).days
+            parsed_time = datetime.datetime.strptime(d[0], '%Y-%m-%d %H:%M:%S').astimezone(config.timezone)
+            day_index = (parsed_time - datetime.datetime.combine(form.start_date.data, datetime.time(0, 0, 0, 0)).
+                         replace(tzinfo=pytz.utc)).days
             hour_index = int(parsed_time.strftime('%H'))
             heatmap_data[hour_index][day_index] = d[1]
 
