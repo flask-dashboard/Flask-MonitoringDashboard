@@ -13,6 +13,18 @@ class TestSetup(unittest.TestCase):
         add_fake_data()
         self.app = get_test_app()
 
+    def test_index(self):
+        """
+            Just retrieve the content and check if nothing breaks
+        """
+        test_admin_secure(self, '')
+
+    def test_static(self):
+        """
+            Just retrieve the content and check if nothing breaks
+        """
+        test_admin_secure(self, 'static/css/custom.css')
+
     def test_configuration(self):
         """
             Just retrieve the content and check if nothing breaks
