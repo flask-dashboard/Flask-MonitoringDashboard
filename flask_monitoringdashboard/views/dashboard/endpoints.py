@@ -6,9 +6,11 @@ from flask_monitoringdashboard.core.plot import get_layout, get_figure, boxplot,
 from flask_monitoringdashboard.core.plot.util import get_information
 from flask_monitoringdashboard.core.utils import simplify
 from flask_monitoringdashboard.database import session_scope
-from flask_monitoringdashboard.database.function_calls import get_endpoints, get_data_per_endpoint
+from flask_monitoringdashboard.database.count_group import get_value
+from flask_monitoringdashboard.database.data_grouped import get_endpoint_data_grouped
+from flask_monitoringdashboard.database.function_calls import get_endpoints
 
-TITLE = 'Global execution time for every endpoint'
+TITLE = 'API Performance'
 
 AXES_INFO = '''The X-axis presents the execution time in ms. The Y-axis presents every
 endpoint of the Flask application.'''
@@ -30,17 +32,13 @@ def endpoint_graph():
     :return:
     """
     with session_scope() as db_session:
-        endpoints = get_endpoints(db_session)
-
-        data = []
-        for endpoint in endpoints:
-            values = [c.execution_time for c in get_data_per_endpoint(db_session, endpoint)]
-            if values:
-                data.append(boxplot(simplify(values, 10), name=endpoint))
+        data = get_endpoint_data_grouped(db_session, lambda x: simplify(x, 10))
+        values = [boxplot(get_value(data, end, default=[]), name=end)
+                  for end in get_endpoints(db_session)]
 
     layout = get_layout(
-        height=350 + 40 * len(endpoints),
+        height=350 + 40 * len(values),
         xaxis={'title': 'Execution time (ms)'},
         margin=get_margin()
     )
-    return get_figure(layout, data)
+    return get_figure(layout, values)

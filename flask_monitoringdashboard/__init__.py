@@ -59,7 +59,7 @@ def bind(app):
             :param response: the response object that the actual endpoint returns
             :return: the unchanged response of the original endpoint
             """
-            hit_time_stamp = str(datetime.datetime.now())
+            hit_time_stamp = str(datetime.datetime.utcnow())
             home = os.path.expanduser("~")
             log = open(home + '/endpoint_hits.log', 'a')
             log.write('"{}","{}"\n'.format(hit_time_stamp, request.endpoint))

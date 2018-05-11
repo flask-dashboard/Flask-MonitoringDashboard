@@ -6,9 +6,10 @@ from flask_monitoringdashboard.core.forms import get_daterange_form
 from flask_monitoringdashboard.core.plot import barplot, get_figure, get_layout
 from flask_monitoringdashboard.core.plot.util import get_information
 from flask_monitoringdashboard.database import session_scope
-from flask_monitoringdashboard.database.function_calls import get_requests_per_day, get_endpoints
+from flask_monitoringdashboard.database.count_group import count_requests_per_day, get_value
+from flask_monitoringdashboard.database.function_calls import get_endpoints
 
-TITLE = 'Requests per endpoint per day'
+TITLE = 'Daily API Utilization'
 
 AXES_INFO = '''The X-axis presents the amount of requests. The Y-axis presents a number 
 of days'''
@@ -36,9 +37,9 @@ def requests_graph(form):
     """
     days = form.get_days()
     with session_scope() as db_session:
-        data = [barplot(x=get_requests_per_day(db_session, end, days), y=days, name=end) for end in
-                get_endpoints(db_session)]
-
+        hits = count_requests_per_day(db_session, days)
+        data = [barplot(x=[get_value(hits_day, end) for hits_day in hits], y=days, name=end)
+                for end in get_endpoints(db_session)]
     layout = get_layout(
         barmode='stack',
         height=350 + 40 * len(days),

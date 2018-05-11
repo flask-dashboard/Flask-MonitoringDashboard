@@ -28,7 +28,7 @@ author = constants['author']
 version = constants['version']
 
 release = version
-copyright = '{}, {}'.format(datetime.datetime.now().year, author)
+copyright = '{}, {}'.format(datetime.datetime.utcnow().year, author)
 
 # -- General configuration ---------------------------------------------------
 

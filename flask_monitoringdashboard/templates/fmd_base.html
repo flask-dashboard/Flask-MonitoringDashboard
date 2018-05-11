@@ -61,10 +61,10 @@
           <ul class="sidenav-second-level {{ "show" if request.endpoint in dashboard_list else "collapse" }}"
               id="collapseDashboard">
             {{ submenu('dashboard.overview', 'Overview') }}
-            {{ submenu('dashboard.hourly_load', 'Hourly load') }}
-            {{ submenu('dashboard.version_usage', 'Version usage') }}
-            {{ submenu('dashboard.requests', 'Request per endpoint') }}
-            {{ submenu('dashboard.endpoints', 'Time per endpoint') }}
+            {{ submenu('dashboard.hourly_load', 'Hourly API Utilization') }}
+            {{ submenu('dashboard.version_usage', 'Multi Version API Utilization') }}
+            {{ submenu('dashboard.requests', 'Daily API Utilization') }}
+            {{ submenu('dashboard.endpoints', 'API Performance') }}
           </ul>
         </li>
         {% block endpoint_menu %}
@@ -113,7 +113,7 @@
     <footer class="sticky-footer">
       <div class="container">
         <div class="text-center">
-          For advanced documentation, see <a href="http://flask-monitoringdashboard.readthedocs.io">this site</a>
+          For advanced documentation, see <a target="_blank" href="http://flask-monitoringdashboard.readthedocs.io">this site</a>
         </div>
       </div>
     </footer>
