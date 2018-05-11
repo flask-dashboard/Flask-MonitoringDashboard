@@ -40,11 +40,6 @@ class Config(object):
             The config_file must at least contains the following variables in section 'dashboard':
             CUSTOM_LINK: The dashboard can be visited at localhost:5000/{{CUSTOM_LINK}}.
 
-            DATABASE: Suppose you have multiple projects where you're working on and want to 
-                separate the results. Then you can specify different database_names, such that the 
-                result of each project is stored in its own database.
-            DEFAULT_MONITOR: Whether you want to automatically monitor all endpoints.
-
             APP_VERSION: the version of the app that you use. Updating the version helps in
                 showing differences in execution times of a function over a period of time.
             Since updating the version in the config-file when updating code isn't very useful, it
@@ -70,9 +65,7 @@ class Config(object):
 
             TIMEZONE: The timezone for converting a UTC timestamp to a local timestamp.
                 for a list of all timezones, use the following: print(pytz.all_timezones)
-
-            SECURITY_TOKEN: Used for getting the data in /get_json_data/<security_token>
-
+            SECURITY_TOKEN: Used for getting the data in /get_json_data
             OUTLIERS_ENABLED: Whether you want the Dashboard to collect extra information about outliers.
 
             :param file: a string pointing to the location of the config-file
