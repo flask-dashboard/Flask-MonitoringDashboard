@@ -4,7 +4,6 @@
 """
 
 from flask import Flask, redirect, url_for
-from pytz import timezone
 
 
 def create_app():
@@ -16,7 +15,6 @@ def create_app():
     dashboard.config.group_by = 'User', 2
     dashboard.config.version = 2.0
     dashboard.config.database_name = 'sqlite:///flask_monitoringdashboard.db'
-    dashboard.config.timezone = timezone('Pacific/Kiritimati')
     dashboard.bind(app)
 
     @app.route('/endpoint1')
@@ -27,14 +25,6 @@ def create_app():
     @app.route('/')
     def main():
         return redirect(url_for('dashboard.index'))
-
-    @app.route('/endpoint2')
-    def endpoint2():
-        return redirect(url_for('dashboard.index'))
-
-    @app.route('/outl')
-    def outl():
-        return 'sfsef'
 
     return app
 
