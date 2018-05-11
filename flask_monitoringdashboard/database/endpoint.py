@@ -3,12 +3,13 @@ Contains all functions that access a single endpoint
 """
 import datetime
 
+import pytz
 from sqlalchemy import func, desc
 from sqlalchemy.orm.exc import NoResultFound
 
 from flask_monitoringdashboard import config
+from flask_monitoringdashboard.core.timezone import to_local_datetime
 from flask_monitoringdashboard.database import FunctionCall, MonitorRule
-import pytz
 
 
 def get_num_requests(db_session, endpoint, start_date, end_date):
@@ -36,7 +37,8 @@ def group_execution_times(times):
     """
     hours_dict = {}
     for time in times:
-        round_time = time.time.replace(tzinfo=pytz.timezone('UTC')).astimezone(tz=config.timezone).strftime('%Y-%m-%d %H:00:00')
+        round_time = time.time.replace(tzinfo=pytz.timezone('UTC')).astimezone(tz=config.timezone).strftime(
+            '%Y-%m-%d %H:00:00')
         hours_dict[round_time] = hours_dict.get(round_time, 0) + 1
     return hours_dict.items()
 
@@ -100,13 +102,6 @@ def update_monitor_rule(db_session, endpoint, value):
     """ Update the value of a specific monitor rule. """
     db_session.query(MonitorRule).filter(MonitorRule.endpoint == endpoint). \
         update({MonitorRule.monitor: value})
-
-
-def to_local_datetime(datetime):
-    """ Convert datetime (UTC) to local datetime from the configuration """
-    if datetime:
-        return datetime.replace(tzinfo=pytz.utc).astimezone(config.timezone)
-    return None
 
 
 def get_last_accessed_times(db_session):

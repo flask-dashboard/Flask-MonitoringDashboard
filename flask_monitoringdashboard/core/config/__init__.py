@@ -4,6 +4,7 @@ import os
 import pytz
 
 from flask_monitoringdashboard.core.config.parser import parse_string, parse_version, parse_bool, parse_literal
+from flask_monitoringdashboard.core.timezone import get_local_timezone
 
 
 class Config(object):
@@ -28,7 +29,7 @@ class Config(object):
         self.colors = {}
         self.security_token = 'cc83733cb0af8b884ff6577086b87909'
         self.outliers_enabled = True
-        self.timezone = pytz.timezone('Europe/Amsterdam')
+        self.timezone = pytz.timezone(get_local_timezone())
 
         # define a custom function to retrieve the session_id or username
         self.group_by = None
