@@ -102,9 +102,17 @@ def update_monitor_rule(db_session, endpoint, value):
         update({MonitorRule.monitor: value})
 
 
+def to_local_datetime(datetime):
+    """ Convert datetime (UTC) to local datetime from the configuration """
+    if datetime:
+        return datetime.replace(tzinfo=pytz.utc).astimezone(config.timezone)
+    return None
+
+
 def get_last_accessed_times(db_session):
     """ Returns the accessed time of a single endpoint. """
-    return db_session.query(MonitorRule.endpoint, MonitorRule.last_accessed).all()
+    result = db_session.query(MonitorRule.endpoint, MonitorRule.last_accessed).all()
+    return [(end, to_local_datetime(time)) for end, time in result]
 
 
 def update_last_accessed(db_session, endpoint, value):

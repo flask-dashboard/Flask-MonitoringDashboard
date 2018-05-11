@@ -2,14 +2,12 @@
 Contains all functions that access any functionCall-object
 """
 
-import datetime
 import time
 
 from sqlalchemy import distinct
 
 from flask_monitoringdashboard import config
 from flask_monitoringdashboard.database import FunctionCall
-from flask_monitoringdashboard.database.count import count_requests
 
 
 def add_function_call(db_session, execution_time, endpoint, ip):
