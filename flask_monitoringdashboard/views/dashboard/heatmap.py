@@ -2,11 +2,9 @@ import datetime
 
 import numpy
 import plotly.graph_objs as go
-import pytz
 from flask import render_template
-from flask_monitoringdashboard.database.function_calls import get_data
 
-from flask_monitoringdashboard import blueprint, config
+from flask_monitoringdashboard import blueprint
 from flask_monitoringdashboard.core.auth import secure
 from flask_monitoringdashboard.core.forms import get_daterange_form
 from flask_monitoringdashboard.core.plot import get_layout, get_figure, heatmap as plot_heatmap

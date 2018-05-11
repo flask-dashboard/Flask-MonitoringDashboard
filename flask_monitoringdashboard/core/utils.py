@@ -4,7 +4,7 @@ from flask import url_for
 from werkzeug.routing import BuildError
 
 from flask_monitoringdashboard import config
-from flask_monitoringdashboard.database.count import count_requests
+from flask_monitoringdashboard.database.count import count_requests, count_total_requests
 from flask_monitoringdashboard.database.endpoint import get_monitor_rule
 from flask_monitoringdashboard.database.function_calls import get_date_of_first_request
 
@@ -30,7 +30,8 @@ def get_details(db_session):
         'link': config.link,
         'dashboard-version': constants['version'],
         'config-version': config.version,
-        'first-request': get_date_of_first_request(db_session)
+        'first-request': get_date_of_first_request(db_session),
+        'total-requests': count_total_requests(db_session)
     }
 
 

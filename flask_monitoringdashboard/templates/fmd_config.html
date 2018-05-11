@@ -81,6 +81,10 @@
           <td><b>First Request</b></td>
           <td>{{ details['first-request'] }}</td>
         </tr>
+          <tr>
+          <td><b>Total amount of monitored requests</b></td>
+          <td>{{ "{:,d}".format(details['total-requests']) }}</td>
+        </tr>
       </table>
     </div>
   </div>
