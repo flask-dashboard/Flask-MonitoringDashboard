@@ -6,6 +6,7 @@
 
 import unittest
 
+from flask_monitoringdashboard.core.timezone import to_utc_datetime
 from flask_monitoringdashboard.database import session_scope
 from flask_monitoringdashboard.test.utils import set_test_environment, clear_db, add_fake_data, NAME
 import pytz
@@ -46,11 +47,11 @@ class TestEndpoint(unittest.TestCase):
             Test whether the function returns the right values.
         """
         import datetime
-        time = datetime.datetime.utcnow().replace(tzinfo=pytz.utc)
+        time = datetime.datetime.utcnow()
         from flask_monitoringdashboard.database.endpoint import update_last_accessed, get_last_accessed_times
         from flask_monitoringdashboard.database.count_group import get_value
         with session_scope() as db_session:
             update_last_accessed(db_session, NAME, time)
             result = get_value(get_last_accessed_times(db_session), NAME)
-            result_utc = result.astimezone(pytz.utc)
+            result_utc = to_utc_datetime(result)
             self.assertEqual(result_utc, time)

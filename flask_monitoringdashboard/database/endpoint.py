@@ -87,6 +87,7 @@ def get_monitor_rule(db_session, endpoint):
             filter(MonitorRule.endpoint == endpoint).one()
         result.time_added = to_local_datetime(result.time_added)
         result.last_accessed = to_local_datetime(result.last_accessed)
+        db_session.expunge_all()
         return result
     except NoResultFound:
         db_session.add(
@@ -105,7 +106,6 @@ def update_monitor_rule(db_session, endpoint, value):
 def get_last_accessed_times(db_session):
     """ Returns the accessed time of a single endpoint. """
     result = db_session.query(MonitorRule.endpoint, MonitorRule.last_accessed).all()
-    print([time for end, time in result])
     return [(end, to_local_datetime(time)) for end, time in result]
 
 
