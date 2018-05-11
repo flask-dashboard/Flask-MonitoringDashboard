@@ -50,18 +50,17 @@ def hourly_load_graph(form, end=None):
     # add data from database to heatmap_data
     start_datetime = to_utc_datetime(datetime.datetime.combine(form.start_date.data, datetime.time(0, 0, 0, 0)))
     end_datetime = to_utc_datetime(datetime.datetime.combine(form.end_date.data, datetime.time(23, 59, 59)))
-    print('start_datetime: ' + str(start_datetime))
-    print('end_datetime: ' + str(end_datetime))
 
     with session_scope() as db_session:
-        for d in get_num_requests(db_session, end, start_datetime, end_datetime):
-            parsed_time = datetime.datetime.strptime(d[0], '%Y-%m-%d %H:%M:%S')
+        for time, count in get_num_requests(db_session, end, start_datetime, end_datetime):
+            parsed_time = datetime.datetime.strptime(time, '%Y-%m-%d %H:%M:%S')
             day_index = (parsed_time - start_datetime).days
-            hour_index = int(parsed_time.strftime('%H'))
-            heatmap_data[hour_index][day_index] = d[1]
+            hour_index = int(to_local_datetime(parsed_time).strftime('%H'))
+            heatmap_data[hour_index][day_index] = count
 
-    start_datetime = to_local_datetime(start_datetime).replace(hour=12, minute=0, second=0)
-    end_datetime = form.end_date.data.strftime('%Y-%m-%d 12:00:00')
+    start_datetime = to_local_datetime(start_datetime - datetime.timedelta(days=1)).strftime('%Y-%m-%d 12:00:00')
+    end_datetime = to_local_datetime(form.end_date.data).strftime('%Y-%m-%d 12:00:00')
+
     layout = get_layout(
         xaxis=go.XAxis(range=[start_datetime, end_datetime]),
         yaxis={'autorange': 'reversed'}

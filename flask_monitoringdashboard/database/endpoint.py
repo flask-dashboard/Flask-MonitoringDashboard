@@ -3,7 +3,6 @@ Contains all functions that access a single endpoint
 """
 import datetime
 
-import pytz
 from sqlalchemy import func, desc
 from sqlalchemy.orm.exc import NoResultFound
 
@@ -22,10 +21,9 @@ def get_num_requests(db_session, endpoint, start_date, end_date):
     query = db_session.query(FunctionCall.time)
     if endpoint:
         query = query.filter(FunctionCall.endpoint == endpoint)
-    query = query.filter(FunctionCall.time >= start_date, FunctionCall.time <= end_date)
+    result = query.filter(FunctionCall.time >= start_date, FunctionCall.time <= end_date).all()
 
-    raw_times = [to_local_datetime(time.time) for time in query.all()]
-    return group_execution_times(raw_times)
+    return group_execution_times(result)
 
 
 def group_execution_times(times):
@@ -35,8 +33,8 @@ def group_execution_times(times):
     :return: list of tuples ('%Y-%m-%d %H:00:00', count)
     """
     hours_dict = {}
-    for datetime in times:
-        round_time = datetime.strftime('%Y-%m-%d %H:00:00')
+    for dt in times:
+        round_time = dt.time.strftime('%Y-%m-%d %H:00:00')
         hours_dict[round_time] = hours_dict.get(round_time, 0) + 1
     return hours_dict.items()
 
