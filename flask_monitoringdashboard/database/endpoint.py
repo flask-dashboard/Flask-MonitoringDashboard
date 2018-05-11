@@ -20,14 +20,11 @@ def get_num_requests(db_session, endpoint, start_date, end_date):
         :param end_date: datetime.date object
     """
     query = db_session.query(FunctionCall.time)
-    start_datetime = to_utc_datetime(datetime.datetime.combine(start_date, datetime.time(0, 0, 0, 0)))
-    end_datetime = to_utc_datetime(datetime.datetime.combine(end_date, datetime.time(23, 59, 59)))
-
     if endpoint:
         query = query.filter(FunctionCall.endpoint == endpoint)
-    query = query.filter(FunctionCall.time >= start_datetime, FunctionCall.time <= end_datetime)
+    query = query.filter(FunctionCall.time >= start_date, FunctionCall.time <= end_date)
 
-    raw_times = query.all()
+    raw_times = [to_local_datetime(time.time) for time in query.all()]
     return group_execution_times(raw_times)
 
 
@@ -38,9 +35,8 @@ def group_execution_times(times):
     :return: list of tuples ('%Y-%m-%d %H:00:00', count)
     """
     hours_dict = {}
-    for time in times:
-        round_time = time.time.replace(tzinfo=pytz.timezone('UTC')).astimezone(tz=config.timezone).strftime(
-            '%Y-%m-%d %H:00:00')
+    for datetime in times:
+        round_time = datetime.strftime('%Y-%m-%d %H:00:00')
         hours_dict[round_time] = hours_dict.get(round_time, 0) + 1
     return hours_dict.items()
 
@@ -89,8 +85,8 @@ def get_monitor_rule(db_session, endpoint):
     try:
         result = db_session.query(MonitorRule). \
             filter(MonitorRule.endpoint == endpoint).one()
-        # for using the result when the session is closed, use expunge
-        db_session.expunge(result)
+        result.time_added = to_local_datetime(result.time_added)
+        result.last_accessed = to_local_datetime(result.last_accessed)
         return result
     except NoResultFound:
         db_session.add(

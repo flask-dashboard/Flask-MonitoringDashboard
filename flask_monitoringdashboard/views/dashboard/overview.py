@@ -5,6 +5,7 @@ from flask import render_template
 from flask_monitoringdashboard import blueprint
 from flask_monitoringdashboard.core.auth import secure, is_admin
 from flask_monitoringdashboard.core.colors import get_color
+from flask_monitoringdashboard.core.timezone import to_local_datetime, to_utc_datetime
 from flask_monitoringdashboard.database import FunctionCall, session_scope
 from flask_monitoringdashboard.database.count_group import count_requests_group, get_value
 from flask_monitoringdashboard.database.data_grouped import get_endpoint_data_grouped
@@ -15,8 +16,8 @@ from flask_monitoringdashboard.database.function_calls import get_endpoints, get
 @blueprint.route('/overview')
 @secure
 def overview():
-    week_ago = datetime.datetime.utcnow() - datetime.timedelta(days=7)
-    today = datetime.datetime.utcnow().replace(hour=0, minute=0, second=0, microsecond=0)
+    week_ago = to_utc_datetime(datetime.datetime.utcnow()) - datetime.timedelta(days=7)
+    today = to_utc_datetime(datetime.datetime.utcnow()).replace(hour=0, minute=0, second=0, microsecond=0)
 
     result = []
     with session_scope() as db_session:
