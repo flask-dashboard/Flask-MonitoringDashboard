@@ -28,7 +28,7 @@
         <tbody>
         {% for record in result %}
           <tr style="cursor: pointer"
-              onclick="window.location='{{ url_for('dashboard.result_heatmap', end=record.name) }}';">
+              onclick="window.location='{{ url_for('dashboard.endpoint_hourly_load', end=record.name) }}';">
             <td style="background-color: {{ record.color }}"></td>
             <td style="max-width: 200px; overflow: hidden; white-space: nowrap; text-overflow: ellipsis;">{{ record.name }}</td>
             <td style="text-align: right;">{{ "{:,d}".format(record['hits-today']) }}</td>
@@ -38,7 +38,7 @@
             <td style="text-align: right;">{{ "{:,.1f}".format(record['median-week']) }}</td>
             <td style="text-align: right;">{{ "{:,.1f}".format(record['median-overall']) }}</td>
             <td style="text-align: center;">{{ "{:%Y-%m-%d %H:%M:%S }".format(record['last-accessed']) }}</td>
-            <td><a href="{{ url_for('dashboard.result_heatmap', end=record.name) }}"
+            <td><a href="{{ url_for('dashboard.endpoint_hourly_load', end=record.name) }}"
                    class="btn btn-primary btn-block">Details</a>
             </td>
           </tr>

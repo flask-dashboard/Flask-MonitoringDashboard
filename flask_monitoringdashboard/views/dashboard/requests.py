@@ -4,20 +4,32 @@ from flask_monitoringdashboard import blueprint
 from flask_monitoringdashboard.core.auth import secure
 from flask_monitoringdashboard.core.forms import get_daterange_form
 from flask_monitoringdashboard.core.plot import barplot, get_figure, get_layout
+from flask_monitoringdashboard.core.plot.util import get_information
 from flask_monitoringdashboard.database import session_scope
-from flask_monitoringdashboard.database.function_calls import get_requests_per_day, get_endpoints
+from flask_monitoringdashboard.database.count_group import count_requests_per_day, get_value
+from flask_monitoringdashboard.database.function_calls import get_endpoints
 
-TITLE = 'Requests per endpoint per day'
+TITLE = 'Daily API Utilization'
+
+AXES_INFO = '''The X-axis presents the amount of requests. The Y-axis presents a number 
+of days'''
+
+CONTENT_INFO = '''This graph presents a horizontal stacked barplot. Each endpoint is represented by a 
+color. In the legend on the right, you can disable a certain endpoint by clicking on it. You can also
+show in the information of a single endpoint by double clicking that endpoint in the legend. The 
+information from this graph can be used to see on which days (a subset of) the endpoints are used to 
+most.'''
 
 
-@blueprint.route('/measurements/requests', methods=['GET', 'POST'])
+@blueprint.route('/requests', methods=['GET', 'POST'])
 @secure
-def page_number_of_requests_per_endpoint():
+def requests():
     form = get_daterange_form(num_days=10)
-    return render_template('fmd_dashboard/graph.html', form=form, graph=get_stacked_bar(form), title=TITLE)
+    return render_template('fmd_dashboard/graph.html', form=form, graph=requests_graph(form), title=TITLE,
+                           information=get_information(AXES_INFO, CONTENT_INFO))
 
 
-def get_stacked_bar(form):
+def requests_graph(form):
     """
     Returns a horizontal boxplot with the number of requests per day.
     :param form: must be the form that is obtained by get_daterange_form
@@ -25,9 +37,9 @@ def get_stacked_bar(form):
     """
     days = form.get_days()
     with session_scope() as db_session:
-        data = [barplot(x=get_requests_per_day(db_session, end, days), y=days, name=end) for end in
-                get_endpoints(db_session)]
-
+        hits = count_requests_per_day(db_session, days)
+        data = [barplot(x=[get_value(hits_day, end) for hits_day in hits], y=days, name=end)
+                for end in get_endpoints(db_session)]
     layout = get_layout(
         barmode='stack',
         height=350 + 40 * len(days),

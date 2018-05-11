@@ -5,7 +5,7 @@
 import datetime
 from contextlib import contextmanager
 
-from sqlalchemy import Column, Integer, String, DateTime, create_engine, Float, Boolean, TEXT, Text
+from sqlalchemy import Column, Integer, String, DateTime, create_engine, Float, Boolean, TEXT
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 
@@ -21,7 +21,7 @@ class MonitorRule(Base):
     # endpoint must be unique and acts as a primary key
     endpoint = Column(String(250), primary_key=True)
     # boolean to determine whether the endpoint should be monitored?
-    monitor = Column(Boolean, default=False)
+    monitor = Column(Boolean, default=config.default_monitor)
     # the time and version on which the endpoint is added
     time_added = Column(DateTime)
     version_added = Column(String(100), default=config.version)

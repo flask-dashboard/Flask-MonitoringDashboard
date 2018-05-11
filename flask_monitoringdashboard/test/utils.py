@@ -2,8 +2,8 @@
     Some useful functions for setting up the testing environment, adding data, etc..
 """
 import datetime
-import time
 
+import pytz
 from flask import Flask
 
 NAME = 'main'
@@ -18,7 +18,8 @@ TEST_NAMES = ['test_name1', 'test_name2']
 
 
 def set_test_environment():
-    """ Override the config-object for a new testing environment. Module flask_monitoringdashboard must be imported locally. """
+    """ Override the config-object for a new testing environment. Module flask_monitoringdashboard
+    must be imported locally. """
     import flask_monitoringdashboard
     flask_monitoringdashboard.config.database_name = 'sqlite:///test-database.db'
 

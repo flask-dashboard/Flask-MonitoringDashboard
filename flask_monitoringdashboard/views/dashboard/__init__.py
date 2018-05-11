@@ -9,9 +9,8 @@
     - Time per endpoint: Shows the overall execution time for all endpoints.
 """
 
-from flask_monitoringdashboard.views.dashboard.endpoints import page_boxplot_per_endpoint
-from flask_monitoringdashboard.views.dashboard.heatmap import heatmap
+from flask_monitoringdashboard.views.dashboard.endpoints import endpoints
+from flask_monitoringdashboard.views.dashboard.heatmap import hourly_load
 from flask_monitoringdashboard.views.dashboard.overview import overview
-from flask_monitoringdashboard.views.dashboard.requests import page_number_of_requests_per_endpoint
+from flask_monitoringdashboard.views.dashboard.requests import requests
 from flask_monitoringdashboard.views.dashboard.version_usage import version_usage
-from flask_monitoringdashboard.views.dashboard.versions import page_boxplot_per_version

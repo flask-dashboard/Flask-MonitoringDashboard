@@ -52,15 +52,16 @@ class TestMeasurement(unittest.TestCase):
             Test whether the last_accessed is stored in the database
         """
         from flask_monitoringdashboard.core.measurement import track_last_accessed
+        from flask_monitoringdashboard.database.count_group import get_value
 
         with session_scope() as db_session:
             get_monitor_rule(db_session, NAME)
             func = track_last_accessed(self.func, NAME)
 
         with session_scope() as db_session:
-            self.assertIsNone(get_last_accessed_times(db_session, NAME))
+            self.assertIsNone(get_value(get_last_accessed_times(db_session), NAME, default=None))
             func()
-            self.assertIsNotNone(get_last_accessed_times(db_session, NAME))
+            self.assertIsNotNone(get_value(get_last_accessed_times(db_session), NAME, default=None))
 
     def test_get_average(self):
         """

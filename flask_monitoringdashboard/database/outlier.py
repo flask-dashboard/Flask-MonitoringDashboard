@@ -12,7 +12,7 @@ def add_outlier(db_session, endpoint, execution_time, stack_info, request):
                       request_headers=str(request.headers), request_environment=str(request.environ),
                       request_url=str(request.url), cpu_percent=stack_info.cpu_percent,
                       memory=stack_info.memory, stacktrace=stack_info.stacktrace,
-                      execution_time=execution_time, time=datetime.datetime.now())
+                      execution_time=execution_time, time=datetime.datetime.utcnow())
     db_session.add(outlier)
 
 

@@ -6,16 +6,19 @@ This project adheres to `Semantic Versioning <http://semver.org/>`_.
 Please note that the changes before version 1.10.0 have not been documented.
 
 
-Unreleased
+v1.13.0
 ----------
 Changed
 
-- Added mean CPU
+- Added boxplot of CPU loads
 
-- Updated documentation
+- Updated naming scheme of all graphs
+
+- Implemented two configuration options: the local timezone and the option to automatically monitor new endpoints
 
 - Updated the Test-Monitoring initialization
 
+- Updated Database support for MySQL
 
 v1.12.0
 -------

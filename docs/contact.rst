@@ -6,21 +6,24 @@ Developing-team
 ---------------
 Currently, the team consists of three active developers:
 
-+------------+----------------------------------------------------------------------+
-| |Picture1| | | **Patrick Vogel**                                                  |
-|            | |                                                                    |
-|            | | Core developer                                                     |
-|            | |                                                                    |
-|            | | **E-mail:** `patrickvogel@live.nl <mailto:patrickvogel@live.nl>`_. |
-+------------+----------------------------------------------------------------------+
-| |Picture2| | | **Thijs Klooster**                                                 |
-|            | |                                                                    |
-|            | | Test Monitor Specialist                                            |
-+------------+----------------------------------------------------------------------+
-| |Picture3| | | **Bogdan Petre**                                                   |
-|            | |                                                                    |
-|            | | Outlier Specialist                                                 |
-+------------+----------------------------------------------------------------------+
+.. table::
+   :widths: 2, 7
+
+   +------------+----------------------------------------------------------------------+
+   | |Picture1| | | **Patrick Vogel**                                                  |
+   |            | |                                                                    |
+   |            | | Core developer                                                     |
+   |            | |                                                                    |
+   |            | | **E-mail:** `patrickvogel@live.nl <mailto:patrickvogel@live.nl>`_. |
+   +------------+----------------------------------------------------------------------+
+   | |Picture2| | | **Thijs Klooster**                                                 |
+   |            | |                                                                    |
+   |            | | Test Monitor Specialist                                            |
+   +------------+----------------------------------------------------------------------+
+   | |Picture3| | | **Bogdan Petre**                                                   |
+   |            | |                                                                    |
+   |            | | Outlier Specialist                                                 |
+   +------------+----------------------------------------------------------------------+
 
 .. |Picture1| image:: https://avatars2.githubusercontent.com/u/17162650?s=460&v=4
               ..:width: 100px
