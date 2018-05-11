@@ -16,7 +16,7 @@ def create_app():
     dashboard.config.group_by = 'User', 2
     dashboard.config.version = 1.0
     dashboard.config.database_name = 'sqlite:///flask_monitoringdashboard.db'
-    # dashboard.config.timezone = timezone('Australia/Sydney')
+    # dashboard.config.timezone = timezone('Pacific/Honolulu')
     dashboard.bind(app)
 
     @app.route('/endpoint1')
