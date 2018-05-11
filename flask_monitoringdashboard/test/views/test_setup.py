@@ -1,4 +1,5 @@
 import os
+import subprocess
 import unittest
 
 from flask_monitoringdashboard.test.utils import set_test_environment, clear_db, add_fake_data, add_fake_test_runs, \
@@ -61,8 +62,10 @@ class TestSetup(unittest.TestCase):
             self.assertEqual(200, c.post('dashboard/rules', data=data).status_code)
 
     def test_collect_performance(self):
-        """ Tests the collect_performance script. """
+        """
+            Tests the collect_performance script.
+        """
         test_dir = os.getcwd() + '/flask_monitoringdashboard/test/db'  # Finds the database tests of the Dashboard.
-        result = os.system(
-            'python -m flask_monitoringdashboard.collect_performance --test_folder={} --times=1'.format(test_dir))
-        self.assertEqual(0, result)
+        self.assertEqual(0, subprocess.call(
+            'python -m flask_monitoringdashboard.collect_performance --test_folder={} --times=1'.format(test_dir),
+            shell=True))
