@@ -5,27 +5,31 @@ from flask import render_template
 from flask_monitoringdashboard import blueprint
 from flask_monitoringdashboard.core.auth import secure, is_admin
 from flask_monitoringdashboard.core.colors import get_color
+from flask_monitoringdashboard.core.timezone import to_local_datetime, to_utc_datetime
 from flask_monitoringdashboard.database import FunctionCall, session_scope
 from flask_monitoringdashboard.database.count_group import count_requests_group, get_value
+from flask_monitoringdashboard.database.data_grouped import get_endpoint_data_grouped
 from flask_monitoringdashboard.database.endpoint import get_last_accessed_times
 from flask_monitoringdashboard.database.function_calls import get_endpoints
-from flask_monitoringdashboard.database.data_grouped import get_endpoint_data_grouped
 
 
 @blueprint.route('/overview')
 @secure
 def overview():
     week_ago = datetime.datetime.utcnow() - datetime.timedelta(days=7)
-    today = datetime.datetime.utcnow().replace(hour=0, minute=0, second=0, microsecond=0)
+    now_local = to_local_datetime(datetime.datetime.utcnow())
+    today_local = now_local.replace(hour=0, minute=0, second=0, microsecond=0)
+    today_utc = to_utc_datetime(today_local)
 
     result = []
     with session_scope() as db_session:
-        hits_today = count_requests_group(db_session, FunctionCall.time > today)
-        hits_week = count_requests_group(db_session, FunctionCall.time > week_ago)
-        hits = count_requests_group(db_session)
         from numpy import median
 
-        median_today = get_endpoint_data_grouped(db_session, median, FunctionCall.time > today)
+        hits_today = count_requests_group(db_session, FunctionCall.time > today_utc)
+        hits_week = count_requests_group(db_session, FunctionCall.time > week_ago)
+        hits = count_requests_group(db_session)
+
+        median_today = get_endpoint_data_grouped(db_session, median, FunctionCall.time > today_utc)
         median_week = get_endpoint_data_grouped(db_session, median, FunctionCall.time > week_ago)
         median = get_endpoint_data_grouped(db_session, median)
         access_times = get_last_accessed_times(db_session)

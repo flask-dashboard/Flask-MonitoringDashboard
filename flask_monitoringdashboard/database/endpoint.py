@@ -7,6 +7,7 @@ from sqlalchemy import func, desc
 from sqlalchemy.orm.exc import NoResultFound
 
 from flask_monitoringdashboard import config
+from flask_monitoringdashboard.core.timezone import to_local_datetime, to_utc_datetime
 from flask_monitoringdashboard.database import FunctionCall, MonitorRule
 
 
@@ -20,13 +21,9 @@ def get_num_requests(db_session, endpoint, start_date, end_date):
     query = db_session.query(FunctionCall.time)
     if endpoint:
         query = query.filter(FunctionCall.endpoint == endpoint)
-    query = query.filter(FunctionCall.time >= datetime.datetime.combine(start_date, datetime.time(0, 0, 0, 0))). \
-        filter(FunctionCall.time <= datetime.datetime.combine(end_date, datetime.time(23, 59, 59)))
+    result = query.filter(FunctionCall.time >= start_date, FunctionCall.time <= end_date).all()
 
-    raw_times = query.all()
-    result = group_execution_times(raw_times)
-    db_session.expunge_all()
-    return result
+    return group_execution_times(result)
 
 
 def group_execution_times(times):
@@ -36,8 +33,8 @@ def group_execution_times(times):
     :return: list of tuples ('%Y-%m-%d %H:00:00', count)
     """
     hours_dict = {}
-    for time in times:
-        round_time = time.time.strftime('%Y-%m-%d %H:00:00')
+    for dt in times:
+        round_time = dt.time.strftime('%Y-%m-%d %H:00:00')
         hours_dict[round_time] = hours_dict.get(round_time, 0) + 1
     return hours_dict.items()
 
@@ -86,8 +83,9 @@ def get_monitor_rule(db_session, endpoint):
     try:
         result = db_session.query(MonitorRule). \
             filter(MonitorRule.endpoint == endpoint).one()
-        # for using the result when the session is closed, use expunge
-        db_session.expunge(result)
+        result.time_added = to_local_datetime(result.time_added)
+        result.last_accessed = to_local_datetime(result.last_accessed)
+        db_session.expunge_all()
         return result
     except NoResultFound:
         db_session.add(
@@ -105,7 +103,8 @@ def update_monitor_rule(db_session, endpoint, value):
 
 def get_last_accessed_times(db_session):
     """ Returns the accessed time of a single endpoint. """
-    return db_session.query(MonitorRule.endpoint, MonitorRule.last_accessed).all()
+    result = db_session.query(MonitorRule.endpoint, MonitorRule.last_accessed).all()
+    return [(end, to_local_datetime(time)) for end, time in result]
 
 
 def update_last_accessed(db_session, endpoint, value):

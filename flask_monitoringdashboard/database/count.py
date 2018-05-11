@@ -48,6 +48,14 @@ def count_requests(db_session, endpoint, *where):
     return count_rows(db_session, FunctionCall.id, FunctionCall.endpoint == endpoint, *where)
 
 
+def count_total_requests(db_session, *where):
+    """ Return the number of total hits
+    :param db_session: session for the database
+    :param where: additional arguments
+    """
+    return count_rows(db_session, FunctionCall.id, *where)
+
+
 def count_outliers(db_session, endpoint):
     """
     :return: An integer with the number of rows in the Outlier-table.

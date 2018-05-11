@@ -6,6 +6,7 @@ from flask_paginate import get_page_args, Pagination
 from flask_monitoringdashboard import blueprint
 from flask_monitoringdashboard.core.auth import secure
 from flask_monitoringdashboard.core.colors import get_color
+from flask_monitoringdashboard.core.timezone import to_local_datetime
 from flask_monitoringdashboard.core.utils import get_endpoint_details, simplify
 from flask_monitoringdashboard.database import Outlier, session_scope
 from flask_monitoringdashboard.database.count import count_outliers
@@ -25,6 +26,8 @@ def outliers(end):
         delete_outliers_without_stacktrace(db_session)
         page, per_page, offset = get_page_args(page_parameter='page', per_page_parameter='per_page')
         table = get_outliers_sorted(db_session, end, Outlier.execution_time, offset, per_page)
+        for outl in table:
+            outl.time = to_local_datetime(outl.time)
         all_cpus = get_outliers_cpus(db_session, end)
         graph = cpu_load_graph(all_cpus)
         pagination = Pagination(page=page, per_page=per_page, total=count_outliers(db_session, end), format_number=True,

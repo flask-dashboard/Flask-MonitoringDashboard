@@ -1,7 +1,10 @@
 import configparser
 import os
 
+import pytz
+
 from flask_monitoringdashboard.core.config.parser import parse_string, parse_version, parse_bool, parse_literal
+from tzlocal import get_localzone
 
 
 class Config(object):
@@ -26,6 +29,7 @@ class Config(object):
         self.colors = {}
         self.security_token = 'cc83733cb0af8b884ff6577086b87909'
         self.outliers_enabled = True
+        self.timezone = pytz.timezone(str(get_localzone()))
 
         # define a custom function to retrieve the session_id or username
         self.group_by = None
@@ -36,9 +40,6 @@ class Config(object):
             APP_VERSION: the version of the app that you use. Updating the version helps in 
                 showing differences in execution times of a function over a period of time.
             CUSTOM_LINK: The dashboard can be visited at localhost:5000/{{CUSTOM_LINK}}.
-            DATABASE: Suppose you have multiple projects where you're working on and want to 
-                separate the results. Then you can specify different database_names, such that the 
-                result of each project is stored in its own database.
             
             Since updating the version in the config-file when updating code isn't very useful, it
             is a better idea to provide the location of the git-folder. From the git-folder. The 
@@ -46,6 +47,11 @@ class Config(object):
             GIT = If you're using git, then it is easier to set the location to the .git-folder, 
                 The location is relative to the config-file.
 
+            DATABASE: Suppose you have multiple projects where you're working on and want to
+                separate the results. Then you can specify different database_names, such that the
+                result of each project is stored in its own database.
+            DEFAULT_MONITOR: Whether you want to automatically monitor all endpoints. Default value
+                is true.
             USERNAME: for logging into the dashboard, a username and password is required. The
                 username can be set using this variable.
             PASSWORD: same as for the username, but this is the password variable.
@@ -55,6 +61,9 @@ class Config(object):
             OUTLIER_DETECTION_CONSTANT: When the execution time is more than this constant *
                 average, extra information is logged into the database. A default value for this
                 variable is 2.5, but can be changed in the config-file.
+
+            TIMEZONE: The timezone for converting a UTC timestamp to a local timestamp.
+                for a list of all timezones, use the following: print(pytz.all_timezones)
 
             SECURITY_TOKEN: Used for getting the data in /get_json_data/<security_token>
 
@@ -84,6 +93,7 @@ class Config(object):
             self.security_token = parse_string(parser, 'SECURITY_TOKEN', self.security_token)
             self.outliers_enabled = parse_bool(parser, 'OUTLIERS_ENABLED', self.outliers_enabled)
             self.colors = parse_literal(parser, 'COLORS', self.colors)
+            self.timezone = pytz.timezone(parse_string(parser, 'TIMEZONE', self.timezone.zone))
             self.outlier_detection_constant = parse_literal(parser, 'OUTlIER_DETECTION_CONSTANT',
                                                             self.outlier_detection_constant)
             self.username = parse_string(parser, 'USERNAME', self.username)
