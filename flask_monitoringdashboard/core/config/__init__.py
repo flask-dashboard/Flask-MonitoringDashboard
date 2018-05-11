@@ -4,7 +4,7 @@ import os
 import pytz
 
 from flask_monitoringdashboard.core.config.parser import parse_string, parse_version, parse_bool, parse_literal
-from flask_monitoringdashboard.core.timezone import get_local_timezone
+from tzlocal import get_localzone
 
 
 class Config(object):
@@ -30,7 +30,7 @@ class Config(object):
         self.colors = {}
         self.security_token = 'cc83733cb0af8b884ff6577086b87909'
         self.outliers_enabled = True
-        self.timezone = pytz.timezone(get_local_timezone())
+        self.timezone = pytz.timezone(str(get_localzone()))
 
         # define a custom function to retrieve the session_id or username
         self.group_by = None
@@ -38,20 +38,26 @@ class Config(object):
     def init_from(self, file=None, envvar=None):
         """
             The config_file must at least contains the following variables in section 'dashboard':
-            APP_VERSION: the version of the app that you use. Updating the version helps in 
-                showing differences in execution times of a function over a period of time.
             CUSTOM_LINK: The dashboard can be visited at localhost:5000/{{CUSTOM_LINK}}.
+
             DATABASE: Suppose you have multiple projects where you're working on and want to 
                 separate the results. Then you can specify different database_names, such that the 
                 result of each project is stored in its own database.
             DEFAULT_MONITOR: Whether you want to automatically monitor all endpoints.
-            
+
+            APP_VERSION: the version of the app that you use. Updating the version helps in
+                showing differences in execution times of a function over a period of time.
             Since updating the version in the config-file when updating code isn't very useful, it
             is a better idea to provide the location of the git-folder. From the git-folder. The 
             version automatically retrieved by reading the commit-id (hashed value):
             GIT = If you're using git, then it is easier to set the location to the .git-folder, 
                 The location is relative to the config-file.
 
+            DATABASE: Suppose you have multiple projects where you're working on and want to
+                separate the results. Then you can specify different database_names, such that the
+                result of each project is stored in its own database.
+            DEFAULT_MONITOR: Whether you want to automatically monitor all endpoints. Default value
+                is true.
             USERNAME: for logging into the dashboard, a username and password is required. The
                 username can be set using this variable.
             PASSWORD: same as for the username, but this is the password variable.

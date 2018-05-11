@@ -1,5 +1,8 @@
+import datetime
+
 from sqlalchemy import func
 
+from flask_monitoringdashboard.core.timezone import to_utc_datetime
 from flask_monitoringdashboard.database import FunctionCall
 
 
@@ -40,5 +43,11 @@ def count_requests_per_day(db_session, list_of_days):
     """ Return the number of hits for all endpoints per day.
     :param db_session: session for the database
     :param list_of_days: list with datetime.datetime objects. """
-    return [count_rows_group(db_session, FunctionCall.id, func.date(FunctionCall.time) == day)
-            for day in list_of_days]
+    result = []
+    for day in list_of_days:
+        dt_begin = to_utc_datetime(datetime.datetime.combine(day, datetime.time(0, 0, 0)))
+        dt_end = dt_begin + datetime.timedelta(days=1)
+
+        result.append(count_rows_group(db_session, FunctionCall.id, FunctionCall.time >= dt_begin,
+                                       FunctionCall.time < dt_end))
+    return result

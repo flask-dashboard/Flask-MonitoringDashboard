@@ -43,7 +43,7 @@ def get_endpoints(db_session):
 
 def get_date_of_first_request(db_session):
     """ return the date (as unix timestamp) of the first request """
-    result = db_session.query(FunctionCall.time).first()
+    result = db_session.query(FunctionCall.time).order_by(FunctionCall.time).first()
     if result:
         return int(time.mktime(result[0].timetuple()))
     return -1

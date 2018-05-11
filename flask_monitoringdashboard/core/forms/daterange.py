@@ -5,6 +5,8 @@ from flask_wtf import FlaskForm
 from wtforms import validators, SubmitField
 from wtforms.fields.html5 import DateField
 
+from flask_monitoringdashboard.core.timezone import to_local_datetime
+
 DATE_FORMAT = '%Y-%m-%d'
 
 
@@ -51,6 +53,6 @@ def get_daterange_form(num_days=20):
         if form.start_date.data > form.end_date.data:
             form.start_date.data, form.end_date.data = form.end_date.data, form.start_date.data
     else:
-        form.end_date.data = datetime.date.today()
+        form.end_date.data = to_local_datetime(datetime.datetime.utcnow()).date()
         form.start_date.data = form.end_date.data - datetime.timedelta(days=num_days)
     return form

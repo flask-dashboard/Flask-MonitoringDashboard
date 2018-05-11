@@ -9,6 +9,7 @@ from flask_monitoringdashboard.core.utils import get_endpoint_details, simplify
 from flask_monitoringdashboard.database import FunctionCall, session_scope
 from flask_monitoringdashboard.database.count_group import get_value
 from flask_monitoringdashboard.database.data_grouped import get_version_data_grouped
+from flask_monitoringdashboard.database.endpoint import to_local_datetime
 from flask_monitoringdashboard.database.versions import get_versions, get_first_requests
 
 TITLE = 'Per-Version Performance'
@@ -39,7 +40,7 @@ def format_version(version, first_used):
     """
     if not first_used:
         return version
-    return '{}<br>{}'.format(version, first_used.strftime('%Y-%m-%d %H:%M'))
+    return '{}<br>{}'.format(version, to_local_datetime(first_used).strftime('%Y-%m-%d %H:%M'))
 
 
 def versions_graph(db_session, end):

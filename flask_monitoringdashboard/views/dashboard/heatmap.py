@@ -2,14 +2,14 @@ import datetime
 
 import numpy
 import plotly.graph_objs as go
-import pytz
 from flask import render_template
 
-from flask_monitoringdashboard import blueprint, config
+from flask_monitoringdashboard import blueprint
 from flask_monitoringdashboard.core.auth import secure
 from flask_monitoringdashboard.core.forms import get_daterange_form
 from flask_monitoringdashboard.core.plot import get_layout, get_figure, heatmap as plot_heatmap
 from flask_monitoringdashboard.core.plot.util import get_information
+from flask_monitoringdashboard.core.timezone import to_utc_datetime, to_local_datetime
 from flask_monitoringdashboard.database import session_scope
 from flask_monitoringdashboard.database.endpoint import get_num_requests
 
@@ -46,17 +46,21 @@ def hourly_load_graph(form, end=None):
     heatmap_data = numpy.zeros((len(hours), len(days)))
 
     # add data from database to heatmap_data
+    start_datetime = to_utc_datetime(datetime.datetime.combine(form.start_date.data, datetime.time(0, 0, 0, 0)))
+    end_datetime = to_utc_datetime(datetime.datetime.combine(form.end_date.data, datetime.time(23, 59, 59)))
+
     with session_scope() as db_session:
-        for d in get_num_requests(db_session, end, form.start_date.data, form.end_date.data):
-            parsed_time = config.timezone.localize(datetime.datetime.strptime(d[0], '%Y-%m-%d %H:%M:%S'))
-            day_index = (parsed_time - datetime.datetime.combine(form.start_date.data, datetime.time(0, 0, 0, 0)).
-                         replace(tzinfo=pytz.utc)).days
-            hour_index = int(parsed_time.strftime('%H'))
-            heatmap_data[hour_index][day_index] = d[1]
+        for time, count in get_num_requests(db_session, end, start_datetime, end_datetime):
+            parsed_time = datetime.datetime.strptime(time, '%Y-%m-%d %H:%M:%S')
+            day_index = (parsed_time - start_datetime).days
+            hour_index = int(to_local_datetime(parsed_time).strftime('%H'))
+            heatmap_data[hour_index][day_index] = count
+
+    start_datetime = to_local_datetime(start_datetime - datetime.timedelta(days=1)).strftime('%Y-%m-%d 12:00:00')
+    end_datetime = to_local_datetime(form.end_date.data).strftime('%Y-%m-%d 12:00:00')
 
     layout = get_layout(
-        xaxis=go.XAxis(range=[(form.start_date.data - datetime.timedelta(days=1, hours=6)).
-                       strftime('%Y-%m-%d 12:00:00'), form.end_date.data.strftime('%Y-%m-%d 12:00:00')]),
+        xaxis=go.XAxis(range=[start_datetime, end_datetime]),
         yaxis={'autorange': 'reversed'}
     )
     return get_figure(layout, [plot_heatmap(x=days, y=hours, z=heatmap_data)])
