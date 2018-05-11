@@ -60,7 +60,7 @@ class Config(object):
                 average, extra information is logged into the database. A default value for this
                 variable is 2.5, but can be changed in the config-file.
 
-            TIMEZONE: The timezone for converting a UTC timestamp to a locale timestamp.
+            TIMEZONE: The timezone for converting a UTC timestamp to a local timestamp.
                 for a list of all timezones, use the following: print(pytz.all_timezones)
 
             SECURITY_TOKEN: Used for getting the data in /get_json_data/<security_token>
