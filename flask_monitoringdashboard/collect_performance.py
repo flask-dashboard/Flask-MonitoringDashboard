@@ -16,6 +16,13 @@ parser.add_argument('--times', dest='times', default=5,
 parser.add_argument('--url', dest='url', default=None,
                     help='url of the Dashboard to submit the performance results to')
 args = parser.parse_args()
+
+# Determine if this script was called normally or if the call was part of a unit test on Travis.
+# When unit testing, only run one dummy test from the testmonitor folder.
+if '/home/travis/build/flask-dashboard/Flask-MonitoringDashboard/' in os.getcwd():
+    args.test_folder = os.getcwd() + 'flask_monitoringdashboard/test/views/testmonitor'
+
+# Show the settings with which this script will run.
 print('Starting the collection of performance results with the following settings:')
 print('  - folder containing unit tests: ', args.test_folder)
 print('  - number of times to run tests: ', args.times)
@@ -35,7 +42,6 @@ log.write('"start_time","stop_time","test_name"\n')
 # Find the tests and execute them the specified number of times.
 # Add the performance results to the result dictionary.
 suites = TestLoader().discover(args.test_folder, pattern="*test*.py")
-print('Number of tests to run in collect_performance: ', suites.countTestCases())
 for iteration in range(int(args.times)):
     for suite in suites:
         for case in suite:
