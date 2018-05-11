@@ -1,26 +1,37 @@
 import argparse
 import csv
-import os
 import datetime
+import os
 import time
 from unittest import TestLoader
 
 import requests
 
-# Parsing the arguments.
-parser = argparse.ArgumentParser(description='Collecting performance results from the unit tests of a project.')
-parser.add_argument('--test_folder', dest='test_folder', required=True,
-                    help='folder in which the unit tests can be found (example: ./tests)')
-parser.add_argument('--times', dest='times', default=5,
-                    help='number of times to execute every unit test (default: 5)')
-parser.add_argument('--url', dest='url', default=None,
-                    help='url of the Dashboard to submit the performance results to')
-args = parser.parse_args()
+test_folder = os.getcwd() + '/flask_monitoringdashboard/test/views/testmonitor'
+times = '1'
+url = None
+
+# Determine if this script was called normally or if the call was part of a unit test on Travis.
+# When unit testing, only run one dummy test from the testmonitor folder.
+if '/home/travis/build/flask-dashboard/Flask-MonitoringDashboard' not in os.getcwd():
+    parser = argparse.ArgumentParser(description='Collecting performance results from the unit tests of a project.')
+    parser.add_argument('--test_folder', dest='test_folder', default='./',
+                        help='folder in which the unit tests can be found (default: ./)')
+    parser.add_argument('--times', dest='times', default=5,
+                        help='number of times to execute every unit test (default: 5)')
+    parser.add_argument('--url', dest='url', default=None,
+                        help='url of the Dashboard to submit the performance results to')
+    args = parser.parse_args()
+    test_folder = args.test_folder
+    times = args.times
+    url = args.url
+
+# Show the settings with which this script will run.
 print('Starting the collection of performance results with the following settings:')
-print('  - folder containing unit tests: ', args.test_folder)
-print('  - number of times to run tests: ', args.times)
-print('  - url to submit the results to: ', args.url)
-if not args.url:
+print('  - folder containing unit tests: ', test_folder)
+print('  - number of times to run tests: ', times)
+print('  - url to submit the results to: ', url)
+if not url:
     print('The performance results will not be submitted.')
 
 # Initialize result dictionary and logs.
@@ -34,8 +45,8 @@ log.write('"start_time","stop_time","test_name"\n')
 
 # Find the tests and execute them the specified number of times.
 # Add the performance results to the result dictionary.
-suites = TestLoader().discover(args.test_folder, pattern="*test*.py")
-for iteration in range(int(args.times)):
+suites = TestLoader().discover(test_folder, pattern="*test*.py")
+for iteration in range(int(times)):
     for suite in suites:
         for case in suite:
             for test in case:
@@ -49,7 +60,7 @@ for iteration in range(int(args.times)):
                 execution_time = (time_after - time_before) * 1000
                 data['test_runs'].append(
                     {'name': str(test), 'exec_time': execution_time, 'time': str(datetime.datetime.utcnow()),
-                     'successful': test_result.wasSuccessful(), 'iter': iteration + 1})
+                     'successful': (test_result.wasSuccessful() if test_result else False), 'iter': iteration + 1})
 log.close()
 
 # Read and parse the log containing the test runs into an array for processing.
@@ -79,13 +90,13 @@ for endpoint_hit in endpoint_hits:
             break
 
 # Send test results and endpoint_name/test_name combinations to the Dashboard if specified.
-if args.url:
-    if args.url[-1] == '/':
-        args.url += 'submit-test-results'
+if url:
+    if url[-1] == '/':
+        url += 'submit-test-results'
     else:
-        args.url += '/submit-test-results'
+        url += '/submit-test-results'
     try:
-        requests.post(args.url, json=data)
-        print('Sent unit test results to the Dashboard at ', args.url)
+        requests.post(url, json=data)
+        print('Sent unit test results to the Dashboard at ', url)
     except Exception as e:
         print('Sending unit test results to the dashboard failed:\n{}'.format(e))

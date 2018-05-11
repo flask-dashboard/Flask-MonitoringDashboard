@@ -13,7 +13,7 @@ EXECUTION_TIMES = [1000, 2000, 3000, 4000, 50000]
 TIMES = [datetime.datetime.utcnow()] * 5
 OUTLIER_COUNT = 3
 for i in range(len(TIMES)):
-    TIMES[i] -= datetime.timedelta(seconds=len(EXECUTION_TIMES)-i)
+    TIMES[i] -= datetime.timedelta(seconds=len(EXECUTION_TIMES) - i)
 TEST_NAMES = ['test_name1', 'test_name2']
 
 
@@ -34,7 +34,7 @@ def clear_db():
 
 def add_fake_data():
     """ Adds data to the database for testing purposes. Module flask_monitoringdashboard must be imported locally. """
-    from flask_monitoringdashboard.database import session_scope, FunctionCall, MonitorRule, Outlier, Tests,\
+    from flask_monitoringdashboard.database import session_scope, FunctionCall, MonitorRule, Outlier, Tests, \
         TestsGrouped
     from flask_monitoringdashboard import config
 
@@ -54,7 +54,7 @@ def add_fake_data():
     with session_scope() as db_session:
         for i in range(OUTLIER_COUNT):
             db_session.add(Outlier(endpoint=NAME, cpu_percent='[%d, %d, %d, %d]' % (i, i + 1, i + 2, i + 3),
-                                   execution_time = 100 * (i + 1), time = TIMES[i]))
+                                   execution_time=100 * (i + 1), time=TIMES[i]))
     # Add Tests
     with session_scope() as db_session:
         db_session.add(Tests(name=NAME, succeeded=True))
@@ -63,6 +63,19 @@ def add_fake_data():
     with session_scope() as db_session:
         for test_name in TEST_NAMES:
             db_session.add(TestsGrouped(endpoint=NAME, test_name=test_name))
+
+
+def add_fake_test_runs():
+    """ Adds test run data to the database for testing purposes. """
+    from flask_monitoringdashboard.database import session_scope, TestRun
+    from flask_monitoringdashboard import config
+
+    with session_scope() as db_session:
+        for test_name in TEST_NAMES:
+            for i in range(len(EXECUTION_TIMES)):
+                db_session.add(
+                    TestRun(name=test_name, execution_time=EXECUTION_TIMES[i], time=datetime.datetime.utcnow(),
+                            version=config.version, suite=1, run=i))
 
 
 def get_test_app():
@@ -106,3 +119,35 @@ def test_admin_secure(test_case, page):
         test_case.assertEqual(302, c.get('dashboard/{}'.format(page)).status_code)
         login(c)
         test_case.assertEqual(200, c.get('dashboard/{}'.format(page)).status_code)
+
+
+def test_get_redirect(test_case, page):
+    """
+    Test whether the page returns a redirection.
+    :param test_case: test class, must be an instance of unittest.TestCase
+    :param page: str with the page of the flask_monitoringdashboard
+    """
+    with test_case.app.test_client() as c:
+        test_case.assertEqual(302, c.get('dashboard/{}'.format(page)).status_code)
+
+
+def test_get_ok(test_case, page):
+    """
+    Test whether the page returns a 200 OK.
+    :param test_case: test class, must be an instance of unittest.TestCase
+    :param page: str with the page of the flask_monitoringdashboard
+    """
+    with test_case.app.test_client() as c:
+        test_case.assertEqual(200, c.get('dashboard/{}'.format(page)).status_code)
+
+
+def test_post_data(test_case, page, data):
+    """
+    Test whether a post request can successfully be made to the page.
+    :param test_case: test class, must be an instance of unittest.TestCase
+    :param page: str with the page of the flask_monitoringdashboard
+    :param data: the data that should be posted to the page
+    """
+    with test_case.app.test_client() as c:
+        test_case.assertEqual(204, c.post('dashboard/{}'.format(page), json=data).status_code)
+

@@ -49,12 +49,16 @@ def bind(app):
     import os
     # Only initialize unit test logging when running on Travis.
     if '/home/travis/build/' in os.getcwd():
-        print('Detected running on Travis.')
         import datetime
         from flask import request
 
         @user_app.after_request
         def after_request(response):
+            """
+            Add after_request function that logs the endpoint hits.
+            :param response: the response object that the actual endpoint returns
+            :return: the unchanged response of the original endpoint
+            """
             hit_time_stamp = str(datetime.datetime.utcnow())
             home = os.path.expanduser("~")
             log = open(home + '/endpoint_hits.log', 'a')

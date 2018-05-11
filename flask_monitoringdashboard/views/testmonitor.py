@@ -15,6 +15,11 @@ from flask_monitoringdashboard.database.tests_grouped import get_tests_grouped
 @blueprint.route('/testmonitor/<test>')
 @secure
 def test_result(test):
+    """
+    Shows the performance results for one specific unit test.
+    :param test: the name of the unit test for which the results should be shown
+    :return:
+    """
     return render_template('fmd_testmonitor/testresult.html', link=config.link, session=session, name=test,
                            boxplot=get_boxplot(test))
 
@@ -22,6 +27,10 @@ def test_result(test):
 @blueprint.route('/testmonitor')
 @secure
 def testmonitor():
+    """
+    Gives an overview of the unit test performance results and the endpoints that they hit.
+    :return:
+    """
     with session_scope() as db_session:
         endp_names = [name.endpoint for name in get_monitor_names(db_session)]
 
@@ -38,10 +47,15 @@ def testmonitor():
         return render_template('fmd_testmonitor/testmonitor.html', tests=get_tests(db_session), endpoints=endp_names,
                                results=get_results(db_session), groups=grouped, colors=cols,
                                res_current_version=get_res_current(db_session, config.version),
-                               boxplot=get_boxplot(None))
+                               boxplot=get_boxplot())
 
 
-def get_boxplot(test):
+def get_boxplot(test=None):
+    """
+    Generates a box plot visualization for the unit test performance results.
+    :param test: if specified, generate box plot for a specific test, otherwise, generate for all tests
+    :return:
+    """
     data = []
     with session_scope() as db_session:
         suites = get_suites(db_session)
