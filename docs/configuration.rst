@@ -54,6 +54,7 @@ contains the entry point of the app. The following things can be configured:
    APP_VERSION=1.0
    CUSTOM_LINK=dashboard
    DATABASE=sqlite:////<path to your project>/dashboard.db
+   TIMEZONE='Europe/Amsterdam'
    USERNAME=admin
    PASSWORD=admin
    GUEST_USERNAME=guest
@@ -74,6 +75,17 @@ This might look a bit overwhelming, but the following list explains everything i
 
 - **DATABASE:** Suppose you have multiple projects where you're working on and want to separate the results.
   Then you can specify different database_names, such that the result of each project is stored in its own database.
+
+- **TIMEZONE:** The timezone for converting a UTC timestamp to a local timestamp. For a list of all
+  timezones, use the following:
+
+  .. code-block:: python
+
+     import pytz  # pip install pytz
+     print(pytz.all_timezones)
+
+  The dashboard saves the time of every request by default in a UTC-timestamp. However, if you want to display
+  it in a local timestamp, you need this property.
 
 - **USERNAME** and **PASSWORD:** Must be used for logging into the Dashboard.
   Thus both are required.
