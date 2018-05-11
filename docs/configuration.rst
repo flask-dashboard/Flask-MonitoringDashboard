@@ -77,6 +77,8 @@ This might look a bit overwhelming, but the following list explains everything i
 - **DATABASE:** Suppose you have multiple projects where you're working on and want to separate the results.
   Then you can specify different database_names, such that the result of each project is stored in its own database.
 
+- **DEFAULT_MONITOR:** When this configuration is set to True, new endpoints are automatically monitored by the Dashboard.
+
 - **TIMEZONE:** The timezone for converting a UTC timestamp to a local timestamp. For a list of all
   timezones, use the following:
 

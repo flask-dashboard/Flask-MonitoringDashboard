@@ -20,6 +20,7 @@ class Config(object):
         self.version = '1.0'
         self.link = 'dashboard'
         self.database_name = 'sqlite:///flask_monitoringdashboard.db'
+        self.default_monitor = True
         self.test_dir = None
         self.username = 'admin'
         self.password = 'admin'
@@ -37,10 +38,10 @@ class Config(object):
     def init_from(self, file=None, envvar=None):
         """
             The config_file must at least contains the following variables in section 'dashboard':
-            APP_VERSION: the version of the app that you use. Updating the version helps in 
-                showing differences in execution times of a function over a period of time.
             CUSTOM_LINK: The dashboard can be visited at localhost:5000/{{CUSTOM_LINK}}.
-            
+
+            APP_VERSION: the version of the app that you use. Updating the version helps in
+                showing differences in execution times of a function over a period of time.
             Since updating the version in the config-file when updating code isn't very useful, it
             is a better idea to provide the location of the git-folder. From the git-folder. The 
             version automatically retrieved by reading the commit-id (hashed value):
@@ -64,9 +65,7 @@ class Config(object):
 
             TIMEZONE: The timezone for converting a UTC timestamp to a local timestamp.
                 for a list of all timezones, use the following: print(pytz.all_timezones)
-
-            SECURITY_TOKEN: Used for getting the data in /get_json_data/<security_token>
-
+            SECURITY_TOKEN: Used for getting the data in /get_json_data
             OUTLIERS_ENABLED: Whether you want the Dashboard to collect extra information about outliers.
 
             :param file: a string pointing to the location of the config-file
@@ -89,6 +88,8 @@ class Config(object):
 
             self.link = parse_string(parser, 'CUSTOM_LINK', self.link)
             self.database_name = parse_string(parser, 'DATABASE', self.database_name)
+            self.default_monitor = parse_bool(parser, 'DEFAULT_MONITOR', self.default_monitor)
+
             self.test_dir = parse_string(parser, 'TEST_DIR', self.test_dir)
             self.security_token = parse_string(parser, 'SECURITY_TOKEN', self.security_token)
             self.outliers_enabled = parse_bool(parser, 'OUTLIERS_ENABLED', self.outliers_enabled)
