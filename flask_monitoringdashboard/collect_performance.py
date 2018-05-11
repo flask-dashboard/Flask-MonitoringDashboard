@@ -60,7 +60,7 @@ for iteration in range(int(times)):
                 execution_time = (time_after - time_before) * 1000
                 data['test_runs'].append(
                     {'name': str(test), 'exec_time': execution_time, 'time': str(datetime.datetime.now()),
-                     'successful': test_result.wasSuccessful(), 'iter': iteration + 1})
+                     'successful': (test_result.wasSuccessful() if test_result else False), 'iter': iteration + 1})
 log.close()
 
 # Read and parse the log containing the test runs into an array for processing.
