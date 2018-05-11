@@ -54,6 +54,7 @@ contains the entry point of the app. The following things can be configured:
    APP_VERSION=1.0
    CUSTOM_LINK=dashboard
    DATABASE=sqlite:////<path to your project>/dashboard.db
+   DEFAULT_MONITOR=True
    TIMEZONE='Europe/Amsterdam'
    USERNAME=admin
    PASSWORD=admin
@@ -61,7 +62,7 @@ contains the entry point of the app. The following things can be configured:
    GUEST_PASSWORD=['dashboardguest!', 'second_pw!']
    GIT=/<path to your project>/.git/
    OUTLIER_DETECTION_CONSTANT=2.5
-   DASHBOARD_ENABLED = True
+   DASHBOARD_ENABLED=True
    TEST_DIR=/<path to your project>/tests/
    COLORS={'main':'[0,97,255]',
            'static':'[255,153,0]'}

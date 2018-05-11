@@ -8,7 +8,7 @@ from sqlalchemy import func, desc
 from sqlalchemy.orm.exc import NoResultFound
 
 from flask_monitoringdashboard import config
-from flask_monitoringdashboard.core.timezone import to_local_datetime
+from flask_monitoringdashboard.core.timezone import to_local_datetime, to_utc_datetime
 from flask_monitoringdashboard.database import FunctionCall, MonitorRule
 
 
@@ -20,10 +20,12 @@ def get_num_requests(db_session, endpoint, start_date, end_date):
         :param end_date: datetime.date object
     """
     query = db_session.query(FunctionCall.time)
+    start_datetime = to_utc_datetime(datetime.datetime.combine(start_date, datetime.time(0, 0, 0, 0)))
+    end_datetime = to_utc_datetime(datetime.datetime.combine(end_date, datetime.time(23, 59, 59)))
+
     if endpoint:
         query = query.filter(FunctionCall.endpoint == endpoint)
-    query = query.filter(FunctionCall.time >= datetime.datetime.combine(start_date, datetime.time(0, 0, 0, 0))). \
-        filter(FunctionCall.time <= datetime.datetime.combine(end_date, datetime.time(23, 59, 59)))
+    query = query.filter(FunctionCall.time >= start_datetime, FunctionCall.time <= end_datetime)
 
     raw_times = query.all()
     return group_execution_times(raw_times)
@@ -107,6 +109,7 @@ def update_monitor_rule(db_session, endpoint, value):
 def get_last_accessed_times(db_session):
     """ Returns the accessed time of a single endpoint. """
     result = db_session.query(MonitorRule.endpoint, MonitorRule.last_accessed).all()
+    print([time for end, time in result])
     return [(end, to_local_datetime(time)) for end, time in result]
 
 

@@ -40,9 +40,6 @@ class Config(object):
             APP_VERSION: the version of the app that you use. Updating the version helps in 
                 showing differences in execution times of a function over a period of time.
             CUSTOM_LINK: The dashboard can be visited at localhost:5000/{{CUSTOM_LINK}}.
-            DATABASE: Suppose you have multiple projects where you're working on and want to 
-                separate the results. Then you can specify different database_names, such that the 
-                result of each project is stored in its own database.
             
             Since updating the version in the config-file when updating code isn't very useful, it
             is a better idea to provide the location of the git-folder. From the git-folder. The 
@@ -50,6 +47,11 @@ class Config(object):
             GIT = If you're using git, then it is easier to set the location to the .git-folder, 
                 The location is relative to the config-file.
 
+            DATABASE: Suppose you have multiple projects where you're working on and want to
+                separate the results. Then you can specify different database_names, such that the
+                result of each project is stored in its own database.
+            DEFAULT_MONITOR: Whether you want to automatically monitor all endpoints. Default value
+                is true.
             USERNAME: for logging into the dashboard, a username and password is required. The
                 username can be set using this variable.
             PASSWORD: same as for the username, but this is the password variable.
