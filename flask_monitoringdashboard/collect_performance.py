@@ -35,6 +35,7 @@ log.write('"start_time","stop_time","test_name"\n')
 # Find the tests and execute them the specified number of times.
 # Add the performance results to the result dictionary.
 suites = TestLoader().discover(args.test_folder, pattern="*test*.py")
+print('Number of tests to run in collect_performance: ', len(suites))
 for iteration in range(int(args.times)):
     for suite in suites:
         for case in suite:
