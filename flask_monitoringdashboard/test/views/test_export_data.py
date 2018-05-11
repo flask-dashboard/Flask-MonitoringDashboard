@@ -60,7 +60,7 @@ class TestExportData(unittest.TestCase):
             result = c.get('dashboard/get_json_monitor_rules').data
         decoded = jwt.decode(result, config.security_token, algorithms=['HS256'])
         data = json.loads(decoded['data'])
-        self.assertEqual(len(data), 2)
+        self.assertEqual(len(data), 1)
         row = data[0]
         self.assertEqual(row['endpoint'], NAME)
         self.assertEqual(row['last_accessed'], str(TIMES[0]))
