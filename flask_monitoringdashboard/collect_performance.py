@@ -7,14 +7,13 @@ from unittest import TestLoader
 
 import requests
 
-test_folder = os.getcwd() + 'flask_monitoringdashboard/test/views/testmonitor'
+test_folder = os.getcwd() + '/flask_monitoringdashboard/test/views/testmonitor'
 times = '1'
 url = None
 
 # Determine if this script was called normally or if the call was part of a unit test on Travis.
 # When unit testing, only run one dummy test from the testmonitor folder.
-print(os.getcwd())
-if '/home/travis/build/flask-dashboard/Flask-MonitoringDashboard/' not in os.getcwd():
+if '/home/travis/build/flask-dashboard/Flask-MonitoringDashboard' not in os.getcwd():
     parser = argparse.ArgumentParser(description='Collecting performance results from the unit tests of a project.')
     parser.add_argument('--test_folder', dest='test_folder', default='./',
                         help='folder in which the unit tests can be found (default: ./)')
