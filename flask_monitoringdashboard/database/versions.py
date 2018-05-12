@@ -1,4 +1,4 @@
-from sqlalchemy import func, asc, distinct, desc
+from sqlalchemy import func, distinct, desc
 
 from flask_monitoringdashboard.database import FunctionCall
 
@@ -26,5 +26,5 @@ def get_first_requests(db_session):
     :param db_session: session for the database
     :return:
     """
-    return db_session.query(FunctionCall.version, func.min(FunctionCall.time)).\
-        group_by(FunctionCall.version).all()
+    return db_session.query(FunctionCall.version, func.min(FunctionCall.time).label('first_used')).\
+        group_by(FunctionCall.version).order_by('first_used').all()
