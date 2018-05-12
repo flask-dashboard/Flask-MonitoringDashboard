@@ -10,7 +10,7 @@ from flask_monitoringdashboard.database import FunctionCall, session_scope
 from flask_monitoringdashboard.database.count_group import get_value
 from flask_monitoringdashboard.database.data_grouped import get_version_data_grouped
 from flask_monitoringdashboard.database.endpoint import to_local_datetime
-from flask_monitoringdashboard.database.versions import get_versions, get_first_requests
+from flask_monitoringdashboard.database.versions import get_first_requests
 
 TITLE = 'Per-Version Performance'
 
@@ -44,15 +44,14 @@ def format_version(version, first_used):
 
 
 def versions_graph(db_session, end):
-    versions = get_versions(db_session, end=end)
     times = get_version_data_grouped(db_session, lambda x: simplify(x, 10), FunctionCall.endpoint == end)
-    used = get_first_requests(db_session)
-    data = [boxplot(name=format_version(version[0], get_value(used, version[0])), values=get_value(times, version[0]),
-                    marker={'color': get_color(version[0])})
-            for version in used]
+    first_requests = get_first_requests(db_session)
+    data = [boxplot(name=format_version(request.version, get_value(first_requests, request.version)),
+                    values=get_value(times, request.version), marker={'color': get_color(request.version)})
+            for request in first_requests]
 
     layout = get_layout(
-        height=350 + 40 * len(versions),
+        height=350 + 40 * len(first_requests),
         xaxis={'title': 'Execution time (ms)'},
         yaxis={'type': 'category', 'title': 'Version', 'autorange': 'reversed'},
         margin=get_margin()
