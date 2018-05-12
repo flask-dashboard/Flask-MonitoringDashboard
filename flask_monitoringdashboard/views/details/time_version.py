@@ -47,9 +47,9 @@ def versions_graph(db_session, end):
     versions = get_versions(db_session, end=end)
     times = get_version_data_grouped(db_session, lambda x: simplify(x, 10), FunctionCall.endpoint == end)
     used = get_first_requests(db_session)
-    data = [boxplot(name=format_version(v, get_value(used, v)), values=get_value(times, v),
-                    marker={'color': get_color(v)})
-            for v in versions]
+    data = [boxplot(name=format_version(version[0], get_value(used, version[0])), values=get_value(times, version[0]),
+                    marker={'color': get_color(version[0])})
+            for version in used]
 
     layout = get_layout(
         height=350 + 40 * len(versions),
