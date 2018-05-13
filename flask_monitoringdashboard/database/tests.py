@@ -3,7 +3,8 @@ Contains all functions that returns results of all tests
 """
 from sqlalchemy import func, desc
 
-from flask_monitoringdashboard.database import TestRun
+from flask_monitoringdashboard.core.timezone import to_local_datetime
+from flask_monitoringdashboard.database import TestRun, TestsGrouped
 
 
 def get_test_names(db_session):
@@ -56,3 +57,15 @@ def get_suite_measurements(db_session, suite):
 def get_test_measurements(db_session, name, suite):
     """ Return all measurements for some test of some Travis build. Used for creating a box plot. """
     return db_session.query(TestRun).filter(TestRun.name == name, TestRun.suite == suite).all()
+
+
+def get_last_tested_times(db_session, test_groups):
+    """ Returns the last tested time of each of the endpoints. """
+    res = {}
+    for group in test_groups:
+        if group.endpoint not in res:
+            res[group.endpoint] = db_session.query(TestRun.time).filter(TestRun.name == group.test_name).all()[0].time
+    result = []
+    for endpoint in res:
+        result.append((endpoint, to_local_datetime(res[endpoint])))
+    return result

@@ -6,15 +6,15 @@ from flask_monitoringdashboard import blueprint, config
 from flask_monitoringdashboard.core.auth import secure
 from flask_monitoringdashboard.core.colors import get_color
 from flask_monitoringdashboard.database import session_scope
-from flask_monitoringdashboard.database.tests import get_test_cnt_avg_current, get_suite_measurements
+from flask_monitoringdashboard.database.count_group import get_value
 from flask_monitoringdashboard.database.tests import get_test_names, get_test_cnt_avg, get_test_suites, \
-    get_test_measurements
-from flask_monitoringdashboard.database.tests_grouped import get_tests_grouped
+    get_test_measurements, get_test_cnt_avg_current, get_suite_measurements, get_last_tested_times
+from flask_monitoringdashboard.database.tests_grouped import get_tests_grouped, get_endpoint_names
 
 
-@blueprint.route('/testmonitor/<test>')
+@blueprint.route('/testmonitor/<end>')
 @secure
-def test_result(test):
+def endpoint_test_details(test):
     """
     Shows the performance results for one specific unit test.
     :param test: the name of the unit test for which the results should be shown
@@ -32,7 +32,32 @@ def testmonitor():
     :return:
     """
     with session_scope() as db_session:
+        from numpy import median
+
         endpoint_test_combinations = get_tests_grouped(db_session)
+
+        # tests_latest = count_requests_group(db_session, FunctionCall.time > week_ago)
+        # tests = count_requests_group(db_session)
+        # median_latest = get_endpoint_data_grouped(db_session, median, FunctionCall.time > week_ago)
+        # median = get_endpoint_data_grouped(db_session, median)
+        tested_times = get_last_tested_times(db_session, endpoint_test_combinations)
+
+        result = []
+        for endpoint in get_endpoint_names(db_session):
+            result.append({
+                'name': endpoint,
+                'color': get_color(endpoint),
+                # 'tests-latest-version': get_value(tests_latest, endpoint),
+                # 'tests-overall': get_value(tests, endpoint),
+                # 'median-latest-version': get_value(median_latest, endpoint),
+                # 'median-overall': get_value(median, endpoint),
+                'tests-latest-version': 0,
+                'tests-overall': 0,
+                'median-latest-version': 0,
+                'median-overall': 0,
+                'last-tested': get_value(tested_times, endpoint, default=None)
+            })
+
         tests_grouped_by_endpoint = {}
         endpoint_colors = {}
         for combination in endpoint_test_combinations:
@@ -43,7 +68,7 @@ def testmonitor():
 
         return render_template('fmd_testmonitor/testmonitor.html', tests=get_test_names(db_session),
                                results=get_test_cnt_avg(db_session), groups=tests_grouped_by_endpoint,
-                               colors=endpoint_colors,
+                               colors=endpoint_colors, result=result,
                                res_current_version=get_test_cnt_avg_current(db_session, config.version),
                                boxplot=get_boxplot())
 

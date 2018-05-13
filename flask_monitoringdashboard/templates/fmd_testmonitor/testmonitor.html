@@ -3,6 +3,52 @@
 {% block content %}
 
     <div class="card mb-3">
+        <div class="card-header"><h4>Testmonitor Overview</h4></div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-striped table-bordered" id="dataTable" width="100%" cellspacing="0"
+                       data-page-length="25">
+                    <thead>
+                    <tr>
+                        <th rowspan="2"></th>
+                        <th rowspan="2">Endpoint</th>
+                        <th colspan="2" style="text-align: center;">Number of times tested</th>
+                        <th colspan="2" style="text-align: center;">Median execution time (ms)</th>
+                        <th rowspan="2">Last tested</th>
+                        <th rowspan="2">Details</th>
+                    </tr>
+                    <tr>
+                        <th>Latest version</th>
+                        <th>Overall</th>
+                        <th>Latest version</th>
+                        <th>Overall</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for record in result %}
+                        <tr style="cursor: pointer"
+                            onclick="window.location='{{ url_for('dashboard.endpoint_test_details', end=record.name) }}';">
+                            <td style="background-color: {{ record.color }}"></td>
+                            <td style="max-width: 200px; overflow: hidden; white-space: nowrap; text-overflow: ellipsis;">{{ record.name }}</td>
+                            <td style="text-align: right;">{{ "{:,d}".format(record['tests-latest-version']) }}</td>
+                            <td style="text-align: right;">{{ "{:,d}".format(record['tests-overall']) }}</td>
+                            <td style="text-align: right;">{{ "{:,.1f}".format(record['median-latest-version']) }}</td>
+                            <td style="text-align: right;">{{ "{:,.1f}".format(record['median-overall']) }}</td>
+                            <td style="text-align: center;">{{ "{:%Y-%m-%d %H:%M:%S }".format(record['last-tested']) }}</td>
+                            <td><a href="{{ url_for('dashboard.endpoint_test_details', end=record.name) }}"
+                                   class="btn btn-primary btn-block">Details</a>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+
+
+    <div class="card mb-3">
         <div class="card-header"><h4>Grouped Test Results</h4></div>
         <div class="card-body">
             {% for group in groups %}
@@ -31,7 +77,7 @@
                                         {% if test.name in groups[group] %}
                                             <tr>
                                                 <td>
-                                                    <a href="{{ url_for('dashboard.test_result', test=test.name) }}">{{ test.name }}</a>
+{#                                                    <a href="{{ url_for('dashboard.test_result', test=test.name) }}">{{ test.name }}</a>#}
                                                 </td>
                                                 {% if results[0] %}
                                                     {% for result in results %}
@@ -56,9 +102,9 @@
                                                     <td></td>
                                                     <td></td>
                                                 {% endif %}
-{#                                                <td style="text-align: center;">#}
-{#                                                    {{ "{:%Y-%m-%d %H:%M:%S }".format(test.lastRun) if test.lastRun != None else "" }}#}
-{#                                                </td>#}
+                                                {#                                                <td style="text-align: center;">#}
+                                                {#                                                    {{ "{:%Y-%m-%d %H:%M:%S }".format(test.lastRun) if test.lastRun != None else "" }}#}
+                                                {#                                                </td>#}
                                             </tr>
                                         {% endif %}
                                     {% endfor %}
@@ -101,5 +147,8 @@
         $(window).ready(function () {
             $('#loading').hide();
         });
+    </script>
+    <script type="text/javascript">
+        $('#dataTable').DataTable().order([[4, "desc"]]).draw();
     </script>
 {% endblock %}

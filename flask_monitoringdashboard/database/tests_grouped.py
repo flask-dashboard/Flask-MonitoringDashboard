@@ -20,3 +20,10 @@ def get_tests_grouped(db_session):
     result = db_session.query(TestsGrouped).all()
     db_session.expunge_all()
     return result
+
+
+def get_endpoint_names(db_session):
+    """ Return all existing endpoint names. """
+    result = db_session.query(TestsGrouped.endpoint).distinct()
+    db_session.expunge_all()
+    return [r[0] for r in result]
