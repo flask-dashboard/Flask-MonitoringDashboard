@@ -16,15 +16,9 @@ class ProfileThread(threading.Thread):
         atexit.register(self.stop)
 
     def run(self):
-        current_time = time.time()
-        elapsed = 0.0
         while self._keeprunning:
-            elapsed += 0.100
             frame = sys._current_frames()[self._thread_to_monitor]
             self.create_flamegraph_entry(frame)
-            secs_passed = time.time() - current_time
-            if elapsed > secs_passed:
-                time.sleep(elapsed - secs_passed)
 
     def _write_results(self):
         print(self._text_dict.items())
