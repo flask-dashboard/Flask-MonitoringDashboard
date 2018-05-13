@@ -10,6 +10,7 @@ from functools import wraps
 from flask import request
 
 from flask_monitoringdashboard import config
+from flask_monitoringdashboard.core.flamegraph import start_profile_thread
 from flask_monitoringdashboard.core.outlier import StackInfo
 from flask_monitoringdashboard.core.rules import get_rules
 from flask_monitoringdashboard.database import session_scope
@@ -61,8 +62,10 @@ def track_performance(func, endpoint):
                 # start a thread to log the stacktrace after 'average' ms
                 stack_info = StackInfo(average)
 
+            thread = start_profile_thread()
             time1 = time.time()
             result = func(*args, **kwargs)
+            thread.stop()
 
             if stack_info:
                 stack_info.stop()

@@ -21,6 +21,7 @@ def create_app():
     def endpoint1():
         import time
         time.sleep(2)
+        return redirect(url_for('dashboard.index'))
 
     @app.route('/')
     def main():
@@ -30,4 +31,4 @@ def create_app():
 
 
 if __name__ == '__main__':
-    create_app().run(debug=True)
+    app = create_app().run(debug=True)
