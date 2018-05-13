@@ -6,7 +6,6 @@ from flask_monitoringdashboard import blueprint, config
 from flask_monitoringdashboard.core.auth import secure
 from flask_monitoringdashboard.core.colors import get_color
 from flask_monitoringdashboard.database import session_scope
-from flask_monitoringdashboard.database.monitor_rules import get_monitor_names
 from flask_monitoringdashboard.database.tests import get_res_current, get_measurements
 from flask_monitoringdashboard.database.tests import get_tests, get_results, get_suites, get_test_measurements
 from flask_monitoringdashboard.database.tests_grouped import get_tests_grouped
@@ -32,22 +31,19 @@ def testmonitor():
     :return:
     """
     with session_scope() as db_session:
-        endp_names = [name.endpoint for name in get_monitor_names(db_session)]
+        endpoint_test_combinations = get_tests_grouped(db_session)
+        tests_grouped_by_endpoint = {}
+        endpoint_colors = {}
+        for combination in endpoint_test_combinations:
+            if combination.endpoint not in tests_grouped_by_endpoint:
+                tests_grouped_by_endpoint[combination.endpoint] = []
+                endpoint_colors[combination.endpoint] = get_color(combination.endpoint)
+            tests_grouped_by_endpoint[combination.endpoint].append(combination.test_name)
 
-        tests = get_tests_grouped(db_session)
-        grouped = {}
-        cols = {}
-        for t in tests:
-            if t.endpoint not in grouped:
-                grouped[t.endpoint] = []
-                cols[t.endpoint] = get_color(t.endpoint)
-            if t.test_name not in grouped[t.endpoint]:
-                grouped[t.endpoint].append(t.test_name)
-
-        return render_template('fmd_testmonitor/testmonitor.html', tests=get_tests(db_session), endpoints=endp_names,
-                               results=get_results(db_session), groups=grouped, colors=cols,
-                               res_current_version=get_res_current(db_session, config.version),
-                               boxplot=get_boxplot())
+        return render_template('fmd_testmonitor/testmonitor.html', tests=get_tests(db_session),
+                               results=get_results(db_session), groups=tests_grouped_by_endpoint,
+                               colors=endpoint_colors,
+                               res_current_version=get_res_current(db_session, config.version), boxplot=get_boxplot())
 
 
 def get_boxplot(test=None):
