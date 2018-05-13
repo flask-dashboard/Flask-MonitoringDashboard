@@ -48,7 +48,7 @@ def bind(app):
 
     import os
     # Only initialize unit test logging when running on Travis.
-    if '/home/travis/build/' in os.getcwd():
+    if 'TRAVIS' in os.environ:
         import datetime
         from flask import request
 

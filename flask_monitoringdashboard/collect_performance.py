@@ -7,13 +7,13 @@ from unittest import TestLoader
 
 import requests
 
-test_folder = os.getcwd() + '/flask_monitoringdashboard/test/views/testmonitor'
-times = '1'
-url = None
 
 # Determine if this script was called normally or if the call was part of a unit test on Travis.
-# When unit testing, only run one dummy test from the testmonitor folder.
-if '/home/travis/build/flask-dashboard/Flask-MonitoringDashboard' not in os.getcwd():
+# When unit testing, only run one dummy test from the testmonitor folder and submit to a dummy url.
+test_folder = os.getcwd() + '/flask_monitoringdashboard/test/views/testmonitor'
+times = '1'
+url = 'https://httpbin.org/post'
+if 'TRAVIS' not in os.environ:
     parser = argparse.ArgumentParser(description='Collecting performance results from the unit tests of a project.')
     parser.add_argument('--test_folder', dest='test_folder', default='./',
                         help='folder in which the unit tests can be found (default: ./)')
@@ -91,12 +91,13 @@ for endpoint_hit in endpoint_hits:
 
 # Send test results and endpoint_name/test_name combinations to the Dashboard if specified.
 if url:
-    if url[-1] == '/':
-        url += 'submit-test-results'
-    else:
-        url += '/submit-test-results'
+    if 'TRAVIS' not in os.environ:
+        if url[-1] == '/':
+            url += 'submit-test-results'
+        else:
+            url += '/submit-test-results'
     try:
         requests.post(url, json=data)
-        print('Sent unit test results to the Dashboard at ', url)
+        print('Sent unit test results to the Dashboard at', url)
     except Exception as e:
         print('Sending unit test results to the dashboard failed:\n{}'.format(e))

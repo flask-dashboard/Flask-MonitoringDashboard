@@ -2,8 +2,8 @@
     Some useful functions for setting up the testing environment, adding data, etc..
 """
 import datetime
+import os
 
-import pytz
 from flask import Flask
 
 NAME = 'main'
@@ -150,4 +150,3 @@ def test_post_data(test_case, page, data):
     """
     with test_case.app.test_client() as c:
         test_case.assertEqual(204, c.post('dashboard/{}'.format(page), json=data).status_code)
-
