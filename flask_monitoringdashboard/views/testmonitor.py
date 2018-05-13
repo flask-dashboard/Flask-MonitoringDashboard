@@ -6,8 +6,9 @@ from flask_monitoringdashboard import blueprint, config
 from flask_monitoringdashboard.core.auth import secure
 from flask_monitoringdashboard.core.colors import get_color
 from flask_monitoringdashboard.database import session_scope
-from flask_monitoringdashboard.database.tests import get_res_current, get_measurements
-from flask_monitoringdashboard.database.tests import get_tests, get_results, get_suites, get_test_measurements
+from flask_monitoringdashboard.database.tests import get_test_cnt_avg_current, get_suite_measurements
+from flask_monitoringdashboard.database.tests import get_test_names, get_test_cnt_avg, get_test_suites, \
+    get_test_measurements
 from flask_monitoringdashboard.database.tests_grouped import get_tests_grouped
 
 
@@ -40,10 +41,11 @@ def testmonitor():
                 endpoint_colors[combination.endpoint] = get_color(combination.endpoint)
             tests_grouped_by_endpoint[combination.endpoint].append(combination.test_name)
 
-        return render_template('fmd_testmonitor/testmonitor.html', tests=get_tests(db_session),
-                               results=get_results(db_session), groups=tests_grouped_by_endpoint,
+        return render_template('fmd_testmonitor/testmonitor.html', tests=get_test_names(db_session),
+                               results=get_test_cnt_avg(db_session), groups=tests_grouped_by_endpoint,
                                colors=endpoint_colors,
-                               res_current_version=get_res_current(db_session, config.version), boxplot=get_boxplot())
+                               res_current_version=get_test_cnt_avg_current(db_session, config.version),
+                               boxplot=get_boxplot())
 
 
 def get_boxplot(test=None):
@@ -54,14 +56,14 @@ def get_boxplot(test=None):
     """
     data = []
     with session_scope() as db_session:
-        suites = get_suites(db_session)
+        suites = get_test_suites(db_session)
     if not suites:
         return None
     for s in suites:
         if test:
             values = [str(c.execution_time) for c in get_test_measurements(db_session, name=test, suite=s.suite)]
         else:
-            values = [str(c.execution_time) for c in get_measurements(db_session, suite=s.suite)]
+            values = [str(c.execution_time) for c in get_suite_measurements(db_session, suite=s.suite)]
 
         data.append(go.Box(
             x=values,

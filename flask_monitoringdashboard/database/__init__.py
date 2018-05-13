@@ -75,19 +75,6 @@ class Outlier(Base):
     time = Column(DateTime)
 
 
-class Tests(Base):
-    """ Stores all unit tests that have been found. """
-    __tablename__ = 'tests'
-    # name must be unique and acts as a primary key
-    name = Column(String(250), primary_key=True)
-    # boolean to determine whether the test should be run
-    run = Column(Boolean, default=True)
-    # the timestamp of the last time the test was run
-    lastRun = Column(DateTime)
-    # whether the test succeeded
-    succeeded = Column(Boolean)
-
-
 class TestRun(Base):
     """ Stores unit test performance results obtained from Travis. """
     __tablename__ = 'testRun'
@@ -144,4 +131,4 @@ def session_scope():
 
 
 def get_tables():
-    return [MonitorRule, Tests, TestRun, FunctionCall, Outlier, TestsGrouped]
+    return [MonitorRule, FunctionCall, Outlier, TestRun, TestsGrouped]

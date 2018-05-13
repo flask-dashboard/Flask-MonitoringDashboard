@@ -2,7 +2,6 @@
     Some useful functions for setting up the testing environment, adding data, etc..
 """
 import datetime
-import os
 
 from flask import Flask
 
@@ -34,8 +33,7 @@ def clear_db():
 
 def add_fake_data():
     """ Adds data to the database for testing purposes. Module flask_monitoringdashboard must be imported locally. """
-    from flask_monitoringdashboard.database import session_scope, FunctionCall, MonitorRule, Outlier, Tests, \
-        TestsGrouped
+    from flask_monitoringdashboard.database import session_scope, FunctionCall, MonitorRule, Outlier, TestsGrouped
     from flask_monitoringdashboard import config
 
     # Add functionCalls
@@ -55,9 +53,6 @@ def add_fake_data():
         for i in range(OUTLIER_COUNT):
             db_session.add(Outlier(endpoint=NAME, cpu_percent='[%d, %d, %d, %d]' % (i, i + 1, i + 2, i + 3),
                                    execution_time=100 * (i + 1), time=TIMES[i]))
-    # Add Tests
-    with session_scope() as db_session:
-        db_session.add(Tests(name=NAME, succeeded=True))
 
     # Add TestsGrouped
     with session_scope() as db_session:
