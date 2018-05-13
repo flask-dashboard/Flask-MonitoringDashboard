@@ -14,14 +14,15 @@ from flask_monitoringdashboard.database.tests_grouped import get_tests_grouped, 
 
 @blueprint.route('/testmonitor/<end>')
 @secure
-def endpoint_test_details(test):
+def endpoint_test_details(end):
     """
     Shows the performance results for one specific unit test.
-    :param test: the name of the unit test for which the results should be shown
+    :param end: the name of the unit test for which the results should be shown
     :return:
     """
-    return render_template('fmd_testmonitor/testresult.html', link=config.link, session=session, name=test,
-                           boxplot=get_boxplot(test))
+    return render_template('fmd_testmonitor/testresult.html', link=config.link, session=session, name=end)
+    # return render_template('fmd_testmonitor/testresult.html', link=config.link, session=session, name=end,
+    #                            boxplot=get_boxplot(end))
 
 
 @blueprint.route('/testmonitor')

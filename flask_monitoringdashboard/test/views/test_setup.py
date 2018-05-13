@@ -1,5 +1,4 @@
 import os
-import subprocess
 import unittest
 
 from flask_monitoringdashboard.test.utils import set_test_environment, clear_db, add_fake_data, add_fake_test_runs, \
