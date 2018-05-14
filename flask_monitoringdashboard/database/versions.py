@@ -14,7 +14,7 @@ def get_versions(db_session, end=None, limit=None):
     query = db_session.query(distinct(FunctionCall.version))
     if end:
         query = query.filter(FunctionCall.endpoint == end)
-    query = query.order_by(desc(FunctionCall.version))
+    query = query.order_by(desc(FunctionCall.time))
     if limit:
         query = query.limit(limit)
     return list(reversed([r[0] for r in query.all()]))
