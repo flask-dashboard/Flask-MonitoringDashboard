@@ -62,7 +62,7 @@ def track_performance(func, endpoint):
                 # start a thread to log the stacktrace after 'average' ms
                 stack_info = StackInfo(average)
 
-            thread = start_profile_thread()
+            thread = start_profile_thread(endpoint)
             time1 = time.time()
             result = func(*args, **kwargs)
             thread.stop()

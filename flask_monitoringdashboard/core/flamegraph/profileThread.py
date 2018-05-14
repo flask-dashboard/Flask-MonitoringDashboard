@@ -7,9 +7,10 @@ import traceback
 
 
 class ProfileThread(threading.Thread):
-    def __init__(self, thread_to_monitor):
+    def __init__(self, thread_to_monitor, endpoint):
         threading.Thread.__init__(self, name="FlameGraph Thread")
         self._thread_to_monitor = thread_to_monitor
+        self._endpoint = endpoint
 
         self._keeprunning = True
         self._text_dict = {}
@@ -24,17 +25,16 @@ class ProfileThread(threading.Thread):
         print(self._text_dict.items())
 
     def create_flamegraph_entry(self, frame):
-        wrapper_code = 'func(*args, **kwargs)'  # defined in flask_monitoringdashboard/core/measurement.py
-        after_wrapper = False
+        in_endpoint_code = False
 
         for fn, ln, fun, text in traceback.extract_stack(frame)[1:]:
             # fn: filename
             # ln: line number:
             # fun: function name
             # text: source code line
-            if wrapper_code in text:
-                after_wrapper = True
-            elif after_wrapper and wrapper_code not in text:
+            if self._endpoint is fun:
+                in_endpoint_code = True
+            if in_endpoint_code:
                 self._text_dict[text] = self._text_dict.get(text, 0) + 1
 
     def stop(self):
