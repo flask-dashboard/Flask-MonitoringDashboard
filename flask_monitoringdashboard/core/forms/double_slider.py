@@ -3,6 +3,8 @@ from flask_wtf import FlaskForm
 from wtforms import SubmitField
 from wtforms.fields.html5 import IntegerRangeField
 
+from flask_monitoringdashboard.core.forms.slider import DEFAULT_SLIDER_VALUE
+
 
 class DoubleSliderForm(FlaskForm):
     """
@@ -66,6 +68,5 @@ def get_double_slider_form(slider_max=[100, 100], subtitle=None):
     if 'slider0' in request.form:
         form.start_value = [request.form['slider0'], request.form['slider1']]
     else:
-        form.start_value = [min(max(form.min_value[i], form.min_value[i] + (slider_max[i] - form.min_value[i]) // 2),
-                            form.max_value[i]) for i in range(2)]
+        form.start_value = [min(DEFAULT_SLIDER_VALUE, form.max_value[i]) for i in range(2)]
     return form

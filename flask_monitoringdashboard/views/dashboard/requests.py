@@ -45,7 +45,7 @@ def requests_graph(form):
         height=350 + 40 * len(days),
         showlegend=True,
         xaxis={'title': 'Number of requests'},
-        yaxis={'type': 'category', 'autorange': 'reversed'}
+        yaxis={'type': 'category'}
     )
 
     return get_figure(layout=layout, data=data)
