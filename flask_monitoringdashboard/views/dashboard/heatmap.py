@@ -60,7 +60,6 @@ def hourly_load_graph(form, end=None):
     end_datetime = to_local_datetime(form.end_date.data).strftime('%Y-%m-%d 12:00:00')
 
     layout = get_layout(
-        xaxis=go.XAxis(range=[start_datetime, end_datetime]),
-        yaxis={'autorange': 'reversed'}
+        xaxis=go.XAxis(range=[start_datetime, end_datetime])
     )
     return get_figure(layout, [plot_heatmap(x=days, y=hours, z=heatmap_data)])

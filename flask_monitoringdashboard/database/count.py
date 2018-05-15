@@ -32,7 +32,14 @@ def count_ip(db_session, endpoint):
     return count_rows(db_session, FunctionCall.ip, FunctionCall.endpoint == endpoint)
 
 
-def count_versions(db_session, endpoint):
+def count_versions(db_session):
+    """
+    :return: The number of distinct versions that are used
+    """
+    return count_rows(db_session, FunctionCall.version)
+
+
+def count_versions_end(db_session, endpoint):
     """
     :param endpoint: filter on this endpoint
     :return: The number of distinct versions that are used for this endpoint

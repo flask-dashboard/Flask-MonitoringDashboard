@@ -3,6 +3,8 @@ from flask_wtf import FlaskForm
 from wtforms import SubmitField
 from wtforms.fields.html5 import IntegerRangeField
 
+DEFAULT_SLIDER_VALUE = 10
+
 
 class SliderForm(FlaskForm):
     """
@@ -48,5 +50,5 @@ def get_slider_form(slider_max=100):
     if 'slider' in request.form:
         form.start_value = request.form['slider']
     else:
-        form.start_value = min(max(form.min_value, form.min_value + (slider_max - form.min_value) // 2), form.max_value)
+        form.start_value = min(DEFAULT_SLIDER_VALUE, slider_max)
     return form

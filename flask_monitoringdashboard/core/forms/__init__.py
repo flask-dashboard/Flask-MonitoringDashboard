@@ -2,8 +2,8 @@ from flask_wtf import FlaskForm
 from wtforms import validators, SubmitField, PasswordField, StringField
 
 from .daterange import get_daterange_form
-from .slider import get_slider_form
 from .double_slider import get_double_slider_form
+from .slider import get_slider_form
 
 
 class Login(FlaskForm):

@@ -13,7 +13,7 @@ def create_app():
 
     dashboard.config.outlier_detection_constant = 0
     dashboard.config.group_by = 'User', 2
-    dashboard.config.version = 2.0
+    dashboard.config.version = 1.5
     dashboard.config.database_name = 'sqlite:///flask_monitoringdashboard.db'
     dashboard.bind(app)
 

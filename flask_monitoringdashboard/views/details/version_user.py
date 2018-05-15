@@ -10,7 +10,7 @@ from flask_monitoringdashboard.core.plot import scatter, get_figure, get_margin,
 from flask_monitoringdashboard.core.plot.util import get_information
 from flask_monitoringdashboard.core.utils import get_endpoint_details
 from flask_monitoringdashboard.database import FunctionCall, session_scope
-from flask_monitoringdashboard.database.count import count_users, count_versions
+from flask_monitoringdashboard.database.count import count_users, count_versions_end
 from flask_monitoringdashboard.database.count_group import get_value
 from flask_monitoringdashboard.database.data_grouped import get_two_columns_grouped
 from flask_monitoringdashboard.database.endpoint import get_users
@@ -33,7 +33,7 @@ there is a difference in performance across users.'''
 def version_user(end):
     with session_scope() as db_session:
         details = get_endpoint_details(db_session, end)
-        form = get_double_slider_form([count_users(db_session, end), count_versions(db_session, end)],
+        form = get_double_slider_form([count_users(db_session, end), count_versions_end(db_session, end)],
                                       subtitle=['Amount of Users', 'Amount of Versions'])
         graph = version_user_graph(db_session, end, form)
     return render_template('fmd_dashboard/graph-details.html', details=details, graph=graph, form=form,
