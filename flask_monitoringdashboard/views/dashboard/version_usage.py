@@ -3,10 +3,10 @@ from flask import render_template
 from flask_monitoringdashboard import blueprint
 from flask_monitoringdashboard.core.auth import secure
 from flask_monitoringdashboard.core.forms import get_slider_form
-from flask_monitoringdashboard.database.count import count_versions
 from flask_monitoringdashboard.core.plot import get_layout, get_figure, get_margin, heatmap
 from flask_monitoringdashboard.core.plot.util import get_information
 from flask_monitoringdashboard.database import FunctionCall, session_scope
+from flask_monitoringdashboard.database.count import count_versions
 from flask_monitoringdashboard.database.count_group import count_requests_group, get_value
 from flask_monitoringdashboard.database.function_calls import get_endpoints
 from flask_monitoringdashboard.database.versions import get_versions
