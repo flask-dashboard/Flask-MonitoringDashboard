@@ -62,7 +62,8 @@ contains the entry point of the app. The following things can be configured:
    GUEST_PASSWORD=['dashboardguest!', 'second_pw!']
    GIT=/<path to your project>/.git/
    OUTLIER_DETECTION_CONSTANT=2.5
-   DASHBOARD_ENABLED=True
+   OUTLIERS_ENABLED=True
+   SECURITY_TOKEN='cc83733cb0af8b884ff6577086b87909'
    TEST_DIR=/<path to your project>/tests/
    COLORS={'main':'[0,97,255]',
            'static':'[255,153,0]'}
@@ -108,6 +109,9 @@ This might look a bit overwhelming, but the following list explains everything i
 - **OUTLIERS_ENABLED:** Whether you want to collect information about outliers. If you set this to true,
   the expected overhead of the Dashboard is a bit larger, as you can find
   `here <https://github.com/flask-dashboard/Testing-Dashboard-Overhead>`_.
+
+- **SECURITY_TOKEN:** The token that is used for exporting the data to other services. If you leave this unchanged,
+  any service is able to retrieve the data from the database.
 
 - **TEST_DIR:** Specifies where the unit tests reside. This will show up in the configuration in the Dashboard.
 
