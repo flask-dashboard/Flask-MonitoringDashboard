@@ -32,7 +32,7 @@
                             <tr style="cursor: pointer"
                                 onclick="window.location='{{ url_for('dashboard.endpoint_hourly_load', end=record.name) }}';">
                                 <td style="background-color: {{ record.color }}"></td>
-                                <td style="max-width: 200px; overflow: hidden; white-space: nowrap; text-overflow: ellipsis;">{{ record.name }}</td>
+                                <td style="max-width: 200px;">{{ record.name }}</td>
                                 <td style="text-align: right;">{{ "{:,d}".format(record['hits-today']) }}</td>
                                 <td style="text-align: right;">{{ "{:,d}".format(record['hits-week']) }}</td>
                                 <td style="text-align: right;">{{ "{:,d}".format(record['hits-overall']) }}</td>

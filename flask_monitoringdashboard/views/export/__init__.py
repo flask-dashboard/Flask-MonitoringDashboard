@@ -16,7 +16,9 @@ def submit_test_results():
     Endpoint for letting Travis submit its unit test performance results to the Dashboard.
     :return: nothing, 204 (No Content)
     """
-    app_version = request.get_json()['app_version']
+    json = request.get_json()
+    if 'app_version' in json:
+        app_version = json['app_version']
     content = request.get_json()['test_runs']
     with session_scope() as db_session:
         suite = get_next_suite_nr(db_session)

@@ -22,9 +22,9 @@
                             <tr style="cursor: pointer"
                                 onclick='toggleCheck("checkbox-{{ row.endpoint }}")'>
                                 <td style="background-color: {{ row.color }}"></td>
-                                <td style="max-width: 200px; overflow: hidden; white-space: nowrap; text-overflow: ellipsis;">{{ row.rule }}</td>
+                                <td style="max-width: 200px;">{{ row.rule }}</td>
                                 <td>{{ ", ".join(row.methods) }}</td>
-                                <td style="max-width: 200px; overflow: hidden; white-space: nowrap; text-overflow: ellipsis;">{{ row.endpoint }}</td>
+                                <td style="max-width: 200px;">{{ row.endpoint }}</td>
                                 <td style="text-align: center;">{{ "{:%Y-%m-%d %H:%M:%S }".format(row.last_accessed) if row.last_accessed }}</td>
                                 <td>
                                     <input id="checkbox-{{ row.endpoint }}" name="checkbox-{{ row.endpoint }}"
