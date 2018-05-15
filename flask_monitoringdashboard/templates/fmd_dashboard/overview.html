@@ -10,20 +10,21 @@
                            data-page-length="10">
                         <thead>
                         <tr>
-                            <th rowspan="2"></th>
-                            <th rowspan="2">Endpoint</th>
+                            <th colspan="2"></th>
                             <th colspan="3" style="text-align: center;">Number of hits</th>
                             <th colspan="3" style="text-align: center;">Median execution time (ms)</th>
-                            <th rowspan="2">Last accessed</th>
-                            <th rowspan="2">Details</th>
+                            <th></th>
                         </tr>
                         <tr>
+                            <th></th>
+                            <th>Endpoint</th>
                             <th>Today</th>
                             <th>Last 7 days</th>
                             <th>Overall</th>
                             <th>Today</th>
                             <th>Last 7 days</th>
                             <th>Overall</th>
+                            <th>Last accessed</th>
                         </tr>
                         </thead>
                         <tbody>
@@ -39,9 +40,6 @@
                                 <td style="text-align: right;">{{ "{:,.1f}".format(record['median-week']) }}</td>
                                 <td style="text-align: right;">{{ "{:,.1f}".format(record['median-overall']) }}</td>
                                 <td style="text-align: center;">{{ "{:%Y-%m-%d %H:%M:%S }".format(record['last-accessed']) }}</td>
-                                <td><a href="{{ url_for('dashboard.endpoint_hourly_load', end=record.name) }}"
-                                       class="btn btn-primary btn-block">Details</a>
-                                </td>
                             </tr>
                         {% endfor %}
                         </tbody>
