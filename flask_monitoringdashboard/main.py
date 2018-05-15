@@ -17,15 +17,12 @@ def create_app():
     dashboard.config.database_name = 'sqlite:///flask_monitoringdashboard.db'
     dashboard.bind(app)
 
-    def f():
-        import time
-        time.sleep(1)
-
     @app.route('/endpoint1')
     def endpoint1():
         import time
+        time.sleep(1)
         time.sleep(2)
-        f()
+        time.sleep(1)
         return ''
 
     @app.route('/')
