@@ -48,5 +48,5 @@ def get_slider_form(slider_max=100):
     if 'slider' in request.form:
         form.start_value = request.form['slider']
     else:
-        form.start_value = min(max(form.min_value, form.min_value + (slider_max - form.min_value) // 2), form.max_value)
+        form.start_value = min(10, slider_max)
     return form
