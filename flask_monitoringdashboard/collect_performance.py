@@ -7,7 +7,6 @@ from unittest import TestLoader
 
 import requests
 
-
 # Determine if this script was called normally or if the call was part of a unit test on Travis.
 # When unit testing, only run one dummy test from the testmonitor folder and submit to a dummy url.
 test_folder = os.getcwd() + '/flask_monitoringdashboard/test/views/testmonitor'
@@ -88,6 +87,10 @@ for endpoint_hit in endpoint_hits:
             if {'endpoint': endpoint_hit[1], 'test_name': test_run[2]} not in data['grouped_tests']:
                 data['grouped_tests'].append({'endpoint': endpoint_hit[1], 'test_name': test_run[2]})
             break
+
+# Retrieve the current version of the user app that is being tested.
+with open(home + '/app_version.log', 'r') as log:
+    data['app_version'] = log.read()
 
 # Send test results and endpoint_name/test_name combinations to the Dashboard if specified.
 if url:

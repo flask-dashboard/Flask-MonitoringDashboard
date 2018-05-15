@@ -52,18 +52,28 @@ def bind(app):
         import datetime
         from flask import request
 
-        @user_app.after_request
-        def after_request(response):
+        @user_app.before_first_request
+        def log_current_version():
             """
-            Add after_request function that logs the endpoint hits.
+            Logs the version of the user app that is currently being tested.
+            :return:
+            """
+            home = os.path.expanduser("~")
+            with open(home + '/app_version.log', 'w') as log:
+                log.write(config.version)
+
+        @user_app.after_request
+        def log_endpoint_hit(response):
+            """
+            Add log_endpoint_hit as after_request function that logs the endpoint hits.
             :param response: the response object that the actual endpoint returns
             :return: the unchanged response of the original endpoint
             """
             hit_time_stamp = str(datetime.datetime.utcnow())
             home = os.path.expanduser("~")
-            log = open(home + '/endpoint_hits.log', 'a')
-            log.write('"{}","{}"\n'.format(hit_time_stamp, request.endpoint))
-            log.close()
+            with open(home + '/endpoint_hits.log', 'a') as log:
+                log.write('"{}","{}"\n'.format(hit_time_stamp, request.endpoint))
+
             return response
 
     # Add all route-functions to the blueprint

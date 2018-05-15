@@ -84,7 +84,7 @@ class TestRun(Base):
     execution_time = Column(Float, primary_key=True)
     # time of adding the result to the database
     time = Column(DateTime, primary_key=True)
-    # version of the website at the moment of adding the result to the database
+    # version of the user app that was tested
     version = Column(String(100), nullable=False)
     # number of the test suite execution
     suite = Column(Integer)
