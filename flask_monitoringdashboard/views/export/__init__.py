@@ -17,6 +17,7 @@ def submit_test_results():
     :return: nothing, 204 (No Content)
     """
     json = request.get_json()
+    app_version = '-1'
     if 'app_version' in json:
         app_version = json['app_version']
     content = request.get_json()['test_runs']
