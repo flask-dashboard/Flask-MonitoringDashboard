@@ -23,8 +23,7 @@ def static(filename):
     :param filename: filename in the /static file
     :return: content of the file
     """
-    with send_from_directory(loc() + 'static', filename) as file:
-        return file
+    return send_from_directory(loc() + 'static', filename)
 
 
 @blueprint.route('/')
