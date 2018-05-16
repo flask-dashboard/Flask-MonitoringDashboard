@@ -1,7 +1,6 @@
 {% extends "fmd_base.html" %}
 {% set title="Testmonitor" %}
 {% block content %}
-
     <div class="card mb-3">
         <div class="card-header"><h4>Testmonitor Overview</h4></div>
         <div class="card-body">
@@ -43,38 +42,9 @@
             </div>
         </div>
     </div>
-
-    <div class="card mb-3">
-        <div class="card-header"><h4>Overall execution time</h4></div>
-        <div class="card-body">
-
-            <div id="loading">
-                <div class="col-md-12 col-sm-12">
-                    <br>
-                    <div class="text-center">
-                        <img src="{{ url_for('dashboard.static', filename='loading.gif') }}"
-                             alt="Be patient..." align="center"/>
-                    </div>
-                </div>
-            </div>
-
-            {% if boxplot %}
-                <div class="col-md-12 col-sm-12">
-                    {{ boxplot|safe }}
-                </div>
-            {% else %}
-                <p>No data available.</p>
-            {% endif %}
-        </div>
-    </div>
 {% endblock %}
 
 {% block script %}
-    <script>
-        $(window).ready(function () {
-            $('#loading').hide();
-        });
-    </script>
     <script type="text/javascript">
         $('#dataTable').DataTable().order([[4, "desc"]]).draw();
     </script>

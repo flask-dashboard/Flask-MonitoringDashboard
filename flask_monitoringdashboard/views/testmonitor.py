@@ -13,6 +13,16 @@ from flask_monitoringdashboard.database.tests import get_test_suites, \
 from flask_monitoringdashboard.database.tests_grouped import get_tests_grouped, get_endpoint_names
 
 
+@blueprint.route('/test_versions')
+@secure
+def test():
+    """
+    Shows the performance results for all of the versions.
+    :return:
+    """
+    return render_template('fmd_testmonitor/boxplot.html', boxplot=get_boxplot(), name='Per-Version Performance')
+
+
 @blueprint.route('/testmonitor/<end>')
 @secure
 def endpoint_test_details(end):
@@ -21,9 +31,8 @@ def endpoint_test_details(end):
     :param end: the name of the unit test for which the results should be shown
     :return:
     """
-    return render_template('fmd_testmonitor/testresult.html', link=config.link, session=session, name=end)
-    # return render_template('fmd_testmonitor/testresult.html', link=config.link, session=session, name=end,
-    #                            boxplot=get_boxplot(end))
+    return render_template('fmd_testmonitor/boxplot.html', name=end)
+    # return render_template('fmd_testmonitor/boxplot.html', name=end, boxplot=get_boxplot(end))
 
 
 @blueprint.route('/testmonitor')
@@ -58,7 +67,7 @@ def testmonitor():
                 'last-tested': get_value(tested_times, endpoint, default=None)
             })
 
-        return render_template('fmd_testmonitor/testmonitor.html', result=result, boxplot=get_boxplot())
+        return render_template('fmd_testmonitor/testmonitor.html', result=result)
 
 
 def get_boxplot(test=None):
