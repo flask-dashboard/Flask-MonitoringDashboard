@@ -4,14 +4,7 @@ Contains all functions that returns results of all tests
 from sqlalchemy import func, desc
 
 from flask_monitoringdashboard.core.timezone import to_local_datetime
-from flask_monitoringdashboard.database import TestRun, TestsGrouped
-
-
-def get_test_names(db_session):
-    """ Return all existing test names. """
-    result = db_session.query(TestRun.name).distinct()
-    db_session.expunge_all()
-    return result
+from flask_monitoringdashboard.database import TestRun
 
 
 def add_test_result(db_session, name, exec_time, time, version, suite, iteration):
@@ -33,15 +26,6 @@ def get_test_cnt_avg(db_session):
                             func.count(TestRun.execution_time).label('count'),
                             func.avg(TestRun.execution_time).label('average')
                             ).group_by(TestRun.name).order_by(desc('count')).all()
-
-
-def get_test_cnt_avg_current(db_session, version):
-    """ Return entries of measurements with their average from the current project version only. """
-    return db_session.query(TestRun.name,
-                            func.count(TestRun.execution_time).label('count'),
-                            func.avg(TestRun.execution_time).label('average')) \
-        .filter(TestRun.version == version) \
-        .group_by(TestRun.name).order_by(desc('count')).all()
 
 
 def get_test_suites(db_session):

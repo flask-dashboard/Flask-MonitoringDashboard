@@ -56,24 +56,6 @@ class TestDBTests(unittest.TestCase):
         """
         self.test_add_test_result()  # can be replaced by test_add_test_result, since this function covers two tests
 
-    def test_get_res_current(self):
-        """
-            Test whether the function returns the right values.
-        """
-        self.test_add_test_result()
-        from flask_monitoringdashboard.database.tests import get_test_cnt_avg_current
-        from flask_monitoringdashboard import config
-        with session_scope() as db_session:
-            result = get_test_cnt_avg_current(db_session, config.version)
-            self.assertEqual(len(result), 1)
-            self.assertEqual(result[0].name, NAME)
-            self.assertEqual(result[0].count, len(EXECUTION_TIMES))
-            self.assertEqual(result[0].average, mean(EXECUTION_TIMES))
-
-            new_version = 'new_version'
-            self.assertNotEqual(new_version, config.version)
-            self.assertEqual(get_test_cnt_avg_current(db_session, new_version), [])
-
     def test_get_suites(self):
         """
             Test whether the function returns the right values.
