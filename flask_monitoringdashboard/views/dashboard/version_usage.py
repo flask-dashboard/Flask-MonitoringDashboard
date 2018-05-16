@@ -2,9 +2,11 @@ from flask import render_template
 
 from flask_monitoringdashboard import blueprint
 from flask_monitoringdashboard.core.auth import secure
+from flask_monitoringdashboard.core.forms import get_slider_form
 from flask_monitoringdashboard.core.plot import get_layout, get_figure, get_margin, heatmap
 from flask_monitoringdashboard.core.plot.util import get_information
 from flask_monitoringdashboard.database import FunctionCall, session_scope
+from flask_monitoringdashboard.database.count import count_versions
 from flask_monitoringdashboard.database.count_group import count_requests_group, get_value
 from flask_monitoringdashboard.database.function_calls import get_endpoints
 from flask_monitoringdashboard.database.versions import get_versions
@@ -21,21 +23,25 @@ column sums up to 100%. This information can be used to validate which endpoints
 requests.'''
 
 
-@blueprint.route('/version_usage')
+@blueprint.route('/version_usage', methods=['GET', 'POST'])
 @secure
 def version_usage():
-    return render_template('fmd_dashboard/graph.html', graph=version_usage_graph(), title=TITLE,
-                           information=get_information(AXES_INFO, CONTENT_INFO))
+    with session_scope() as db_session:
+        form = get_slider_form(count_versions(db_session))
+    graph = version_usage_graph(form)
+    return render_template('fmd_dashboard/graph.html', graph=graph, title=TITLE,
+                           information=get_information(AXES_INFO, CONTENT_INFO), form=form)
 
 
-def version_usage_graph():
+def version_usage_graph(form):
     """
     Used for getting a Heatmap with an overview of which endpoints are used in which versions
+    :param form: instance of SliderForm
     :return:
     """
     with session_scope() as db_session:
         endpoints = get_endpoints(db_session)
-        versions = get_versions(db_session)
+        versions = get_versions(db_session, limit=form.get_slider_value())
 
         requests = [count_requests_group(db_session, FunctionCall.version == v) for v in versions]
         total_hits = []
