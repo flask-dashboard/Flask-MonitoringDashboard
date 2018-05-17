@@ -38,18 +38,6 @@ class TestDBTests(unittest.TestCase):
             self.assertEqual(result[0].count, len(EXECUTION_TIMES))
             self.assertEqual(result[0].average, mean(EXECUTION_TIMES))
 
-    def test_get_suite_nr(self):
-        """
-            Test whether the function returns the right values.
-        """
-        from flask_monitoringdashboard.database.tests import get_next_suite_nr, add_test_result
-        from flask_monitoringdashboard import config
-        import datetime
-        with session_scope() as db_session:
-            self.assertEqual(get_next_suite_nr(db_session), 1)
-            add_test_result(db_session, NAME, 1234, datetime.datetime.utcnow(), config.version, SUITE, 2)
-            self.assertEqual(get_next_suite_nr(db_session), SUITE + 1)
-
     def test_get_results(self):
         """
             Test whether the function returns the right values.

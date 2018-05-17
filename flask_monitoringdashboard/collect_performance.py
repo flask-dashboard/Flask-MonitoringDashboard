@@ -7,14 +7,12 @@ from unittest import TestLoader
 
 import requests
 
-print('Travis job number:', os.getenv('TRAVIS_JOB_NUMBER'))
-
 # Determine if this script was called normally or if the call was part of a unit test on Travis.
 # When unit testing, only run one dummy test from the testmonitor folder and submit to a dummy url.
 test_folder = os.getcwd() + '/flask_monitoringdashboard/test/views/testmonitor'
 times = '1'
 url = 'https://httpbin.org/post'
-if 'TRAVIS' not in os.environ:
+if 'flask-dashboard/Flask-MonitoringDashboard' not in os.getenv('TRAVIS_BUILD_DIR'):
     parser = argparse.ArgumentParser(description='Collecting performance results from the unit tests of a project.')
     parser.add_argument('--test_folder', dest='test_folder', default='./',
                         help='folder in which the unit tests can be found (default: ./)')
@@ -94,9 +92,12 @@ for endpoint_hit in endpoint_hits:
 with open(home + '/app_version.log', 'r') as log:
     data['app_version'] = log.read()
 
+# Add the current Travis Build Job number.
+data['travis_job'] = os.getenv('TRAVIS_JOB_NUMBER')
+
 # Send test results and endpoint_name/test_name combinations to the Dashboard if specified.
 if url:
-    if 'TRAVIS' not in os.environ:
+    if 'flask-dashboard/Flask-MonitoringDashboard' not in os.getenv('TRAVIS_BUILD_DIR'):
         if url[-1] == '/':
             url += 'submit-test-results'
         else:

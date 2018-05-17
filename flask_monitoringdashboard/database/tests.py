@@ -12,14 +12,6 @@ def add_test_result(db_session, name, exec_time, time, version, suite, iteration
     db_session.add(TestRun(name=name, execution_time=exec_time, time=time, version=version, suite=suite, run=iteration))
 
 
-def get_next_suite_nr(db_session):
-    """ Retrieves the number of the next suite to run. """
-    result = db_session.query(func.max(TestRun.suite).label('nr')).one()
-    if result.nr:
-        return result.nr + 1
-    return 1
-
-
 def get_test_cnt_avg(db_session):
     """ Return all entries of measurements with their average. The results are grouped by their name. """
     return db_session.query(TestRun.name,
