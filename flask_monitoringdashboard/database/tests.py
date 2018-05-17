@@ -20,19 +20,23 @@ def get_test_cnt_avg(db_session):
                             ).group_by(TestRun.name).order_by(desc('count')).all()
 
 
-def get_test_suites(db_session):
+def get_test_suites(db_session, limit=None):
     """ Returns all test suites that have been run. """
-    return db_session.query(TestRun.suite).group_by(TestRun.suite).all()
+    result = db_session.query(TestRun.suite).group_by(TestRun.suite).order_by(desc(TestRun.suite)).all()
+    if limit:
+        return result[:int(limit)]
+    return result
 
 
 def get_suite_measurements(db_session, suite):
     """ Return all measurements for some Travis build. Used for creating a box plot. """
-    return db_session.query(TestRun).filter(TestRun.suite == suite).all()
+    return [result[0] for result in db_session.query(TestRun.execution_time).filter(TestRun.suite == suite).all()]
 
 
 def get_test_measurements(db_session, name, suite):
     """ Return all measurements for some test of some Travis build. Used for creating a box plot. """
-    return db_session.query(TestRun).filter(TestRun.name == name, TestRun.suite == suite).all()
+    return [result[0] for result in
+            db_session.query(TestRun.execution_time).filter(TestRun.name == name, TestRun.suite == suite).all()]
 
 
 def get_last_tested_times(db_session, test_groups):

@@ -58,31 +58,23 @@ class TestDBTests(unittest.TestCase):
             Test whether the function returns the right values.
         """
         from flask_monitoringdashboard.database.tests import get_suite_measurements
-        from flask_monitoringdashboard import config
         with session_scope() as db_session:
             self.assertEqual(get_suite_measurements(db_session, SUITE), [])
             self.test_add_test_result()
             result = get_suite_measurements(db_session, SUITE)
             self.assertEqual(len(result), len(EXECUTION_TIMES))
             for test_run in result:
-                self.assertEqual(test_run.name, NAME)
                 self.assertIn(test_run.execution_time, EXECUTION_TIMES)
-                self.assertEqual(test_run.version, config.version)
-                self.assertEqual(test_run.suite, SUITE)
 
     def test_get_test_measurements(self):
         """
             Test whether the function returns the right values.
         """
         from flask_monitoringdashboard.database.tests import get_test_measurements
-        from flask_monitoringdashboard import config
         with session_scope() as db_session:
             self.assertEqual(get_test_measurements(db_session, NAME, SUITE), [])
             self.test_add_test_result()
             result = get_test_measurements(db_session, NAME, SUITE)
             self.assertEqual(len(result), len(EXECUTION_TIMES))
             for test_run in result:
-                self.assertEqual(test_run.name, NAME)
                 self.assertIn(test_run.execution_time, EXECUTION_TIMES)
-                self.assertEqual(test_run.version, config.version)
-                self.assertEqual(test_run.suite, SUITE)
