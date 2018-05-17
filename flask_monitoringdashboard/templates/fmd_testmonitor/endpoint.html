@@ -1,0 +1,33 @@
+{% extends "fmd_dashboard/graph.html" %}
+
+{% block endpoint_menu %}
+    {% macro endpoint_submenu(endpoint, name) -%}
+        <li><a class="{{ active_if_is(endpoint) }}" href="{{ url_for(endpoint, end=end) }}">{{ name }}</a></li>
+    {%- endmacro %}
+
+    {% set url_heatmap='dashboard.endpoint_hourly_load' %}
+    {% set url_version_user='dashboard.version_user' %}
+    {% set url_version_ip='dashboard.version_ip' %}
+    {% set url_version='dashboard.versions' %}
+    {% set url_user='dashboard.users' %}
+    {% set url_outliers='dashboard.outliers' %}
+    {% set endpoint_list=[url_heatmap, url_version_user, url_version_ip, url_version, url_user,
+  url_outliers] %}
+
+    <li class="nav-item" data-toggle="tooltip" data-placement="right" title="{{ end }}">
+        <a class="nav-link nav-link-collapse {{ "my-active" if request.endpoint in endpoint_list }}"
+           data-toggle="collapse" href="#collapseEndpoint">
+            <i class="fa fa-fw fa-asterisk"></i>
+            <span class="nav-link-text">{{ end }}</span>
+        </a>
+        <ul class="sidenav-second-level show"
+            id="collapseEndpoint">
+            {{ endpoint_submenu(url_heatmap, 'Hourly API Utilization') }}
+            {{ endpoint_submenu(url_version_user, 'User-Focused Multi-Version Performance') }}
+            {{ endpoint_submenu(url_version_ip, 'IP-Focused Multi-Version Performance') }}
+            {{ endpoint_submenu(url_version, 'Per-Version Performance') }}
+            {{ endpoint_submenu(url_user, 'Per-User Performance') }}
+            {{ endpoint_submenu(url_outliers, 'Outliers') }}
+        </ul>
+    </li>
+{% endblock %}

@@ -7,6 +7,8 @@ from unittest import TestLoader
 
 import requests
 
+print('Travis job number:', os.getenv('TRAVIS_JOB_NUMBER'))
+
 # Determine if this script was called normally or if the call was part of a unit test on Travis.
 # When unit testing, only run one dummy test from the testmonitor folder and submit to a dummy url.
 test_folder = os.getcwd() + '/flask_monitoringdashboard/test/views/testmonitor'

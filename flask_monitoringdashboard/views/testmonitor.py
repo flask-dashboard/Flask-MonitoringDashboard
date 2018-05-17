@@ -1,10 +1,11 @@
 import plotly
 import plotly.graph_objs as go
-from flask import session, render_template
+from flask import render_template
 
-from flask_monitoringdashboard import blueprint, config
+from flask_monitoringdashboard import blueprint
 from flask_monitoringdashboard.core.auth import secure
 from flask_monitoringdashboard.core.colors import get_color
+from flask_monitoringdashboard.core.utils import get_endpoint_details
 from flask_monitoringdashboard.database import session_scope, TestRun
 from flask_monitoringdashboard.database.count_group import get_value, count_times_tested, get_latest_test_version
 from flask_monitoringdashboard.database.data_grouped import get_test_data_grouped
@@ -31,8 +32,7 @@ def endpoint_test_details(end):
     :param end: the name of the unit test for which the results should be shown
     :return:
     """
-    return render_template('fmd_testmonitor/boxplot.html', name=end)
-    # return render_template('fmd_testmonitor/boxplot.html', name=end, boxplot=get_boxplot(end))
+    return render_template('fmd_testmonitor/endpoint.html', graph=get_boxplot(end), title=end)
 
 
 @blueprint.route('/testmonitor')
