@@ -38,9 +38,9 @@ def get_test_measurements(db_session, name, suite):
     result = []
     test_names = db_session.query(TestsGrouped.test_name).filter(TestsGrouped.endpoint == name).all()
     for test in test_names:
-        result.extend([result[0] for result in
-                       db_session.query(TestRun.execution_time).filter(TestRun.name == test[0],
-                                                                       TestRun.suite == suite).all()])
+        result += [result[0] for result in
+                   db_session.query(TestRun.execution_time).filter(TestRun.name == test[0],
+                                                                   TestRun.suite == suite).all()]
     return result
 
 
