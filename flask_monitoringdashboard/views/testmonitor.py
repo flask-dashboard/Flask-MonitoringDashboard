@@ -20,7 +20,7 @@ def test():
     Shows the performance results for all of the versions.
     :return:
     """
-    return render_template('fmd_testmonitor/boxplot.html', boxplot=get_boxplot(), name='Per-Version Performance')
+    return render_template('fmd_dashboard/graph.html', graph=get_boxplot(), title='Per-Version Performance')
 
 
 @blueprint.route('/testmonitor/<end>')
