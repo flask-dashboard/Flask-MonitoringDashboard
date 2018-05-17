@@ -30,7 +30,7 @@ def build_performance():
     """
     with session_scope() as db_session:
         form = get_slider_form(count_builds(db_session))
-    graph = get_boxplot(form)
+    graph = get_boxplot(form=form)
     return render_template('fmd_dashboard/graph.html', graph=graph, title='Per-Build Performance',
                            information=get_information(AXES_INFO, CONTENT_INFO), form=form)
 
@@ -43,7 +43,7 @@ def endpoint_test_details(end):
     :param end: the name of the unit test for which the results should be shown
     :return:
     """
-    return render_template('fmd_testmonitor/endpoint.html', graph=get_boxplot(end), title=end)
+    return render_template('fmd_testmonitor/endpoint.html', graph=get_boxplot(test=end), title=end)
 
 
 @blueprint.route('/testmonitor')
@@ -79,7 +79,7 @@ def testmonitor():
         return render_template('fmd_testmonitor/testmonitor.html', result=result)
 
 
-def get_boxplot(form, test=None):
+def get_boxplot(test=None, form=None):
     """
     Generates a box plot visualization for the unit test performance results.
     :param test: if specified, generate box plot for a specific test, otherwise, generate for all tests
@@ -87,29 +87,33 @@ def get_boxplot(form, test=None):
     """
     data = []
     with session_scope() as db_session:
-        suites = get_test_suites(db_session, limit=form.get_slider_value())
-    if not suites:
-        return None
-    for s in suites:
-        if test:
-            values = get_test_measurements(db_session, name=test, suite=s.suite)
+        if form:
+            suites = get_test_suites(db_session, limit=form.get_slider_value())
         else:
-            values = get_suite_measurements(db_session, suite=s.suite)
+            suites = get_test_suites(db_session)
 
-        data.append(go.Box(
-            x=values,
-            name='{} -'.format(s.suite)))
+        if not suites:
+            return None
+        for s in suites:
+            if test:
+                values = get_test_measurements(db_session, name=test, suite=s.suite)
+            else:
+                values = get_suite_measurements(db_session, suite=s.suite)
 
-    layout = go.Layout(
-        autosize=True,
-        height=350 + 40 * len(suites),
-        plot_bgcolor='rgba(249,249,249,1)',
-        showlegend=False,
-        xaxis=dict(title='Execution time (ms)'),
-        yaxis=dict(
-            title='Travis Build',
-            autorange='reversed'
+            data.append(go.Box(
+                x=values,
+                name='{} -'.format(s.suite)))
+
+        layout = go.Layout(
+            autosize=True,
+            height=350 + 40 * len(suites),
+            plot_bgcolor='rgba(249,249,249,1)',
+            showlegend=False,
+            xaxis=dict(title='Execution time (ms)'),
+            yaxis=dict(
+                title='Travis Build',
+                autorange='reversed'
+            )
         )
-    )
 
-    return plotly.offline.plot(go.Figure(data=data, layout=layout), output_type='div', show_link=False)
+        return plotly.offline.plot(go.Figure(data=data, layout=layout), output_type='div', show_link=False)

@@ -63,8 +63,6 @@ class TestDBTests(unittest.TestCase):
             self.test_add_test_result()
             result = get_suite_measurements(db_session, SUITE)
             self.assertEqual(len(result), len(EXECUTION_TIMES))
-            for test_run in result:
-                self.assertIn(test_run.execution_time, EXECUTION_TIMES)
 
     def test_get_test_measurements(self):
         """
@@ -76,5 +74,3 @@ class TestDBTests(unittest.TestCase):
             self.test_add_test_result()
             result = get_test_measurements(db_session, NAME, SUITE)
             self.assertEqual(len(result), len(EXECUTION_TIMES))
-            for test_run in result:
-                self.assertIn(test_run.execution_time, EXECUTION_TIMES)
