@@ -35,11 +35,11 @@ class TestDBTestsGrouped(unittest.TestCase):
             Test whether the function returns the right values.
         """
         from flask_monitoringdashboard.database.tests_grouped import add_tests_grouped, get_tests_grouped
-        json = [{'endpoint': 'endpoint', 'test_name': 'test_name'}]
+        json = [{'endpoint': 'main', 'test_name': 'test_name1'}, {'endpoint': 'main', 'test_name': 'test_name2'}]
         with session_scope() as db_session:
             self.assertEqual(len(get_tests_grouped(db_session)), len(TEST_NAMES))
             add_tests_grouped(db_session, json)
-            self.assertEqual(len(get_tests_grouped(db_session)), len(TEST_NAMES)+1)
+            self.assertEqual(len(get_tests_grouped(db_session)), len(TEST_NAMES)+2)
 
     def test_get_tests_grouped(self):
         """

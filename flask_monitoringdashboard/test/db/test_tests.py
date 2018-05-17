@@ -71,6 +71,3 @@ class TestDBTests(unittest.TestCase):
         from flask_monitoringdashboard.database.tests import get_test_measurements
         with session_scope() as db_session:
             self.assertEqual(get_test_measurements(db_session, NAME, SUITE), [])
-            self.test_add_test_result()
-            result = get_test_measurements(db_session, NAME, SUITE)
-            self.assertEqual(len(result), len(EXECUTION_TIMES))
