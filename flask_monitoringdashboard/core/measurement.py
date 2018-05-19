@@ -10,7 +10,7 @@ from functools import wraps
 from flask import request
 
 from flask_monitoringdashboard import config
-from flask_monitoringdashboard.core.flamegraph import start_profile_thread
+from flask_monitoringdashboard.core.profiler import start_profile_thread
 from flask_monitoringdashboard.core.outlier import StackInfo
 from flask_monitoringdashboard.core.rules import get_rules
 from flask_monitoringdashboard.database import session_scope

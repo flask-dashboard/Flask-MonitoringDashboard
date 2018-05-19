@@ -2,6 +2,7 @@ import sys
 import threading
 import traceback
 import inspect
+from collections import defaultdict
 
 from flask_monitoringdashboard import user_app
 
@@ -19,14 +20,13 @@ class ProfileThread(threading.Thread):
         self._endpoint = endpoint
         self._total_traces = 0
         self._keeprunning = True
-        self._text_dict = {}
+        self._text_dict = defaultdict(int)
         self._h = {}  # dictionary for replacing the filename by an integer
 
     def run(self):
         while self._keeprunning:
             frame = sys._current_frames()[self._thread_to_monitor]
             in_endpoint_code = False
-
             callgraph = ''
             for fn, ln, fun, line in traceback.extract_stack(frame):
                 # fn: filename
@@ -36,24 +36,27 @@ class ProfileThread(threading.Thread):
                 if self._endpoint is fun:
                     in_endpoint_code = True
                 if in_endpoint_code:
-                    key = (fn, ln, fun, line, callgraph)
-                    if key in self._text_dict:
-                        self._text_dict[key] += 1
-                    else:
-                        self._text_dict[key] = 1
+                    key = (fn, ln, fun, line, callgraph)  # quintuple
+                    self._text_dict[key] += 1
                     encode = self.encode(fn, ln)
                     if encode not in callgraph:
                         callgraph = append_callgraph(callgraph, encode)
 
-    def encode(self, fn, ln):
-        return '{}:{}'.format(self.get_index(fn), ln)
-
-    def stop(self):
-        self._keeprunning = False
+        # After the while loop, print the result.
         self._total_traces = sum([v for k, v in self.find_items_with_callgraph(self._text_dict.items(), '')])
         self.print_funcheader()
         self.print_dict()
         self._text_dict.clear()
+
+    def encode(self, fn, ln):
+        return str(self.get_index(fn)) + ':' + str(ln)
+        # return '{}:{}'.format(self.get_index(fn), ln)
+
+    def stop(self):
+        """
+        After the request has completely been processed, the while loop is stopped
+        """
+        self._keeprunning = False
         self.join()
 
     def find_items_with_callgraph(self, list, callgraph):
