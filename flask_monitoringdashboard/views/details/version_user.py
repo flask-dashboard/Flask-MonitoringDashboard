@@ -34,7 +34,7 @@ def version_user(end):
     with session_scope() as db_session:
         details = get_endpoint_details(db_session, end)
         form = get_double_slider_form([count_users(db_session, end), count_versions_end(db_session, end)],
-                                      subtitle=['Amount of Users', 'Amount of Versions'])
+                                      subtitle=['Users', 'Versions'], title='Select the number of users and versions')
         graph = version_user_graph(db_session, end, form)
     return render_template('fmd_dashboard/graph-details.html', details=details, graph=graph, form=form,
                            title='{} for {}'.format(TITLE, end),
