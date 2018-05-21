@@ -1,9 +1,11 @@
 import ast
+
 import numpy as np
 from flask import url_for
 from werkzeug.routing import BuildError
 
 from flask_monitoringdashboard import config
+from flask_monitoringdashboard.core.rules import get_rules
 from flask_monitoringdashboard.database.count import count_requests, count_total_requests
 from flask_monitoringdashboard.database.endpoint import get_monitor_rule
 from flask_monitoringdashboard.database.function_calls import get_date_of_first_request
@@ -13,6 +15,7 @@ def get_endpoint_details(db_session, endpoint):
     """ Return details about an endpoint"""
     return {
         'endpoint': endpoint,
+        'rules': [r.rule for r in get_rules(endpoint)],
         'rule': get_monitor_rule(db_session, endpoint),
         'url': get_url(endpoint),
         'total_hits': count_requests(db_session, endpoint)

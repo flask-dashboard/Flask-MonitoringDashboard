@@ -59,7 +59,7 @@ class TestDBTests(unittest.TestCase):
         """
         from flask_monitoringdashboard.database.tests import get_suite_measurements
         with session_scope() as db_session:
-            self.assertEqual(get_suite_measurements(db_session, SUITE), [])
+            self.assertEqual(get_suite_measurements(db_session, SUITE), [0])
             self.test_add_test_result()
             result = get_suite_measurements(db_session, SUITE)
             self.assertEqual(len(result), len(EXECUTION_TIMES))
@@ -70,4 +70,4 @@ class TestDBTests(unittest.TestCase):
         """
         from flask_monitoringdashboard.database.tests import get_test_measurements
         with session_scope() as db_session:
-            self.assertEqual(get_test_measurements(db_session, NAME, SUITE), [])
+            self.assertEqual(get_test_measurements(db_session, NAME, SUITE), [0])
