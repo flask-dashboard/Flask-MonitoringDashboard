@@ -46,7 +46,7 @@
             <span class="navbar-toggler-icon"></span>
         </button>
         <div class="collapse navbar-collapse" id="navbarResponsive">
-            <ul class="navbar-nav navbar-sidenav nav-pills" id="exampleAccordion">
+            <ul class="navbar-nav navbar-sidenav nav-pills" id="exampleAccordion" style="overflow: hidden">
                 <li class="nav-item" data-toggle="tooltip" data-placement="right" title="Rules">
                     <a class="nav-link {{ active_if_is(rules_endpoint) }}" href="{{ url_for(rules_endpoint) }}">
                         <i class="fa fa-fw fa-wrench"></i>
