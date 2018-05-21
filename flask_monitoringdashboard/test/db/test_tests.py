@@ -8,7 +8,7 @@ import unittest
 
 from flask_monitoringdashboard.database import session_scope
 from flask_monitoringdashboard.test.utils import set_test_environment, clear_db, add_fake_data, mean, \
-    EXECUTION_TIMES, NAME
+    EXECUTION_TIMES, NAME, TEST_NAMES
 
 NAME2 = 'main2'
 SUITE = 3
@@ -31,12 +31,13 @@ class TestDBTests(unittest.TestCase):
         with session_scope() as db_session:
             self.assertEqual(get_test_cnt_avg(db_session), [])
             for exec_time in EXECUTION_TIMES:
-                add_test_result(db_session, NAME, exec_time, datetime.datetime.utcnow(), config.version, SUITE, 2)
+                for test in TEST_NAMES:
+                    add_test_result(db_session, test, exec_time, datetime.datetime.utcnow(), config.version, SUITE, 0)
             result = get_test_cnt_avg(db_session)
-            self.assertEqual(len(result), 1)
-            self.assertEqual(result[0].name, NAME)
-            self.assertEqual(result[0].count, len(EXECUTION_TIMES))
-            self.assertEqual(result[0].average, mean(EXECUTION_TIMES))
+            self.assertEqual(2, len(result))
+            self.assertEqual(TEST_NAMES[0], result[0].name)
+            self.assertEqual(len(EXECUTION_TIMES), result[0].count)
+            self.assertEqual(mean(EXECUTION_TIMES), result[0].average)
 
     def test_get_results(self):
         """
@@ -62,7 +63,7 @@ class TestDBTests(unittest.TestCase):
             self.assertEqual(get_suite_measurements(db_session, SUITE), [0])
             self.test_add_test_result()
             result = get_suite_measurements(db_session, SUITE)
-            self.assertEqual(len(result), len(EXECUTION_TIMES))
+            self.assertEqual(len(EXECUTION_TIMES) * 2, len(result))
 
     def test_get_test_measurements(self):
         """
@@ -71,3 +72,6 @@ class TestDBTests(unittest.TestCase):
         from flask_monitoringdashboard.database.tests import get_test_measurements
         with session_scope() as db_session:
             self.assertEqual(get_test_measurements(db_session, NAME, SUITE), [0])
+            self.test_add_test_result()
+            result = get_test_measurements(db_session, NAME, SUITE)
+            self.assertEqual(len(EXECUTION_TIMES) * 2, len(result))
