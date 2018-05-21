@@ -27,7 +27,7 @@ requests.'''
 @secure
 def version_usage():
     with session_scope() as db_session:
-        form = get_slider_form(count_versions(db_session))
+        form = get_slider_form(count_versions(db_session), 'Select the number of versions')
     graph = version_usage_graph(form)
     return render_template('fmd_dashboard/graph.html', graph=graph, title=TITLE,
                            information=get_information(AXES_INFO, CONTENT_INFO), form=form)

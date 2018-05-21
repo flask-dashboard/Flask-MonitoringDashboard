@@ -14,8 +14,8 @@ class SelectDateRangeForm(FlaskForm):
     """ Used for selecting two dates, which together specify a range. """
     start_date = DateField('Start date', format=DATE_FORMAT, validators=[validators.data_required()])
     end_date = DateField('End date', format=DATE_FORMAT, validators=[validators.data_required()])
-    submit = SubmitField('Submit')
-    title = 'Select two dates for reducing the size of the graph'
+    submit = SubmitField('Update')
+    title = 'Select the time interval'
 
     def get_days(self):
         """
