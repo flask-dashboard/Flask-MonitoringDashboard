@@ -10,6 +10,7 @@ from functools import wraps
 from flask import request
 
 from flask_monitoringdashboard import config, user_app
+from flask_monitoringdashboard.core.profiler import start_profile_thread
 from flask_monitoringdashboard.core.outlier import StackInfo
 from flask_monitoringdashboard.core.rules import get_rules
 from flask_monitoringdashboard.database import session_scope
@@ -35,9 +36,9 @@ def init_measurement():
         for rule in get_rules():
             end = rule.endpoint
             db_rule = get_monitor_rule(db_session, end)
-            user_app.view_functions[end] = track_last_accessed(user_app.view_functions[end], end)
             if db_rule.monitor:
                 user_app.view_functions[end] = track_performance(user_app.view_functions[end], end)
+            user_app.view_functions[end] = track_last_accessed(user_app.view_functions[end], end)
 
 
 def track_performance(endpoint, monitor_level):
@@ -62,8 +63,10 @@ def track_performance(endpoint, monitor_level):
                 # start a thread to log the stacktrace after 'average' ms
                 stack_info = StackInfo(average)
 
+            thread = start_profile_thread(endpoint)
             time1 = time.time()
             result = func(*args, **kwargs)
+            thread.stop()
 
             if stack_info:
                 stack_info.stop()

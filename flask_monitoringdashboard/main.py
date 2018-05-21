@@ -18,10 +18,25 @@ def create_app():
     dashboard.config.database_name = 'sqlite:///flask_monitoringdashboard.db'
     dashboard.bind(app)
 
-    @app.route('/endpoint1')
-    def endpoint1():
+    def f():
         import time
-        time.sleep(2)
+        time.sleep(1)
+
+    def g():
+        f()
+
+    def h():
+        g()
+
+    @app.route('/endpoint1')
+    @app.route('/endpoint')
+    def endpoint():
+        import time
+        time.sleep(1)
+        f()
+        g()
+        h()
+        return ''
 
     @app.route('/')
     def main():
@@ -31,4 +46,4 @@ def create_app():
 
 
 if __name__ == '__main__':
-    create_app().run(debug=True)
+    app = create_app().run(debug=True)
