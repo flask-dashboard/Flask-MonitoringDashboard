@@ -35,7 +35,7 @@ def build_performance():
                            information=get_information(AXES_INFO, CONTENT_INFO), form=form)
 
 
-@blueprint.route('/testmonitor/<end>')
+@blueprint.route('/testmonitor/<end>', methods=['GET', 'POST'])
 @secure
 def endpoint_test_details(end):
     """
@@ -43,7 +43,11 @@ def endpoint_test_details(end):
     :param end: the name of the unit test for which the results should be shown
     :return:
     """
-    return render_template('fmd_testmonitor/endpoint.html', graph=get_boxplot(test=end), title=end)
+    with session_scope() as db_session:
+        form = get_slider_form(count_builds(db_session))
+    graph = get_boxplot(endpoint=end, form=form)
+    return render_template('fmd_testmonitor/endpoint.html', graph=graph, title='Per-Version Performance for ' + end,
+                           information=get_information(AXES_INFO, CONTENT_INFO), endp=end, form=form)
 
 
 @blueprint.route('/testmonitor')
@@ -79,10 +83,11 @@ def testmonitor():
         return render_template('fmd_testmonitor/testmonitor.html', result=result)
 
 
-def get_boxplot(test=None, form=None):
+def get_boxplot(endpoint=None, form=None):
     """
     Generates a box plot visualization for the unit test performance results.
-    :param test: if specified, generate box plot for a specific test, otherwise, generate for all tests
+    :param endpoint: if specified, generate box plot for a specific test, otherwise, generate for all tests
+    :param form: the form that can be used for showing a subset of the data
     :return:
     """
     data = []
@@ -95,8 +100,8 @@ def get_boxplot(test=None, form=None):
         if not suites:
             return None
         for s in suites:
-            if test:
-                values = get_test_measurements(db_session, name=test, suite=s.suite)
+            if endpoint:
+                values = get_test_measurements(db_session, name=endpoint, suite=s.suite)
             else:
                 values = get_suite_measurements(db_session, suite=s.suite)
 
@@ -115,5 +120,4 @@ def get_boxplot(test=None, form=None):
                 autorange='reversed'
             )
         )
-
         return plotly.offline.plot(go.Figure(data=data, layout=layout), output_type='div', show_link=False)

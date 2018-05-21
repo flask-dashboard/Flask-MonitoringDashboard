@@ -82,6 +82,8 @@
                         {{ submenu('dashboard.build_performance', 'Per-Build Performance') }}
                     </ul>
                 </li>
+                {% block test_endpoint_menu %}
+                {% endblock %}
                 <li class="nav-item" data-toggle="tooltip" data-placement="right" title="Configuration">
                     <a class="nav-link {{ active_if_is(config_endpoint) }}" href="{{ url_for(config_endpoint) }}">
                         <i class="fa fa-fw fa-gear"></i>
@@ -120,8 +122,8 @@
     <footer class="sticky-footer">
         <div class="container">
             <div class="text-center">
-                For advanced documentation, see <a target="_blank"
-                                                   href="http://flask-monitoringdashboard.readthedocs.io">this site</a>
+                Click <a target="_blank" href="http://flask-monitoringdashboard.readthedocs.io">here</a> to read
+                advanced documentation.
             </div>
         </div>
     </footer>

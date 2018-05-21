@@ -30,7 +30,8 @@ def get_test_suites(db_session, limit=None):
 
 def get_suite_measurements(db_session, suite):
     """ Return all measurements for some Travis build. Used for creating a box plot. """
-    return [result[0] for result in db_session.query(TestRun.execution_time).filter(TestRun.suite == suite).all()]
+    result = [result[0] for result in db_session.query(TestRun.execution_time).filter(TestRun.suite == suite).all()]
+    return result if len(result) > 0 else [0]
 
 
 def get_test_measurements(db_session, name, suite):
@@ -41,7 +42,7 @@ def get_test_measurements(db_session, name, suite):
         result += [result[0] for result in
                    db_session.query(TestRun.execution_time).filter(TestRun.name == test[0],
                                                                    TestRun.suite == suite).all()]
-    return result
+    return result if len(result) > 0 else [0]
 
 
 def get_last_tested_times(db_session, test_groups):
