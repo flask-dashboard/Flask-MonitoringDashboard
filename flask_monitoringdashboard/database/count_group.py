@@ -13,7 +13,9 @@ def get_latest_test_version(db_session):
     :return: latest test version
     """
     latest_time = db_session.query(func.max(TestRun.time)).one()[0]
-    return db_session.query(TestRun.version).filter(TestRun.time == latest_time).one()[0]
+    if latest_time:
+        return db_session.query(TestRun.version).filter(TestRun.time == latest_time).one()[0]
+    return None
 
 
 def count_rows_group(db_session, column, *criterion):

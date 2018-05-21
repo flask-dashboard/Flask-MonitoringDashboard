@@ -21,9 +21,9 @@ CONTENT_INFO = '''In this graph, it is easy to compare the execution time of the
 to one another. This information may be useful to validate which endpoints need to be improved.'''
 
 
-@blueprint.route('/build_performance', methods=['GET', 'POST'])
+@blueprint.route('/test_build_performance', methods=['GET', 'POST'])
 @secure
-def build_performance():
+def test_build_performance():
     """
     Shows the performance results for all of the versions.
     :return:
@@ -62,6 +62,7 @@ def testmonitor():
 
         tests_latest = count_times_tested(db_session, TestRun.version == get_latest_test_version(db_session))
         tests = count_times_tested(db_session)
+        # Medians can only be calculated when the new way of data collection is implemented.
         # median_latest = get_endpoint_data_grouped(db_session, median, FunctionCall.time > week_ago)
         # median = get_test_data_grouped(db_session, median)
         tested_times = get_last_tested_times(db_session, endpoint_test_combinations)
@@ -73,6 +74,7 @@ def testmonitor():
                 'color': get_color(endpoint),
                 'tests-latest-version': get_value(tests_latest, endpoint),
                 'tests-overall': get_value(tests, endpoint),
+                # Medians can only be calculated when the new way of data collection is implemented.
                 # 'median-latest-version': get_value(median_latest, endpoint),
                 # 'median-overall': get_value(median, endpoint),
                 'median-latest-version': -1,

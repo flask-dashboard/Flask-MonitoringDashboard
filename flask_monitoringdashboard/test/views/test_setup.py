@@ -51,6 +51,13 @@ class TestSetup(unittest.TestCase):
         add_fake_test_runs()
         test_admin_secure(self, 'testmonitor')
 
+    def test_build_performance(self):
+        """
+            Just retrieve the content and check if nothing breaks
+        """
+        add_fake_test_runs()
+        test_admin_secure(self, 'testmonitor/test_build_performance')
+
     def test_monitor_rule(self):
         """
             Test whether it is possible to monitor a rule

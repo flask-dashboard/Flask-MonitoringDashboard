@@ -24,7 +24,7 @@
 {%- endmacro %}
 
 {% set rules_endpoint='dashboard.rules' %}
-{% set testmonitor_list=['dashboard.testmonitor', 'dashboard.build_performance'] %}
+{% set testmonitor_list=['dashboard.testmonitor', 'dashboard.test_build_performance'] %}
 {% set config_endpoint='dashboard.configuration' %}
 {% set dashboard_list=['dashboard.overview', 'dashboard.hourly_load', 'dashboard.version_usage',
        'dashboard.requests', 'dashboard.endpoints'] %}
@@ -79,7 +79,7 @@
                     <ul class="sidenav-second-level {{ "show" if request.endpoint in testmonitor_list else "collapse" }}"
                         id="collapseTestmonitor">
                         {{ submenu('dashboard.testmonitor', 'Overview') }}
-                        {{ submenu('dashboard.build_performance', 'Per-Build Performance') }}
+                        {{ submenu('dashboard.test_build_performance', 'Per-Build Performance') }}
                     </ul>
                 </li>
                 {% block test_endpoint_menu %}
