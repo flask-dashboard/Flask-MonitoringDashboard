@@ -7,7 +7,7 @@ from flask_monitoringdashboard.core.auth import secure
 from flask_monitoringdashboard.core.colors import get_color
 from flask_monitoringdashboard.core.forms import get_double_slider_form
 from flask_monitoringdashboard.core.plot import get_average_bubble_size, scatter, get_layout, get_margin, get_figure
-from flask_monitoringdashboard.core.plot.util import get_information
+from flask_monitoringdashboard.core.info_box import get_plot_info
 from flask_monitoringdashboard.core.utils import get_endpoint_details
 from flask_monitoringdashboard.database import FunctionCall, session_scope
 from flask_monitoringdashboard.database.count import count_ip, count_versions_end
@@ -38,7 +38,7 @@ def version_ip(end):
         graph = version_ip_graph(db_session, end, form)
     return render_template('fmd_dashboard/graph-details.html', details=details, graph=graph, form=form,
                            title='{} for {}'.format(TITLE, end),
-                           information=get_information(AXES_INFO, CONTENT_INFO))
+                           information=get_plot_info(AXES_INFO, CONTENT_INFO))
 
 
 def version_ip_graph(db_session, end, form):

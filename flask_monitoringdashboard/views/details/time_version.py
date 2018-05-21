@@ -5,7 +5,7 @@ from flask_monitoringdashboard.core.auth import secure
 from flask_monitoringdashboard.core.colors import get_color
 from flask_monitoringdashboard.core.forms import get_slider_form
 from flask_monitoringdashboard.core.plot import boxplot, get_figure, get_layout, get_margin
-from flask_monitoringdashboard.core.plot.util import get_information
+from flask_monitoringdashboard.core.info_box import get_plot_info
 from flask_monitoringdashboard.core.utils import get_endpoint_details, simplify
 from flask_monitoringdashboard.database import FunctionCall, session_scope
 from flask_monitoringdashboard.database.count import count_versions_end
@@ -32,7 +32,7 @@ def versions(end):
         graph = versions_graph(db_session, end, form)
         return render_template('fmd_dashboard/graph-details.html', details=details, graph=graph,
                                title='{} for {}'.format(TITLE, end), form=form,
-                               information=get_information(AXES_INFO, CONTENT_INFO))
+                               information=get_plot_info(AXES_INFO, CONTENT_INFO))
 
 
 def format_version(version, first_used):

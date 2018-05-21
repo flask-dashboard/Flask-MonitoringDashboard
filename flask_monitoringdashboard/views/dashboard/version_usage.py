@@ -4,7 +4,7 @@ from flask_monitoringdashboard import blueprint
 from flask_monitoringdashboard.core.auth import secure
 from flask_monitoringdashboard.core.forms import get_slider_form
 from flask_monitoringdashboard.core.plot import get_layout, get_figure, get_margin, heatmap
-from flask_monitoringdashboard.core.plot.util import get_information
+from flask_monitoringdashboard.core.info_box import get_plot_info
 from flask_monitoringdashboard.database import FunctionCall, session_scope
 from flask_monitoringdashboard.database.count import count_versions
 from flask_monitoringdashboard.database.count_group import count_requests_group, get_value
@@ -30,7 +30,7 @@ def version_usage():
         form = get_slider_form(count_versions(db_session))
     graph = version_usage_graph(form)
     return render_template('fmd_dashboard/graph.html', graph=graph, title=TITLE,
-                           information=get_information(AXES_INFO, CONTENT_INFO), form=form)
+                           information=get_plot_info(AXES_INFO, CONTENT_INFO), form=form)
 
 
 def version_usage_graph(form):

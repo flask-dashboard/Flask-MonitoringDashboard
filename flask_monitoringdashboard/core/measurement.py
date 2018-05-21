@@ -9,7 +9,7 @@ from functools import wraps
 
 from flask import request
 
-from flask_monitoringdashboard import config
+from flask_monitoringdashboard import config, user_app
 from flask_monitoringdashboard.core.outlier import StackInfo
 from flask_monitoringdashboard.core.rules import get_rules
 from flask_monitoringdashboard.database import session_scope
@@ -40,12 +40,13 @@ def init_measurement():
                 user_app.view_functions[end] = track_performance(user_app.view_functions[end], end)
 
 
-def track_performance(func, endpoint):
+def track_performance(endpoint, monitor_level):
     """
     Measure the execution time of a function and store result in the database
-    :param func: the function to be measured
     :param endpoint: the name of the endpoint
+    :param monitor_level: the level of monitoring (0 = not monitoring).
     """
+    func = user_app.view_functions[endpoint]
 
     @wraps(func)
     def wrapper(*args, **kwargs):

@@ -4,7 +4,7 @@ from flask_monitoringdashboard import blueprint
 from flask_monitoringdashboard.core.auth import secure
 from flask_monitoringdashboard.core.forms import get_daterange_form
 from flask_monitoringdashboard.core.plot import barplot, get_figure, get_layout
-from flask_monitoringdashboard.core.plot.util import get_information
+from flask_monitoringdashboard.core.info_box import get_plot_info
 from flask_monitoringdashboard.database import session_scope
 from flask_monitoringdashboard.database.count_group import count_requests_per_day, get_value
 from flask_monitoringdashboard.database.function_calls import get_endpoints
@@ -26,7 +26,7 @@ most.'''
 def requests():
     form = get_daterange_form(num_days=10)
     return render_template('fmd_dashboard/graph.html', form=form, graph=requests_graph(form), title=TITLE,
-                           information=get_information(AXES_INFO, CONTENT_INFO))
+                           information=get_plot_info(AXES_INFO, CONTENT_INFO))
 
 
 def requests_graph(form):

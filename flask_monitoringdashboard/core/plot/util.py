@@ -13,24 +13,3 @@ def add_default_value(arg_name, value, **kwargs):
     return kwargs
 
 
-def get_information(axes='', content=''):
-    """
-    :param axes: If specified, information about the axis
-    :param content: If specified, information about the content
-    :return: a String with information in HTML
-    """
-    def b(s):
-        return '<b>{}</b>'.format(s)
-
-    def p(s):
-        return '<p>{}</p>'.format(s)
-
-    information = b('Graph') + p(GRAPH_INFO)
-
-    if axes:
-        information = information + b('Axes') + p(axes)
-
-    if content:
-        information = information + b('Content') + p(content)
-
-    return information

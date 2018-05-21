@@ -503,7 +503,6 @@ footer.sticky-footer {
 }
 
 .clickable {
-    cursor: pointer;
     cursor: hand;
 }
 
@@ -541,6 +540,5 @@ footer.sticky-footer {
 
 .pagination-page-info b {
     color: black;
-    padding-left: 2px;
     padding: .1em .25em;
 }

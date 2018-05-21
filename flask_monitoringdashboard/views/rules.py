@@ -3,6 +3,8 @@ from flask import request, render_template
 from flask_monitoringdashboard import blueprint, user_app
 from flask_monitoringdashboard.core.auth import admin_secure
 from flask_monitoringdashboard.core.colors import get_color
+from flask_monitoringdashboard.core.forms import get_monitor_form
+from flask_monitoringdashboard.core.info_box import get_rules_info
 from flask_monitoringdashboard.core.measurement import track_performance
 from flask_monitoringdashboard.core.rules import get_rules
 from flask_monitoringdashboard.database import session_scope
@@ -21,18 +23,19 @@ def rules():
     """
     with session_scope() as db_session:
         if request.method == 'POST':
-            name = request.form['name']
-            endpoint = name.rsplit('-', 1)[1]
-            value = request.form['value']
+            print(request.form)
+            endpoint = request.form['name']
+            value = int(request.form['value'])
 
-            if value == 'true':  # add wrapper
-                update_monitor_rule(db_session, endpoint, value=True)
-                user_app.view_functions[endpoint] = track_performance(user_app.view_functions[endpoint], endpoint)
-            else:  # remove wrapper
-                update_monitor_rule(db_session, endpoint, value=False)
+            if value == 0:  # remove wrapper
+                update_monitor_rule(db_session, endpoint, value=0)
                 original = getattr(user_app.view_functions[endpoint], 'original', None)
                 if original:
                     user_app.view_functions[endpoint] = original
+            else:  # remove wrapper
+                update_monitor_rule(db_session, endpoint, value=value)
+                user_app.view_functions[endpoint] = track_performance(endpoint, value)
+
             return 'OK'
 
         last_accessed = get_last_accessed_times(db_session)
@@ -42,6 +45,8 @@ def rules():
             'endpoint': rule.endpoint,
             'methods': rule.methods,
             'last_accessed': get_value(last_accessed, rule.endpoint, default=None),
-            'monitor': get_monitor_rule(db_session, rule.endpoint).monitor
+            'monitor': get_monitor_rule(db_session, rule.endpoint).monitor,
+            'form': get_monitor_form(rule.endpoint)
+
         } for rule in get_rules()]
-    return render_template('fmd_rules.html', rules=all_rules)
+    return render_template('fmd_rules.html', rules=all_rules, information=get_rules_info())
