@@ -75,7 +75,7 @@ class FunctionCall(Base):
     # ip address of remote user
     ip = Column(String(25), nullable=False)
     # whether the function call was an outlier or not
-    outlier = Column(Boolean, default=False)
+    is_outlier = Column(Boolean, default=False)
 
 
 class ExecutionPathLine(Base):
