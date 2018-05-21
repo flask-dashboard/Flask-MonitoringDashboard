@@ -29,7 +29,7 @@ def test_build_performance():
     :return:
     """
     with session_scope() as db_session:
-        form = get_slider_form(count_builds(db_session))
+        form = get_slider_form(count_builds(db_session), title='Select the number of builds')
     graph = get_boxplot(form=form)
     return render_template('fmd_dashboard/graph.html', graph=graph, title='Per-Build Performance',
                            information=get_information(AXES_INFO, CONTENT_INFO), form=form)
@@ -44,7 +44,7 @@ def endpoint_test_details(end):
     :return:
     """
     with session_scope() as db_session:
-        form = get_slider_form(count_builds(db_session))
+        form = get_slider_form(count_builds(db_session), title='Select the number of builds')
     graph = get_boxplot(endpoint=end, form=form)
     return render_template('fmd_testmonitor/endpoint.html', graph=graph, title='Per-Version Performance for ' + end,
                            information=get_information(AXES_INFO, CONTENT_INFO), endp=end, form=form)
