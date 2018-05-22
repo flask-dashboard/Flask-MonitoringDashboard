@@ -11,7 +11,7 @@ class SliderForm(FlaskForm):
         Class for generating a slider that can be used to reduce the graph.
     """
     slider = IntegerRangeField()
-    submit = SubmitField('Submit')
+    submit = SubmitField('Update')
     title = 'Select a number below for reducing the size of the graph'
 
     def get_slider_value(self):
@@ -38,15 +38,18 @@ class SliderForm(FlaskForm):
                            self.submit(class_="btn btn-primary btn-block"))
 
 
-def get_slider_form(slider_max=100):
+def get_slider_form(slider_max=100, title=None):
     """
     Return a SliderForm with the range from 0 to slider_max
     :param slider_max: maximum value for the slider
+    :param title: override the default title
     :return: a SliderForm with the range (0 ... slider_max)
     """
     form = SliderForm(request.form)
     form.min_value = 1
     form.max_value = slider_max
+    if title:
+        form.title = title
     if 'slider' in request.form:
         form.start_value = request.form['slider']
     else:

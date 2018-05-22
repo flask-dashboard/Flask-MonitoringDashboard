@@ -34,7 +34,8 @@ def version_ip(end):
     with session_scope() as db_session:
         details = get_endpoint_details(db_session, end)
         form = get_double_slider_form([count_ip(db_session, end), count_versions_end(db_session, end)],
-                                      subtitle=['Amount of IP-addresses', 'Amount of Versions'])
+                                      subtitle=['IP-addresses', 'Versions'],
+                                      title='Select the number of IP-addresses and versions')
         graph = version_ip_graph(db_session, end, form)
     return render_template('fmd_dashboard/graph-details.html', details=details, graph=graph, form=form,
                            title='{} for {}'.format(TITLE, end),

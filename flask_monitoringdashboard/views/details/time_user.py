@@ -26,7 +26,7 @@ With this graph you can found out whether the performance is different across di
 def users(end):
     with session_scope() as db_session:
         details = get_endpoint_details(db_session, end)
-        form = get_slider_form(count_users(db_session, end))
+        form = get_slider_form(count_users(db_session, end), title='Select the number of users')
     graph = users_graph(end, form)
 
     return render_template('fmd_dashboard/graph-details.html', details=details, graph=graph, form=form,
