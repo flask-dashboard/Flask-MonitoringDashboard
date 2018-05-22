@@ -1,6 +1,12 @@
+#!/usr/bin/env python3
+"""
+    Use this file for migrating the Database from v1.X.X to v2.X.X
+    Before you can execute this script, change the DB_PATH on line 9.
+"""
+
 import sqlite3
 
-DB_PATH = '/home/bogdan/flask_monitoringdashboard_copy.db'
+DB_PATH = 'path_to_you_db/flask_monitoringdashboard.db'
 
 sql_drop_temp = """DROP TABLE IF EXISTS temp"""
 sql_drop_functionCalls = """DROP TABLE IF EXISTS functionCalls"""
