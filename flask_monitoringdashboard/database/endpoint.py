@@ -98,7 +98,7 @@ def get_monitor_rule(db_session, endpoint):
 def update_monitor_rule(db_session, endpoint, value):
     """ Update the value of a specific monitor rule. """
     db_session.query(MonitorRule).filter(MonitorRule.endpoint == endpoint). \
-        update({MonitorRule.monitor: value})
+        update({MonitorRule.monitor_level: value})
 
 
 def get_last_accessed_times(db_session):
