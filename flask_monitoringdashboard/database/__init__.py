@@ -59,9 +59,9 @@ class TestRun(Base):
     run = Column(Integer)
 
 
-class FunctionCall(Base):
+class Request(Base):
     """ Table for storing measurements of function calls. """
-    __tablename__ = 'functionCalls'
+    __tablename__ = 'requests'
     id = Column(Integer, primary_key=True, autoincrement=True)
     endpoint = Column(String(250), nullable=False)
     # execution_time in ms
@@ -82,8 +82,8 @@ class ExecutionPathLine(Base):
     """ Table for storing lines of execution paths of calls. """
     __tablename__ = 'executionPathLines'
     id = Column(Integer, primary_key=True, autoincrement=True)
-    # every execution path line belongs to a function call
-    function_call_id = Column(Integer, ForeignKey(FunctionCall.id), nullable=False)
+    # every execution path line belongs to a request
+    request_id = Column(Integer, ForeignKey(Request.id), nullable=False)
     # order in the execution path
     line_number = Column(Integer, nullable=False)
     # level in the tree
@@ -162,4 +162,4 @@ def session_scope():
 
 
 def get_tables():
-    return [MonitorRule, Tests, TestRun, FunctionCall, ExecutionPathLine, Outlier, TestsGrouped]
+    return [MonitorRule, Tests, TestRun, Request, ExecutionPathLine, Outlier, TestsGrouped]

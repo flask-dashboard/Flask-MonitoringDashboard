@@ -15,7 +15,7 @@ from flask_monitoringdashboard.core.outlier import StackInfo
 from flask_monitoringdashboard.core.rules import get_rules
 from flask_monitoringdashboard.database import session_scope
 from flask_monitoringdashboard.database.endpoint import update_last_accessed, get_monitor_rule
-from flask_monitoringdashboard.database.function_calls import add_function_call
+from flask_monitoringdashboard.database.request import add_request
 from flask_monitoringdashboard.database.outlier import add_outlier
 
 # count and sum are dicts and used for calculating the averages

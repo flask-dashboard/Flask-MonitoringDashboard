@@ -1,6 +1,6 @@
 from numpy import median
 
-from flask_monitoringdashboard.database import FunctionCall
+from flask_monitoringdashboard.database import Request
 
 
 def get_data_grouped(db_session, column, func, *where):
@@ -10,7 +10,7 @@ def get_data_grouped(db_session, column, func, *where):
     :param func: the function to reduce the data
     :param where: additional where clause
     """
-    result = db_session.query(column, FunctionCall.execution_time). \
+    result = db_session.query(column, Request.execution_time). \
         filter(*where).order_by(column).all()
     # result is now a list of tuples per request.
     return group_result(result, func)
@@ -39,7 +39,7 @@ def get_endpoint_data_grouped(db_session, func, *where):
     :param func: the function to reduce the data
     :param where: additional where clause
     """
-    return get_data_grouped(db_session, FunctionCall.endpoint, func, *where)
+    return get_data_grouped(db_session, Request.endpoint, func, *where)
 
 
 def get_version_data_grouped(db_session, func, *where):
@@ -48,7 +48,7 @@ def get_version_data_grouped(db_session, func, *where):
     :param func: the function to reduce the data
     :param where: additional where clause
     """
-    return get_data_grouped(db_session, FunctionCall.version, func, *where)
+    return get_data_grouped(db_session, Request.version, func, *where)
 
 
 def get_user_data_grouped(db_session, func, *where):
@@ -57,16 +57,16 @@ def get_user_data_grouped(db_session, func, *where):
     :param func: the function to reduce the data
     :param where: additional where clause
     """
-    return get_data_grouped(db_session, FunctionCall.group_by, func, *where)
+    return get_data_grouped(db_session, Request.group_by, func, *where)
 
 
 def get_two_columns_grouped(db_session, column, *where):
     """
     :param db_session: session for the database
-    :param column: column that is used for the grouping (together with the FunctionCall.version)
+    :param column: column that is used for the grouping (together with the Request.version)
     :param where: additional where clause
     """
-    result = db_session.query(column, FunctionCall.version, FunctionCall.execution_time). \
+    result = db_session.query(column, Request.version, Request.execution_time). \
         filter(*where).all()
     result = [((g, v), t) for g, v, t in result]
     return group_result(result, median)

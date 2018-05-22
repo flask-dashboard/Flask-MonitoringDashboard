@@ -1,6 +1,6 @@
 from sqlalchemy import func, distinct
 
-from flask_monitoringdashboard.database import FunctionCall, Outlier
+from flask_monitoringdashboard.database import Request, Outlier
 
 
 def count_rows(db_session, column, *criterion):
@@ -21,7 +21,7 @@ def count_users(db_session, endpoint):
     :param endpoint: filter on this endpoint
     :return: The number of distinct users that have requested this endpoint
     """
-    return count_rows(db_session, FunctionCall.group_by, FunctionCall.endpoint == endpoint)
+    return count_rows(db_session, Request.group_by, Request.endpoint == endpoint)
 
 
 def count_ip(db_session, endpoint):
@@ -29,14 +29,14 @@ def count_ip(db_session, endpoint):
     :param endpoint: filter on this endpoint
     :return: The number of distinct users that have requested this endpoint
     """
-    return count_rows(db_session, FunctionCall.ip, FunctionCall.endpoint == endpoint)
+    return count_rows(db_session, Request.ip, Request.endpoint == endpoint)
 
 
 def count_versions(db_session):
     """
     :return: The number of distinct versions that are used
     """
-    return count_rows(db_session, FunctionCall.version)
+    return count_rows(db_session, Request.version)
 
 
 def count_versions_end(db_session, endpoint):
@@ -44,7 +44,7 @@ def count_versions_end(db_session, endpoint):
     :param endpoint: filter on this endpoint
     :return: The number of distinct versions that are used for this endpoint
     """
-    return count_rows(db_session, FunctionCall.version, FunctionCall.endpoint == endpoint)
+    return count_rows(db_session, Request.version, Request.endpoint == endpoint)
 
 
 def count_requests(db_session, endpoint, *where):
@@ -52,7 +52,7 @@ def count_requests(db_session, endpoint, *where):
     :param endpoint: name of the endpoint
     :param where: additional arguments
     """
-    return count_rows(db_session, FunctionCall.id, FunctionCall.endpoint == endpoint, *where)
+    return count_rows(db_session, Request.id, Request.endpoint == endpoint, *where)
 
 
 def count_total_requests(db_session, *where):
@@ -60,7 +60,7 @@ def count_total_requests(db_session, *where):
     :param db_session: session for the database
     :param where: additional arguments
     """
-    return count_rows(db_session, FunctionCall.id, *where)
+    return count_rows(db_session, Request.id, *where)
 
 
 def count_outliers(db_session, endpoint):

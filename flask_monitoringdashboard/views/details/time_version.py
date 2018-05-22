@@ -7,7 +7,7 @@ from flask_monitoringdashboard.core.forms import get_slider_form
 from flask_monitoringdashboard.core.plot import boxplot, get_figure, get_layout, get_margin
 from flask_monitoringdashboard.core.info_box import get_plot_info
 from flask_monitoringdashboard.core.utils import get_endpoint_details, simplify
-from flask_monitoringdashboard.database import FunctionCall, session_scope
+from flask_monitoringdashboard.database import Request, session_scope
 from flask_monitoringdashboard.database.count import count_versions_end
 from flask_monitoringdashboard.database.count_group import get_value
 from flask_monitoringdashboard.database.data_grouped import get_version_data_grouped
@@ -47,7 +47,7 @@ def format_version(version, first_used):
 
 
 def versions_graph(db_session, end, form):
-    times = get_version_data_grouped(db_session, lambda x: simplify(x, 10), FunctionCall.endpoint == end)
+    times = get_version_data_grouped(db_session, lambda x: simplify(x, 10), Request.endpoint == end)
     first_requests = get_first_requests(db_session, form.get_slider_value())
     data = [boxplot(name=format_version(request.version, get_value(first_requests, request.version)),
                     values=get_value(times, request.version), marker={'color': get_color(request.version)})
