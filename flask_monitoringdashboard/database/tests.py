@@ -22,10 +22,10 @@ def get_test_cnt_avg(db_session):
 
 def get_test_suites(db_session, limit=None):
     """ Returns all test suites that have been run. """
-    result = db_session.query(TestRun.suite).group_by(TestRun.suite).order_by(desc(TestRun.suite)).all()
+    query = db_session.query(TestRun.suite).group_by(TestRun.suite).order_by(desc(TestRun.suite))
     if limit:
-        return result[:int(limit)]
-    return result
+        query = query.limit(limit)
+    return query.all()
 
 
 def get_suite_measurements(db_session, suite):

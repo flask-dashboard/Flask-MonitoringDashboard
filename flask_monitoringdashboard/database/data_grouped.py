@@ -48,6 +48,9 @@ def get_test_data_grouped(db_session, func, *where):
     :param func: the function to reduce the data
     :param where: additional where clause
     """
+    # This method will be used in the Testmonitor overview table for the median execution times later on.
+    # Medians can only be calculated when the new way of data collection is implemented.
+
     # result = db_session.query(column, TestRun.execution_time). \
     #     filter(*where).order_by(column).all()
     #

@@ -61,10 +61,7 @@ def count_times_tested(db_session, *where):
     for group in test_endpoint_groups:
         times = db_session.query(func.count(TestRun.name)).filter(TestRun.name == group.test_name).\
                                                            filter(*where).one()[0]
-        if group.endpoint in result:
-            result[group.endpoint] += int(times)
-        else:
-            result[group.endpoint] = times
+        result[group.endpoint] = result.get(group.endpoint, 0) + int(times)
     return result.items()
 
 
