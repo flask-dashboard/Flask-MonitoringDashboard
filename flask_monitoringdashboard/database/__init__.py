@@ -5,7 +5,7 @@
 import datetime
 from contextlib import contextmanager
 
-from sqlalchemy import Column, Integer, String, DateTime, create_engine, Float, Boolean, TEXT
+from sqlalchemy import Column, Integer, String, DateTime, create_engine, Float, Boolean, TEXT, ForeignKey
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 
@@ -74,6 +74,24 @@ class FunctionCall(Base):
     group_by = Column(String(100), default=get_group_by)
     # ip address of remote user
     ip = Column(String(25), nullable=False)
+    # whether the function call was an outlier or not
+    is_outlier = Column(Boolean, default=False)
+
+
+class ExecutionPathLine(Base):
+    """ Table for storing lines of execution paths of calls. """
+    __tablename__ = 'executionPathLines'
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    # every execution path line belongs to a function call
+    function_call_id = Column(Integer, ForeignKey(FunctionCall.id), nullable=False)
+    # order in the execution path
+    line_number = Column(Integer, nullable=False)
+    # level in the tree
+    indent = Column(Integer, nullable=False)
+    # text of the line
+    line_text = Column(String(250), nullable=False)
+    # cycles spent on that line
+    value = Column(Integer, nullable=False)
 
 
 class Outlier(Base):
@@ -144,4 +162,4 @@ def session_scope():
 
 
 def get_tables():
-    return [MonitorRule, Tests, TestRun, FunctionCall, Outlier, TestsGrouped]
+    return [MonitorRule, Tests, TestRun, FunctionCall, ExecutionPathLine, Outlier, TestsGrouped]
