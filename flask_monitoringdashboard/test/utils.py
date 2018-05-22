@@ -78,7 +78,13 @@ def get_test_app():
     :return: Flask Test Application with the right settings
     """
     import flask_monitoringdashboard
+    from flask import redirect, url_for
     user_app = Flask(__name__)
+
+    @user_app.route('/')
+    def main():
+        return redirect(url_for('dashboard.index'))
+
     user_app.config['SECRET_KEY'] = flask_monitoringdashboard.config.security_token
     user_app.testing = True
     flask_monitoringdashboard.user_app = user_app
