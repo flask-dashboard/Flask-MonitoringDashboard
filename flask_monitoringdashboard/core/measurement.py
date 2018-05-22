@@ -2,21 +2,14 @@
     Contains all functions that are used to track the performance of the flask-application.
     See init_measurement() for more detailed info.
 """
-import datetime
 import time
-import traceback
 from functools import wraps
-
-from flask import request
 
 from flask_monitoringdashboard import config, user_app
 from flask_monitoringdashboard.core.profiler import start_profile_thread
-from flask_monitoringdashboard.core.outlier import StackInfo
 from flask_monitoringdashboard.core.rules import get_rules
 from flask_monitoringdashboard.database import session_scope
-from flask_monitoringdashboard.database.endpoint import update_last_accessed, get_monitor_rule
-from flask_monitoringdashboard.database.function_calls import add_function_call
-from flask_monitoringdashboard.database.outlier import add_outlier
+from flask_monitoringdashboard.database.endpoint import get_monitor_rule
 
 # count and sum are dicts and used for calculating the averages
 endpoint_count = {}
@@ -34,7 +27,7 @@ def init_measurement():
     with session_scope() as db_session:
         for rule in get_rules():
             db_rule = get_monitor_rule(db_session, rule.endpoint)
-            add_decorator(rule.endpoint, db_rule.monitor)
+            add_decorator(rule.endpoint, db_rule.monitor_level)
 
 
 def add_decorator(endpoint, monitor_level):
@@ -44,7 +37,6 @@ def add_decorator(endpoint, monitor_level):
     :param monitor_level: int-value with the wrapper that should be added. This value is either 1, 2 or 3.
     :return:
     """
-    print('{}: {}'.format(endpoint, monitor_level))
     func = user_app.view_functions[endpoint]
 
     @wraps(func)
@@ -109,27 +101,6 @@ def add_decorator(endpoint, monitor_level):
 #             return func(*args, **kwargs)
 #
 #     wrapper.original = func
-#
-#     return wrapper
-
-
-# def track_last_accessed(func, endpoint):
-#     """
-#     Keep track of the last access time of the endpoints.
-#     :param func: the function to be measured
-#     :param endpoint: the name of the endpoint
-#     """
-#
-#     @wraps(func)
-#     def wrapper(*args, **kwargs):
-#         try:
-#             with session_scope() as db_session:
-#                 update_last_accessed(db_session, endpoint=endpoint, value=datetime.datetime.utcnow())
-#         except:
-#             traceback.print_exc()
-#
-#         # Execute the endpoint that was called, even if the tracking fails.
-#         return func(*args, **kwargs)
 #
 #     return wrapper
 

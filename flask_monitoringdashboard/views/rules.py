@@ -23,7 +23,6 @@ def rules():
     """
     with session_scope() as db_session:
         if request.method == 'POST':
-            print(request.form)
             endpoint = request.form['name']
             value = int(request.form['value'])
             update_monitor_rule(db_session, endpoint, value=value)
@@ -46,6 +45,6 @@ def rules():
                 'endpoint': rule.endpoint,
                 'methods': rule.methods,
                 'last_accessed': get_value(last_accessed, rule.endpoint, default=None),
-                'form': get_monitor_form(rule.endpoint, db_rule.monitor)
+                'form': get_monitor_form(rule.endpoint, db_rule.monitor_level)
             })
     return render_template('fmd_rules.html', rules=all_rules, information=get_rules_info())

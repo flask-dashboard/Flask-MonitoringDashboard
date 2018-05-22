@@ -1,7 +1,7 @@
 """
     This file contains all unit tests that count a number of results in the database. (Corresponding to the file:
     'flask_monitoringdashboard/database/count.py')
-    See __init__.py for how to run the test-cases.
+    See info_box.py for how to run the test-cases.
 """
 
 import unittest
