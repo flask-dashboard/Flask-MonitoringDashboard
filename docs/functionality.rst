@@ -147,7 +147,7 @@ Now Travis will monitor the performance of the unit tests automatically after ev
 These results will then show up in the Dashboard, under 'Testmonitor'.
 Here, all tests that have been run will show up, along with the endpoints of the web service that they test.
 Visualizations of the performance evolution of the unit tests are also available here.
-This may give the developer of the web service insight in the expected performance change when the new version of the
+This will give the developer of the web service insight in the expected performance change when the new version of the
 web service should be deployed.
 
 Outliers

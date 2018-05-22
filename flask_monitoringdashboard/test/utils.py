@@ -9,6 +9,7 @@ NAME = 'main'
 IP = '127.0.0.1'
 GROUP_BY = '1'
 EXECUTION_TIMES = [1000, 2000, 3000, 4000, 50000]
+BASE_OUTLIER_EXEC_TIME = 100
 TIMES = [datetime.datetime.utcnow()] * 5
 OUTLIER_COUNT = 3
 for i in range(len(TIMES)):
@@ -52,7 +53,7 @@ def add_fake_data():
     with session_scope() as db_session:
         for i in range(OUTLIER_COUNT):
             db_session.add(Outlier(endpoint=NAME, cpu_percent='[%d, %d, %d, %d]' % (i, i + 1, i + 2, i + 3),
-                                   execution_time=100 * (i + 1), time=TIMES[i]))
+                                   execution_time=BASE_OUTLIER_EXEC_TIME * (i + 1), time=TIMES[i]))
 
     # Add TestsGrouped
     with session_scope() as db_session:

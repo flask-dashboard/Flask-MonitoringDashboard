@@ -1,11 +1,10 @@
-import plotly
-import plotly.graph_objs as go
 from flask import render_template
 
 from flask_monitoringdashboard import blueprint
 from flask_monitoringdashboard.core.auth import secure
 from flask_monitoringdashboard.core.colors import get_color
 from flask_monitoringdashboard.core.forms import get_slider_form
+from flask_monitoringdashboard.core.plot import get_layout, get_figure, boxplot
 from flask_monitoringdashboard.core.plot.util import get_information
 from flask_monitoringdashboard.database import session_scope, TestRun
 from flask_monitoringdashboard.database.count import count_builds
@@ -92,7 +91,7 @@ def get_boxplot(endpoint=None, form=None):
     :param form: the form that can be used for showing a subset of the data
     :return:
     """
-    data = []
+    trace = []
     with session_scope() as db_session:
         if form:
             suites = get_test_suites(db_session, limit=form.get_slider_value())
@@ -107,19 +106,11 @@ def get_boxplot(endpoint=None, form=None):
             else:
                 values = get_suite_measurements(db_session, suite=s.suite)
 
-            data.append(go.Box(
-                x=values,
-                name='{} -'.format(s.suite)))
+            trace.append(boxplot(values=values, label='{} -'.format(s.suite)))
 
-        layout = go.Layout(
-            autosize=True,
-            height=350 + 40 * len(suites),
-            plot_bgcolor='rgba(249,249,249,1)',
-            showlegend=False,
-            xaxis=dict(title='Execution time (ms)'),
-            yaxis=dict(
-                title='Travis Build',
-                autorange='reversed'
-            )
+        layout = get_layout(
+            xaxis={'title': 'Execution time (ms)'},
+            yaxis={'title': 'Travis Build', 'autorange': 'reversed'}
         )
-        return plotly.offline.plot(go.Figure(data=data, layout=layout), output_type='div', show_link=False)
+
+        return get_figure(layout=layout, data=trace)
