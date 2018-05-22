@@ -37,13 +37,15 @@ def rules():
             return 'OK'
 
         last_accessed = get_last_accessed_times(db_session)
-        all_rules = [{
-            'color': get_color(rule.endpoint),
-            'rule': rule.rule,
-            'endpoint': rule.endpoint,
-            'methods': rule.methods,
-            'last_accessed': get_value(last_accessed, rule.endpoint, default=None),
-            'monitor': get_monitor_rule(db_session, rule.endpoint).monitor,
-            'form': get_monitor_form(rule.endpoint)
-        } for rule in get_rules()]
+        all_rules = []
+        for rule in get_rules():
+            db_rule = get_monitor_rule(db_session, rule.endpoint)
+            all_rules.append({
+                'color': get_color(rule.endpoint),
+                'rule': rule.rule,
+                'endpoint': rule.endpoint,
+                'methods': rule.methods,
+                'last_accessed': get_value(last_accessed, rule.endpoint, default=None),
+                'form': get_monitor_form(rule.endpoint, db_rule.monitor)
+            })
     return render_template('fmd_rules.html', rules=all_rules, information=get_rules_info())

@@ -27,11 +27,13 @@ class RunTests(FlaskForm):
 
 class MonitorLevel(FlaskForm):
     """ Used in the Rules page (per endpoint)"""
-    monitor = SelectField('Monitor', choices=MONITOR_CHOICES)
+    monitor = SelectField('Monitor', coerce=int, choices=MONITOR_CHOICES)
 
 
-def get_monitor_form(endpoint):
+def get_monitor_form(endpoint, default_value):
     """ Return a form with the endpoint as a variable """
     form = MonitorLevel(request.form)
-    form.endpoint = endpoint
+    form.monitor.default = default_value
+    form.monitor.label = endpoint
+    form.process()
     return form
