@@ -1,5 +1,5 @@
 from flask_monitoringdashboard.core.profiler.baseProfiler import BaseProfiler
-from flask_monitoringdashboard.database.function_calls import add_function_call
+from flask_monitoringdashboard.database.request import add_request
 
 
 class PerformanceProfiler(BaseProfiler):
@@ -10,4 +10,4 @@ class PerformanceProfiler(BaseProfiler):
 
     def _on_thread_stopped(self, db_session):
         super(PerformanceProfiler, self)._on_thread_stopped(db_session)
-        add_function_call(db_session, execution_time=self._duration, endpoint=self._endpoint, ip=self._ip)
+        add_request(db_session, execution_time=self._duration, endpoint=self._endpoint, ip=self._ip)

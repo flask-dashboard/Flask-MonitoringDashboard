@@ -6,7 +6,7 @@ from flask_monitoringdashboard.core.forms import get_slider_form
 from flask_monitoringdashboard.core.plot import get_layout, get_figure, boxplot
 from flask_monitoringdashboard.core.info_box import get_plot_info
 from flask_monitoringdashboard.core.utils import get_endpoint_details, simplify
-from flask_monitoringdashboard.database import FunctionCall, session_scope
+from flask_monitoringdashboard.database import Request, session_scope
 from flask_monitoringdashboard.database.count import count_users
 from flask_monitoringdashboard.database.count_group import get_value
 from flask_monitoringdashboard.database.data_grouped import get_user_data_grouped
@@ -43,7 +43,7 @@ def users_graph(end, form):
     """
     with session_scope() as db_session:
         users = get_users(db_session, end, form.get_slider_value())
-        times = get_user_data_grouped(db_session, lambda x: simplify(x, 10), FunctionCall.endpoint == end)
+        times = get_user_data_grouped(db_session, lambda x: simplify(x, 10), Request.endpoint == end)
         data = [boxplot(name=u, values=get_value(times, u)) for u in users]
 
     layout = get_layout(

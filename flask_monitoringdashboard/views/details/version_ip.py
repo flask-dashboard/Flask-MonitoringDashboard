@@ -9,7 +9,7 @@ from flask_monitoringdashboard.core.forms import get_double_slider_form
 from flask_monitoringdashboard.core.plot import get_average_bubble_size, scatter, get_layout, get_margin, get_figure
 from flask_monitoringdashboard.core.info_box import get_plot_info
 from flask_monitoringdashboard.core.utils import get_endpoint_details
-from flask_monitoringdashboard.database import FunctionCall, session_scope
+from flask_monitoringdashboard.database import Request, session_scope
 from flask_monitoringdashboard.database.count import count_ip, count_versions_end
 from flask_monitoringdashboard.database.count_group import get_value
 from flask_monitoringdashboard.database.data_grouped import get_two_columns_grouped
@@ -53,7 +53,7 @@ def version_ip_graph(db_session, end, form):
     versions = get_versions(db_session, end, form.get_slider_value(1))
 
     first_request = get_first_requests(db_session)
-    values = get_two_columns_grouped(db_session, FunctionCall.ip, FunctionCall.endpoint == end)
+    values = get_two_columns_grouped(db_session, Request.ip, Request.endpoint == end)
     data = [[get_value(values, (user, v)) for v in versions] for user in users]
 
     average = get_average_bubble_size(data)

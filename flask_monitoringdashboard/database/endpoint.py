@@ -8,7 +8,7 @@ from sqlalchemy.orm.exc import NoResultFound
 
 from flask_monitoringdashboard import config
 from flask_monitoringdashboard.core.timezone import to_local_datetime, to_utc_datetime
-from flask_monitoringdashboard.database import FunctionCall, MonitorRule
+from flask_monitoringdashboard.database import Request, MonitorRule
 
 
 def get_num_requests(db_session, endpoint, start_date, end_date):
@@ -18,10 +18,10 @@ def get_num_requests(db_session, endpoint, start_date, end_date):
         :param start_date: datetime.date object
         :param end_date: datetime.date object
     """
-    query = db_session.query(FunctionCall.time)
+    query = db_session.query(Request.time)
     if endpoint:
-        query = query.filter(FunctionCall.endpoint == endpoint)
-    result = query.filter(FunctionCall.time >= start_date, FunctionCall.time <= end_date).all()
+        query = query.filter(Request.endpoint == endpoint)
+    result = query.filter(Request.time >= start_date, Request.time <= end_date).all()
 
     return group_execution_times(result)
 
@@ -48,9 +48,9 @@ def get_users(db_session, endpoint, limit=None):
     :param limit: the number of
     :return: a list with the group_by as strings.
     """
-    query = db_session.query(FunctionCall.group_by, func.count(FunctionCall.group_by)). \
-        filter(FunctionCall.endpoint == endpoint).group_by(FunctionCall.group_by). \
-        order_by(desc(func.count(FunctionCall.group_by)))
+    query = db_session.query(Request.group_by, func.count(Request.group_by)). \
+        filter(Request.endpoint == endpoint).group_by(Request.group_by). \
+        order_by(desc(func.count(Request.group_by)))
     if limit:
         query = query.limit(limit)
     result = query.all()
@@ -67,9 +67,9 @@ def get_ips(db_session, endpoint, limit=None):
     :param limit: the number of
     :return: a list with the group_by as strings.
     """
-    query = db_session.query(FunctionCall.ip, func.count(FunctionCall.ip)). \
-        filter(FunctionCall.endpoint == endpoint).group_by(FunctionCall.ip). \
-        order_by(desc(func.count(FunctionCall.ip)))
+    query = db_session.query(Request.ip, func.count(Request.ip)). \
+        filter(Request.endpoint == endpoint).group_by(Request.ip). \
+        order_by(desc(func.count(Request.ip)))
     if limit:
         query = query.limit(limit)
     result = query.all()
