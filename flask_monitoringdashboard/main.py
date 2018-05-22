@@ -41,6 +41,14 @@ def create_app():
     def main():
         return redirect(url_for('dashboard.index'))
 
+    @app.route('/level2')
+    def level2():
+        return 'level2 endpoint'
+
+    @app.route('/level3')
+    def level3():
+        return 'level3 endpoint'
+
     return app
 
 

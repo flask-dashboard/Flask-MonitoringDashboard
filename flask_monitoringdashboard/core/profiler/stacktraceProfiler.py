@@ -36,7 +36,10 @@ class StacktraceProfiler(PerformanceProfiler):
     def _on_thread_stopped(self, db_session):
         super(StacktraceProfiler, self)._on_thread_stopped(db_session)
 
-        if not self.only_outliers:  # TODO: update this
+        if self.only_outliers:
+            pass
+            # TODO: check if req is outlier
+        else:
             total_traces = sum([v for k, v in find_items_with_callgraph(self._text_dict.items(), '')])
             self.print_funcheader(total_traces)
             self.print_dict()

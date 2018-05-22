@@ -21,7 +21,7 @@ class MonitorRule(Base):
     # endpoint must be unique and acts as a primary key
     endpoint = Column(String(250), primary_key=True)
     # boolean to determine whether the endpoint should be monitored?
-    monitor = Column(Integer, default=config.monitor_level)
+    monitor_level = Column(Integer, default=config.monitor_level)
     # the time and version on which the endpoint is added
     time_added = Column(DateTime)
     version_added = Column(String(100), default=config.version)
