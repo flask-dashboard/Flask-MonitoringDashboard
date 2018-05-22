@@ -20,7 +20,7 @@ class Config(object):
         self.version = '1.0'
         self.link = 'dashboard'
         self.database_name = 'sqlite:///flask_monitoringdashboard.db'
-        self.default_monitor = True
+        self.monitor_level = 3
         self.test_dir = None
         self.username = 'admin'
         self.password = 'admin'
@@ -51,8 +51,7 @@ class Config(object):
             DATABASE: Suppose you have multiple projects where you're working on and want to
                 separate the results. Then you can specify different database_names, such that the
                 result of each project is stored in its own database.
-            DEFAULT_MONITOR: Whether you want to automatically monitor all endpoints. Default value
-                is true.
+            MONITOR_LEVEL: The level for monitoring your endpoints. The default value is 3.
             USERNAME: for logging into the dashboard, a username and password is required. The
                 username can be set using this variable.
             PASSWORD: same as for the username, but this is the password variable.
@@ -88,7 +87,7 @@ class Config(object):
 
             self.link = parse_string(parser, 'CUSTOM_LINK', self.link)
             self.database_name = parse_string(parser, 'DATABASE', self.database_name)
-            self.default_monitor = parse_bool(parser, 'DEFAULT_MONITOR', self.default_monitor)
+            self.monitor_level = parse_literal(parser, 'MONITOR_LEVEL', self.monitor_level)
 
             self.test_dir = parse_string(parser, 'TEST_DIR', self.test_dir)
             self.security_token = parse_string(parser, 'SECURITY_TOKEN', self.security_token)

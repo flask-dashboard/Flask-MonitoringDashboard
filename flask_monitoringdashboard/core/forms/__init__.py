@@ -13,10 +13,6 @@ MONITOR_CHOICES = [
     (3, '3 - All requests')]
 
 
-#
-# MONITOR_CHOICES = ['0 - Nothing', '1 - Performance',  '2 - Outliers', '3 - All requests']
-
-
 class Login(FlaskForm):
     """ Used for serving a login form. """
     name = StringField('Username', [validators.data_required()])

@@ -37,7 +37,7 @@ def init_measurement():
             end = rule.endpoint
             db_rule = get_monitor_rule(db_session, end)
             if db_rule.monitor:
-                user_app.view_functions[end] = track_performance(user_app.view_functions[end], end)
+                user_app.view_functions[end] = track_performance(end, db_rule.monitor)
             user_app.view_functions[end] = track_last_accessed(user_app.view_functions[end], end)
 
 

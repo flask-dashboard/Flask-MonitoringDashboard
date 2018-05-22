@@ -27,13 +27,12 @@ def rules():
             endpoint = request.form['name']
             value = int(request.form['value'])
 
+            update_monitor_rule(db_session, endpoint, value=value)
             if value == 0:  # remove wrapper
-                update_monitor_rule(db_session, endpoint, value=0)
                 original = getattr(user_app.view_functions[endpoint], 'original', None)
                 if original:
                     user_app.view_functions[endpoint] = original
             else:  # remove wrapper
-                update_monitor_rule(db_session, endpoint, value=value)
                 user_app.view_functions[endpoint] = track_performance(endpoint, value)
 
             return 'OK'
