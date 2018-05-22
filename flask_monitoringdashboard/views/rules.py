@@ -5,7 +5,7 @@ from flask_monitoringdashboard.core.auth import admin_secure
 from flask_monitoringdashboard.core.colors import get_color
 from flask_monitoringdashboard.core.forms import get_monitor_form
 from flask_monitoringdashboard.core.info_box import get_rules_info
-from flask_monitoringdashboard.core.measurement import track_performance
+from flask_monitoringdashboard.core.measurement import add_decorator
 from flask_monitoringdashboard.core.rules import get_rules
 from flask_monitoringdashboard.database import session_scope
 from flask_monitoringdashboard.database.count_group import get_value
@@ -26,15 +26,14 @@ def rules():
             print(request.form)
             endpoint = request.form['name']
             value = int(request.form['value'])
-
             update_monitor_rule(db_session, endpoint, value=value)
-            if value == 0:  # remove wrapper
-                original = getattr(user_app.view_functions[endpoint], 'original', None)
-                if original:
-                    user_app.view_functions[endpoint] = original
-            else:  # remove wrapper
-                user_app.view_functions[endpoint] = track_performance(endpoint, value)
 
+            # Remove wrapper
+            original = getattr(user_app.view_functions[endpoint], 'original', None)
+            if original:
+                user_app.view_functions[endpoint] = original
+
+            add_decorator(endpoint, value)
             return 'OK'
 
         last_accessed = get_last_accessed_times(db_session)
@@ -46,6 +45,5 @@ def rules():
             'last_accessed': get_value(last_accessed, rule.endpoint, default=None),
             'monitor': get_monitor_rule(db_session, rule.endpoint).monitor,
             'form': get_monitor_form(rule.endpoint)
-
         } for rule in get_rules()]
     return render_template('fmd_rules.html', rules=all_rules, information=get_rules_info())

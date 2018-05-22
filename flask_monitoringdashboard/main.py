@@ -28,7 +28,6 @@ def create_app():
     def h():
         g()
 
-    @app.route('/endpoint1')
     @app.route('/endpoint')
     def endpoint():
         import time

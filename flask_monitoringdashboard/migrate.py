@@ -6,7 +6,7 @@
 
 import sqlite3
 
-DB_PATH = 'path_to_you_db/flask_monitoringdashboard.db'
+DB_PATH = '/Applications/PyCharm.app/Contents/bin/flask_monitoringdashboard.db'
 
 sql_drop_temp = """DROP TABLE IF EXISTS temp"""
 sql_drop_functionCalls = """DROP TABLE IF EXISTS functionCalls"""
