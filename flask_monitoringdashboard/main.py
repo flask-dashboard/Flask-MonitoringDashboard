@@ -14,7 +14,7 @@ def create_app():
     dashboard.config.outlier_detection_constant = 0
     dashboard.config.group_by = 'User', 2
     dashboard.config.version = 1.5
-    dashboard.config.database_name = 'sqlite:///flask_monitoringdashboard.db'
+    dashboard.config.database_name = 'sqlite:///flask_monitoringdashboard_v2.db'
     dashboard.bind(app)
 
     def f():
@@ -46,6 +46,11 @@ def create_app():
 
     @app.route('/level3')
     def level3():
+        import time
+        time.sleep(1)
+        f()
+        g()
+        h()
         return 'level3 endpoint'
 
     return app

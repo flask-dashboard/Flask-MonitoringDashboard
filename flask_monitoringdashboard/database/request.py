@@ -11,8 +11,11 @@ from flask_monitoringdashboard.database import Request
 
 
 def add_request(db_session, execution_time, endpoint, ip):
-    """ Add a measurement to the database. """
-    db_session.add(Request(endpoint=endpoint, execution_time=execution_time, version=config.version, ip=ip))
+    """ Adds a request to the database. Returns the id."""
+    request = Request(endpoint=endpoint, execution_time=execution_time, version=config.version, ip=ip)
+    db_session.add(request)
+    db_session.flush()
+    return request.id
 
 
 def get_data_between(db_session, time_from, time_to=None):

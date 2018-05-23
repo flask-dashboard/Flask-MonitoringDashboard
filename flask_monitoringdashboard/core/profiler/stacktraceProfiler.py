@@ -5,6 +5,7 @@ from collections import defaultdict
 
 from flask_monitoringdashboard import user_app
 from flask_monitoringdashboard.core.profiler import PerformanceProfiler
+from flask_monitoringdashboard.database.execution_path_line import add_execution_path_line
 
 
 class StacktraceProfiler(PerformanceProfiler):
@@ -35,14 +36,20 @@ class StacktraceProfiler(PerformanceProfiler):
 
     def _on_thread_stopped(self, db_session):
         super(StacktraceProfiler, self)._on_thread_stopped(db_session)
+        print("----------%d" % self._request_id)
 
         if self.only_outliers:
             pass
             # TODO: check if req is outlier
+            # if outlier store to db
         else:
             total_traces = sum([v for k, v in find_items_with_callgraph(self._text_dict.items(), '')])
             self.print_funcheader(total_traces)
             self.print_dict()
+            for (key, val) in self._text_dict.items():
+                print("%s----%s" %(key, val))
+                add_execution_path_line(db_session, self._request_id, key[1], len(key[4].split('->')),
+                                        key[0] + ":" + key[2] + ":" + key[3], val)
             self._text_dict.clear()
 
     def print_funcheader(self, total_traces):
