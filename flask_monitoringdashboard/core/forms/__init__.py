@@ -11,8 +11,3 @@ class Login(FlaskForm):
     name = StringField('Username', [validators.data_required()])
     password = PasswordField('Password', [validators.data_required()])
     submit = SubmitField('Login')
-
-
-class RunTests(FlaskForm):
-    """ Used for serving a login form on /{{ link }}/testmonitor. """
-    submit = SubmitField('Run selected tests')
