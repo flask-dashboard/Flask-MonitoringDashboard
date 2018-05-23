@@ -38,6 +38,12 @@ def create_app():
 
     @app.route('/')
     def main():
+        import time
+        i = 0
+        while i < 1000:
+            time.sleep(0.001)
+            i += 1
+
         return redirect(url_for('dashboard.index'))
 
     @app.route('/level2')
