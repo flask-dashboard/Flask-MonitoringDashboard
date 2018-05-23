@@ -1,0 +1,22 @@
+{% extends "fmd_dashboard/graph.html" %}
+
+{% block test_endpoint_menu %}
+    {% macro endpoint_t_submenu(endpoint, name) -%}
+        <li><a class="{{ active_if_is(endpoint) }}" href="{{ url_for(endpoint, end=endp) }}">{{ name }}</a></li>
+    {%- endmacro %}
+
+    {% set url_version='dashboard.endpoint_test_details' %}
+    {% set endpoint_list=[url_version] %}
+
+    <li class="nav-item" data-toggle="tooltip" data-placement="right" title="{{ endp }}">
+        <a class="nav-link nav-link-collapse {{ "my-active" if request.endpoint in endpoint_list }}"
+           data-toggle="collapse" href="#collapseTEndpoint">
+            <i class="fa fa-fw fa-asterisk"></i>
+            <span class="nav-link-text">{{ endp }}</span>
+        </a>
+        <ul class="sidenav-second-level show"
+            id="collapseTEndpoint">
+            {{ endpoint_t_submenu(url_version, 'Per-Version Performance') }}
+        </ul>
+    </li>
+{% endblock %}

@@ -1,71 +1,76 @@
 {% extends "fmd_dashboard/graph.html" %}
 
 {% block endpoint_menu %}
-  {% macro endpoint_submenu(endpoint, name) -%}
-    <li><a class="{{ active_if_is(endpoint) }}" href="{{ url_for(endpoint, end=details.endpoint) }}">{{ name }}</a></li>
-  {%- endmacro %}
+    {% macro endpoint_submenu(endpoint, name) -%}
+        <li><a class="{{ active_if_is(endpoint) }}" href="{{ url_for(endpoint, end=details.endpoint) }}">{{ name }}</a>
+        </li>
+    {%- endmacro %}
 
-  {% set url_heatmap='dashboard.endpoint_hourly_load' %}
-  {% set url_version_user='dashboard.version_user' %}
-  {% set url_version_ip='dashboard.version_ip' %}
-  {% set url_version='dashboard.versions' %}
-  {% set url_user='dashboard.users' %}
-  {% set url_outliers='dashboard.outliers' %}
-  {% set endpoint_list=[url_heatmap, url_version_user, url_version_ip, url_version, url_user,
+    {% set url_heatmap='dashboard.endpoint_hourly_load' %}
+    {% set url_version_user='dashboard.version_user' %}
+    {% set url_version_ip='dashboard.version_ip' %}
+    {% set url_version='dashboard.versions' %}
+    {% set url_user='dashboard.users' %}
+    {% set url_outliers='dashboard.outliers' %}
+    {% set endpoint_list=[url_heatmap, url_version_user, url_version_ip, url_version, url_user,
   url_outliers] %}
 
-  <li class="nav-item" data-toggle="tooltip" data-placement="right" title="{{ details.endpoint }}">
-    <a class="nav-link nav-link-collapse {{ "my-active" if request.endpoint in endpoint_list }}"
-       data-toggle="collapse" href="#collapseEndpoint" >
-      <i class="fa fa-fw fa-asterisk"></i>
-      <span class="nav-link-text">{{ details.endpoint }}</span>
-    </a>
-    <ul class="sidenav-second-level show"
-        id="collapseEndpoint">
-      {{ endpoint_submenu(url_heatmap, 'Hourly API Utilization') }}
-      {{ endpoint_submenu(url_version_user, 'User-Focused Multi-Version Performance') }}
-      {{ endpoint_submenu(url_version_ip, 'IP-Focused Multi-Version Performance') }}
-      {{ endpoint_submenu(url_version, 'Per-Version Performance') }}
-      {{ endpoint_submenu(url_user, 'Per-User Performance') }}
-      {{ endpoint_submenu(url_outliers, 'Outliers') }}
-    </ul>
-  </li>
+    <li class="nav-item" data-toggle="tooltip" data-placement="right" title="{{ details.endpoint }}">
+        <a class="nav-link nav-link-collapse {{ "my-active" if request.endpoint in endpoint_list }}"
+           data-toggle="collapse" href="#collapseEndpoint">
+            <i class="fa fa-fw fa-asterisk"></i>
+            <span class="nav-link-text">{{ details.endpoint }}</span>
+        </a>
+        <ul class="sidenav-second-level show"
+            id="collapseEndpoint">
+            {{ endpoint_submenu(url_heatmap, 'Hourly API Utilization') }}
+            {{ endpoint_submenu(url_version_user, 'User-Focused Multi-Version Performance') }}
+            {{ endpoint_submenu(url_version_ip, 'IP-Focused Multi-Version Performance') }}
+            {{ endpoint_submenu(url_version, 'Per-Version Performance') }}
+            {{ endpoint_submenu(url_user, 'Per-User Performance') }}
+            {{ endpoint_submenu(url_outliers, 'Outliers') }}
+        </ul>
+    </li>
 {% endblock %}
 
 {% block summary %}
-<div class="card mb-3" style="margin-top: 10px;">
-  <div class="card-header"><h4>Summary of endpoint</h4></div>
-  <div class="card-body">
-    <div class="table-responsive">
-      <table class="table table-striped table-bordered table-hover">
-        <tr>
-          <td><b>Endpoint</b></td>
-          <td>{{ details.endpoint }}</td>
-        </tr>
-        <tr>
-          <td><b>Added since app version</b></td>
-          <td>{{ details.rule.version_added }}</td>
-        </tr>
-        <tr>
-          <td><b>Date added to app</b></td>
-          <td>{{ "{:%Y-%m-%d %H:%M:%S }".format(details.rule.time_added) }}</td>
-        </tr>
-        {% if url %}
-          <tr>
-            <td><b>Link to endpoint</b></td>
-            <td><a href="{{ details.url }}">{{ details.url }}</a></td>
-          </tr>
-        {% endif %}
-        <tr>
-          <td><b>Last accessed</b></td>
-          <td>{{ "{:%Y-%m-%d %H:%M:%S }".format(details.rule.last_accessed) }}</td>
-        </tr>
-        <tr>
-          <td><b>Total number of hits</b></td>
-          <td>{{ "{:,d}".format(details.total_hits) }}</td>
-        </tr>
-      </table>
+    <div class="card mb-3" style="margin-top: 10px;">
+        <div class="card-header"><h4>Summary of endpoint</h4></div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-striped table-bordered table-hover">
+                    <tr>
+                        <td><b>Endpoint</b></td>
+                        <td>{{ details.endpoint }}</td>
+                    </tr>
+                    <tr>
+                        <td><b>Rule(s)</b></td>
+                        <td>{{ details.rules }}</td>
+                    </tr>
+                    <tr>
+                        <td><b>Added since app version</b></td>
+                        <td>{{ details.rule.version_added }}</td>
+                    </tr>
+                    <tr>
+                        <td><b>Date added to app</b></td>
+                        <td>{{ "{:%Y-%m-%d %H:%M:%S }".format(details.rule.time_added) }}</td>
+                    </tr>
+                    {% if url %}
+                        <tr>
+                            <td><b>Link to endpoint</b></td>
+                            <td><a href="{{ details.url }}">{{ details.url }}</a></td>
+                        </tr>
+                    {% endif %}
+                    <tr>
+                        <td><b>Last accessed</b></td>
+                        <td>{{ "{:%Y-%m-%d %H:%M:%S }".format(details.rule.last_accessed) }}</td>
+                    </tr>
+                    <tr>
+                        <td><b>Total number of hits</b></td>
+                        <td>{{ "{:,d}".format(details.total_hits) }}</td>
+                    </tr>
+                </table>
+            </div>
+        </div>
     </div>
-  </div>
-</div>
 {% endblock %}

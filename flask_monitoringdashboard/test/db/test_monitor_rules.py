@@ -31,16 +31,6 @@ class TestMonitorRule(unittest.TestCase):
             self.assertEqual(result[0].version_added, config.version)
             self.assertEqual(result[0].last_accessed, TIMES[0])
 
-    def test_get_monitor_names(self):
-        """
-            Test whether the function returns the right values.
-        """
-        from flask_monitoringdashboard.database.monitor_rules import get_monitor_names
-        with session_scope() as db_session:
-            result = get_monitor_names(db_session)
-            self.assertEqual(len(result), 1)
-            self.assertEqual(result[0].endpoint, NAME)
-
     def test_get_monitor_data(self):
         """
             Test whether the function returns the right values.
