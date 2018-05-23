@@ -11,13 +11,6 @@ def get_monitor_rules(db_session):
     return result
 
 
-def get_monitor_names(db_session):
-    """ Return all names of monitor rules that are currently being monitored"""
-    result = db_session.query(MonitorRule.endpoint).filter(MonitorRule.monitor).all()
-    db_session.expunge_all()
-    return result
-
-
 def get_monitor_data(db_session):
     """
     Returns all data in the rules-table. This table contains which endpoints are being

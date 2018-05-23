@@ -1,73 +1,116 @@
-import plotly
-import plotly.graph_objs as go
-from flask import session, render_template
+from flask import render_template
 
-from flask_monitoringdashboard import blueprint, config
+from flask_monitoringdashboard import blueprint
 from flask_monitoringdashboard.core.auth import secure
 from flask_monitoringdashboard.core.colors import get_color
-from flask_monitoringdashboard.database import session_scope
-from flask_monitoringdashboard.database.monitor_rules import get_monitor_names
-from flask_monitoringdashboard.database.tests import get_res_current, get_measurements
-from flask_monitoringdashboard.database.tests import get_tests, get_results, get_suites, get_test_measurements
-from flask_monitoringdashboard.database.tests_grouped import get_tests_grouped
+from flask_monitoringdashboard.core.forms import get_slider_form
+from flask_monitoringdashboard.core.plot import get_layout, get_figure, boxplot
+from flask_monitoringdashboard.core.plot.util import get_information
+from flask_monitoringdashboard.database import session_scope, TestRun
+from flask_monitoringdashboard.database.count import count_builds
+from flask_monitoringdashboard.database.count_group import get_value, count_times_tested, get_latest_test_version
+from flask_monitoringdashboard.database.tests import get_test_suites, \
+    get_test_measurements, get_suite_measurements, get_last_tested_times
+from flask_monitoringdashboard.database.tests_grouped import get_tests_grouped, get_endpoint_names
+
+AXES_INFO = '''The X-axis presents the execution time in ms. The Y-axis presents the
+Travis builds of the Flask application.'''
+
+CONTENT_INFO = '''In this graph, it is easy to compare the execution time of the different builds
+to one another. This information may be useful to validate which endpoints need to be improved.'''
 
 
-@blueprint.route('/testmonitor/<test>')
+@blueprint.route('/test_build_performance', methods=['GET', 'POST'])
 @secure
-def test_result(test):
-    return render_template('fmd_testmonitor/testresult.html', link=config.link, session=session, name=test,
-                           boxplot=get_boxplot(test))
+def test_build_performance():
+    """
+    Shows the performance results for all of the versions.
+    :return:
+    """
+    with session_scope() as db_session:
+        form = get_slider_form(count_builds(db_session), title='Select the number of builds')
+    graph = get_boxplot(form=form)
+    return render_template('fmd_dashboard/graph.html', graph=graph, title='Per-Build Performance',
+                           information=get_information(AXES_INFO, CONTENT_INFO), form=form)
+
+
+@blueprint.route('/testmonitor/<end>', methods=['GET', 'POST'])
+@secure
+def endpoint_test_details(end):
+    """
+    Shows the performance results for one specific unit test.
+    :param end: the name of the unit test for which the results should be shown
+    :return:
+    """
+    with session_scope() as db_session:
+        form = get_slider_form(count_builds(db_session), title='Select the number of builds')
+    graph = get_boxplot(endpoint=end, form=form)
+    return render_template('fmd_testmonitor/endpoint.html', graph=graph, title='Per-Version Performance for ' + end,
+                           information=get_information(AXES_INFO, CONTENT_INFO), endp=end, form=form)
 
 
 @blueprint.route('/testmonitor')
 @secure
 def testmonitor():
+    """
+    Gives an overview of the unit test performance results and the endpoints that they hit.
+    :return:
+    """
     with session_scope() as db_session:
-        endp_names = [name.endpoint for name in get_monitor_names(db_session)]
+        endpoint_test_combinations = get_tests_grouped(db_session)
 
-        tests = get_tests_grouped(db_session)
-        grouped = {}
-        cols = {}
-        for t in tests:
-            if t.endpoint not in grouped:
-                grouped[t.endpoint] = []
-                cols[t.endpoint] = get_color(t.endpoint)
-            if t.test_name not in grouped[t.endpoint]:
-                grouped[t.endpoint].append(t.test_name)
+        tests_latest = count_times_tested(db_session, TestRun.version == get_latest_test_version(db_session))
+        tests = count_times_tested(db_session)
+        # Medians can only be calculated when the new way of data collection is implemented.
+        # median_latest = get_endpoint_data_grouped(db_session, median, FunctionCall.time > week_ago)
+        # median = get_test_data_grouped(db_session, median)
+        tested_times = get_last_tested_times(db_session, endpoint_test_combinations)
 
-        return render_template('fmd_testmonitor/testmonitor.html', tests=get_tests(db_session), endpoints=endp_names,
-                               results=get_results(db_session), groups=grouped, colors=cols,
-                               res_current_version=get_res_current(db_session, config.version),
-                               boxplot=get_boxplot(None))
+        result = []
+        for endpoint in get_endpoint_names(db_session):
+            result.append({
+                'name': endpoint,
+                'color': get_color(endpoint),
+                'tests-latest-version': get_value(tests_latest, endpoint),
+                'tests-overall': get_value(tests, endpoint),
+                # Medians can only be calculated when the new way of data collection is implemented.
+                # 'median-latest-version': get_value(median_latest, endpoint),
+                # 'median-overall': get_value(median, endpoint),
+                'median-latest-version': -1,
+                'median-overall': -1,
+                'last-tested': get_value(tested_times, endpoint, default=None)
+            })
+
+        return render_template('fmd_testmonitor/testmonitor.html', result=result)
 
 
-def get_boxplot(test):
-    data = []
+def get_boxplot(endpoint=None, form=None):
+    """
+    Generates a box plot visualization for the unit test performance results.
+    :param endpoint: if specified, generate box plot for a specific test, otherwise, generate for all tests
+    :param form: the form that can be used for showing a subset of the data
+    :return:
+    """
+    trace = []
     with session_scope() as db_session:
-        suites = get_suites(db_session)
-    if not suites:
-        return None
-    for s in suites:
-        if test:
-            values = [str(c.execution_time) for c in get_test_measurements(db_session, name=test, suite=s.suite)]
+        if form:
+            suites = get_test_suites(db_session, limit=form.get_slider_value())
         else:
-            values = [str(c.execution_time) for c in get_measurements(db_session, suite=s.suite)]
+            suites = get_test_suites(db_session)
 
-        data.append(go.Box(
-            x=values,
-            name="{0} ({1})".format(s.suite, len(values))))
+        if not suites:
+            return None
+        for s in suites:
+            if endpoint:
+                values = get_test_measurements(db_session, name=endpoint, suite=s.suite)
+            else:
+                values = get_suite_measurements(db_session, suite=s.suite)
 
-    layout = go.Layout(
-        autosize=True,
-        height=350 + 40 * len(suites),
-        plot_bgcolor='rgba(249,249,249,1)',
-        showlegend=False,
-        title='Execution times for every Travis build',
-        xaxis=dict(title='Execution time (ms)'),
-        yaxis=dict(
-            title='Build (measurements)',
-            autorange='reversed'
+            trace.append(boxplot(values=values, label='{} -'.format(s.suite)))
+
+        layout = get_layout(
+            xaxis={'title': 'Execution time (ms)'},
+            yaxis={'title': 'Travis Build', 'autorange': 'reversed'}
         )
-    )
 
-    return plotly.offline.plot(go.Figure(data=data, layout=layout), output_type='div', show_link=False)
+        return get_figure(layout=layout, data=trace)

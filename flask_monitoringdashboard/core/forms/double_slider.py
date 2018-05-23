@@ -3,6 +3,8 @@ from flask_wtf import FlaskForm
 from wtforms import SubmitField
 from wtforms.fields.html5 import IntegerRangeField
 
+from flask_monitoringdashboard.core.forms.slider import DEFAULT_SLIDER_VALUE
+
 
 class DoubleSliderForm(FlaskForm):
     """
@@ -10,7 +12,7 @@ class DoubleSliderForm(FlaskForm):
     """
     slider0 = IntegerRangeField()
     slider1 = IntegerRangeField()
-    submit = SubmitField('Submit')
+    submit = SubmitField('Update')
     title = 'Select two numbers below for reducing the size of the graph'
     subtitle = ['Subtitle0', 'Subtitle1']
 
@@ -52,20 +54,23 @@ class DoubleSliderForm(FlaskForm):
                            self.submit(class_="btn btn-primary btn-block"))
 
 
-def get_double_slider_form(slider_max=[100, 100], subtitle=None):
+def get_double_slider_form(slider_max=(100, 100), title=None, subtitle=None):
     """
     Return a SliderForm with the range from 0 to slider_max
     :param slider_max: maximum value for the slider
+    :param title: override the default title
+    :param subtitle: override the default titles of the 2 sliders
     :return: a SliderForm with the range (0 ... slider_max)
     """
     form = DoubleSliderForm(request.form)
-    form.min_value = [1, 1]
+    form.min_value = (1, 1)
     form.max_value = slider_max
+    if title:
+        form.title = title
     if subtitle:
         form.subtitle = subtitle
     if 'slider0' in request.form:
         form.start_value = [request.form['slider0'], request.form['slider1']]
     else:
-        form.start_value = [min(max(form.min_value[i], form.min_value[i] + (slider_max[i] - form.min_value[i]) // 2),
-                            form.max_value[i]) for i in range(2)]
+        form.start_value = [min(DEFAULT_SLIDER_VALUE, form.max_value[i]) for i in range(2)]
     return form

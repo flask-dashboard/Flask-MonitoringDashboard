@@ -1,6 +1,6 @@
 from sqlalchemy import func, distinct
 
-from flask_monitoringdashboard.database import FunctionCall, Outlier
+from flask_monitoringdashboard.database import FunctionCall, Outlier, TestRun
 
 
 def count_rows(db_session, column, *criterion):
@@ -32,7 +32,21 @@ def count_ip(db_session, endpoint):
     return count_rows(db_session, FunctionCall.ip, FunctionCall.endpoint == endpoint)
 
 
-def count_versions(db_session, endpoint):
+def count_versions(db_session):
+    """
+    :return: The number of distinct versions that are used
+    """
+    return count_rows(db_session, FunctionCall.version)
+
+
+def count_builds(db_session):
+    """
+    :return: The number of Travis builds that are available
+    """
+    return count_rows(db_session, TestRun.suite)
+
+
+def count_versions_end(db_session, endpoint):
     """
     :param endpoint: filter on this endpoint
     :return: The number of distinct versions that are used for this endpoint

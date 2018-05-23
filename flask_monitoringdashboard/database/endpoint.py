@@ -7,7 +7,7 @@ from sqlalchemy import func, desc
 from sqlalchemy.orm.exc import NoResultFound
 
 from flask_monitoringdashboard import config
-from flask_monitoringdashboard.core.timezone import to_local_datetime, to_utc_datetime
+from flask_monitoringdashboard.core.timezone import to_local_datetime
 from flask_monitoringdashboard.database import FunctionCall, MonitorRule
 
 
