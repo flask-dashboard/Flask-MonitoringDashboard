@@ -62,10 +62,21 @@ def bind(app):
             with open(home + '/app_version.log', 'w') as log:
                 log.write(config.version)
 
-        @user_app.after_request
-        def log_endpoint_hit(response):
+        @user_app.before_request
+        def log_start_endpoint_hit():
             """
-            Add log_endpoint_hit as after_request function that logs the endpoint hits.
+            Add log_start_endpoint_hit as before_request function that logs the start of the endpoint hit.
+            :return:
+            """
+            hit_time_stamp = str(datetime.datetime.utcnow())
+            home = os.path.expanduser("~")
+            with open(home + '/start_endpoint_hits.log', 'a') as log:
+                log.write('"{}","{}"\n'.format(hit_time_stamp, request.endpoint))
+
+        @user_app.after_request
+        def log_finish_endpoint_hit(response):
+            """
+            Add log_finish_endpoint_hit as after_request function that logs the finish of the endpoint hit.
             :param response: the response object that the actual endpoint returns
             :return: the unchanged response of the original endpoint
             """
