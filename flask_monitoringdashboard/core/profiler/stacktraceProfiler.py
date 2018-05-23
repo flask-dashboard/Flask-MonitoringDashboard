@@ -7,6 +7,8 @@ from flask_monitoringdashboard import user_app
 from flask_monitoringdashboard.core.profiler import PerformanceProfiler
 from flask_monitoringdashboard.database.execution_path_line import add_execution_path_line
 
+FILE_SPLIT = '->'
+
 
 class StacktraceProfiler(PerformanceProfiler):
 
@@ -15,11 +17,12 @@ class StacktraceProfiler(PerformanceProfiler):
         self.only_outliers = only_outliers
         self._text_dict = defaultdict(int)
         self._h = {}  # dictionary for replacing the filename by an integer
+        self._lines_body = []
 
     def _run_cycle(self):
         frame = sys._current_frames()[self._thread_to_monitor]
         in_endpoint_code = False
-        callgraph = ''
+        encoded_path = ''
         for fn, ln, fun, line in traceback.extract_stack(frame):
             # fn: filename
             # ln: line number
@@ -28,47 +31,52 @@ class StacktraceProfiler(PerformanceProfiler):
             if self._endpoint is fun:
                 in_endpoint_code = True
             if in_endpoint_code:
-                key = (fn, ln, fun, line, callgraph)  # quintuple
+                key = (fn, ln, fun, line, encoded_path)  # quintuple
                 self._text_dict[key] += 1
                 encode = self.encode(fn, ln)
-                if encode not in callgraph:
-                    callgraph = append_callgraph(callgraph, encode)
+                if encode not in encoded_path:
+                    encoded_path = append_to_encoded_path(encoded_path, encode)
 
     def _on_thread_stopped(self, db_session):
         super(StacktraceProfiler, self)._on_thread_stopped(db_session)
-        print("----------%d" % self._request_id)
 
         if self.only_outliers:
             pass
             # TODO: check if req is outlier
             # if outlier store to db
         else:
-            total_traces = sum([v for k, v in find_items_with_callgraph(self._text_dict.items(), '')])
-            self.print_funcheader(total_traces)
-            self.print_dict()
-            for (key, val) in self._text_dict.items():
-                print("%s----%s" %(key, val))
-                add_execution_path_line(db_session, self._request_id, key[1], len(key[4].split('->')),
-                                        key[0] + ":" + key[2] + ":" + key[3], val)
+            total_traces = sum([v for k, v in filter_on_encoded_path(self._text_dict.items(), '')])
+            line_number = 0
+            for line in self.get_funcheader():
+                add_execution_path_line(db_session, self._request_id, line_number, 0, line, total_traces)
+                line_number += 1
+            self.order_text_dict()
+
+            for (line, path, val) in self._lines_body:
+                add_execution_path_line(db_session, self._request_id, line_number, get_indent(path), line, val)
+                line_number += 1
             self._text_dict.clear()
 
-    def print_funcheader(self, total_traces):
+    def get_funcheader(self):
+        lines_returned = []
         lines, _ = inspect.getsourcelines(user_app.view_functions[self._endpoint])
         for line in lines:
-            line = line.strip()
-            print(line)
-            if line[:4] == 'def ':
-                print(' {:,}'.format(total_traces))
-                return
+            lines_returned.append(line.strip())
+            if line.strip()[:4] == 'def ':
+                return lines_returned
 
-    def print_dict(self, callgraph='', indent=1):
-        list = sorted(find_items_with_callgraph(self._text_dict.items(), callgraph), key=lambda item: item[0][1])
-        prefix = '  ' * indent
+    def order_text_dict(self, encoded_path=''):
+        """
+        Finds the order of self._text_dict and assigns this order to self._lines_body
+        :param encoded_path: used to filter the results
+        :return:
+        """
+        list = sorted(filter_on_encoded_path(self._text_dict.items(), encoded_path), key=lambda item: item[0][1])
         if not list:
             return
         for key, count in list:
-            print('{}{}: {:,}'.format(prefix, key[3], count))
-            self.print_dict(callgraph=append_callgraph(callgraph, self.encode(key[0], key[1])), indent=indent + 1)
+            self._lines_body.append((key[3], key[4], count))
+            self.order_text_dict(encoded_path=append_to_encoded_path(encoded_path, self.encode(key[0], key[1])))
 
     def encode(self, fn, ln):
         return str(self.get_index(fn)) + ':' + str(ln)
@@ -79,12 +87,18 @@ class StacktraceProfiler(PerformanceProfiler):
         self._h[fn] = len(self._h)
 
 
-def find_items_with_callgraph(list, callgraph):
+def get_indent(string):
+    if string:
+        return len(string.split(FILE_SPLIT)) + 1
+    return 1
+
+
+def filter_on_encoded_path(list, encoded_path):
     """ List must be the following: [(key, value), (key, value), ...]"""
-    return [(key, value) for key, value in list if key[4] == callgraph]
+    return [(key, value) for key, value in list if key[4] == encoded_path]
 
 
-def append_callgraph(callgraph, encode):
+def append_to_encoded_path(callgraph, encode):
     if callgraph:
-        return callgraph + '->' + encode
+        return callgraph + FILE_SPLIT + encode
     return encode
