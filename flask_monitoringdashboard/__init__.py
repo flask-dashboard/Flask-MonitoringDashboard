@@ -82,7 +82,7 @@ def bind(app):
             """
             hit_time_stamp = str(datetime.datetime.utcnow())
             home = os.path.expanduser("~")
-            with open(home + '/endpoint_hits.log', 'a') as log:
+            with open(home + '/finish_endpoint_hits.log', 'a') as log:
                 log.write('"{}","{}"\n'.format(hit_time_stamp, request.endpoint))
 
             return response
