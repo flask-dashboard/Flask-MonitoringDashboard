@@ -52,5 +52,5 @@ def get_rules_info():
 
     info += b('3 - All requests') + \
             p('When the monitoring-level is set to 3, you get all the functionality from 2, but now every request is '
-              'stored in the database.')
+              'stored in the database, instead of only outliers.')
     return info

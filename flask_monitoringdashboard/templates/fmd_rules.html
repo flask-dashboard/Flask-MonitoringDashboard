@@ -25,6 +25,7 @@
                 <td style="max-width: 200px; overflow: hidden; white-space: nowrap; text-overflow: ellipsis;">{{ row.endpoint }}</td>
                 <td style="text-align: center;">{{ "{:%Y-%m-%d %H:%M:%S }".format(row.last_accessed) if row.last_accessed }}</td>
                 <td>
+                    <span hidden>{{ row.form.monitor.data }}</span>
                     {{ row.form.monitor(onchange='sendForm("{}", this.value);'.format(row.endpoint)) }}
                 </td>
               </tr>
