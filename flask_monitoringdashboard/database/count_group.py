@@ -4,7 +4,6 @@ from sqlalchemy import func
 
 from flask_monitoringdashboard.core.timezone import to_utc_datetime
 from flask_monitoringdashboard.database import Request, TestRun, TestsGrouped
-from flask_monitoringdashboard.database import FunctionCall, TestRun, TestsGrouped
 
 
 def get_latest_test_version(db_session):

@@ -5,7 +5,7 @@ from flask_monitoringdashboard.core.auth import secure
 from flask_monitoringdashboard.core.colors import get_color
 from flask_monitoringdashboard.core.forms import get_slider_form
 from flask_monitoringdashboard.core.plot import get_layout, get_figure, boxplot
-from flask_monitoringdashboard.core.plot.util import get_information
+from flask_monitoringdashboard.core.info_box import get_plot_info
 from flask_monitoringdashboard.database import session_scope, TestRun
 from flask_monitoringdashboard.database.count import count_builds
 from flask_monitoringdashboard.database.count_group import get_value, count_times_tested, get_latest_test_version
@@ -31,7 +31,7 @@ def test_build_performance():
         form = get_slider_form(count_builds(db_session), title='Select the number of builds')
     graph = get_boxplot(form=form)
     return render_template('fmd_dashboard/graph.html', graph=graph, title='Per-Build Performance',
-                           information=get_information(AXES_INFO, CONTENT_INFO), form=form)
+                           information=get_plot_info(AXES_INFO, CONTENT_INFO), form=form)
 
 
 @blueprint.route('/testmonitor/<end>', methods=['GET', 'POST'])
@@ -46,7 +46,7 @@ def endpoint_test_details(end):
         form = get_slider_form(count_builds(db_session), title='Select the number of builds')
     graph = get_boxplot(endpoint=end, form=form)
     return render_template('fmd_testmonitor/endpoint.html', graph=graph, title='Per-Version Performance for ' + end,
-                           information=get_information(AXES_INFO, CONTENT_INFO), endp=end, form=form)
+                           information=get_plot_info(AXES_INFO, CONTENT_INFO), endp=end, form=form)
 
 
 @blueprint.route('/testmonitor')
