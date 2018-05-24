@@ -1,0 +1,22 @@
+{% extends "fmd_dashboard/graph-details.html" %}
+
+{% block graph_content %}
+    {{ pagination.info }}
+    {{ pagination.links }}
+    {% for request_id, lines in table %}
+        <div class="card">
+            <div class="card">
+                <div class="card-header"><h6>{{ request_id[0] }}</h6></div>
+                <div class="card-body">
+                    {% for line in lines %}
+                        {{ '{:,d} - '.format(line.value)|safe }}
+                        {{ ' &nbsp;&nbsp;&nbsp;'|safe * line.indent + line.line_text }}<br/>
+                    {% endfor %}
+                </div>
+            </div>
+        </div><br/>
+
+    {% endfor %}
+    {{ pagination.info }}
+    {{ pagination.links }}
+{% endblock %}

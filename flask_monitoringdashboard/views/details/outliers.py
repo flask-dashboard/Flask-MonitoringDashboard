@@ -14,7 +14,6 @@ from flask_monitoringdashboard.database.outlier import get_outliers_sorted, dele
     get_outliers_cpus
 from flask_monitoringdashboard.core.plot import boxplot, get_figure, get_layout, get_margin
 
-OUTLIERS_PER_PAGE = 10
 NUM_DATAPOINTS = 50
 
 
