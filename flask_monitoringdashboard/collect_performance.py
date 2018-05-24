@@ -15,7 +15,7 @@ TEST_NAME = 2
 START_TIME = 0
 END_TIME = 1
 HIT_TIME = 0
-EXEC_TIME = 0
+EXEC_TIME_STAMP = 0
 
 # Determine if this script was called normally or if the call was part of a unit test on Travis.
 # When unit testing, only run one dummy test from the testmonitor folder and submit to a dummy url.
@@ -101,9 +101,15 @@ with open(home + '/finish_endpoint_hits.log') as log:
 # Calculate the execution time each of these endpoint calls took.
 number_of_hits = len(finish_endpoint_hits)
 for hit in range(number_of_hits):
-    exec_time = math.ceil((finish_endpoint_hits[hit][EXEC_TIME] - start_endpoint_hits[hit][EXEC_TIME]).
-                          total_seconds() * CONVERT_TO_MS)
-    data['endpoint_exec_times'].append({'endpoint': finish_endpoint_hits[hit][ENDPOINT_NAME], 'exec_time': exec_time})
+    for test_run in test_runs:
+        if test_run[START_TIME] <= finish_endpoint_hits[hit][EXEC_TIME_STAMP] <= test_run[END_TIME]:
+            exec_time = math.ceil(
+                (finish_endpoint_hits[hit][EXEC_TIME_STAMP] - start_endpoint_hits[hit][EXEC_TIME_STAMP]).
+                total_seconds() * CONVERT_TO_MS)
+            data['endpoint_exec_times'].append(
+                {'endpoint': finish_endpoint_hits[hit][ENDPOINT_NAME], 'exec_time': exec_time,
+                 'test_name': test_run[TEST_NAME]})
+            break
 
 # Analyze the two arrays to find out which endpoints were hit by which unit tests.
 # Add the endpoint_name/test_name combination to the result dictionary.
