@@ -3,9 +3,10 @@ import sys
 import traceback
 from collections import defaultdict
 
-from flask_monitoringdashboard import user_app
+from flask_monitoringdashboard import user_app, config
 from flask_monitoringdashboard.core.profiler import PerformanceProfiler
 from flask_monitoringdashboard.database.execution_path_line import add_execution_path_line
+from flask_monitoringdashboard.database.request import get_avg_execution_time
 
 FILE_SPLIT = '->'
 
@@ -14,7 +15,7 @@ class StacktraceProfiler(PerformanceProfiler):
 
     def __init__(self, thread_to_monitor, endpoint, ip, only_outliers):
         super(StacktraceProfiler, self).__init__(thread_to_monitor, endpoint, ip)
-        self.only_outliers = only_outliers
+        self._only_outliers = only_outliers
         self._text_dict = defaultdict(int)
         self._h = {}  # dictionary for replacing the filename by an integer
         self._lines_body = []
@@ -39,23 +40,11 @@ class StacktraceProfiler(PerformanceProfiler):
 
     def _on_thread_stopped(self, db_session):
         super(StacktraceProfiler, self)._on_thread_stopped(db_session)
-
-        if self.only_outliers:
-            pass
-            # TODO: check if req is outlier
-            # if outlier store to db
+        if self._only_outliers:
+            if self._is_outlier:
+                self.insert_lines_db(db_session)
         else:
-            total_traces = sum([v for k, v in filter_on_encoded_path(self._text_dict.items(), '')])
-            line_number = 0
-            for line in self.get_funcheader():
-                add_execution_path_line(db_session, self._request_id, line_number, 0, line, total_traces)
-                line_number += 1
-            self.order_text_dict()
-
-            for (line, path, val) in self._lines_body:
-                add_execution_path_line(db_session, self._request_id, line_number, get_indent(path), line, val)
-                line_number += 1
-            self._text_dict.clear()
+            self.insert_lines_db(db_session)
 
     def get_funcheader(self):
         lines_returned = []
@@ -85,6 +74,19 @@ class StacktraceProfiler(PerformanceProfiler):
         if fn in self._h:
             return self._h[fn]
         self._h[fn] = len(self._h)
+
+    def insert_lines_db(self, db_session):
+        total_traces = sum([v for k, v in filter_on_encoded_path(self._text_dict.items(), '')])
+        line_number = 0
+        for line in self.get_funcheader():
+            add_execution_path_line(db_session, self._request_id, line_number, 0, line, total_traces)
+            line_number += 1
+        self.order_text_dict()
+
+        for (line, path, val) in self._lines_body:
+            add_execution_path_line(db_session, self._request_id, line_number, get_indent(path), line, val)
+            line_number += 1
+        # self._text_dict.clear()
 
 
 def get_indent(string):

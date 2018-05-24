@@ -4,15 +4,16 @@ Contains all functions that access any functionCall-object
 
 import time
 
-from sqlalchemy import distinct
+from sqlalchemy import distinct, func
 
 from flask_monitoringdashboard import config
 from flask_monitoringdashboard.database import Request
 
 
-def add_request(db_session, execution_time, endpoint, ip):
+def add_request(db_session, execution_time, endpoint, ip, is_outlier=False):
     """ Adds a request to the database. Returns the id."""
-    request = Request(endpoint=endpoint, execution_time=execution_time, version=config.version, ip=ip)
+    request = Request(endpoint=endpoint, execution_time=execution_time, version=config.version,
+                      ip=ip, is_outlier=is_outlier)
     db_session.add(request)
     db_session.flush()
     return request.id
@@ -50,3 +51,10 @@ def get_date_of_first_request(db_session):
     if result:
         return int(time.mktime(result[0].timetuple()))
     return -1
+
+
+def get_avg_execution_time(db_session, endpoint):
+    """ Return the average execution time of an endpoint """
+    result = db_session.query(func.avg(Request.execution_time).label('average')).\
+        filter(Request.endpoint == endpoint).one()
+    return result[0]

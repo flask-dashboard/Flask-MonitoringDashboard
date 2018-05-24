@@ -7,8 +7,8 @@ from .double_slider import get_double_slider_form
 from .slider import get_slider_form
 
 MONITOR_CHOICES = [
-    (0, '0 - Nothing'),
-    (1, '1 - Performance'),
+    (0, '0 - Disabled'),
+    (1, '1 - Execution time'),
     (2, '2 - Outliers'),
     (3, '3 - All requests')]
 
