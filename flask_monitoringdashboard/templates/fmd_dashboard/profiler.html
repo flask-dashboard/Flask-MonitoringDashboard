@@ -1,12 +1,19 @@
 {% extends "fmd_dashboard/graph-details.html" %}
 
+{% macro request_title(request) -%}
+    <div class="card-header">
+        <h6>Request {{ request.id|string + ': ' + "{:,.1f} ms".format(request.execution_time) }}</h6>
+    </div>
+{%- endmacro %}
+
+
 {% block graph_content %}
     {{ pagination.info }}
     {{ pagination.links }}
-    {% for request_id, lines in table %}
+    {% for request, lines in table %}
         <div class="card">
             <div class="card">
-                <div class="card-header"><h6>{{ request_id[0] }}</h6></div>
+                {{ request_title(request) }}
                 <div class="card-body">
                     {% for line in lines %}
                         {{ '{:,d} - '.format(line.value)|safe }}
