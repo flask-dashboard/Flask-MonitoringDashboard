@@ -20,7 +20,7 @@
     {% set line = lines[index] %}
     {% set total_hits = lines[0].value %}
     {% set body = get_body(index, lines) %}
-    {% set percentage=line.value / lines[0].value if lines[0].value > 0 else 0 %}
+    {% set percentage = line.value / lines[0].value if lines[0].value > 0 else 0 %}
 
     <tr>
         <td hidden>{{ line.line_number }}</td>
@@ -28,7 +28,7 @@
             {{ line.line_text }}
             {% if body %}
                 <i class="fa fa-minus-square" style="cursor: pointer;"
-                   onclick="hide_rows({{ '{}, {}, this'.format(body, request.id)}});"></i>
+                   onclick="{{ 'toggle_rows({}, {}, this)'.format(body, request.id)}}"></i>
             {% endif %}
         </td>
         <td style="text-align: right; background-color: {{ compute_color(percentage) }}">
@@ -82,7 +82,7 @@
             "info": false,
             "searching": false
         });
-        function hide_rows(rows, request_id, icon){
+        function toggle_rows(rows, request_id, icon){
             var table = $(".table.table-bordered.req-id" + request_id);
 
             if (icon.className.indexOf("fa-minus-square") >= 0){
@@ -91,6 +91,7 @@
 
                 rows.forEach(function(i){
                     var element = table.find('tr:eq(' + (i + 1) + ')');
+                    console.log(element.find('.fa').removeClass("fa-plus-square").addClass("fa-minus-square"));
                     if (element.is(":visible")){
                         element.hide();
                     }
@@ -98,6 +99,7 @@
             } else {
                 $(icon).removeClass("fa-plus-square");
                 $(icon).addClass("fa-minus-square");
+
                 rows.forEach(function(i){
                     var element = table.find('tr:eq(' + (i + 1) + ')');
                     if (!element.is(":visible")){
