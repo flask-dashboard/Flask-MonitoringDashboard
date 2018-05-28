@@ -34,7 +34,7 @@ def add_decorator(endpoint, monitor_level):
     """
     Add a wrapper to the Flask-Endpoint based on the monitoring-level.
     :param endpoint: name of the endpoint
-    :param monitor_level: int-value with the wrapper that should be added. This value is either 1, 2 or 3.
+    :param monitor_level: int-value with the wrapper that should be added. This value is either 0, 1, 2 or 3.
     :return:
     """
     func = user_app.view_functions[endpoint]
@@ -49,6 +49,8 @@ def add_decorator(endpoint, monitor_level):
 
     wrapper.original = func
     user_app.view_functions[endpoint] = wrapper
+
+    return wrapper
 
 
 # def track_performance(endpoint, monitor_level):

@@ -3,7 +3,6 @@
 """
 import datetime
 
-import pytz
 from flask import Flask
 
 NAME = 'main'
@@ -35,8 +34,7 @@ def clear_db():
 
 def add_fake_data():
     """ Adds data to the database for testing purposes. Module flask_monitoringdashboard must be imported locally. """
-    from flask_monitoringdashboard.database import session_scope, Request, MonitorRule, Outlier, Tests,\
-        TestsGrouped
+    from flask_monitoringdashboard.database import session_scope, Request, MonitorRule, Outlier, TestsGrouped
     from flask_monitoringdashboard import config
 
     # Add functionCalls
@@ -48,7 +46,7 @@ def add_fake_data():
 
     # Add MonitorRule
     with session_scope() as db_session:
-        db_session.add(MonitorRule(endpoint=NAME, monitor=True, time_added=datetime.datetime.utcnow(),
+        db_session.add(MonitorRule(endpoint=NAME, monitor_level=1, time_added=datetime.datetime.utcnow(),
                                    version_added=config.version, last_accessed=TIMES[0]))
 
     # Add Outliers
@@ -87,6 +85,10 @@ def get_test_app():
     @user_app.route('/')
     def main():
         return redirect(url_for('dashboard.index'))
+
+    @user_app.route('/test_endpoint')
+    def test_endpoint():
+        return 'endpoint used for testing'
 
     user_app.config['SECRET_KEY'] = flask_monitoringdashboard.config.security_token
     user_app.testing = True

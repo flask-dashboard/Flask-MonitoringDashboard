@@ -27,7 +27,7 @@ class TestMonitorRule(unittest.TestCase):
             result = get_monitor_rules(db_session)
             self.assertEqual(len(result), 1)
             self.assertEqual(result[0].endpoint, NAME)
-            self.assertTrue(result[0].monitor)
+            self.assertEqual(result[0].monitor_level, 1)
             self.assertEqual(result[0].version_added, config.version)
             self.assertEqual(result[0].last_accessed, TIMES[0])
 
@@ -44,6 +44,6 @@ class TestMonitorRule(unittest.TestCase):
             self.assertEqual(len(result1), len(result2))
             self.assertEqual(result1[0].endpoint, result2[0].endpoint)
             self.assertEqual(result1[0].last_accessed, result2[0].last_accessed)
-            self.assertEqual(result1[0].monitor, result2[0].monitor)
+            self.assertEqual(result1[0].monitor_level, result2[0].monitor_level)
             self.assertEqual(result1[0].time_added, result2[0].time_added)
             self.assertEqual(result1[0].version_added, result2[0].version_added)

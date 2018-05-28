@@ -6,7 +6,7 @@ from flask_monitoringdashboard.database import MonitorRule
 
 def get_monitor_rules(db_session):
     """ Return all monitor rules that are currently being monitored"""
-    result = db_session.query(MonitorRule).filter(MonitorRule.monitor).all()
+    result = db_session.query(MonitorRule).filter(MonitorRule.monitor_level > 0).all()
     db_session.expunge_all()
     return result
 
@@ -17,7 +17,7 @@ def get_monitor_data(db_session):
     monitored and which are not.
     :return: all data from the database in the rules-table.
     """
-    result = db_session.query(MonitorRule.endpoint, MonitorRule.last_accessed, MonitorRule.monitor,
+    result = db_session.query(MonitorRule.endpoint, MonitorRule.last_accessed, MonitorRule.monitor_level,
                               MonitorRule.time_added, MonitorRule.version_added).all()
     db_session.expunge_all()
     return result

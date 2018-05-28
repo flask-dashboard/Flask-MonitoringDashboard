@@ -66,11 +66,11 @@ class TestExportData(unittest.TestCase):
             result = c.get('dashboard/get_json_monitor_rules').data
         decoded = jwt.decode(result, config.security_token, algorithms=['HS256'])
         data = json.loads(decoded['data'])
-        self.assertEqual(len(data), 2)
+        self.assertEqual(len(data), 3)
         row = data[0]
         self.assertEqual(row['endpoint'], NAME)
         self.assertEqual(row['last_accessed'], str(TIMES[0]))
-        self.assertTrue(row['monitor'])
+        self.assertEqual(row['monitor_level'], 1)
         self.assertEqual(row['version_added'], config.version)
 
     def test_get_json_details(self):
