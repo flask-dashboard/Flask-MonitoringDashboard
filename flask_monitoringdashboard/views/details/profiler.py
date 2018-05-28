@@ -11,6 +11,23 @@ from flask_monitoringdashboard.database.execution_path_line import get_profiled_
 OUTLIERS_PER_PAGE = 10
 
 
+def get_body(index, lines):
+    """
+    Return the lines (as a list) that belong to the line given in the index
+    :param index: integer, between 0 and length(lines)
+    :param lines: all lines belonging to a certain request. Every element in this list is an ExecutionPathLine-obj.
+    :return: an empty list if the index doesn't belong to a function. If the list is not empty, it denotes the body of
+    the given line (by the index).
+    """
+    body = []
+    indent = lines[index].indent
+    index += 1
+    while index < len(lines) and lines[index].indent > indent:
+        body.append(index)
+        index += 1
+    return body
+
+
 @blueprint.route('/endpoint/<end>/profiler')
 @secure
 def profiler(end):
@@ -23,4 +40,4 @@ def profiler(end):
                                 format_number=True, css_framework='bootstrap4', format_total=True,
                                 record_name='profiled requests')
     return render_template('fmd_dashboard/profiler.html', details=details, table=table, pagination=pagination,
-                           title='Profiler results for {}'.format(end))
+                           title='Profiler results for {}'.format(end), get_body=get_body)

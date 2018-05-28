@@ -39,6 +39,7 @@ def create_app():
     @app.route('/')
     def main():
         import time
+        f()
         i = 0
         while i < 1000:
             time.sleep(0.001)
