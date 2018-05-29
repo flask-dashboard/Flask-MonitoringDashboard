@@ -35,3 +35,28 @@ def get_profiled_requests(db_session, endpoint, offset, per_page):
              order_by(ExecutionPathLine.line_number).all()))
     db_session.expunge_all()
     return data
+
+
+def get_grouped_profiled_requests(db_session, endpoint, offset, per_page):
+    """
+        :param db_session: session for the database
+        :param endpoint: filter profiled requests on this endpoint
+        :param offset: number of items to skip
+        :param per_page: number of items to return
+        :return: A list with tuples.
+            Each tuple consists first of a Request-object, and the second part of the tuple is a list of
+            ExecutionPathLine-objects.
+        request.
+        """
+    request_ids = db_session.query(func.distinct(Request.id)). \
+        join(ExecutionPathLine, Request.id == ExecutionPathLine.request_id). \
+        filter(Request.endpoint == endpoint).order_by(desc(Request.id)).offset(offset).limit(per_page).all()
+
+    data = []
+    for request_id in request_ids:
+        data.append(
+            (db_session.query(Request).filter(Request.id == request_id[0]).one(),
+             db_session.query(ExecutionPathLine).filter(ExecutionPathLine.request_id == request_id[0]).
+             order_by(ExecutionPathLine.line_number).all()))
+    db_session.expunge_all()
+    return data

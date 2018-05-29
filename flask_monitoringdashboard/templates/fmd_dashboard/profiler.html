@@ -20,7 +20,7 @@
     {% set line = lines[index] %}
     {% set total_hits = lines[0].value %}
     {% set body = get_body(index, lines) %}
-    {% set percentage = line.value / lines[0].value if lines[0].value > 0 else 0 %}
+    {% set percentage = line.value / lines[0].value if lines[0].value > 0 else 1 %}
 
     <tr>
         <td hidden>{{ line.line_number }}</td>
@@ -28,13 +28,13 @@
             {{ line.line_text }}
             {% if body %}
                 <i class="fa fa-minus-square" style="cursor: pointer;"
-                   onclick="{{ 'toggle_rows({}, {}, this)'.format(body, request.id)}}"></i>
+                   onclick="toggle_rows( {{'{}, {}, this'.format(body, request.id) }})"></i>
             {% endif %}
         </td>
-        <td style="text-align: right; background-color: {{ compute_color(percentage) }}">
+        <td style="text-align: right; background-color: {{ compute_color(percentage) }}; width: 20%">
             {{ "{:,.1f} ms".format(percentage * execution_time) }}
         </td>
-        <td style="text-align: right; background-color: {{ compute_color(percentage) }}">
+        <td style="text-align: right; background-color: {{ compute_color(percentage) }}; width: 20%">
             {{ "{:.1f} %".format(percentage * 100) }}
         </td>
     </tr>
@@ -42,8 +42,10 @@
 
 
 {% block graph_content %}
-    {{ pagination.info }}
-    {{ pagination.links }}
+    {% if pagination %}
+        {{ pagination.info }}
+        {{ pagination.links }}
+    {% endif %}
     {% for request, lines in table %}
         <div class="card">
             <div class="card">
@@ -70,8 +72,10 @@
         </div><br/>
 
     {% endfor %}
-    {{ pagination.info }}
-    {{ pagination.links }}
+    {% if pagination %}
+        {{ pagination.info }}
+        {{ pagination.links }}
+    {% endif %}
 {% endblock %}
 
 {% block script %}
@@ -91,7 +95,7 @@
 
                 rows.forEach(function(i){
                     var element = table.find('tr:eq(' + (i + 1) + ')');
-                    console.log(element.find('.fa').removeClass("fa-plus-square").addClass("fa-minus-square"));
+                    element.find('.fa').removeClass("fa-plus-square").addClass("fa-minus-square");
                     if (element.is(":visible")){
                         element.hide();
                     }
