@@ -1,6 +1,6 @@
 from sqlalchemy import func, distinct
 
-from flask_monitoringdashboard.database import Request, Outlier, TestRun
+from flask_monitoringdashboard.database import Request, Outlier, TestRun, ExecutionPathLine
 
 
 def count_rows(db_session, column, *criterion):
@@ -75,3 +75,18 @@ def count_outliers(db_session, endpoint):
     :return: An integer with the number of rows in the Outlier-table.
     """
     return count_rows(db_session, Outlier.id, Outlier.endpoint == endpoint)
+
+
+def count_profiled_requests(db_session, endpoint):
+    """
+    Count the number of profiled requests for a certain endpoint
+    :param db_session: session for the database
+    :param endpoint: a string with the endpoint to filter on.
+    :return: An integer
+    """
+    count = db_session.query(func.count(distinct(Request.id))). \
+        join(ExecutionPathLine, Request.id == ExecutionPathLine.request_id). \
+        filter(Request.endpoint == endpoint).first()
+    if count:
+        return count[0]
+    return 0

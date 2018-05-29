@@ -60,7 +60,7 @@ def get_json_monitor_rules():
                 data.append({
                     'endpoint': entry.endpoint,
                     'last_accessed': str(entry.last_accessed),
-                    'monitor': entry.monitor,
+                    'monitor_level': entry.monitor_level,
                     'time_added': str(entry.time_added),
                     'version_added': entry.version_added
                 })
