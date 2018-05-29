@@ -46,6 +46,9 @@ if not url:
 # Initialize result dictionary and logs.
 data = {'test_runs': [], 'grouped_tests': [], 'endpoint_exec_times': []}
 home = os.path.expanduser("~")
+log = open(home + '/start_endpoint_hits.log', 'w')
+log.write('"time","endpoint"\n')
+log.close()
 log = open(home + '/finish_endpoint_hits.log', 'w')
 log.write('"time","endpoint"\n')
 log.close()
