@@ -1,5 +1,4 @@
 from flask import render_template
-from flask_paginate import get_page_args
 
 from flask_monitoringdashboard import blueprint
 from flask_monitoringdashboard.core.auth import secure
@@ -14,9 +13,8 @@ OUTLIERS_PER_PAGE = 10
 @blueprint.route('/endpoint/<end>/grouped-profiler')
 @secure
 def grouped_profiler(end):
-    page, per_page, offset = get_page_args(page_parameter='page', per_page_parameter='per_page')
     with session_scope() as db_session:
         details = get_endpoint_details(db_session, end)
-        table = get_grouped_profiled_requests(db_session, end, offset, per_page)
+        table = get_grouped_profiled_requests(db_session, end)
     return render_template('fmd_dashboard/profiler.html', details=details, table=table,
                            title='Grouped Profiler results for {}'.format(end), get_body=get_body)
