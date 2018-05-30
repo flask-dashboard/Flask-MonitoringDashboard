@@ -5,7 +5,7 @@
 from flask import redirect, url_for
 from flask.helpers import send_from_directory
 
-from flask_monitoringdashboard import blueprint, loc
+from flask_monitoringdashboard import blueprint, loc, user_app
 # Import more route-functions
 from . import auth
 from . import dashboard

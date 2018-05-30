@@ -1,6 +1,9 @@
-Flask-Monitoring-Dashboard
+.. figure :: img/header.png
+   :width: 100%
+
+Flask-MonitoringDashboard
 ==========================
-Automatically monitor the evolving performance of Flask/Python web services. 
+Automatically monitor the evolving performance of Flask/Python web services.  
 
 What is the Flask-MonitoringDashboard?
 ---------------------------------------
