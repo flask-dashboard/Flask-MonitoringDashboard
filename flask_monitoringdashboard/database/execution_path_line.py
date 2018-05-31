@@ -54,5 +54,4 @@ def get_grouped_profiled_requests(db_session, endpoint):
              order_by(ExecutionPathLine.line_number).all()))
     db_session.expunge_all()
 
-    # TODO: Group data based on the list of ExecutionPathLine-objects
     return data
