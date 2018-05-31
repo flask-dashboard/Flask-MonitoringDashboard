@@ -12,9 +12,10 @@
     {% set url_version='dashboard.versions' %}
     {% set url_user='dashboard.users' %}
     {% set url_profiler='dashboard.profiler' %}
+    {% set url_grouped_profiler='dashboard.grouped_profiler' %}
     {% set url_outliers='dashboard.outliers' %}
     {% set endpoint_list=[url_heatmap, url_version_user, url_version_ip, url_version, url_user, url_profiler,
-  url_outliers] %}
+    url_grouped_profiler, url_outliers] %}
 
     <li class="nav-item" data-toggle="tooltip" data-placement="right" title="{{ details.endpoint }}">
         <a class="nav-link nav-link-collapse {{ "my-active" if request.endpoint in endpoint_list }}"
@@ -30,6 +31,7 @@
             {{ endpoint_submenu(url_version, 'Per-Version Performance') }}
             {{ endpoint_submenu(url_user, 'Per-User Performance') }}
             {{ endpoint_submenu(url_profiler, 'Profiler') }}
+            {{ endpoint_submenu(url_grouped_profiler, 'Grouped Profiler') }}
             {{ endpoint_submenu(url_outliers, 'Outliers') }}
         </ul>
     </li>

@@ -16,3 +16,4 @@ from flask_monitoringdashboard.views.details.time_version import versions
 from flask_monitoringdashboard.views.details.version_ip import version_ip
 from flask_monitoringdashboard.views.details.version_user import version_user
 from flask_monitoringdashboard.views.details.profiler import profiler
+from flask_monitoringdashboard.views.details.grouped_profiler import grouped_profiler

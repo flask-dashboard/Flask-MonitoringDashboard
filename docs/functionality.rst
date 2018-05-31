@@ -114,7 +114,7 @@ Using the collected data, a number of observations can be made:
 - Do users experience different execution times in different version of the application?
 
 Monitoring Unit Test Performance
-------------------------
+--------------------------------
 In addition to monitoring the performance of a live deployed version of some web service,
 the performance of such a web service can also be monitored by making use of its unit tests.
 This of course assumes that several unit tests were written for the web service project it concerns.
