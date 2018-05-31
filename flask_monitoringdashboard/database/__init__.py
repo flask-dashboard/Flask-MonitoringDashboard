@@ -119,6 +119,22 @@ class TestsGrouped(Base):
     test_name = Column(String(250), primary_key=True)
 
 
+class TestedEndpoints(Base):
+    """ Stores the endpoint hits that came from unit tests. """
+    __tablename__ = 'testedEndpoints'
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    # Name of the endpoint that was hit.
+    endpoint_name = Column(String(250), nullable=False)
+    # Execution time of the endpoint hit in ms.
+    execution_time = Column(Integer, nullable=False)
+    # Name of the unit test that the hit came from.
+    test_name = Column(String(250), nullable=False)
+    # Version of the tested user app.
+    app_version = Column(String(100), nullable=False)
+    # ID of the Travis job this record came from.
+    travis_job_id = Column(String(10), nullable=False)
+
+
 # define the database
 engine = create_engine(config.database_name)
 
