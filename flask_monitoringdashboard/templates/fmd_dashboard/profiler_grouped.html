@@ -20,7 +20,7 @@
     {% set body = get_body(index, table) %}
     {% set row = table[index] %}
     <tr>
-        <td hidden>{{ row.index }}</td>
+        <td hidden>{{ row.avg_ln }}</td>
         <td style="padding-left: {{ 10 + 15 * row.indent }}px; width: 60%">
             {{ row.code }}
             {% if body %}

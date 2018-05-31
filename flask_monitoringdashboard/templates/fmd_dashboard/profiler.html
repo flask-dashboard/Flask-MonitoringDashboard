@@ -8,8 +8,10 @@
 {%- endmacro %}
 
 {% macro compute_color(percentage) -%}
-    {% set red = 244, 67, 54 %}
-    {% set green = 205, 220, 57 %}
+    {% set red = 230, 74, 54 %}
+{#    {% set green = 205, 220, 57 %}#}
+    {% set green = 198, 220, 0 %}
+
     {% set color_0 = red[0] * percentage + green[0] * (1 - percentage) %}
     {% set color_1 = red[1] * percentage + green[1] * (1 - percentage) %}
     {% set color_2 = red[2] * percentage + green[2] * (1 - percentage) %}
