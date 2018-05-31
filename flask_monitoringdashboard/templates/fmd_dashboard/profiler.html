@@ -31,7 +31,7 @@
                    onclick="toggle_rows( {{'{}, {}, this'.format(body, request.id) }})"></i>
             {% endif %}
         </td>
-        <td style="text-align: right; background-color: {{ compute_color(percentage) }}; width: 20%">
+        <td style="text-align: right; width: 20%">
             {{ "{:,.1f} ms".format(percentage * execution_time) }}
         </td>
         <td style="text-align: right; background-color: {{ compute_color(percentage) }}; width: 20%">

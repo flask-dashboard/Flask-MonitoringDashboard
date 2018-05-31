@@ -28,30 +28,6 @@ def get_body(index, lines):
     return body
 
 
-def get_path(lines, index):
-    """
-    Returns a list that corresponds to the path to the root.
-    For example, if lines consists of the following code:
-    0.  f():
-    1.      g():
-    2.          time.sleep(1)
-    3.      time.sleep(1)
-    get_path(lines, 0) ==> ['f():']
-    get_path(lines, 3) ==> ['f():', 'time.sleep(1)']
-
-    :param lines: List of ExecutionPathLine-objects
-    :param index: integer in range 0 .. len(lines)
-    :return: A list with strings
-    """
-    path = []
-    while index >= 0:
-        path.append(lines[index].line_text)
-        current_indent = lines[index].indent
-        while index >= 0 and lines[index].indent != current_indent - 1:
-            index -= 1
-    return ' / '.join(reversed(path))
-
-
 @blueprint.route('/endpoint/<end>/grouped-profiler')
 @secure
 def grouped_profiler(end):
