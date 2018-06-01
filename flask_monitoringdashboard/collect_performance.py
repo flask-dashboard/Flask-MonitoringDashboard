@@ -19,21 +19,23 @@ EXEC_TIME_STAMP = 0
 
 # Determine if this script was called normally or if the call was part of a unit test on Travis.
 # When unit testing, only run one dummy test from the testmonitor folder and submit to a dummy url.
-test_folder = os.getcwd() + '/flask_monitoringdashboard/test/views/testmonitor'
+test_folder = os.getcwd()[:os.getcwd().find('Flask-MonitoringDashboard')] + \
+              'Flask-MonitoringDashboard/flask_monitoringdashboard/test/views/testmonitor'
 times = '1'
 url = 'https://httpbin.org/post'
-if 'flask-dashboard/Flask-MonitoringDashboard' not in os.getenv('TRAVIS_BUILD_DIR'):
-    parser = argparse.ArgumentParser(description='Collecting performance results from the unit tests of a project.')
-    parser.add_argument('--test_folder', dest='test_folder', default='./',
-                        help='folder in which the unit tests can be found (default: ./)')
-    parser.add_argument('--times', dest='times', default=5,
-                        help='number of times to execute every unit test (default: 5)')
-    parser.add_argument('--url', dest='url', default=None,
-                        help='url of the Dashboard to submit the performance results to')
-    args = parser.parse_args()
-    test_folder = args.test_folder
-    times = args.times
-    url = args.url
+if 'TRAVIS_BUILD_DIR' in os.environ:
+    if 'flask-dashboard/Flask-MonitoringDashboard' not in os.getenv('TRAVIS_BUILD_DIR'):
+        parser = argparse.ArgumentParser(description='Collecting performance results from the unit tests of a project.')
+        parser.add_argument('--test_folder', dest='test_folder', default='./',
+                            help='folder in which the unit tests can be found (default: ./)')
+        parser.add_argument('--times', dest='times', default=5,
+                            help='number of times to execute every unit test (default: 5)')
+        parser.add_argument('--url', dest='url', default=None,
+                            help='url of the Dashboard to submit the performance results to')
+        args = parser.parse_args()
+        test_folder = args.test_folder
+        times = args.times
+        url = args.url
 
 # Show the settings with which this script will run.
 print('Starting the collection of performance results with the following settings:')
@@ -133,7 +135,8 @@ data['travis_job'] = os.getenv('TRAVIS_JOB_NUMBER')
 
 # Send test results and endpoint_name/test_name combinations to the Dashboard if specified.
 if url:
-    if 'flask-dashboard/Flask-MonitoringDashboard' not in os.getenv('TRAVIS_BUILD_DIR'):
+    if ('TRAVIS_BUILD_DIR' in os.environ and 'flask-dashboard/Flask-MonitoringDashboard' not in os.getenv(
+            'TRAVIS_BUILD_DIR')) or 'httpbin.org' not in url:
         if url[-1] == '/':
             url += 'submit-test-results'
         else:

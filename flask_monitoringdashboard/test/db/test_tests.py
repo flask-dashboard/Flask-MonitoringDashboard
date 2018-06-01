@@ -26,6 +26,7 @@ class TestDBTests(unittest.TestCase):
             Test whether the function returns the right values.
         """
         from flask_monitoringdashboard.database.tests import get_test_cnt_avg, add_test_result
+        from flask_monitoringdashboard.database.tested_endpoints import add_endpoint_hit
         from flask_monitoringdashboard import config
         import datetime
         with session_scope() as db_session:
@@ -33,6 +34,7 @@ class TestDBTests(unittest.TestCase):
             for exec_time in EXECUTION_TIMES:
                 for test in TEST_NAMES:
                     add_test_result(db_session, test, exec_time, datetime.datetime.utcnow(), config.version, SUITE, 0)
+                add_endpoint_hit(db_session, NAME, exec_time, test, config.version, SUITE)
             result = get_test_cnt_avg(db_session)
             self.assertEqual(2, len(result))
             self.assertEqual(TEST_NAMES[0], result[0].name)
@@ -71,7 +73,7 @@ class TestDBTests(unittest.TestCase):
         """
         from flask_monitoringdashboard.database.tests import get_endpoint_measurements_job
         with session_scope() as db_session:
-            self.assertEqual(get_endpoint_measurements_job(db_session, NAME, SUITE), [0])
+            initial_len = len(get_endpoint_measurements_job(db_session, NAME, SUITE))
             self.test_add_test_result()
             result = get_endpoint_measurements_job(db_session, NAME, SUITE)
-            self.assertEqual(len(EXECUTION_TIMES) * 2, len(result))
+            self.assertEqual(initial_len + len(EXECUTION_TIMES), len(result))
