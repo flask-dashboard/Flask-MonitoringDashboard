@@ -1,9 +1,22 @@
 from flask_monitoringdashboard.core.profiler.stringHash import StringHash
 
 STRING_SPLIT = '->'
+LINE_SPLIT = ':'
 
 
 class PathHash(object):
+    """
+    Used for encoding the stacktrace.
+    A stacktrace can be seen by a list of tuples (filename and linenumber): e.g. [(fn1, 25), (fn2, 30)]
+    this is encoded as a string:
+
+        encoded = 'fn1:25->fn2->30'
+
+   However, the filename could possibly contain '->', therefore the filename is hashed into a number.
+    So, the encoding becomes:
+
+        encoded = '0:25->1:30'
+    """
 
     def __init__(self):
         self._string_hash = StringHash()
@@ -30,12 +43,18 @@ class PathHash(object):
         return self._current_path
 
     def append(self, fn, ln):
+        """
+        Concatenate the current_path with the new path.
+        :param fn: filename
+        :param ln: line number
+        :return: The new current_path
+        """
         if self._current_path:
             return self._current_path + STRING_SPLIT + self._encode(fn, ln)
         return self._encode(fn, ln)
 
     def _encode(self, fn, ln):
-        return str(self._string_hash.hash(fn)) + ':' + str(ln)
+        return str(self._string_hash.hash(fn)) + LINE_SPLIT + str(ln)
 
     @staticmethod
     def get_indent(string):

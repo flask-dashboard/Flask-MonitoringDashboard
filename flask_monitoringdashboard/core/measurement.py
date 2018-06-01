@@ -11,12 +11,6 @@ from flask_monitoringdashboard.core.rules import get_rules
 from flask_monitoringdashboard.database import session_scope
 from flask_monitoringdashboard.database.endpoint import get_monitor_rule
 
-# count and sum are dicts and used for calculating the averages
-endpoint_count = {}
-endpoint_sum = {}
-
-MIN_NUM_REQUESTS = 10
-
 
 def init_measurement():
     """
