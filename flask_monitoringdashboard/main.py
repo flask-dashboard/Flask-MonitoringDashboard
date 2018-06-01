@@ -23,8 +23,8 @@ def create_app():
     def g():
         f()
 
-    @app.route('/')
-    def main():
+    @app.route('/endpoint')
+    def endpoint():
         i = 0
         while i < 500:
             time.sleep(0.001)

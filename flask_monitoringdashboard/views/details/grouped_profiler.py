@@ -1,5 +1,3 @@
-from functools import reduce
-
 from flask import render_template
 
 from flask_monitoringdashboard import blueprint
@@ -9,6 +7,7 @@ from flask_monitoringdashboard.database import session_scope
 from flask_monitoringdashboard.database.execution_path_line import get_grouped_profiled_requests
 
 OUTLIERS_PER_PAGE = 10
+SEPARATOR = ' / '
 
 
 def get_body(index, lines):
@@ -28,51 +27,134 @@ def get_body(index, lines):
     return body
 
 
+def get_path(lines, index):
+    """
+    Returns a list that corresponds to the path to the root.
+    For example, if lines consists of the following code:
+    0.  f():
+    1.      g():
+    2.          time.sleep(1)
+    3.      time.sleep(1)
+    get_path(lines, 0) ==> ['f():']
+    get_path(lines, 3) ==> ['f():', 'time.sleep(1)']
+    :param lines: List of ExecutionPathLine-objects
+    :param index: integer in range 0 .. len(lines)
+    :return: A list with strings
+    """
+    path = []
+    while index >= 0:
+        path.append(lines[index].line_text)
+        current_indent = lines[index].indent
+        while index >= 0 and lines[index].indent != current_indent - 1:
+            index -= 1
+    return SEPARATOR.join(reversed(path))
+
+
+def has_prefix(path, prefix):
+    """
+    :param path: execution path line
+    :param prefix
+    :return: True, if the path contains the prefix
+    """
+    if prefix is None:
+        return True
+    return path.startswith(prefix)
+
+
+def sort_equal_level_paths(paths):
+    """
+        :param paths: List of tuples (ExecutionPathLines, [hits])
+        :return: list sorted based on the total number of hits
+        """
+    return sorted(paths, key=lambda tup: sum(tup[1]), reverse=True)
+
+
+def sort_lines(lines, partial_list, level=1, prefix=None):
+    """
+    Returns the list of execution path lines, in the order they are supposed to be printed.
+    As input, it will get something like: [def endpoint():_/_g()_/_f(), def endpoint():_/_g()_/_f()_/_time.sleep(1),
+    def endpoint():_/_g(), @app.route('/endpoint'), def endpoint():_/_f()_/_time.sleep(1), def endpoint():,
+    def endpoint():_/_f()]. The sorted list should be:
+    [@app.route('/endpoint'), def endpoint():, def endpoint():_/_time.sleep(0.001), def endpoint():_/_f(),
+    def endpoint():_/_f()_/_time.sleep(1), def endpoint():_/_g(), def endpoint():_/_g()_/_f(),
+    def endpoint():_/_g()_/_f()_/_time.sleep(1)]
+
+    :param lines: List of tuples (ExecutionPathLines, [hits])
+    :param partial_list: the final list at different moments of computation
+    :param level: the tree depth. level 1 means root
+    :param prefix: this represents the parent node in the tree
+    :return: List of sorted tuples
+    """
+    equal_level_paths = []
+    for l in lines:
+        if len(l[0].split(SEPARATOR)) == level:
+            equal_level_paths.append(l)
+
+    # if we reached the end of a branch, return
+    if len(equal_level_paths) == 0:
+        return partial_list
+
+    if level == 1:  # ugly hardcoding to ensure that @app.route stays first
+        equal_level_paths = sorted(equal_level_paths, key=lambda tup: tup[0])
+    else:  # we want to display branches with most hits first
+        equal_level_paths = sort_equal_level_paths(equal_level_paths)
+
+    for l in equal_level_paths:
+        if has_prefix(l[0], prefix):
+            partial_list.append(l)
+            sort_lines(lines, partial_list, level + 1, prefix=l[0])
+    return partial_list
+
+
 @blueprint.route('/endpoint/<end>/grouped-profiler')
 @secure
 def grouped_profiler(end):
     with session_scope() as db_session:
         details = get_endpoint_details(db_session, end)
         data = get_grouped_profiled_requests(db_session, end)
-    lines = [lines for _, lines in data]
-    requests = [requests for requests, _ in data]
     total_execution_time = 0
-    for r in requests:
-        total_execution_time += r.execution_time
-    lines = reduce(lambda x, y: x + y, lines)
+    total_hits = 0
+    for d in data:
+        total_execution_time += d[0].execution_time
+        total_hits += d[1][0].value
 
-    histogram = {}
-    for line in lines:
-        key = (line.indent, line.line_text)
-        if key in histogram:
-            histogram[key].append((line.value, line.line_number))
-        else:
-            histogram[key] = [(line.value, line.line_number)]
+    # total hits ........ total execution time ms
+    #     x hits ........     y execution time ms
+    # y = x * (total exec time / total hits)
+    coefficient = total_execution_time/total_hits
 
-    total = max([sum(s[0]) for s in histogram.values()])
+    histogram = {}  # path -> [list of values]
+    for _, lines in data:
+        for index in range(len(lines)):
+            key = get_path(lines, index)
+            line = lines[index]
+            if key in histogram:
+                histogram[key].append(line.value)
+            else:
+                histogram[key] = [line.value]
+
+    unsorted_tuples_list = []
+    for k, v in histogram.items():
+        unsorted_tuples_list.append((k, v))
+    sorted_list = sort_lines(lines=unsorted_tuples_list, partial_list=[], level=1)
+
     table = []
     index = 0
-    for key, values in histogram.items():
-        total_line_hits = 0
-        sum_line_number = 0
-        for v in values:
-            total_line_hits += v[0]
-            sum_line_number += v[1]
-
-        indent, line_text = key
+    for line in sorted_list:
+        split_line = line[0].split(SEPARATOR)
+        sum_ = sum(line[1])
+        count = len(line[1])
         table.append({
             'index': index,
-            'indent': indent,
-            'code': line_text,
-            'hits': len(values),
-            'average': total_execution_time / len(requests),
-            'percentage': total_line_hits / (total * len(values)),
-            'avg_ln': sum_line_number / len(values)
+            'indent': len(split_line),
+            'code': split_line[-1],
+            'hits': len(line[1]),
+            'total': sum_ * coefficient,
+            'average': sum_ / count * coefficient,
+            'percentage': sum_ / total_hits
         })
         index += 1
 
-    total_execution_time = [request.execution_time for request, _ in data]
-    average_time = sum(total_execution_time) / len(total_execution_time)
-    table = sorted(table, key=lambda row: row.get('avg_ln'))
     return render_template('fmd_dashboard/profiler_grouped.html', details=details, table=table, get_body=get_body,
-                           average_time=average_time, title='Grouped Profiler results for {}'.format(end))
+                           average_time=total_execution_time/len(data),
+                           title='Grouped Profiler results for {}'.format(end))

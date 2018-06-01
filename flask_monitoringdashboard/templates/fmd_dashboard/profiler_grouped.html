@@ -20,7 +20,7 @@
     {% set body = get_body(index, table) %}
     {% set row = table[index] %}
     <tr>
-        <td hidden>{{ row.avg_ln }}</td>
+        <td hidden>{{ row.index }}</td>
         <td style="padding-left: {{ 10 + 15 * row.indent }}px; width: 60%">
             {{ row.code }}
             {% if body %}
@@ -29,10 +29,13 @@
             {% endif %}
         </td>
         <td style="text-align: right;">{{ row.hits }}</td>
-        <td style="text-align: right; width: 20%">
-            {{ "{:,.1f} ms".format(row.percentage * average_time) }}
+        <td style="text-align: right; width: 12%">
+            {{ "{:,.1f} ms".format(row.total) }}
         </td>
-        <td style="text-align: right; background-color: {{ compute_color(row.percentage) }}; width: 20%">
+        <td style="text-align: right; width: 12%">
+            {{ "{:,.1f} ms".format(row.average) }}
+        </td>
+        <td style="text-align: right; background-color: {{ compute_color(row.percentage) }}; width: 10%">
             {{ "{:.1f} %".format(row.percentage * 100) }}
         </td>
     </tr>
@@ -46,7 +49,8 @@
                 <th hidden>Line number</th>
                 <th>Codestack</th>
                 <th>Hits</th>
-                <th>Average duration</th>
+                <th>Total time</th>
+                <th>Average time</th>
                 <th>Percentage</th>
             </tr>
         </thead>
