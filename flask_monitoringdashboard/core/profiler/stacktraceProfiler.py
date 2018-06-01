@@ -1,50 +1,67 @@
+import datetime
 import inspect
 import sys
+import threading
 import traceback
 from collections import defaultdict
 
-from flask_monitoringdashboard import user_app, config
-from flask_monitoringdashboard.core.profiler import PerformanceProfiler
+from flask_monitoringdashboard import user_app
+from flask_monitoringdashboard.core.profiler.pathHash import PathHash
+from flask_monitoringdashboard.database import session_scope
+from flask_monitoringdashboard.database.endpoint import update_last_accessed
 from flask_monitoringdashboard.database.execution_path_line import add_execution_path_line
-from flask_monitoringdashboard.database.request import get_avg_execution_time
-
-FILE_SPLIT = '->'
+from flask_monitoringdashboard.database.request import add_request
 
 
-class StacktraceProfiler(PerformanceProfiler):
+class StacktraceProfiler(threading.Thread):
+    """
+    Used for profiling the performance per line code.
+    """
 
-    def __init__(self, thread_to_monitor, endpoint, ip, only_outliers):
-        super(StacktraceProfiler, self).__init__(thread_to_monitor, endpoint, ip)
-        self._only_outliers = only_outliers
-        self._text_dict = defaultdict(int)
-        self._h = {}  # dictionary for replacing the filename by an integer
+    def __init__(self, thread_to_monitor, endpoint, ip):
+        threading.Thread.__init__(self)
+        self._keeprunning = True
+        self._thread_to_monitor = thread_to_monitor
+        self._endpoint = endpoint
+        self._ip = ip
+        self._duration = 0
+        self._histogram = defaultdict(int)
+        self._path_hash = PathHash()
         self._lines_body = []
 
-    def _run_cycle(self):
-        frame = sys._current_frames()[self._thread_to_monitor]
-        in_endpoint_code = False
-        encoded_path = ''
-        for fn, ln, fun, line in traceback.extract_stack(frame):
-            # fn: filename
-            # ln: line number
-            # fun: function name
-            # text: source code line
-            if self._endpoint is fun:
-                in_endpoint_code = True
-            if in_endpoint_code:
-                key = (fn, ln, fun, line, encoded_path)  # quintuple
-                self._text_dict[key] += 1
-                encode = self.encode(fn, ln)
-                if encode not in encoded_path:
-                    encoded_path = append_to_encoded_path(encoded_path, encode)
+    def run(self):
+        """
+        Continuously takes a snapshot from the stacktrace (only the main-thread). Filters everything before the
+        endpoint has been called (i.e. the Flask library).
+        Directly computes the histogram, since this is more efficient for storingpo
+        :return:
+        """
+        while self._keeprunning:
+            frame = sys._current_frames()[self._thread_to_monitor]
+            in_endpoint_code = False
+            self._path_hash.set_path('')
+            for fn, ln, fun, line in traceback.extract_stack(frame):
+                # fn: filename
+                # ln: line number
+                # fun: function name
+                # text: source code line
+                if self._endpoint is fun:
+                    in_endpoint_code = True
+                if in_endpoint_code:
+                    key = (self._path_hash.get_path(fn, ln), line)
+                    self._histogram[key] += 1
+        self._on_thread_stopped()
 
-    def _on_thread_stopped(self, db_session):
-        super(StacktraceProfiler, self)._on_thread_stopped(db_session)
-        if self._only_outliers:
-            if self._is_outlier:
-                self.insert_lines_db(db_session)
-        else:
-            self.insert_lines_db(db_session)
+    def stop(self, duration):
+        self._duration = duration * 1000
+        self._keeprunning = False
+
+    def _on_thread_stopped(self):
+        self._order_histogram()
+        with session_scope() as db_session:
+            update_last_accessed(db_session, endpoint=self._endpoint, value=datetime.datetime.utcnow())
+            request_id = add_request(db_session, execution_time=self._duration, endpoint=self._endpoint, ip=self._ip)
+            self.insert_lines_db(db_session, request_id)
 
     def get_funcheader(self):
         lines_returned = []
@@ -54,53 +71,31 @@ class StacktraceProfiler(PerformanceProfiler):
             if line.strip()[:4] == 'def ':
                 return lines_returned
 
-    def order_text_dict(self, encoded_path=''):
+    def _order_histogram(self, path=''):
         """
         Finds the order of self._text_dict and assigns this order to self._lines_body
-        :param encoded_path: used to filter the results
+        :param path: used to filter the results
         :return:
         """
-        list = sorted(filter_on_encoded_path(self._text_dict.items(), encoded_path), key=lambda item: item[0][1])
-        if not list:
-            return
-        for key, count in list:
-            self._lines_body.append((key[3], key[4], count))
-            self.order_text_dict(encoded_path=append_to_encoded_path(encoded_path, self.encode(key[0], key[1])))
+        for key, count in self._get_order(path):
+            self._lines_body.append((key, count))
+            self._order_histogram(path=key[0])
 
-    def encode(self, fn, ln):
-        return str(self.get_index(fn)) + ':' + str(ln)
-
-    def get_index(self, fn):
-        if fn in self._h:
-            return self._h[fn]
-        self._h[fn] = len(self._h)
-
-    def insert_lines_db(self, db_session):
-        total_traces = sum([v for k, v in filter_on_encoded_path(self._text_dict.items(), '')])
+    def insert_lines_db(self, db_session, request_id):
+        total_traces = sum([v for k, v in self._get_order('')])
         line_number = 0
         for line in self.get_funcheader():
-            add_execution_path_line(db_session, self._request_id, line_number, 0, line, total_traces)
+            add_execution_path_line(db_session, request_id, line_number, 0, line, total_traces)
             line_number += 1
-        self.order_text_dict()
 
-        for (line, path, val) in self._lines_body:
-            add_execution_path_line(db_session, self._request_id, line_number, get_indent(path), line, val)
+        for (key, val) in self._lines_body:
+            path, text = key
+            indent = self._path_hash.get_indent(path)
+            add_execution_path_line(db_session, request_id, line_number, indent, text, val)
             line_number += 1
-        # self._text_dict.clear()
 
-
-def get_indent(string):
-    if string:
-        return len(string.split(FILE_SPLIT)) + 1
-    return 1
-
-
-def filter_on_encoded_path(list, encoded_path):
-    """ List must be the following: [(key, value), (key, value), ...]"""
-    return [(key, value) for key, value in list if key[4] == encoded_path]
-
-
-def append_to_encoded_path(callgraph, encode):
-    if callgraph:
-        return callgraph + FILE_SPLIT + encode
-    return encode
+    def _get_order(self, path):
+        indent = self._path_hash.get_indent(path) + 1
+        return sorted([row for row in self._histogram.items()
+                       if row[0][0][:len(path)] == path and indent == self._path_hash.get_indent(row[0][0])],
+                      key=lambda row: row[0][0])
