@@ -1,6 +1,6 @@
 from numpy import median
 
-from flask_monitoringdashboard.database import Request, TestRun
+from flask_monitoringdashboard.database import Request, TestedEndpoints
 
 
 def get_data_grouped(db_session, column, func, *where):
@@ -48,23 +48,13 @@ def get_test_data_grouped(db_session, func, *where):
     :param func: the function to reduce the data
     :param where: additional where clause
     """
-    # This method will be used in the Testmonitor overview table for the median execution times later on.
-    # Medians can only be calculated when the new way of data collection is implemented.
 
-    # result = db_session.query(column, TestRun.execution_time). \
-    #     filter(*where).order_by(column).all()
-    #
-    # data = {}
-    # for key, value in result:
-    #     if key in data.keys():
-    #         data[key].append(value)
-    #     else:
-    #         data[key] = [value]
-    # for key in data:
-    #     data[key] = func(data[key])
-    #
-    # return data.items()
-    pass
+    result = db_session.query(TestedEndpoints.endpoint_name, TestedEndpoints.execution_time). \
+        filter(*where).order_by(TestedEndpoints.execution_time).all()
+
+    print(result)
+
+    return group_result(result, func)
 
 
 def get_version_data_grouped(db_session, func, *where):

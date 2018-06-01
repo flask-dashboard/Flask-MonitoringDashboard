@@ -133,6 +133,8 @@ class TestedEndpoints(Base):
     app_version = Column(String(100), nullable=False)
     # ID of the Travis job this record came from.
     travis_job_id = Column(String(10), nullable=False)
+    # Time at which the row was added to the database.
+    time_added = Column(DateTime, default=datetime.datetime.utcnow)
 
 
 # define the database

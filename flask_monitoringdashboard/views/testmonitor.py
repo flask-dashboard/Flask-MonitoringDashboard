@@ -4,9 +4,10 @@ from flask_monitoringdashboard import blueprint
 from flask_monitoringdashboard.core.auth import secure
 from flask_monitoringdashboard.core.colors import get_color
 from flask_monitoringdashboard.core.forms import get_slider_form
-from flask_monitoringdashboard.core.plot import get_layout, get_figure, boxplot
 from flask_monitoringdashboard.core.info_box import get_plot_info
+from flask_monitoringdashboard.core.plot import get_layout, get_figure, boxplot
 from flask_monitoringdashboard.database import session_scope, TestRun
+from flask_monitoringdashboard.database.data_grouped import get_test_data_grouped
 from flask_monitoringdashboard.database.count import count_builds
 from flask_monitoringdashboard.database.count_group import get_value, count_times_tested, get_latest_test_version
 from flask_monitoringdashboard.database.tests import get_test_suites, \
@@ -56,6 +57,8 @@ def testmonitor():
     Gives an overview of the unit test performance results and the endpoints that they hit.
     :return:
     """
+    from numpy import median
+
     with session_scope() as db_session:
         endpoint_test_combinations = get_tests_grouped(db_session)
 
@@ -63,7 +66,7 @@ def testmonitor():
         tests = count_times_tested(db_session)
         # Medians can only be calculated when the new way of data collection is implemented.
         # median_latest = get_endpoint_data_grouped(db_session, median, FunctionCall.time > week_ago)
-        # median = get_test_data_grouped(db_session, median)
+        median = get_test_data_grouped(db_session, median)
         tested_times = get_last_tested_times(db_session, endpoint_test_combinations)
 
         result = []
@@ -75,9 +78,8 @@ def testmonitor():
                 'tests-overall': get_value(tests, endpoint),
                 # Medians can only be calculated when the new way of data collection is implemented.
                 # 'median-latest-version': get_value(median_latest, endpoint),
-                # 'median-overall': get_value(median, endpoint),
+                'median-overall': get_value(median, endpoint),
                 'median-latest-version': -1,
-                'median-overall': -1,
                 'last-tested': get_value(tested_times, endpoint, default=None)
             })
 
