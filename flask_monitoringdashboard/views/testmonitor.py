@@ -58,7 +58,7 @@ def endpoint_test_details(end):
     :return:
     """
     with session_scope() as db_session:
-        form = get_slider_form(count_builds(db_session), title='Select the number of builds')
+        form = get_slider_form(count_builds_endpoint(db_session), title='Select the number of builds')
     graph = get_boxplot_endpoints(endpoint=end, form=form)
     return render_template('fmd_testmonitor/endpoint.html', graph=graph, title='Per-Version Performance for ' + end,
                            information=get_plot_info(AXES_INFO, CONTENT_INFO), endp=end, form=form)
@@ -134,19 +134,19 @@ def get_boxplot_endpoints(endpoint=None, form=None):
     trace = []
     with session_scope() as db_session:
         if form:
-            suites = get_travis_builds(db_session, limit=form.get_slider_value())
+            ids = get_travis_builds(db_session, limit=form.get_slider_value())
         else:
-            suites = get_travis_builds(db_session)
+            ids = get_travis_builds(db_session)
 
-        if not suites:
+        if not ids:
             return None
-        for s in suites:
+        for id in ids:
             if endpoint:
-                values = get_endpoint_measurements_job(db_session, name=endpoint, job_id=s.travis_job_id)
+                values = get_endpoint_measurements_job(db_session, name=endpoint, job_id=id)
             else:
-                values = get_endpoint_measurements(db_session, suite=s.travis_job_id)
+                values = get_endpoint_measurements(db_session, suite=id)
 
-            trace.append(boxplot(values=values, label='{} -'.format(s.travis_job_id)))
+            trace.append(boxplot(values=values, label='{} -'.format(id)))
 
         layout = get_layout(
             xaxis={'title': 'Execution time (ms)'},

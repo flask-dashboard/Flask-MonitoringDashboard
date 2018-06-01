@@ -33,7 +33,7 @@ def get_travis_builds(db_session, limit=None):
         desc(TestedEndpoints.travis_job_id))
     if limit:
         query = query.limit(limit)
-    return query.all()
+    return sorted([int(build[0]) for build in query.all()], reverse=True)
 
 
 def get_suite_measurements(db_session, suite):

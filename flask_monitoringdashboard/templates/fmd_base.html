@@ -79,8 +79,8 @@
                     <ul class="sidenav-second-level {{ "show" if request.endpoint in testmonitor_list else "collapse" }}"
                         id="collapseTestmonitor">
                         {{ submenu('dashboard.testmonitor', 'Overview') }}
-                        {{ submenu('dashboard.test_build_performance', 'Per-Build Test Performance') }}
                         {{ submenu('dashboard.endpoint_build_performance', 'Per-Build Endpoint Performance') }}
+                        {{ submenu('dashboard.test_build_performance', 'Per-Build Test Performance') }}
                     </ul>
                 </li>
                 {% block test_endpoint_menu %}
