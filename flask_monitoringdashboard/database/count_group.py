@@ -3,7 +3,7 @@ import datetime
 from sqlalchemy import func
 
 from flask_monitoringdashboard.core.timezone import to_utc_datetime
-from flask_monitoringdashboard.database import Request, TestRun, TestsGrouped
+from flask_monitoringdashboard.database import Request, TestedEndpoints
 
 
 def get_latest_test_version(db_session):
@@ -12,9 +12,9 @@ def get_latest_test_version(db_session):
     :param db_session: session for the database
     :return: latest test version
     """
-    latest_time = db_session.query(func.max(TestRun.time)).one()[0]
+    latest_time = db_session.query(func.max(TestedEndpoints.time_added)).one()[0]
     if latest_time:
-        return db_session.query(TestRun.version).filter(TestRun.time == latest_time).one()[0]
+        return db_session.query(TestedEndpoints.app_version).filter(TestedEndpoints.time_added == latest_time).one()[0]
     return None
 
 
@@ -26,7 +26,7 @@ def count_rows_group(db_session, column, *criterion):
     :param criterion: where-clause of the query
     :return: list with the number of rows per endpoint
     """
-    return db_session.query(Request.endpoint, func.count(column)).\
+    return db_session.query(Request.endpoint, func.count(column)). \
         filter(*criterion).group_by(Request.endpoint).all()
 
 
@@ -56,13 +56,9 @@ def count_times_tested(db_session, *where):
     :param db_session: session for the database
     :param where: additional arguments
     """
-    result = {}
-    test_endpoint_groups = db_session.query(TestsGrouped).all()
-    for group in test_endpoint_groups:
-        times = db_session.query(func.count(TestRun.name)).filter(TestRun.name == group.test_name).\
-                                                           filter(*where).one()[0]
-        result[group.endpoint] = result.get(group.endpoint, 0) + int(times)
-    return result.items()
+    result = db_session.query(TestedEndpoints.endpoint_name, func.count(TestedEndpoints.endpoint_name)).filter(
+        *where).group_by(TestedEndpoints.endpoint_name).all()
+    return result
 
 
 def count_requests_per_day(db_session, list_of_days):

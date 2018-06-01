@@ -69,9 +69,9 @@ class TestDBTests(unittest.TestCase):
         """
             Test whether the function returns the right values.
         """
-        from flask_monitoringdashboard.database.tests import get_test_measurements
+        from flask_monitoringdashboard.database.tests import get_endpoint_measurements_job
         with session_scope() as db_session:
-            self.assertEqual(get_test_measurements(db_session, NAME, SUITE), [0])
+            self.assertEqual(get_endpoint_measurements_job(db_session, NAME, SUITE), [0])
             self.test_add_test_result()
-            result = get_test_measurements(db_session, NAME, SUITE)
+            result = get_endpoint_measurements_job(db_session, NAME, SUITE)
             self.assertEqual(len(EXECUTION_TIMES) * 2, len(result))
