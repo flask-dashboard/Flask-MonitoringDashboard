@@ -57,4 +57,6 @@ def get_avg_execution_time(db_session, endpoint):
     """ Return the average execution time of an endpoint """
     result = db_session.query(func.avg(Request.execution_time).label('average')).\
         filter(Request.endpoint == endpoint).one()
-    return result[0]
+    if result[0]:
+        return result[0]
+    return 0  # default value

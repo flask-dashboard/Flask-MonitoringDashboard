@@ -3,6 +3,7 @@ import threading
 from flask import request
 
 from flask_monitoringdashboard.core.profiler.baseProfiler import BaseProfiler
+from flask_monitoringdashboard.core.profiler.outlierProfiler import OutlierProfiler
 from flask_monitoringdashboard.core.profiler.performanceProfiler import PerformanceProfiler
 from flask_monitoringdashboard.core.profiler.stacktraceProfiler import StacktraceProfiler
 
@@ -20,7 +21,7 @@ def threads_before_request(endpoint, monitor_level):
     if monitor_level == 2:
         threads = [StacktraceProfiler(current_thread, endpoint, ip)]
     elif monitor_level == 3:
-        threads = [StacktraceProfiler(current_thread, endpoint, ip)]
+        threads = [StacktraceProfiler(current_thread, endpoint, ip), OutlierProfiler(current_thread, endpoint)]
     else:
         raise ValueError("MonitorLevel should be 2 or 3.")
 

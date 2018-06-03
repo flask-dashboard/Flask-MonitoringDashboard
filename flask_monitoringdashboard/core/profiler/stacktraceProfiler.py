@@ -16,6 +16,7 @@ from flask_monitoringdashboard.database.request import add_request
 class StacktraceProfiler(threading.Thread):
     """
     Used for profiling the performance per line code.
+    This is used when monitoring-level == 2 and monitoring-level == 3
     """
 
     def __init__(self, thread_to_monitor, endpoint, ip):
@@ -33,7 +34,7 @@ class StacktraceProfiler(threading.Thread):
         """
         Continuously takes a snapshot from the stacktrace (only the main-thread). Filters everything before the
         endpoint has been called (i.e. the Flask library).
-        Directly computes the histogram, since this is more efficient for storingpo
+        Directly computes the histogram, since this is more efficient for performance
         :return:
         """
         while self._keeprunning:
