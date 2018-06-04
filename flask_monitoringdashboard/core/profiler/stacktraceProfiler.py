@@ -18,7 +18,7 @@ class StacktraceProfiler(threading.Thread):
     This is used when monitoring-level == 2 and monitoring-level == 3
     """
 
-    def __init__(self, thread_to_monitor, endpoint, ip):
+    def __init__(self, thread_to_monitor, endpoint, ip, outlier_profiler=None):
         threading.Thread.__init__(self)
         self._keeprunning = True
         self._thread_to_monitor = thread_to_monitor
@@ -28,6 +28,7 @@ class StacktraceProfiler(threading.Thread):
         self._histogram = defaultdict(int)
         self._path_hash = PathHash()
         self._lines_body = []
+        self._outlier_profiler = outlier_profiler
 
     def run(self):
         """
@@ -57,11 +58,11 @@ class StacktraceProfiler(threading.Thread):
         self._keeprunning = False
 
     def _on_thread_stopped(self):
-        self._order_histogram()
         with session_scope() as db_session:
             update_last_accessed(db_session, endpoint_name=self._endpoint.name)
             request_id = add_request(db_session, duration=self._duration, endpoint_id=self._endpoint.id, ip=self._ip)
-            # print(request_id)
+            self._outlier_profiler.set_request_id(request_id)
+            self._order_histogram()
             self.insert_lines_db(db_session, request_id)
 
     def get_funcheader(self):

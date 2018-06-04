@@ -20,8 +20,8 @@ def threads_before_request(endpoint):
     if endpoint.monitor_level == 2:
         threads = [StacktraceProfiler(current_thread, endpoint, ip)]
     elif endpoint.monitor_level == 3:
-        threads = [StacktraceProfiler(current_thread, endpoint, ip),
-                   OutlierProfiler(current_thread, endpoint)]
+        outlier = OutlierProfiler(current_thread, endpoint)
+        threads = [StacktraceProfiler(current_thread, endpoint, ip, outlier), outlier]
     else:
         raise ValueError("MonitorLevel should be 2 or 3.")
 

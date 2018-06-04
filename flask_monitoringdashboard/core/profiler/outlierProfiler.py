@@ -4,9 +4,11 @@ import time
 import traceback
 
 import psutil
+from flask import request
 
 from flask_monitoringdashboard import config
 from flask_monitoringdashboard.database import session_scope
+from flask_monitoringdashboard.database.outlier import add_outlier
 from flask_monitoringdashboard.database.request import get_avg_execution_time
 
 
@@ -20,11 +22,16 @@ class OutlierProfiler(threading.Thread):
         self._current_thread = current_thread
         self._endpoint = endpoint
         self._stopped = False
+        self._cpu_percent = ''
+        self._memory = ''
+        self._stacktrace = ''
+
+        self._request = str(request.headers), str(request.environ), str(request.url)
 
     def run(self):
         # sleep for average * ODC ms
         with session_scope() as db_session:
-            average = get_avg_execution_time(db_session, self._endpoint) * config.outlier_detection_constant
+            average = get_avg_execution_time(db_session, self._endpoint.id) * config.outlier_detection_constant
         time.sleep(average / 1000.0)
         if not self._stopped:
             stack_list = []
@@ -41,14 +48,19 @@ class OutlierProfiler(threading.Thread):
                     stack_list.append('File: "{}", line {}, in "{}": "{}"'.format(fn, ln, fun, line))
 
             # Set the values in the object
-            stacktrace = '<br />'.join(stack_list)
-            cpu_percent = str(psutil.cpu_percent(interval=None, percpu=True))
-            memory = str(psutil.virtual_memory())
-
-            # print(stacktrace)
-            # print(cpu_percent)
-            # print(memory)
-            # TODO: insert in database
+            self._stacktrace = '<br />'.join(stack_list)
+            self._cpu_percent = str(psutil.cpu_percent(interval=None, percpu=True))
+            self._memory = str(psutil.virtual_memory())
 
     def stop(self, duration):
         self._stopped = True
+
+    def set_request_id(self, request_id):
+        if self._stopped:
+            return
+        # Wait till the everything is assigned.
+        while not self._memory:
+            time.sleep(.01)
+
+        with session_scope() as db_session:
+            add_outlier(db_session, request_id, self._cpu_percent, self._memory, self._stacktrace, self._request)

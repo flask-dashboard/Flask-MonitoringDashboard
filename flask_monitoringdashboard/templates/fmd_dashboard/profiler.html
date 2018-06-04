@@ -48,7 +48,8 @@
         {{ pagination.info }}
         {{ pagination.links }}
     {% endif %}
-    {% for request, lines in table %}
+    {% for request in requests %}
+        {% set lines = request.stack_lines %}
         <div class="card">
             <div class="card">
                 {{ request_title(request) }}

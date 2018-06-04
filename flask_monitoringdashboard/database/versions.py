@@ -3,17 +3,17 @@ from sqlalchemy import func, distinct, desc
 from flask_monitoringdashboard.database import Request
 
 
-def get_versions(db_session, end=None, limit=None):
+def get_versions(db_session, endpoint_id=None, limit=None):
     """
     Returns a list of length 'limit' with the versions that are used in the application
     :param db_session: session for the database
-    :param end: the versions that are used in a specific endpoint
+    :param endpoint_id: only get the version that are used in this endpoint
     :param limit: only return the most recent versions
     :return: a list with the versions (as a string)
     """
     query = db_session.query(distinct(Request.version_requested))
-    if end:
-        query = query.filter(Request.endpoint == end)
+    if endpoint_id:
+        query = query.filter(Request.endpoint_id == endpoint_id)
     query = query.order_by(desc(Request.time_requested))
     if limit:
         query = query.limit(limit)

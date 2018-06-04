@@ -34,11 +34,10 @@ def profiler(endpoint_id):
     page, per_page, offset = get_page_args(page_parameter='page', per_page_parameter='per_page')
     with session_scope() as db_session:
         details = get_endpoint_details(db_session, endpoint_id)
-        end = details.endpoint
-        table = get_profiled_requests(db_session, end, offset, per_page)
+        requests = get_profiled_requests(db_session, endpoint_id, offset, per_page)
 
-        pagination = Pagination(page=page, per_page=per_page, total=count_profiled_requests(db_session, end),
+        pagination = Pagination(page=page, per_page=per_page, total=count_profiled_requests(db_session, endpoint_id),
                                 format_number=True, css_framework='bootstrap4', format_total=True,
                                 record_name='profiled requests')
-    return render_template('fmd_dashboard/profiler.html', details=details, table=table, pagination=pagination,
-                           title='Profiler results for {}'.format(end), get_body=get_body)
+    return render_template('fmd_dashboard/profiler.html', details=details, requests=requests, pagination=pagination,
+                           title='Profiler results for {}'.format(details['endpoint']), get_body=get_body)

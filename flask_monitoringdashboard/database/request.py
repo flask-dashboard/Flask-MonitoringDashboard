@@ -49,10 +49,10 @@ def get_date_of_first_request(db_session):
     return -1
 
 
-def get_avg_execution_time(db_session, endpoint):
+def get_avg_execution_time(db_session, endpoint_id):
     """ Return the average execution time of an endpoint """
     result = db_session.query(func.avg(Request.duration).label('average')). \
-        filter(Request.endpoint == endpoint).one()
+        filter(Request.endpoint_id == endpoint_id).one()
     if result[0]:
         return result[0]
     return 0  # default value

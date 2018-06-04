@@ -2,6 +2,7 @@
 Contains all functions that access a single endpoint
 """
 import datetime
+from collections import defaultdict
 
 from sqlalchemy import func, desc
 from sqlalchemy.orm.exc import NoResultFound
@@ -17,24 +18,24 @@ def get_num_requests(db_session, endpoint_id, start_date, end_date):
         :param start_date: datetime.date object
         :param end_date: datetime.date object
     """
-    query = db_session.query(Request.duration)
+    query = db_session.query(Request.time_requested)
     if endpoint_id:
         query = query.filter(Request.endpoint_id == endpoint_id)
-    result = query.filter(Request.duration >= start_date, Request.duration <= end_date).all()
+    result = query.filter(Request.time_requested >= start_date, Request.duration <= end_date).all()
 
-    return group_execution_times(result)
+    return group_execution_times([r[0] for r in result])
 
 
-def group_execution_times(times):
+def group_execution_times(datetimes):
     """
     Returns a list of tuples containing the number of hits per hour
-    :param times: list of datetime objects
+    :param datetimes: list of datetime objects
     :return: list of tuples ('%Y-%m-%d %H:00:00', count)
     """
-    hours_dict = {}
-    for dt in times:
-        round_time = dt.time.strftime('%Y-%m-%d %H:00:00')
-        hours_dict[round_time] = hours_dict.get(round_time, 0) + 1
+    hours_dict = defaultdict(int)
+    for dt in datetimes:
+        round_time = dt.strftime('%Y-%m-%d %H:00:00')
+        hours_dict[round_time] += 1
     return hours_dict.items()
 
 

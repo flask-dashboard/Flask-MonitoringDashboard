@@ -26,7 +26,6 @@ def overview():
         from numpy import median
 
         hits_today = count_requests_group(db_session, Request.time_requested > today_utc)
-        print(hits_today)
         hits_week = count_requests_group(db_session, Request.time_requested > week_ago)
         hits = count_requests_group(db_session)
 
@@ -37,6 +36,7 @@ def overview():
 
         for endpoint in get_endpoints(db_session):
             result.append({
+                'id': endpoint.id,
                 'name': endpoint.name,
                 'color': get_color(endpoint.name),
                 'hits-today': get_value(hits_today, endpoint.id),
