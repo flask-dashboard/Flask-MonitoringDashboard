@@ -4,7 +4,7 @@
 """
 import random
 
-from flask import Flask, request
+from flask import Flask
 
 
 def create_app():
@@ -14,7 +14,7 @@ def create_app():
     app = Flask(__name__)
 
     dashboard.config.outlier_detection_constant = 0
-    dashboard.config.database_name = 'sqlite:///flask_monitoringdashboard_v6.db'
+    dashboard.config.database_name = 'sqlite:///flask_monitoringdashboard_v7.db'
     dashboard.bind(app)
 
     def f():

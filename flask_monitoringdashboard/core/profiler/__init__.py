@@ -8,20 +8,20 @@ from flask_monitoringdashboard.core.profiler.performanceProfiler import Performa
 from flask_monitoringdashboard.core.profiler.stacktraceProfiler import StacktraceProfiler
 
 
-def threads_before_request(endpoint, monitor_level):
+def threads_before_request(endpoint):
     """
     Starts a thread before the request has been processed
-    :param endpoint: string of the endpoint that is wrapped
-    :param monitor_level: either 2 or 3
+    :param endpoint: endpoint object that is wrapped
     :return: a list with either 1 or 2 threads
     """
     current_thread = threading.current_thread().ident
     ip = request.environ['REMOTE_ADDR']
 
-    if monitor_level == 2:
+    if endpoint.monitor_level == 2:
         threads = [StacktraceProfiler(current_thread, endpoint, ip)]
-    elif monitor_level == 3:
-        threads = [StacktraceProfiler(current_thread, endpoint, ip), OutlierProfiler(current_thread, endpoint)]
+    elif endpoint.monitor_level == 3:
+        threads = [StacktraceProfiler(current_thread, endpoint, ip),
+                   OutlierProfiler(current_thread, endpoint)]
     else:
         raise ValueError("MonitorLevel should be 2 or 3.")
 
@@ -30,16 +30,15 @@ def threads_before_request(endpoint, monitor_level):
     return threads
 
 
-def thread_after_request(endpoint, monitor_level, duration):
+def thread_after_request(endpoint, duration):
     """
     Starts a thread after the request has been processed
-    :param endpoint: string of the endpoint that is wrapped
-    :param monitor_level: either 0 or 1
+    :param endpoint: endpoint object that is wrapped
     :param duration: time elapsed for processing the request (in ms)
     """
-    if monitor_level == 0:
-        BaseProfiler(endpoint).start()
-    elif monitor_level == 1:
+    if endpoint.monitor_level == 0:
+        BaseProfiler(endpoint.id).start()
+    elif endpoint.monitor_level == 1:
         ip = request.environ['REMOTE_ADDR']
         PerformanceProfiler(endpoint, ip, duration).start()
     else:

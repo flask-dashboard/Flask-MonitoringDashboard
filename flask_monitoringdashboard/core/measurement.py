@@ -20,24 +20,22 @@ def init_measurement():
     """
     with session_scope() as db_session:
         for rule in get_rules():
-            db_rule = get_endpoint_by_name(db_session, rule.endpoint)
-            add_decorator(rule.endpoint, db_rule.id, db_rule.monitor_level)
+            endpoint = get_endpoint_by_name(db_session, rule.endpoint)
+            add_decorator(endpoint)
 
 
-def add_decorator(endpoint, endpoint_id, monitor_level):
+def add_decorator(endpoint):
     """
     Add a wrapper to the Flask-Endpoint based on the monitoring-level.
-    :param endpoint: name of the endpoint as a string
-    :param endpoint_id: id of the endpoint in the database
-    :param monitor_level: int with the wrapper that should be added. This value is either 0, 1, 2 or 3.
+    :param endpoint: endpoint object
     :return: the wrapper
     """
-    func = user_app.view_functions[endpoint]
+    func = user_app.view_functions[endpoint.name]
 
     @wraps(func)
     def wrapper(*args, **kwargs):
-        if monitor_level == 2 or monitor_level == 3:
-            threads = threads_before_request(endpoint_id, monitor_level)
+        if endpoint.monitor_level == 2 or endpoint.monitor_level == 3:
+            threads = threads_before_request(endpoint)
             start_time = time.time()
             result = func(*args, **kwargs)
             stop_time = time.time() - start_time
@@ -47,10 +45,10 @@ def add_decorator(endpoint, endpoint_id, monitor_level):
             start_time = time.time()
             result = func(*args, **kwargs)
             stop_time = time.time() - start_time
-            thread_after_request(endpoint_id, monitor_level, stop_time)
+            thread_after_request(endpoint, stop_time)
         return result
 
     wrapper.original = func
-    user_app.view_functions[endpoint] = wrapper
+    user_app.view_functions[endpoint.name] = wrapper
 
     return wrapper

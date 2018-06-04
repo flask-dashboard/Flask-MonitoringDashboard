@@ -45,11 +45,11 @@ class StacktraceProfiler(threading.Thread):
                 # fn: filename
                 # ln: line number
                 # fun: function name
-                # text: source code line
-                if self._endpoint is fun:
+                # line: source code line
+                if self._endpoint.name == fun:
                     in_endpoint_code = True
                 if in_endpoint_code:
-                    key = (self._path_hash.get_path(fn, ln), line)
+                    key = (self._path_hash.get_path(fn, ln), fun, line)
                     self._histogram[key] += 1
         self._on_thread_stopped()
 
@@ -60,13 +60,21 @@ class StacktraceProfiler(threading.Thread):
     def _on_thread_stopped(self):
         self._order_histogram()
         with session_scope() as db_session:
-            update_last_accessed(db_session, endpoint=self._endpoint, value=datetime.datetime.utcnow())
-            request_id = add_request(db_session, execution_time=self._duration, endpoint=self._endpoint, ip=self._ip)
+            update_last_accessed(db_session, endpoint_name=self._endpoint.name)
+            request_id = add_request(db_session, duration=self._duration, endpoint_id=self._endpoint.id, ip=self._ip)
+            # print(request_id)
             self.insert_lines_db(db_session, request_id)
 
     def get_funcheader(self):
         lines_returned = []
-        lines, _ = inspect.getsourcelines(user_app.view_functions[self._endpoint])
+        fun = user_app.view_functions[self._endpoint.name]
+        if hasattr(fun, 'original'):
+            fun = fun.original
+            print(inspect.getfile(fun))
+            print(inspect.findsource(fun)[1])
+        lines, _ = inspect.getsourcelines(user_app.view_functions[self._endpoint.name])
+        ln = inspect.findsource(user_app.view_functions[self._endpoint.name])[1]
+        fn = inspect.getfile(user_app.view_functions[self._endpoint.name])
         for line in lines:
             lines_returned.append(line.strip())
             if line.strip()[:4] == 'def ':
@@ -84,18 +92,25 @@ class StacktraceProfiler(threading.Thread):
 
     def insert_lines_db(self, db_session, request_id):
         total_traces = sum([v for k, v in self._get_order('')])
-        line_number = 0
-        for line in self.get_funcheader():
-            add_stack_line(db_session, request_id, line_number, 0, line, total_traces)
-            line_number += 1
+        position = 0
+        # TODO duration should be in ms
+        for code_line in self.get_funcheader():
+            add_stack_line(db_session, request_id, position=position, indent=0, duration=total_traces,
+                           code_line=code_line)
+            position += 1
 
+        print(self._lines_body)
         for (key, val) in self._lines_body:
+            print("%s-------------%s" % (key, val))
             path, text = key
             indent = self._path_hash.get_indent(path)
-            add_stack_line(db_session, request_id, line_number, indent, text, val)
-            line_number += 1
+            # TODO duration should be in ms
+            add_stack_line(db_session, request_id, position=position, indent=indent, duration=val,
+                           code_line=(fn, ln, fun, line))
+            position += 1
 
     def _get_order(self, path):
+        print("get order____%s" % path)
         indent = self._path_hash.get_indent(path) + 1
         return sorted([row for row in self._histogram.items()
                        if row[0][0][:len(path)] == path and indent == self._path_hash.get_indent(row[0][0])],

@@ -45,9 +45,9 @@ class OutlierProfiler(threading.Thread):
             cpu_percent = str(psutil.cpu_percent(interval=None, percpu=True))
             memory = str(psutil.virtual_memory())
 
-            print(stacktrace)
-            print(cpu_percent)
-            print(memory)
+            # print(stacktrace)
+            # print(cpu_percent)
+            # print(memory)
             # TODO: insert in database
 
     def stop(self, duration):

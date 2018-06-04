@@ -25,12 +25,12 @@ def overview():
     with session_scope() as db_session:
         from numpy import median
 
-        hits_today = count_requests_group(db_session, Request.time > today_utc)
-        hits_week = count_requests_group(db_session, Request.time > week_ago)
+        hits_today = count_requests_group(db_session, Request.time_requested > today_utc)
+        hits_week = count_requests_group(db_session, Request.time_requested > week_ago)
         hits = count_requests_group(db_session)
 
-        median_today = get_endpoint_data_grouped(db_session, median, Request.time > today_utc)
-        median_week = get_endpoint_data_grouped(db_session, median, Request.time > week_ago)
+        median_today = get_endpoint_data_grouped(db_session, median, Request.time_requested > today_utc)
+        median_week = get_endpoint_data_grouped(db_session, median, Request.time_requested > week_ago)
         median = get_endpoint_data_grouped(db_session, median)
         access_times = get_last_requested(db_session)
 
