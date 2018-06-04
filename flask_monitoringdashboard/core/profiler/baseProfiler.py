@@ -17,4 +17,4 @@ class BaseProfiler(threading.Thread):
 
     def run(self):
         with session_scope() as db_session:
-            update_last_accessed(db_session, endpoint=self._endpoint, value=datetime.datetime.utcnow())
+            update_last_accessed(db_session, endpoint=self._endpoint)

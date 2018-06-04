@@ -8,7 +8,7 @@ from flask_monitoringdashboard.core.plot import boxplot, get_figure, get_layout,
 from flask_monitoringdashboard.core.info_box import get_plot_info
 from flask_monitoringdashboard.core.utils import get_endpoint_details, simplify
 from flask_monitoringdashboard.database import Request, session_scope
-from flask_monitoringdashboard.database.count import count_versions_end
+from flask_monitoringdashboard.database.count import count_versions_endpoint
 from flask_monitoringdashboard.database.count_group import get_value
 from flask_monitoringdashboard.database.data_grouped import get_version_data_grouped
 from flask_monitoringdashboard.database.endpoint import to_local_datetime
@@ -27,7 +27,7 @@ graph you can found out whether the performance changes across different version
 @secure
 def versions(end):
     with session_scope() as db_session:
-        form = get_slider_form(count_versions_end(db_session, end), title='Select the number of versions')
+        form = get_slider_form(count_versions_endpoint(db_session, end), title='Select the number of versions')
         details = get_endpoint_details(db_session, end)
         graph = versions_graph(db_session, end, form)
         return render_template('fmd_dashboard/graph-details.html', details=details, graph=graph,

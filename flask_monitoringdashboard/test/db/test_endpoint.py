@@ -23,10 +23,10 @@ class TestEndpoint(unittest.TestCase):
         """
             Test wheter the function returns the right values.
         """
-        from flask_monitoringdashboard.database.endpoint import get_monitor_rule
+        from flask_monitoringdashboard.database.endpoint import get_endpoint_by_name
         from flask_monitoringdashboard import config
         with session_scope() as db_session:
-            rule = get_monitor_rule(db_session, NAME)
+            rule = get_endpoint_by_name(db_session, NAME)
         self.assertEqual(rule.endpoint, NAME)
         self.assertEqual(rule.monitor_level, 1)
         self.assertEqual(rule.version_added, config.version)
@@ -35,12 +35,12 @@ class TestEndpoint(unittest.TestCase):
         """
             Test whether the function returns the right values.
         """
-        from flask_monitoringdashboard.database.endpoint import get_monitor_rule, update_monitor_rule
+        from flask_monitoringdashboard.database.endpoint import get_endpoint_by_name, update_endpoint
         with session_scope() as db_session:
-            current_value = get_monitor_rule(db_session, NAME).monitor_level
+            current_value = get_endpoint_by_name(db_session, NAME).monitor_level
             new_value = 1 if current_value != 1 else 2
-            update_monitor_rule(db_session, NAME, new_value)
-            self.assertEqual(get_monitor_rule(db_session, NAME).monitor_level, new_value)
+            update_endpoint(db_session, NAME, new_value)
+            self.assertEqual(get_endpoint_by_name(db_session, NAME).monitor_level, new_value)
 
     def test_update_last_accessed(self):
         """

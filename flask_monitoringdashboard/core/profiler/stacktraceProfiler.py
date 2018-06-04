@@ -9,7 +9,7 @@ from flask_monitoringdashboard import user_app
 from flask_monitoringdashboard.core.profiler.pathHash import PathHash
 from flask_monitoringdashboard.database import session_scope
 from flask_monitoringdashboard.database.endpoint import update_last_accessed
-from flask_monitoringdashboard.database.execution_path_line import add_execution_path_line
+from flask_monitoringdashboard.database.stack_line import add_stack_line
 from flask_monitoringdashboard.database.request import add_request
 
 
@@ -86,13 +86,13 @@ class StacktraceProfiler(threading.Thread):
         total_traces = sum([v for k, v in self._get_order('')])
         line_number = 0
         for line in self.get_funcheader():
-            add_execution_path_line(db_session, request_id, line_number, 0, line, total_traces)
+            add_stack_line(db_session, request_id, line_number, 0, line, total_traces)
             line_number += 1
 
         for (key, val) in self._lines_body:
             path, text = key
             indent = self._path_hash.get_indent(path)
-            add_execution_path_line(db_session, request_id, line_number, indent, text, val)
+            add_stack_line(db_session, request_id, line_number, indent, text, val)
             line_number += 1
 
     def _get_order(self, path):

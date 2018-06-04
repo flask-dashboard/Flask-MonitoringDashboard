@@ -9,7 +9,7 @@ from flask_monitoringdashboard import user_app
 from flask_monitoringdashboard.core.profiler import thread_after_request, threads_before_request
 from flask_monitoringdashboard.core.rules import get_rules
 from flask_monitoringdashboard.database import session_scope
-from flask_monitoringdashboard.database.endpoint import get_monitor_rule
+from flask_monitoringdashboard.database.endpoint import get_endpoint_by_name
 
 
 def init_measurement():
@@ -20,7 +20,7 @@ def init_measurement():
     """
     with session_scope() as db_session:
         for rule in get_rules():
-            db_rule = get_monitor_rule(db_session, rule.endpoint)
+            db_rule = get_endpoint_by_name(db_session, rule.endpoint)
             add_decorator(rule.endpoint, db_rule.monitor_level)
 
 

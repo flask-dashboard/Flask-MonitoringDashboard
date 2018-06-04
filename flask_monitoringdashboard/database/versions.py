@@ -11,10 +11,10 @@ def get_versions(db_session, end=None, limit=None):
     :param limit: only return the most recent versions
     :return: a list with the versions (as a string)
     """
-    query = db_session.query(distinct(Request.version))
+    query = db_session.query(distinct(Request.version_requested))
     if end:
         query = query.filter(Request.endpoint == end)
-    query = query.order_by(desc(Request.time))
+    query = query.order_by(desc(Request.time_requested))
     if limit:
         query = query.limit(limit)
     return list(reversed([r[0] for r in query.all()]))
@@ -27,8 +27,8 @@ def get_first_requests(db_session, limit=None):
     :param limit: only return the most recent versions
     :return:
     """
-    query = db_session.query(Request.version, func.min(Request.time).label('first_used')). \
-        group_by(Request.version).order_by(desc('first_used'))
+    query = db_session.query(Request.version_requested, func.min(Request.time_requested).label('first_used')). \
+        group_by(Request.version_requested).order_by(desc('first_used'))
     if limit:
         query = query.limit(limit)
     return query.all()

@@ -38,7 +38,7 @@ class OutlierProfiler(threading.Thread):
                 if self._endpoint is fun:
                     in_endpoint_code = True
                 if in_endpoint_code:
-                    stack_list.append('File: "{}", line {}, in "{}": {}'.format(fn, ln, fun, line))
+                    stack_list.append('File: "{}", line {}, in "{}": "{}"'.format(fn, ln, fun, line))
 
             # Set the values in the object
             stacktrace = '<br />'.join(stack_list)
