@@ -85,7 +85,7 @@ def get_endpoint_by_name(db_session, endpoint_name):
         result = db_session.query(Endpoint). \
             filter(Endpoint.name == endpoint_name).one()
         result.time_added = to_local_datetime(result.time_added)
-        result.last_accessed = to_local_datetime(result.last_accessed)
+        result.last_requested = to_local_datetime(result.last_requested)
         db_session.expunge_all()
     except NoResultFound:
         result = Endpoint(name=endpoint_name)
@@ -106,7 +106,7 @@ def update_endpoint(db_session, endpoint_name, value):
         update({Endpoint.monitor_level: value})
 
 
-def get_last_accessed_times(db_session):
+def get_last_requested(db_session):
     """ Returns the accessed time of a single endpoint. """
     result = db_session.query(Endpoint.name, Endpoint.last_requested).all()
     return [(end, to_local_datetime(time)) for end, time in result]

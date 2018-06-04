@@ -9,7 +9,7 @@ from flask_monitoringdashboard.core.timezone import to_local_datetime, to_utc_da
 from flask_monitoringdashboard.database import Request, session_scope
 from flask_monitoringdashboard.database.count_group import count_requests_group, get_value
 from flask_monitoringdashboard.database.data_grouped import get_endpoint_data_grouped
-from flask_monitoringdashboard.database.endpoint import get_last_accessed_times
+from flask_monitoringdashboard.database.endpoint import get_last_requested
 from flask_monitoringdashboard.database.request import get_endpoints
 
 
@@ -32,7 +32,7 @@ def overview():
         median_today = get_endpoint_data_grouped(db_session, median, Request.time > today_utc)
         median_week = get_endpoint_data_grouped(db_session, median, Request.time > week_ago)
         median = get_endpoint_data_grouped(db_session, median)
-        access_times = get_last_accessed_times(db_session)
+        access_times = get_last_requested(db_session)
 
         for endpoint in get_endpoints(db_session):
             result.append({
