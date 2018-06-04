@@ -26,6 +26,7 @@ def overview():
         from numpy import median
 
         hits_today = count_requests_group(db_session, Request.time_requested > today_utc)
+        print(hits_today)
         hits_week = count_requests_group(db_session, Request.time_requested > week_ago)
         hits = count_requests_group(db_session)
 
@@ -36,15 +37,15 @@ def overview():
 
         for endpoint in get_endpoints(db_session):
             result.append({
-                'name': endpoint,
-                'color': get_color(endpoint),
-                'hits-today': get_value(hits_today, endpoint),
-                'hits-week': get_value(hits_week, endpoint),
-                'hits-overall': get_value(hits, endpoint),
-                'median-today': get_value(median_today, endpoint),
-                'median-week': get_value(median_week, endpoint),
-                'median-overall': get_value(median, endpoint),
-                'last-accessed': get_value(access_times, endpoint, default=None)
+                'name': endpoint.name,
+                'color': get_color(endpoint.name),
+                'hits-today': get_value(hits_today, endpoint.id),
+                'hits-week': get_value(hits_week, endpoint.id),
+                'hits-overall': get_value(hits, endpoint.id),
+                'median-today': get_value(median_today, endpoint.id),
+                'median-week': get_value(median_week, endpoint.id),
+                'median-overall': get_value(median, endpoint.id),
+                'last-accessed': get_value(access_times, endpoint.name, default=None)
             })
 
     return render_template('fmd_dashboard/overview.html', result=result, is_admin=is_admin(),

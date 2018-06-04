@@ -6,7 +6,7 @@ import time
 
 from sqlalchemy import distinct, func
 
-from flask_monitoringdashboard.database import Request
+from flask_monitoringdashboard.database import Request, Endpoint
 
 
 def add_request(db_session, duration, endpoint_id, ip):
@@ -38,9 +38,7 @@ def get_data(db_session):
 
 def get_endpoints(db_session):
     """ Returns the name of all endpoints from the database """
-    result = db_session.query(distinct(Request.endpoint)).order_by(Request.endpoint).all()
-    db_session.expunge_all()
-    return [r[0] for r in result]  # unpack tuple result
+    return db_session.query(Endpoint).all()
 
 
 def get_date_of_first_request(db_session):

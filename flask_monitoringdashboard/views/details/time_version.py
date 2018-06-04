@@ -23,12 +23,14 @@ CONTENT_INFO = '''This graph shows a horizontal boxplot for the versions that ar
 graph you can found out whether the performance changes across different versions.'''
 
 
-@blueprint.route('/endpoint/<end>/versions', methods=['GET', 'POST'])
+@blueprint.route('/endpoint/<endpoint_id>/versions', methods=['GET', 'POST'])
 @secure
-def versions(end):
+def versions(endpoint_id):
     with session_scope() as db_session:
+        details = get_endpoint_details(db_session, endpoint_id)
+        end = details.endpoint
         form = get_slider_form(count_versions_endpoint(db_session, end), title='Select the number of versions')
-        details = get_endpoint_details(db_session, end)
+
         graph = versions_graph(db_session, end, form)
         return render_template('fmd_dashboard/graph-details.html', details=details, graph=graph,
                                title='{} for {}'.format(TITLE, end), form=form,

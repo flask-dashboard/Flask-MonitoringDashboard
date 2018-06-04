@@ -28,12 +28,13 @@ def get_body(index, lines):
     return body
 
 
-@blueprint.route('/endpoint/<end>/profiler')
+@blueprint.route('/endpoint/<endpoint_id>/profiler')
 @secure
-def profiler(end):
+def profiler(endpoint_id):
     page, per_page, offset = get_page_args(page_parameter='page', per_page_parameter='per_page')
     with session_scope() as db_session:
-        details = get_endpoint_details(db_session, end)
+        details = get_endpoint_details(db_session, endpoint_id)
+        end = details.endpoint
         table = get_profiled_requests(db_session, end, offset, per_page)
 
         pagination = Pagination(page=page, per_page=per_page, total=count_profiled_requests(db_session, end),

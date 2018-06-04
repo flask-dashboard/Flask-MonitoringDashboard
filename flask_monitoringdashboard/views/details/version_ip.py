@@ -28,11 +28,12 @@ graph you don\'t need any configuration to see a difference between the performa
 IP-addresses.'''
 
 
-@blueprint.route('/endpoint/<end>/version_ip', methods=['GET', 'POST'])
+@blueprint.route('/endpoint/<endpoint_id>/version_ip', methods=['GET', 'POST'])
 @secure
-def version_ip(end):
+def version_ip(endpoint_id):
     with session_scope() as db_session:
-        details = get_endpoint_details(db_session, end)
+        details = get_endpoint_details(db_session, endpoint_id)
+        end = details.endpoint
         form = get_double_slider_form([count_ip(db_session, end), count_versions_endpoint(db_session, end)],
                                       subtitle=['IP-addresses', 'Versions'],
                                       title='Select the number of IP-addresses and versions')

@@ -14,12 +14,14 @@ in a single hour. The darker the cell, the more requests it has processed. This 
 to validate on which moment of the day this endpoint processes to most requests.'''
 
 
-@blueprint.route('/endpoint/<end>/hourly_load', methods=['GET', 'POST'])
+@blueprint.route('/endpoint/<endpoint_id>/hourly_load', methods=['GET', 'POST'])
 @secure
-def endpoint_hourly_load(end):
+def endpoint_hourly_load(endpoint_id):
     form = get_daterange_form()
     with session_scope() as db_session:
-        details = get_endpoint_details(db_session, end)
-    return render_template('fmd_dashboard/graph-details.html', form=form, details=details,
-                           graph=hourly_load_graph(form, end), title='{} for {}'.format(TITLE, end),
+        details = get_endpoint_details(db_session, endpoint_id)
+    title = '{} for {}'.format(TITLE, details['endpoint'])
+    graph = hourly_load_graph(form, details['endpoint'])
+
+    return render_template('fmd_dashboard/graph-details.html', form=form, details=details, graph=graph, title=title,
                            information=get_plot_info(AXES_INFO, CONTENT_INFO))

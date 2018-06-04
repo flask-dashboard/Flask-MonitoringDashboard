@@ -2,7 +2,7 @@
 
 {% block endpoint_menu %}
     {% macro endpoint_submenu(endpoint, name) -%}
-        <li><a class="{{ active_if_is(endpoint) }}" href="{{ url_for(endpoint, end=details.endpoint) }}">{{ name }}</a>
+        <li><a class="{{ active_if_is(endpoint) }}" href="{{ url_for(endpoint, endpoint_id=details.id) }}">{{ name }}</a>
         </li>
     {%- endmacro %}
 
@@ -23,8 +23,7 @@
             <i class="fa fa-fw fa-asterisk"></i>
             <span class="nav-link-text">{{ details.endpoint }}</span>
         </a>
-        <ul class="sidenav-second-level show"
-            id="collapseEndpoint">
+        <ul class="sidenav-second-level show" id="collapseEndpoint">
             {{ endpoint_submenu(url_heatmap, 'Hourly API Utilization') }}
             {{ endpoint_submenu(url_version_user, 'User-Focused Multi-Version Performance') }}
             {{ endpoint_submenu(url_version_ip, 'IP-Focused Multi-Version Performance') }}
@@ -67,7 +66,8 @@
                     {% endif %}
                     <tr>
                         <td><b>Last accessed</b></td>
-                        <td>{{ "{:%Y-%m-%d %H:%M:%S }".format(details.rule.last_accessed) }}</td>
+                        <td>{{ "{:%Y-%m-%d %H:%M:%S }".format(details.rule.last_accessed)
+                                if details.rule.last_accessed }}</td>
                     </tr>
                     <tr>
                         <td><b>Total number of hits</b></td>

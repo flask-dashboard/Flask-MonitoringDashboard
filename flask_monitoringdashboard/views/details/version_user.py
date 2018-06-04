@@ -28,11 +28,12 @@ A larger execution time is presented by a larger circle. With this graph you can
 there is a difference in performance across users.'''
 
 
-@blueprint.route('/endpoint/<end>/version_user', methods=['GET', 'POST'])
+@blueprint.route('/endpoint/<endpoint_id>/version_user', methods=['GET', 'POST'])
 @secure
-def version_user(end):
+def version_user(endpoint_id):
     with session_scope() as db_session:
-        details = get_endpoint_details(db_session, end)
+        details = get_endpoint_details(db_session, endpoint_id)
+        end = details.endpoint
         form = get_double_slider_form([count_users(db_session, end), count_versions_endpoint(db_session, end)],
                                       subtitle=['Users', 'Versions'], title='Select the number of users and versions')
         graph = version_user_graph(db_session, end, form)

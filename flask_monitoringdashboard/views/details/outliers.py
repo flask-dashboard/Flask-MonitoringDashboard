@@ -17,11 +17,12 @@ from flask_monitoringdashboard.core.plot import boxplot, get_figure, get_layout,
 NUM_DATAPOINTS = 50
 
 
-@blueprint.route('/endpoint/<end>/outliers')
+@blueprint.route('/endpoint/<endpoint_id>/outliers')
 @secure
-def outliers(end):
+def outliers(endpoint_id):
     with session_scope() as db_session:
-        details = get_endpoint_details(db_session, end)
+        details = get_endpoint_details(db_session, endpoint_id)
+        end = details.endpoint
         delete_outliers_without_stacktrace(db_session)
         page, per_page, offset = get_page_args(page_parameter='page', per_page_parameter='per_page')
         table = get_outliers_sorted(db_session, end, Outlier.execution_time, offset, per_page)

@@ -106,11 +106,12 @@ def sort_lines(lines, partial_list, level=1, prefix=None):
     return partial_list
 
 
-@blueprint.route('/endpoint/<end>/grouped-profiler')
+@blueprint.route('/endpoint/<endpoint_id>/grouped-profiler')
 @secure
-def grouped_profiler(end):
+def grouped_profiler(endpoint_id):
     with session_scope() as db_session:
-        details = get_endpoint_details(db_session, end)
+        details = get_endpoint_details(db_session, endpoint_id)
+        end = details.endpoint
         data = get_grouped_profiled_requests(db_session, end)
     total_execution_time = 0
     total_hits = 0

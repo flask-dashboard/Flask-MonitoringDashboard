@@ -89,6 +89,7 @@ def get_endpoint_by_name(db_session, endpoint_name):
     except NoResultFound:
         result = Endpoint(name=endpoint_name)
         db_session.add(result)
+        db_session.flush()
     db_session.expunge(result)
     return result
 
@@ -97,7 +98,9 @@ def get_endpoint_by_id(db_session, id):
     """get the Endpoint-object from a given endpoint_id.
         :param db_session: session for the database
         :param id: id of the endpoint. """
-    return db_session.query(Endpoint).filter(Endpoint.id == id).one()
+    result = db_session.query(Endpoint).filter(Endpoint.id == id).one()
+    db_session.expunge(result)
+    return result
 
 
 def update_endpoint(db_session, endpoint_name, value):
@@ -109,6 +112,7 @@ def update_endpoint(db_session, endpoint_name, value):
 def get_last_requested(db_session):
     """ Returns the accessed time of a single endpoint. """
     result = db_session.query(Endpoint.name, Endpoint.last_requested).all()
+    db_session.expunge_all()
     return [(end, to_local_datetime(time)) for end, time in result]
 
 

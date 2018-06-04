@@ -40,7 +40,8 @@
                                 <td style="text-align: right;">{{ "{:,.1f}".format(record['median-today']) }}</td>
                                 <td style="text-align: right;">{{ "{:,.1f}".format(record['median-week']) }}</td>
                                 <td style="text-align: right;">{{ "{:,.1f}".format(record['median-overall']) }}</td>
-                                <td style="text-align: center;">{{ "{:%Y-%m-%d %H:%M:%S }".format(record['last-accessed']) }}</td>
+                                <td style="text-align: center;">{{ "{:%Y-%m-%d %H:%M:%S }".format(record['last-accessed'])
+                                                    if record['last-accessed'] }}</td>
                             </tr>
                         {% endfor %}
                         </tbody>

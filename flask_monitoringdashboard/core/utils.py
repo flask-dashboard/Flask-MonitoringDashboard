@@ -11,15 +11,16 @@ from flask_monitoringdashboard.database.endpoint import get_endpoint_by_name, ge
 from flask_monitoringdashboard.database.request import get_date_of_first_request
 
 
-def get_endpoint_details(db_session, id):
+def get_endpoint_details(db_session, endpoint_id):
     """ Return details about an endpoint"""
-    endpoint = get_endpoint_by_id(db_session, id).name
+    endpoint = get_endpoint_by_id(db_session, endpoint_id)
     return {
-        'endpoint': endpoint,
+        'id': endpoint_id,
+        'endpoint': endpoint.name,
         'rules': [r.rule for r in get_rules(endpoint)],
-        'rule': get_endpoint_by_name(db_session, endpoint),
-        'url': get_url(endpoint),
-        'total_hits': count_requests(db_session, endpoint)
+        'rule': endpoint,
+        'url': get_url(endpoint.name),
+        'total_hits': count_requests(db_session, endpoint.id)
     }
 
 

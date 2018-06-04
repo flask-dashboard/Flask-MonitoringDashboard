@@ -1,4 +1,3 @@
-import datetime
 import inspect
 import sys
 import threading
@@ -9,8 +8,8 @@ from flask_monitoringdashboard import user_app
 from flask_monitoringdashboard.core.profiler.pathHash import PathHash
 from flask_monitoringdashboard.database import session_scope
 from flask_monitoringdashboard.database.endpoint import update_last_accessed
-from flask_monitoringdashboard.database.stack_line import add_stack_line
 from flask_monitoringdashboard.database.request import add_request
+from flask_monitoringdashboard.database.stack_line import add_stack_line
 
 
 class StacktraceProfiler(threading.Thread):
@@ -95,7 +94,7 @@ class StacktraceProfiler(threading.Thread):
         total_traces = sum([v for k, v in self._get_order('')])
         position = 0
         for code_line in self.get_funcheader():
-            add_stack_line(db_session, request_id, position=position, indent=0, duration=total_traces,
+            add_stack_line(db_session, request_id, position=position, indent=0, duration=self._duration,
                            code_line=code_line)
             position += 1
 
@@ -103,7 +102,8 @@ class StacktraceProfiler(threading.Thread):
             path, fun, line = key
             fn, ln = self._path_hash.get_last_fn_ln(path)
             indent = self._path_hash.get_indent(path)
-            add_stack_line(db_session, request_id, position=position, indent=indent, duration=val,
+            duration = val * self._duration / total_traces
+            add_stack_line(db_session, request_id, position=position, indent=indent, duration=duration,
                            code_line=(fn, ln, fun, line))
             position += 1
 

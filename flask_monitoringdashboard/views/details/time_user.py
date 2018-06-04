@@ -21,16 +21,16 @@ CONTENT_INFO = '''This graph shows a horizontal boxplot for the unique users tha
 With this graph you can found out whether the performance is different across different users.'''
 
 
-@blueprint.route('/endpoint/<id>/users', methods=['GET', 'POST'])
+@blueprint.route('/endpoint/<endpoint_id>/users', methods=['GET', 'POST'])
 @secure
-def users(id):
+def users(endpoint_id):
     with session_scope() as db_session:
-        details = get_endpoint_details(db_session, id)
-        form = get_slider_form(count_users(db_session, id), title='Select the number of users')
-    graph = users_graph(id, form)
+        details = get_endpoint_details(db_session, endpoint_id)
+        form = get_slider_form(count_users(db_session, endpoint_id), title='Select the number of users')
+    graph = users_graph(endpoint_id, form)
 
     return render_template('fmd_dashboard/graph-details.html', details=details, graph=graph, form=form,
-                           title='{} for {}'.format(TITLE, details.endpoint),
+                           title='{} for {}'.format(TITLE, details['endpoint']),
                            information=get_plot_info(AXES_INFO, CONTENT_INFO))
 
 
@@ -43,7 +43,7 @@ def users_graph(id, form):
     """
     with session_scope() as db_session:
         users = get_users(db_session, id, form.get_slider_value())
-        times = get_user_data_grouped(db_session, lambda x: simplify(x, 10), Request.endpoint == end)
+        times = get_user_data_grouped(db_session, lambda x: simplify(x, 10), Request.endpoint_id == id)
         data = [boxplot(name=u, values=get_value(times, u)) for u in users]
 
     layout = get_layout(
