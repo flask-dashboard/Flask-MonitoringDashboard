@@ -69,16 +69,17 @@ class StacktraceProfiler(threading.Thread):
         lines_returned = []
         fun = user_app.view_functions[self._endpoint.name]
         if hasattr(fun, 'original'):
-            fun = fun.original
-            print(inspect.getfile(fun))
-            print(inspect.findsource(fun)[1])
-        lines, _ = inspect.getsourcelines(user_app.view_functions[self._endpoint.name])
-        ln = inspect.findsource(user_app.view_functions[self._endpoint.name])[1]
-        fn = inspect.getfile(user_app.view_functions[self._endpoint.name])
-        for line in lines:
-            lines_returned.append(line.strip())
-            if line.strip()[:4] == 'def ':
-                return lines_returned
+            original = fun.original
+            fn = inspect.getfile(original)
+            ln = inspect.findsource(original)[1] + 1
+            lines, ln = inspect.getsourcelines(original)
+            count = 0
+            for line in lines:
+                lines_returned.append((fn, ln + count, 'None', line.strip()))
+                count += 1
+                if line.strip()[:4] == 'def ':
+                    return lines_returned
+        return ValueError('Cannot retrieve the function header')
 
     def _order_histogram(self, path=''):
         """
@@ -93,24 +94,20 @@ class StacktraceProfiler(threading.Thread):
     def insert_lines_db(self, db_session, request_id):
         total_traces = sum([v for k, v in self._get_order('')])
         position = 0
-        # TODO duration should be in ms
         for code_line in self.get_funcheader():
             add_stack_line(db_session, request_id, position=position, indent=0, duration=total_traces,
                            code_line=code_line)
             position += 1
 
-        print(self._lines_body)
-        for (key, val) in self._lines_body:
-            print("%s-------------%s" % (key, val))
-            path, text = key
+        for key, val in self._lines_body:
+            path, fun, line = key
+            fn, ln = self._path_hash.get_last_fn_ln(path)
             indent = self._path_hash.get_indent(path)
-            # TODO duration should be in ms
             add_stack_line(db_session, request_id, position=position, indent=indent, duration=val,
                            code_line=(fn, ln, fun, line))
             position += 1
 
     def _get_order(self, path):
-        print("get order____%s" % path)
         indent = self._path_hash.get_indent(path) + 1
         return sorted([row for row in self._histogram.items()
                        if row[0][0][:len(path)] == path and indent == self._path_hash.get_indent(row[0][0])],

@@ -56,8 +56,20 @@ class PathHash(object):
     def _encode(self, fn, ln):
         return str(self._string_hash.hash(fn)) + LINE_SPLIT + str(ln)
 
+    def _decode(self, string):
+        """ Opposite of _encode
+
+        Example: _decode('0:12') => ('fn1', 12)
+        """
+        hash, ln = string.split(LINE_SPLIT)
+        return self._string_hash.unhash(int(hash)), int(ln)
+
     @staticmethod
     def get_indent(string):
         if string:
             return len(string.split(STRING_SPLIT))
         return 0
+
+    def get_last_fn_ln(self, string):
+        last = string.rpartition(STRING_SPLIT)[-1]
+        return self._decode(last)

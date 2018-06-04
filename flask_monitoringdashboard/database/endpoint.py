@@ -86,10 +86,10 @@ def get_endpoint_by_name(db_session, endpoint_name):
             filter(Endpoint.name == endpoint_name).one()
         result.time_added = to_local_datetime(result.time_added)
         result.last_requested = to_local_datetime(result.last_requested)
-        db_session.expunge_all()
     except NoResultFound:
         result = Endpoint(name=endpoint_name)
         db_session.add(result)
+    db_session.expunge(result)
     return result
 
 
