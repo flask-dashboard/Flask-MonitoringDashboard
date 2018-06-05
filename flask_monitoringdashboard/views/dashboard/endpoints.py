@@ -8,7 +8,7 @@ from flask_monitoringdashboard.core.utils import simplify
 from flask_monitoringdashboard.database import session_scope
 from flask_monitoringdashboard.database.count_group import get_value
 from flask_monitoringdashboard.database.data_grouped import get_endpoint_data_grouped
-from flask_monitoringdashboard.database.request import get_endpoints
+from flask_monitoringdashboard.database.endpoint import get_endpoints
 
 TITLE = 'API Performance'
 

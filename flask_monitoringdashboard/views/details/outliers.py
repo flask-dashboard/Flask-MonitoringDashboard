@@ -24,7 +24,7 @@ def outliers(endpoint_id):
         page, per_page, offset = get_page_args(page_parameter='page', per_page_parameter='per_page')
         table = get_outliers_sorted(db_session, endpoint_id, offset, per_page)
         for outlier in table:
-            outlier.time = to_local_datetime(outlier.time)
+            outlier.request.time_requested = to_local_datetime(outlier.request.time_requested)
         all_cpus = get_outliers_cpus(db_session, endpoint_id)
         graph = cpu_load_graph(all_cpus)
 
@@ -41,7 +41,7 @@ def cpu_load_graph(all_cpus):
     for cpu in all_cpus:
         if not cpu:
             continue
-        x = ast.literal_eval(cpu[0])
+        x = ast.literal_eval(cpu)
         values.append(x)
         count += 1
 

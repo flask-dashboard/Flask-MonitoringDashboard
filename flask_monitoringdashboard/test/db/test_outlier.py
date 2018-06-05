@@ -7,7 +7,8 @@
 import unittest
 
 from flask_monitoringdashboard.database import session_scope
-from flask_monitoringdashboard.test.utils import set_test_environment, clear_db, add_fake_data, NAME, OUTLIER_COUNT
+from flask_monitoringdashboard.test.utils import set_test_environment, clear_db, add_fake_data, NAME, OUTLIER_COUNT,\
+    ENDPOINT_ID
 
 
 class TestMonitorRule(unittest.TestCase):
@@ -32,10 +33,10 @@ class TestMonitorRule(unittest.TestCase):
         """
         from flask_monitoringdashboard.database.outlier import get_outliers_sorted, Outlier
         with session_scope() as db_session:
-            outliers = get_outliers_sorted(db_session, NAME, Outlier.time, offset=0, per_page=10)
+            outliers = get_outliers_sorted(db_session, endpoint_id=ENDPOINT_ID, offset=0, per_page=10)
         self.assertEqual(len(outliers), OUTLIER_COUNT)
         for i, outlier in enumerate(outliers):
-            self.assertEqual(outlier.endpoint, NAME)
+            self.assertEqual(outlier.request.endpoint.name, NAME)
             if i == 0:
                 continue
             self.assertTrue(outlier.time <= outliers[i - 1].time)

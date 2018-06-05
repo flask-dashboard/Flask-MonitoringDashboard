@@ -23,6 +23,7 @@ def grouped_profiler(endpoint_id):
         requests = get_grouped_profiled_requests(db_session, endpoint_id)
         db_session.expunge_all()
     total_execution_time = sum([r.duration for r in requests])
+    num_requests = len(requests) if len(requests) > 0 else 1
 
     histogram = defaultdict(list)  # path -> [list of values]
     path_hash = PathHash()

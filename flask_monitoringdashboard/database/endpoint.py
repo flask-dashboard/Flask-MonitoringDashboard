@@ -123,9 +123,14 @@ def update_last_accessed(db_session, endpoint_name):
         update({Endpoint.last_requested: datetime.datetime.utcnow()})
 
 
-def get_monitor_data(db_session):
+def get_endpoints(db_session):
+    """ Returns the name of all endpoints from the database """
+    return db_session.query(Endpoint).all()
+
+
+def get_endpoint_data(db_session):
     """
-    Returns all data in the rules-table. This table contains which endpoints are being
+    Returns all data in the endpoints table. This table contains which endpoints are being
     monitored and which are not.
     :return: all data from the database in the rules-table.
     """

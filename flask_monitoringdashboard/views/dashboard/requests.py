@@ -7,7 +7,7 @@ from flask_monitoringdashboard.core.plot import barplot, get_figure, get_layout
 from flask_monitoringdashboard.core.info_box import get_plot_info
 from flask_monitoringdashboard.database import session_scope
 from flask_monitoringdashboard.database.count_group import count_requests_per_day, get_value
-from flask_monitoringdashboard.database.request import get_endpoints
+from flask_monitoringdashboard.database.endpoint import get_endpoints
 
 TITLE = 'Daily API Utilization'
 
