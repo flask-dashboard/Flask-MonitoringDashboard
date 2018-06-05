@@ -39,7 +39,7 @@ def profiler(endpoint_id):
         total = count_profiled_requests(db_session, endpoint_id)
     pagination = Pagination(page=page, per_page=per_page, total=total, format_number=True,
                             css_framework='bootstrap4', format_total=True, record_name='profiled requests')
-    
+
     body = {}  # dict with the request.id as a key, and the values is a list for every stack_line.
     for request in requests:
         body[request.id] = [get_body(index, request.stack_lines) for index in range(len(request.stack_lines))]
