@@ -114,6 +114,7 @@ def grouped_profiler(endpoint_id):
         requests = get_grouped_profiled_requests(db_session, endpoint_id)
         db_session.expunge_all()
     total_execution_time = sum([r.duration for r in requests])
+    num_requests = len(requests) if len(requests) > 0 else 1
 
     histogram = {}  # path -> [list of values]
     for r in requests:
@@ -148,5 +149,5 @@ def grouped_profiler(endpoint_id):
         index += 1
 
     return render_template('fmd_dashboard/profiler_grouped.html', details=details, table=table, get_body=get_body,
-                           average_time=total_execution_time/len(requests),
+                           average_time=total_execution_time/num_requests,
                            title='Grouped Profiler results for {}'.format(end))

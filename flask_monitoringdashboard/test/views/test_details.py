@@ -1,7 +1,7 @@
 import unittest
 
 from flask_monitoringdashboard.test.utils import set_test_environment, clear_db, add_fake_data, get_test_app, NAME, \
-    test_admin_secure
+    test_admin_secure, ENDPOINT_ID
 
 
 class TestResult(unittest.TestCase):
@@ -46,4 +46,4 @@ class TestResult(unittest.TestCase):
         """
             Just retrieve the content and check if nothing breaks
         """
-        test_admin_secure(self, 'endpoint/{}/outliers'.format(NAME))
+        test_admin_secure(self, 'endpoint/{}/outliers'.format(ENDPOsINT_ID))

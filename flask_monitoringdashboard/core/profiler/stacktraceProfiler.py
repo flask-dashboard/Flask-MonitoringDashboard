@@ -61,7 +61,7 @@ class StacktraceProfiler(threading.Thread):
         with session_scope() as db_session:
             update_last_accessed(db_session, endpoint_name=self._endpoint.name)
             request_id = add_request(db_session, duration=self._duration, endpoint_id=self._endpoint.id, ip=self._ip)
-            self._outlier_profiler.set_request_id(request_id)
+            self._outlier_profiler.set_request_id(db_session, request_id)
             self._order_histogram()
             self.insert_lines_db(db_session, request_id)
 

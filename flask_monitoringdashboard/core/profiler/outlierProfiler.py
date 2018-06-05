@@ -42,7 +42,7 @@ class OutlierProfiler(threading.Thread):
                 # ln: line number
                 # fun: function name
                 # text: source code line
-                if self._endpoint is fun:
+                if self._endpoint.name == fun:
                     in_endpoint_code = True
                 if in_endpoint_code:
                     stack_list.append('File: "{}", line {}, in "{}": "{}"'.format(fn, ln, fun, line))
@@ -55,12 +55,5 @@ class OutlierProfiler(threading.Thread):
     def stop(self, duration):
         self._stopped = True
 
-    def set_request_id(self, request_id):
-        if self._stopped:
-            return
-        # Wait till the everything is assigned.
-        while not self._memory:
-            time.sleep(.01)
-
-        with session_scope() as db_session:
-            add_outlier(db_session, request_id, self._cpu_percent, self._memory, self._stacktrace, self._request)
+    def set_request_id(self, db_session, request_id):
+        add_outlier(db_session, request_id, self._cpu_percent, self._memory, self._stacktrace, self._request)

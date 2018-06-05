@@ -8,7 +8,7 @@ from flask_monitoringdashboard.core.info_box import get_plot_info
 from flask_monitoringdashboard.database import Request, session_scope
 from flask_monitoringdashboard.database.count import count_versions
 from flask_monitoringdashboard.database.count_group import count_requests_group, get_value
-from flask_monitoringdashboard.database.request import get_endpoints
+from flask_monitoringdashboard.database.endpoint import get_endpoints
 from flask_monitoringdashboard.database.versions import get_versions
 
 TITLE = 'Multi Version API Utilization'

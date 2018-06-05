@@ -4,9 +4,9 @@ Contains all functions that access any functionCall-object
 
 import time
 
-from sqlalchemy import distinct, func
+from sqlalchemy import func
 
-from flask_monitoringdashboard.database import Request, Endpoint
+from flask_monitoringdashboard.database import Request
 
 
 def add_request(db_session, duration, endpoint_id, ip):
@@ -34,11 +34,6 @@ def get_data(db_session):
     :return: all data from the database in the Endpoint-table.
     """
     return db_session.query(Request).all()
-
-
-def get_endpoints(db_session):
-    """ Returns the name of all endpoints from the database """
-    return db_session.query(Endpoint).all()
 
 
 def get_date_of_first_request(db_session):
