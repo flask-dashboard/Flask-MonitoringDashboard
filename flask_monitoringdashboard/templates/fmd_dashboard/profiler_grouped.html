@@ -1,49 +1,33 @@
-{% extends "fmd_dashboard/graph-details.html" %}
-
-{% macro request_title(request) -%}
-    {# request is a Request-object #}
-    <div class="card-header">
-        <h6>Request {{ request.id|string + ': ' + "{:,.1f} ms".format(request.execution_time) }}</h6>
-    </div>
-{%- endmacro %}
-
-{% macro compute_color(percentage) -%}
-    {% set red = 244, 67, 54 %}
-    {% set green = 205, 220, 57 %}
-    {% set color_0 = red[0] * percentage + green[0] * (1 - percentage) %}
-    {% set color_1 = red[1] * percentage + green[1] * (1 - percentage) %}
-    {% set color_2 = red[2] * percentage + green[2] * (1 - percentage) %}
-    {{ 'rgb({},{},{})'.format(color_0, color_1, color_2) }}
-{%- endmacro %}
-
-{% macro table_row(index, table) -%}
-    {% set body = get_body(index, table) %}
-    {% set row = table[index] %}
-    <tr>
-        <td hidden>{{ row.index }}</td>
-        <td style="padding-left: {{ 10 + 15 * row.indent }}px; width: 60%">
-            {{ row.code }}
-            {% if body %}
-                <i class="fa fa-minus-square" style="cursor: pointer;"
-                   onclick="toggle_rows( {{'{}, this'.format(body) }})"></i>
-            {% endif %}
-        </td>
-        <td style="text-align: right;">{{ row.hits }}</td>
-        <td style="text-align: right; width: 12%">
-            {{ "{:,.1f} ms".format(row.total) }}
-        </td>
-        <td style="text-align: right; width: 12%">
-            {{ "{:,.1f} ms".format(row.average) }}
-        </td>
-        <td style="text-align: right; background-color: {{ compute_color(row.percentage) }}; width: 10%">
-            {{ "{:.1f} %".format(row.percentage * 100) }}
-        </td>
-    </tr>
-{%- endmacro %}
+{% extends "fmd_dashboard/profiler.html" %}
 
 
 {% block graph_content %}
-    <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0" >
+
+    {% macro table_row(index, table) -%}
+        {% set row = table[index] %}
+        <tr>
+            <td hidden>{{ row.index }}</td>
+            <td style="padding-left: {{ 10 + 15 * row.indent }}px; width: 60%">
+                {{ row.code }}
+                {% if row.body %}
+                    <i class="fa fa-minus-square" style="cursor: pointer;"
+                       onclick="toggle_rows( {{'{}, 0, this'.format(row.body) }})"></i>
+                {% endif %}
+            </td>
+            <td style="text-align: right;">{{ row.hits }}</td>
+            <td style="text-align: right; width: 12%">
+                {{ "{:,.1f} ms".format(row.sum) }}
+            </td>
+            <td style="text-align: right; width: 12%">
+                {{ "{:,.1f} ms".format(row.average) }}
+            </td>
+            <td style="text-align: right; background-color: {{ compute_color(row.percentage) }}; width: 10%">
+                {{ "{:.1f} %".format(row.percentage * 100) }}
+            </td>
+        </tr>
+    {%- endmacro %}
+
+    <table class="table table-bordered req-id0" id="dataTable" width="100%" cellspacing="0" >
         <thead>
             <tr>
                 <th hidden>Line number</th>
@@ -60,41 +44,4 @@
             {% endfor %}
         </tbody>
     </table>
-{% endblock %}
-
-{% block script %}
-    <script type="text/javascript">
-        $('#loading').hide();
-        $('#dataTable').DataTable({
-            "paging": false,
-            "info": false,
-            "searching": false
-        });
-        function toggle_rows(rows, icon){
-            var table = $(".table.table-bordered");
-
-            if (icon.className.indexOf("fa-minus-square") >= 0){
-                $(icon).removeClass("fa-minus-square");
-                $(icon).addClass("fa-plus-square");
-
-                rows.forEach(function(i){
-                    var element = table.find('tr:eq(' + (i + 1) + ')');
-                    element.find('.fa').removeClass("fa-plus-square").addClass("fa-minus-square");
-                    if (element.is(":visible")){
-                        element.hide();
-                    }
-                });
-            } else {
-                $(icon).removeClass("fa-plus-square");
-                $(icon).addClass("fa-minus-square");
-
-                rows.forEach(function(i){
-                    var element = table.find('tr:eq(' + (i + 1) + ')');
-                    if (!element.is(":visible")){
-                        element.show();
-                    }
-                });
-            }
-        }
-    </script>
 {% endblock %}

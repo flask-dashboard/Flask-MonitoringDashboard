@@ -43,4 +43,3 @@ def thread_after_request(endpoint, duration):
         PerformanceProfiler(endpoint, ip, duration).start()
     else:
         raise ValueError("MonitorLevel should be 0 or 1.")
-

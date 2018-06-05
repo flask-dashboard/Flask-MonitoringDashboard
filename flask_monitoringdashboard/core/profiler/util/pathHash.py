@@ -1,4 +1,4 @@
-from flask_monitoringdashboard.core.profiler.stringHash import StringHash
+from flask_monitoringdashboard.core.profiler.util.stringHash import StringHash
 
 STRING_SPLIT = '->'
 LINE_SPLIT = ':'
@@ -73,3 +73,15 @@ class PathHash(object):
     def get_last_fn_ln(self, string):
         last = string.rpartition(STRING_SPLIT)[-1]
         return self._decode(last)
+
+    def get_stacklines_path(self, stack_lines, index):
+        self.set_path('')
+        path = []
+        while index >= 0:
+            path.append(stack_lines[index].code)
+            current_indent = stack_lines[index].indent
+            while index >= 0 and stack_lines[index].indent != current_indent - 1:
+                index -= 1
+        for code_line in reversed(path):
+            self._current_path = self.append(code_line.filename, code_line.line_number)
+        return self._current_path
