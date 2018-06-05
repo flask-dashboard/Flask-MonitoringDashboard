@@ -1,4 +1,4 @@
-from sqlalchemy import desc
+from sqlalchemy import desc, asc
 from sqlalchemy.orm import joinedload
 
 from flask_monitoringdashboard.database import Outlier, Request
@@ -20,12 +20,14 @@ def get_outliers_sorted(db_session, endpoint_id, offset, per_page):
     :param endpoint_id: endpoint_id for filtering the requests
     :param offset: number of items to skip
     :param per_page: number of items to return
-    :return: a list of all outliers of a specific endpoint. The list is sorted based on the column that is given.
+    :return: a list of all outliers of a specific endpoint. The list is sorted based on request time.
     """
     result = db_session.query(Outlier).\
-        filter(Request.endpoint_id == endpoint_id).\
+        join(Outlier.request). \
+        options(joinedload(Outlier.request)). \
+        filter(Request.endpoint_id == endpoint_id). \
         order_by(desc(Request.time_requested)). \
-        offset(offset).limit(per_page).options(joinedload(Outlier.request)).all()
+        offset(offset).limit(per_page).all()
     db_session.expunge_all()
     return result
 
