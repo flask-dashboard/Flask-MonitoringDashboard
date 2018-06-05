@@ -42,7 +42,7 @@ def get_path(lines, index):
     """
     path = []
     while index >= 0:
-        path.append(lines[index].line_text)
+        path.append(lines[index].code.code)
         current_indent = lines[index].indent
         while index >= 0 and lines[index].indent != current_indent - 1:
             index -= 1
@@ -111,27 +111,19 @@ def grouped_profiler(endpoint_id):
     with session_scope() as db_session:
         details = get_endpoint_details(db_session, endpoint_id)
         end = details['endpoint']
-        data = get_grouped_profiled_requests(db_session, end)
-    total_execution_time = 0
-    total_hits = 0
-    for d in data:
-        total_execution_time += d[0].execution_time
-        total_hits += d[1][0].value
-
-    # total hits ........ total execution time ms
-    #     x hits ........     y execution time ms
-    # y = x * (total exec time / total hits)
-    coefficient = total_execution_time/total_hits
+        requests = get_grouped_profiled_requests(db_session, endpoint_id)
+        db_session.expunge_all()
+    total_execution_time = sum([r.duration for r in requests])
 
     histogram = {}  # path -> [list of values]
-    for _, lines in data:
-        for index in range(len(lines)):
-            key = get_path(lines, index)
-            line = lines[index]
+    for r in requests:
+        for index in range(len(r.stack_lines)):
+            key = get_path(r.stack_lines, index)
+            line = r.stack_lines[index]
             if key in histogram:
-                histogram[key].append(line.value)
+                histogram[key].append(line.duration)
             else:
-                histogram[key] = [line.value]
+                histogram[key] = [line.duration]
 
     unsorted_tuples_list = []
     for k, v in histogram.items():
@@ -149,12 +141,12 @@ def grouped_profiler(endpoint_id):
             'indent': len(split_line),
             'code': split_line[-1],
             'hits': len(line[1]),
-            'total': sum_ * coefficient,
-            'average': sum_ / count * coefficient,
-            'percentage': sum_ / total_hits
+            'total': sum_,
+            'average': sum_ / count,
+            'percentage': sum_ / total_execution_time
         })
         index += 1
 
     return render_template('fmd_dashboard/profiler_grouped.html', details=details, table=table, get_body=get_body,
-                           average_time=total_execution_time/len(data),
+                           average_time=total_execution_time/len(requests),
                            title='Grouped Profiler results for {}'.format(end))

@@ -1,7 +1,7 @@
 """
 Contains all functions that access an StackLine object.
 """
-from sqlalchemy import desc, func
+from sqlalchemy import desc
 from sqlalchemy.orm import joinedload
 
 from flask_monitoringdashboard.database import StackLine, Request
@@ -48,4 +48,4 @@ def get_grouped_profiled_requests(db_session, endpoint_id):
             is a list of StackLine-objects.
     """
     return db_session.query(Request).filter(Request.endpoint_id == endpoint_id). \
-        order_by(desc(Request.id)).all()
+        order_by(desc(Request.id)).options(joinedload(Request.stack_lines).joinedload(StackLine.code)).all()

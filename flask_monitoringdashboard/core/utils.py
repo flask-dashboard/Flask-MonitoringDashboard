@@ -7,7 +7,7 @@ from werkzeug.routing import BuildError
 from flask_monitoringdashboard import config
 from flask_monitoringdashboard.core.rules import get_rules
 from flask_monitoringdashboard.database.count import count_requests, count_total_requests
-from flask_monitoringdashboard.database.endpoint import get_endpoint_by_name, get_endpoint_by_id
+from flask_monitoringdashboard.database.endpoint import get_endpoint_by_id
 from flask_monitoringdashboard.database.request import get_date_of_first_request
 
 
@@ -17,7 +17,7 @@ def get_endpoint_details(db_session, endpoint_id):
     return {
         'id': endpoint_id,
         'endpoint': endpoint.name,
-        'rules': [r.rule for r in get_rules(endpoint)],
+        'rules': ', '.join([r.rule for r in get_rules(endpoint.name)]),
         'rule': endpoint,
         'url': get_url(endpoint.name),
         'total_hits': count_requests(db_session, endpoint.id)
