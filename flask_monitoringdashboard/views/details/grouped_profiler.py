@@ -23,10 +23,9 @@ def grouped_profiler(endpoint_id):
         requests = get_grouped_profiled_requests(db_session, endpoint_id)
         db_session.expunge_all()
     total_execution_time = sum([r.duration for r in requests])
-    num_requests = len(requests) if len(requests) > 0 else 1
-
     histogram = defaultdict(list)  # path -> [list of values]
     path_hash = PathHash()
+
     for r in requests:
         for index in range(len(r.stack_lines)):
             line = r.stack_lines[index]
@@ -35,8 +34,8 @@ def grouped_profiler(endpoint_id):
 
     table = []
     for key, duration_list in order_histogram(histogram.items()):
-        table.append(GroupedStackLine(indent=path_hash.get_indent(key[0]), code=key[1], hits=len(duration_list),
-                                      sum=sum(duration_list), total=total_execution_time))
+        table.append(GroupedStackLine(indent=path_hash.get_indent(key[0]), code=key[1], values=duration_list,
+                                      total=total_execution_time))
 
     for index in range(len(table)):
         table[index].compute_body(index, table)
