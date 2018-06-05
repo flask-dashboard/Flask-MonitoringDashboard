@@ -17,8 +17,8 @@ def get_code_line(db_session, fn, ln, name, code):
         result = db_session.query(CodeLine). \
             filter(CodeLine.filename == fn, CodeLine.line_number == ln, CodeLine.function_name == name,
                    CodeLine.code == code).one()
-        db_session.expunge_all()
     except NoResultFound:
         result = CodeLine(filename=fn, line_number=ln, function_name=name, code=code)
         db_session.add(result)
+        db_session.flush()
     return result

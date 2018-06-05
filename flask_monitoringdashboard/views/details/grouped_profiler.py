@@ -6,7 +6,6 @@ from flask_monitoringdashboard.core.utils import get_endpoint_details
 from flask_monitoringdashboard.database import session_scope
 from flask_monitoringdashboard.database.stack_line import get_grouped_profiled_requests
 
-OUTLIERS_PER_PAGE = 10
 SEPARATOR = ' / '
 
 

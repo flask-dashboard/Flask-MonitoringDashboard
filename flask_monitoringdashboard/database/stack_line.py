@@ -2,6 +2,7 @@
 Contains all functions that access an StackLine object.
 """
 from sqlalchemy import desc, func
+from sqlalchemy.orm import joinedload
 
 from flask_monitoringdashboard.database import StackLine, Request
 from flask_monitoringdashboard.database.code_line import get_code_line
@@ -32,8 +33,11 @@ def get_profiled_requests(db_session, endpoint_id, offset, per_page):
         :return: A list with tuples. Each tuple consists first of a Request-object, and the second part of the tuple
             is a list of StackLine-objects.
     """
-    return db_session.query(Request).filter(Request.endpoint_id == endpoint_id).\
-        order_by(desc(Request.id)).offset(offset).limit(per_page).all()
+    result = db_session.query(Request).filter(Request.endpoint_id == endpoint_id).\
+        order_by(desc(Request.id)).offset(offset).limit(per_page)\
+        .options(joinedload(Request.stack_lines).joinedload(StackLine.code)).all()
+    db_session.expunge_all()
+    return result
 
 
 def get_grouped_profiled_requests(db_session, endpoint_id):

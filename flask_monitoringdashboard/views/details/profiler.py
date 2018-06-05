@@ -11,18 +11,18 @@ from flask_monitoringdashboard.database.stack_line import get_profiled_requests
 OUTLIERS_PER_PAGE = 10
 
 
-def get_body(index, lines):
+def get_body(index, stack_lines):
     """
     Return the lines (as a list) that belong to the line given in the index
     :param index: integer, between 0 and length(lines)
-    :param lines: all lines belonging to a certain request. Every element in this list is an ExecutionPathLine-obj.
+    :param stack_lines: all lines belonging to a certain request. Every element in this list is an StackLine-obj.
     :return: an empty list if the index doesn't belong to a function. If the list is not empty, it denotes the body of
     the given line (by the index).
     """
     body = []
-    indent = lines[index].indent
+    indent = stack_lines[index].indent
     index += 1
-    while index < len(lines) and lines[index].indent > indent:
+    while index < len(stack_lines) and stack_lines[index].indent > indent:
         body.append(index)
         index += 1
     return body
@@ -36,8 +36,13 @@ def profiler(endpoint_id):
         details = get_endpoint_details(db_session, endpoint_id)
         requests = get_profiled_requests(db_session, endpoint_id, offset, per_page)
 
-        pagination = Pagination(page=page, per_page=per_page, total=count_profiled_requests(db_session, endpoint_id),
-                                format_number=True, css_framework='bootstrap4', format_total=True,
-                                record_name='profiled requests')
-        return render_template('fmd_dashboard/profiler.html', details=details, requests=requests, pagination=pagination,
-                               title='Profiler results for {}'.format(details['endpoint']), get_body=get_body)
+        total = count_profiled_requests(db_session, endpoint_id)
+    pagination = Pagination(page=page, per_page=per_page, total=total, format_number=True,
+                            css_framework='bootstrap4', format_total=True, record_name='profiled requests')
+    
+    body = {}  # dict with the request.id as a key, and the values is a list for every stack_line.
+    for request in requests:
+        body[request.id] = [get_body(index, request.stack_lines) for index in range(len(request.stack_lines))]
+
+    return render_template('fmd_dashboard/profiler.html', details=details, requests=requests, pagination=pagination,
+                           title='Profiler results for {}'.format(details['endpoint']), body=body)
