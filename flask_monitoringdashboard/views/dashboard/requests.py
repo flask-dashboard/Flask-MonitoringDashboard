@@ -38,7 +38,8 @@ def requests_graph(form):
     days = form.get_days()
     with session_scope() as db_session:
         hits = count_requests_per_day(db_session, days)
-        data = [barplot(x=[get_value(hits_day, end) for hits_day in hits], y=days, name=end)
+        print(hits)
+        data = [barplot(x=[get_value(hits_day, end.id) for hits_day in hits], y=days, name=end.name)
                 for end in get_endpoints(db_session)]
     layout = get_layout(
         barmode='stack',

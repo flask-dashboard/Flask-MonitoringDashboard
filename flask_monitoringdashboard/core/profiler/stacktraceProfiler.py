@@ -71,7 +71,6 @@ class StacktraceProfiler(threading.Thread):
         if hasattr(fun, 'original'):
             original = fun.original
             fn = inspect.getfile(original)
-            ln = inspect.findsource(original)[1] + 1
             lines, ln = inspect.getsourcelines(original)
             count = 0
             for line in lines:
@@ -79,7 +78,7 @@ class StacktraceProfiler(threading.Thread):
                 count += 1
                 if line.strip()[:4] == 'def ':
                     return lines_returned
-        return ValueError('Cannot retrieve the function header')
+        raise ValueError('Cannot retrieve the function header')
 
     def _order_histogram(self, path=''):
         """
