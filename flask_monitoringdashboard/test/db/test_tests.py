@@ -25,7 +25,7 @@ class TestDBTests(unittest.TestCase):
         """
             Test whether the function returns the right values.
         """
-        from flask_monitoringdashboard.database.tests import add_test_result, get_suite_measurements
+        from flask_monitoringdashboard.database.tests import add_test_result, get_suite_measurements, add_or_update_test
         from flask_monitoringdashboard.database.tested_endpoints import add_endpoint_hit
         from flask_monitoringdashboard import config
         import datetime
@@ -33,6 +33,8 @@ class TestDBTests(unittest.TestCase):
             self.assertEqual(get_suite_measurements(db_session, SUITE), [0])
             for exec_time in EXECUTION_TIMES:
                 for test in TEST_NAMES:
+                    add_or_update_test(db_session, test, True, datetime.datetime.utcnow(), config.version,
+                                       datetime.datetime.utcnow())
                     add_test_result(db_session, test, exec_time, datetime.datetime.utcnow(), config.version, SUITE, 0)
                 add_endpoint_hit(db_session, NAME, exec_time, test, config.version, SUITE)
             result = get_suite_measurements(db_session, SUITE)
@@ -51,7 +53,7 @@ class TestDBTests(unittest.TestCase):
         from flask_monitoringdashboard.database.tests import get_test_suites
         self.test_add_test_result()
         with session_scope() as db_session:
-            self.assertEqual(get_test_suites(db_session), [(SUITE,)])
+            self.assertEqual(get_test_suites(db_session), [SUITE])
 
     def test_get_measurements(self):
         """
@@ -73,4 +75,6 @@ class TestDBTests(unittest.TestCase):
             initial_len = len(get_endpoint_measurements_job(db_session, NAME, SUITE))
             self.test_add_test_result()
             result = get_endpoint_measurements_job(db_session, NAME, SUITE)
+            print(result)
+            print(initial_len)
             self.assertEqual(initial_len + len(EXECUTION_TIMES), len(result))
