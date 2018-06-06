@@ -8,14 +8,7 @@ from unittest import TestLoader
 
 import requests
 
-# Constants for time conversion and array indices.
 CONVERT_TO_MS = 1000
-ENDPOINT_NAME = 1
-TEST_NAME = 2
-START_TIME = 0
-END_TIME = 1
-HIT_TIME = 0
-EXEC_TIME_STAMP = 0
 
 # Determine if this script was called normally or if the call was part of a unit test on Travis.
 # When unit testing, only run one dummy test from the testmonitor folder and submit to a dummy url.
@@ -82,9 +75,9 @@ test_runs = []
 with open(home + '/test_runs.log') as log:
     reader = csv.DictReader(log)
     for row in reader:
-        test_runs.append([datetime.datetime.strptime(row["start_time"], "%Y-%m-%d %H:%M:%S.%f"),
+        test_runs.append((datetime.datetime.strptime(row["start_time"], "%Y-%m-%d %H:%M:%S.%f"),
                           datetime.datetime.strptime(row["stop_time"], "%Y-%m-%d %H:%M:%S.%f"),
-                          row['test_name']])
+                          row['test_name']))
 
 # Read and parse the log containing the start of the endpoint hits into an array for processing.
 start_endpoint_hits = []
@@ -99,21 +92,21 @@ finish_endpoint_hits = []
 with open(home + '/finish_endpoint_hits.log') as log:
     reader = csv.DictReader(log)
     for row in reader:
-        finish_endpoint_hits.append([datetime.datetime.strptime(row["time"], "%Y-%m-%d %H:%M:%S.%f"),
-                                     row['endpoint']])
+        finish_endpoint_hits.append((datetime.datetime.strptime(row["time"], "%Y-%m-%d %H:%M:%S.%f"),
+                                     row['endpoint']))
 
 # Analyze the two arrays containing the start and finish times of the endpoints that were hit by the tests.
 # Calculate the execution time each of these endpoint calls took.
 number_of_hits = len(finish_endpoint_hits)
 for hit in range(number_of_hits):
+    time_stamp_a, endpoint_name_a = start_endpoint_hits[hit]
+    time_stamp_b, endpoint_name_b = finish_endpoint_hits[hit]
     for test_run in test_runs:
-        if test_run[START_TIME] <= finish_endpoint_hits[hit][EXEC_TIME_STAMP] <= test_run[END_TIME]:
-            exec_time = math.ceil(
-                (finish_endpoint_hits[hit][EXEC_TIME_STAMP] - start_endpoint_hits[hit][EXEC_TIME_STAMP]).
-                total_seconds() * CONVERT_TO_MS)
+        start_time, stop_time, test_name = test_run
+        if start_time <= time_stamp_b <= stop_time:
+            exec_time = math.ceil((time_stamp_b - time_stamp_a).total_seconds() * CONVERT_TO_MS)
             data['endpoint_exec_times'].append(
-                {'endpoint': finish_endpoint_hits[hit][ENDPOINT_NAME], 'exec_time': exec_time,
-                 'test_name': test_run[TEST_NAME]})
+                {'endpoint': endpoint_name_b, 'exec_time': exec_time, 'test_name': test_name})
             break
 
 # Retrieve the current version of the user app that is being tested.
