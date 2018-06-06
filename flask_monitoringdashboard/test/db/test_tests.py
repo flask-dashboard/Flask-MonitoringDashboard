@@ -75,6 +75,4 @@ class TestDBTests(unittest.TestCase):
             initial_len = len(get_endpoint_measurements_job(db_session, NAME, SUITE))
             self.test_add_test_result()
             result = get_endpoint_measurements_job(db_session, NAME, SUITE)
-            print(result)
-            print(initial_len)
             self.assertEqual(initial_len + len(EXECUTION_TIMES), len(result))
