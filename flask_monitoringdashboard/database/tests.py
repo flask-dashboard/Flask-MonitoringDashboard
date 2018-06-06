@@ -3,7 +3,7 @@ Contains all functions that returns results of all tests
 """
 from sqlalchemy import func, desc
 
-from flask_monitoringdashboard.database import TestRun, TestsGrouped, TestedEndpoints
+from flask_monitoringdashboard.database import TestRun, TestedEndpoints
 
 
 def add_test_result(db_session, name, exec_time, time, version, suite, iteration):

@@ -20,7 +20,7 @@ def submit_test_results():
     results = request.get_json()
     travis_job_id = -1
     if results['travis_job']:
-        travis_job_id = int(float(results['travis_job']))
+        travis_job_id = results['travis_job']
     app_version = '-1'
     if 'app_version' in results:
         app_version = results['app_version']
@@ -31,8 +31,8 @@ def submit_test_results():
     with session_scope() as db_session:
         for test_run in test_runs:
             time = datetime.datetime.strptime(test_run['time'], '%Y-%m-%d %H:%M:%S.%f')
-            add_test_result(db_session, test_run['name'], test_run['exec_time'], time, app_version, travis_job_id,
-                            test_run['iter'])
+            add_test_result(db_session, test_run['name'], test_run['exec_time'], time, app_version,
+                            int(float(travis_job_id)), test_run['iter'])
 
         for endpoint_hit in endpoint_hits:
             add_endpoint_hit(db_session, endpoint_hit['endpoint'], endpoint_hit['exec_time'], endpoint_hit['test_name'],

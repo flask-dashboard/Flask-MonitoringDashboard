@@ -7,7 +7,7 @@ from contextlib import contextmanager
 
 from sqlalchemy import Column, Integer, String, DateTime, create_engine, Float, Boolean, TEXT, ForeignKey
 from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.orm import sessionmaker
+from sqlalchemy.orm import sessionmaker, relationship
 
 from flask_monitoringdashboard import config
 from flask_monitoringdashboard.core.group_by import get_group_by
@@ -93,47 +93,41 @@ class Outlier(Base):
     time = Column(DateTime)
 
 
-class TestRun(Base):
+class Test(Base):
+    """ Stores all of the tests that exist in the project. """
+    __tablename__ = 'test'
+    id = Column(Integer, primary_key=True)
+    name = Column(String(250), unique=True)
+    passing = Column(Boolean, nullable=False)
+    last_tested = Column(DateTime, default=datetime.datetime.utcnow)
+    version_added = Column(String(100), nullable=False)
+    time_added = Column(DateTime, default=datetime.datetime.utcnow)
+
+
+class TestResult(Base):
     """ Stores unit test performance results obtained from Travis. """
-    __tablename__ = 'testRun'
-    # name of executed test
-    name = Column(String(250), primary_key=True)
-    # execution_time in ms
-    execution_time = Column(Float, primary_key=True)
-    # time of adding the result to the database
-    time = Column(DateTime, primary_key=True)
-    # version of the user app that was tested
-    version = Column(String(100), nullable=False)
-    # number of the test suite execution
-    suite = Column(Integer)
-    # number describing the i-th run of the test within the suite
-    run = Column(Integer)
-
-
-class TestsGrouped(Base):
-    """ Stores which endpoints are tested by which unit tests. """
-    __tablename__ = 'testsGrouped'
-    # Name of the endpoint
-    endpoint = Column(String(250), primary_key=True)
-    # Name of the unit test
-    test_name = Column(String(250), primary_key=True)
-
-
-class TestedEndpoints(Base):
-    """ Stores the endpoint hits that came from unit tests. """
-    __tablename__ = 'testedEndpoints'
-    id = Column(Integer, primary_key=True, autoincrement=True)
-    # Name of the endpoint that was hit.
-    endpoint_name = Column(String(250), nullable=False)
-    # Execution time of the endpoint hit in ms.
-    execution_time = Column(Integer, nullable=False)
-    # Name of the unit test that the hit came from.
-    test_name = Column(String(250), nullable=False)
-    # Version of the tested user app.
+    __tablename__ = 'testResult'
+    id = Column(Integer, primary_key=True)
+    test_id = Column(Integer, ForeignKey(Test.id))
+    test = relationship(Test)
+    execution_time = Column(Float, nullable=False)
+    time_added = Column(DateTime, default=datetime.datetime.utcnow)
     app_version = Column(String(100), nullable=False)
-    # ID of the Travis job this record came from.
     travis_job_id = Column(String(10), nullable=False)
-    # Time at which the row was added to the database.
+    run_nr = Column(Integer, nullable=False)
+
+
+class TestEndpoint(Base):
+    """ Stores the endpoint hits that came from unit tests. """
+    __tablename__ = 'testEndpoint'
+    id = Column(Integer, primary_key=True)
+    endpoint_id = Column(Integer, ForeignKey(Endpoint.id))
+    endpoint = relationship(Endpoint)
+    test_id = Column(Integer, ForeignKey(Test.id))
+    test = relationship(Test)
+    execution_time = Column(Integer, nullable=False)
+    app_version = Column(String(100), nullable=False)
+    travis_job_id = Column(String(10), nullable=False)
     time_added = Column(DateTime, default=datetime.datetime.utcnow)
 
 
@@ -167,4 +161,4 @@ def session_scope():
 
 
 def get_tables():
-    return [MonitorRule, TestRun, Request, ExecutionPathLine, Outlier, TestsGrouped]
+    return [Endpoint, Request, Outlier, CodeLine, StackLine, Test, TestRun, TestEndpoint]
