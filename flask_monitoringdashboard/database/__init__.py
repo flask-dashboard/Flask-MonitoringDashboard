@@ -17,7 +17,7 @@ Base = declarative_base()
 
 class Endpoint(Base):
     """ Table for storing which endpoints to monitor. """
-    __tablename__ = 'Endpoint'
+    __tablename__ = '{}Endpoint'.format(config.table_prefix)
     id = Column(Integer, primary_key=True)
     name = Column(String(250), unique=True, nullable=False)
     monitor_level = Column(Integer, default=config.monitor_level)
@@ -30,7 +30,7 @@ class Endpoint(Base):
 
 class Request(Base):
     """ Table for storing measurements of function calls. """
-    __tablename__ = 'Request'
+    __tablename__ = '{}Request'.format(config.table_prefix)
     id = Column(Integer, primary_key=True)
     endpoint_id = Column(Integer, ForeignKey(Endpoint.id))
     endpoint = relationship(Endpoint)
@@ -49,7 +49,7 @@ class Request(Base):
 
 class Outlier(Base):
     """ Table for storing information about outliers. """
-    __tablename__ = 'Outlier'
+    __tablename__ = '{}Outlier'.format(config.table_prefix)
     id = Column(Integer, primary_key=True)
     request_id = Column(Integer, ForeignKey(Request.id))
     request = relationship(Request, back_populates='outlier')
@@ -65,7 +65,7 @@ class Outlier(Base):
 
 
 class CodeLine(Base):
-    __tablename__ = 'CodeLine'
+    __tablename__ = '{}CodeLine'.format(config.table_prefix)
     """ Table for storing the text of a StackLine. """
     id = Column(Integer, primary_key=True)
     filename = Column(String(250), nullable=False)
@@ -76,7 +76,7 @@ class CodeLine(Base):
 
 class StackLine(Base):
     """ Table for storing lines of execution paths of calls. """
-    __tablename__ = 'StackLine'
+    __tablename__ = '{}StackLine'.format(config.table_prefix)
     request_id = Column(Integer, ForeignKey(Request.id), primary_key=True)
     request = relationship(Request, back_populates='stack_lines')
     position = Column(Integer, primary_key=True)
@@ -92,7 +92,7 @@ class StackLine(Base):
 
 class Test(Base):
     """ Stores all of the tests that exist in the project. """
-    __tablename__ = 'test'
+    __tablename__ = '{}test'.format(config.table_prefix)
     id = Column(Integer, primary_key=True)
     name = Column(String(250), unique=True)
     passing = Column(Boolean, nullable=False)
@@ -103,7 +103,7 @@ class Test(Base):
 
 class TestResult(Base):
     """ Stores unit test performance results obtained from Travis. """
-    __tablename__ = 'testResult'
+    __tablename__ = '{}testResult'.format(config.table_prefix)
     id = Column(Integer, primary_key=True)
     test_id = Column(Integer, ForeignKey(Test.id))
     test = relationship(Test)
@@ -116,7 +116,7 @@ class TestResult(Base):
 
 class TestEndpoint(Base):
     """ Stores the endpoint hits that came from unit tests. """
-    __tablename__ = 'testEndpoint'
+    __tablename__ = '{}testEndpoint'.format(config.table_prefix)
     id = Column(Integer, primary_key=True)
     endpoint_id = Column(Integer, ForeignKey(Endpoint.id))
     endpoint = relationship(Endpoint)

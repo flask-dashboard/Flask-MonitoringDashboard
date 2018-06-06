@@ -26,7 +26,7 @@ def create_app():
     @app.route('/endpoint')
     def endpoint():
 
-        g()
+        f()
 
         return 'Ok'
 

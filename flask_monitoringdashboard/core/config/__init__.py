@@ -17,19 +17,25 @@ class Config(object):
         """
             Sets the default values for the project
         """
+        # dashboard
         self.version = '1.0'
         self.link = 'dashboard'
-        self.database_name = 'sqlite:///flask_monitoringdashboard.db'
         self.monitor_level = 3
-        self.test_dir = None
+        self.outlier_detection_constant = 2.5
+
+        # database
+        self.database_name = 'sqlite:///flask_monitoringdashboard.db'
+        self.table_prefix = ''
+
+        # authentication
         self.username = 'admin'
         self.password = 'admin'
         self.guest_username = 'guest'
         self.guest_password = ['guest_password']
-        self.outlier_detection_constant = 2.5
-        self.colors = {}
         self.security_token = 'cc83733cb0af8b884ff6577086b87909'
-        self.outliers_enabled = True
+
+        # visualization
+        self.colors = {}
         self.timezone = pytz.timezone(str(get_localzone()))
 
         # define a custom function to retrieve the session_id or username
@@ -38,36 +44,41 @@ class Config(object):
     def init_from(self, file=None, envvar=None):
         """
             The config_file must at least contains the following variables in section 'dashboard':
-            CUSTOM_LINK: The dashboard can be visited at localhost:5000/{{CUSTOM_LINK}}.
-
-            APP_VERSION: the version of the app that you use. Updating the version helps in
+            - APP_VERSION: the version of the app that you use. Updating the version helps in
                 showing differences in execution times of a function over a period of time.
-            Since updating the version in the config-file when updating code isn't very useful, it
-            is a better idea to provide the location of the git-folder. From the git-folder. The 
-            version automatically retrieved by reading the commit-id (hashed value):
-            GIT = If you're using git, then it is easier to set the location to the .git-folder, 
+            - GIT = If you're using git, then it is easier to set the location to the .git-folder,
                 The location is relative to the config-file.
+            - CUSTOM_LINK: The dashboard can be visited at localhost:5000/{CUSTOM_LINK}.
+            - MONITOR_LEVEL: The level for monitoring your endpoints. The default value is 3.
+            - OUTLIER_DETECTION_CONSTANT: When the execution time is more than this constant *
+                average, extra information is logged into the database. A default value for this
+                variable is 2.5.
 
-            DATABASE: Suppose you have multiple projects where you're working on and want to
+            The config_file must at least contains the following variables in section 'authentication':
+            - USERNAME: for logging into the dashboard, a username and password is required. The
+                username can be set using this variable.
+            - PASSWORD: same as for the username, but this is the password variable.
+            - GUEST_USERNAME: A guest can only see the results, but cannot configure/download data.
+            - GUEST_PASSWORD: A guest can only see the results, but cannot configure/download data.
+            - SECURITY_TOKEN: Used for getting the data in /get_json_data
+
+            The config_file must at least contains the following variables in section 'database':
+            - DATABASE: Suppose you have multiple projects where you're working on and want to
                 separate the results. Then you can specify different database_names, such that the
                 result of each project is stored in its own database.
-            MONITOR_LEVEL: The level for monitoring your endpoints. The default value is 3.
-            USERNAME: for logging into the dashboard, a username and password is required. The
-                username can be set using this variable.
-            PASSWORD: same as for the username, but this is the password variable.
-            GUEST_USERNAME: A guest can only see the results, but cannot configure/download data.
-            GUEST_PASSWORD: A guest can only see the results, but cannot configure/download data.
+            - TABLE_PREFIX: A prefix to every table that the Flask-MonitoringDashboard uses, to ensure
+                that there are no conflicts with the user of the dashboard.
 
-            OUTLIER_DETECTION_CONSTANT: When the execution time is more than this constant *
-                average, extra information is logged into the database. A default value for this
-                variable is 2.5, but can be changed in the config-file.
+            The config_file must at least contains the following variables in section 'visualization':
+            - TIMEZONE: The timezone for converting a UTC timestamp to a local timestamp.
+                for a list of all timezones, use the following:
 
-            TIMEZONE: The timezone for converting a UTC timestamp to a local timestamp.
-                for a list of all timezones, use the following: print(pytz.all_timezones)
-            SECURITY_TOKEN: Used for getting the data in /get_json_data
-            OUTLIERS_ENABLED: Whether you want the Dashboard to collect extra information about outliers.
+                >>> import pytz  # pip install pytz
+                >>> print(pytz.all_timezones)
 
-            :param file: a string pointing to the location of the config-file
+            - COLORS: A dictionary to override the colors used per endpoint.
+
+            :param file: a string pointing to the location of the config-file.
             :param envvar: a string specifying which environment variable holds the config file location
         """
 
@@ -83,22 +94,26 @@ class Config(object):
         parser = configparser.RawConfigParser()
         try:
             parser.read(file)
-            self.version = parse_version(parser, self.version)
 
-            self.link = parse_string(parser, 'CUSTOM_LINK', self.link)
-            self.database_name = parse_string(parser, 'DATABASE', self.database_name)
-            self.monitor_level = parse_literal(parser, 'MONITOR_LEVEL', self.monitor_level)
-
-            self.test_dir = parse_string(parser, 'TEST_DIR', self.test_dir)
-            self.security_token = parse_string(parser, 'SECURITY_TOKEN', self.security_token)
-            self.outliers_enabled = parse_bool(parser, 'OUTLIERS_ENABLED', self.outliers_enabled)
-            self.colors = parse_literal(parser, 'COLORS', self.colors)
-            self.timezone = pytz.timezone(parse_string(parser, 'TIMEZONE', self.timezone.zone))
-            self.outlier_detection_constant = parse_literal(parser, 'OUTlIER_DETECTION_CONSTANT',
+            # parse 'dashboard'
+            self.version = parse_version(parser, 'dashboard', self.version)
+            self.link = parse_string(parser, 'dashboard', 'CUSTOM_LINK', self.link)
+            self.monitor_level = parse_literal(parser, 'dashboard', 'MONITOR_LEVEL', self.monitor_level)
+            self.outlier_detection_constant = parse_literal(parser, 'dashboard', 'OUTlIER_DETECTION_CONSTANT',
                                                             self.outlier_detection_constant)
-            self.username = parse_string(parser, 'USERNAME', self.username)
-            self.password = parse_string(parser, 'PASSWORD', self.password)
-            self.guest_username = parse_string(parser, 'GUEST_USERNAME', self.guest_username)
-            self.guest_password = parse_literal(parser, 'GUEST_PASSWORD', self.guest_password)
+            # parse 'authentication'
+            self.username = parse_string(parser, 'authentication', 'USERNAME', self.username)
+            self.password = parse_string(parser, 'authentication', 'PASSWORD', self.password)
+            self.security_token = parse_string(parser, 'authentication', 'SECURITY_TOKEN', self.security_token)
+            self.guest_username = parse_string(parser, 'authentication', 'GUEST_USERNAME', self.guest_username)
+            self.guest_password = parse_literal(parser, 'authentication', 'GUEST_PASSWORD', self.guest_password)
+
+            # database
+            self.database_name = parse_string(parser, 'database', 'DATABASE', self.database_name)
+            self.table_prefix = parse_string(parser, 'database', 'TABLE_PREFIX', self.table_prefix)
+
+            # visualization
+            self.colors = parse_literal(parser, 'visualization', 'COLORS', self.colors)
+            self.timezone = pytz.timezone(parse_string(parser, 'visualization', 'TIMEZONE', self.timezone.zone))
         except configparser.Error:
             raise
