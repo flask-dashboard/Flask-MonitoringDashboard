@@ -3,7 +3,7 @@
 """
 import datetime
 
-from flask import Flask
+from flask import Flask, json
 
 NAME = 'main'
 ENDPOINT_ID = 1
@@ -152,4 +152,7 @@ def test_post_data(test_case, page, data):
     :param data: the data that should be posted to the page
     """
     with test_case.app.test_client() as c:
-        test_case.assertEqual(204, c.post('dashboard/{}'.format(page), json=data).status_code)
+        headers = {'content-type': 'application/json'}
+
+        test_case.assertEqual(204, c.post('dashboard/{}'.format(page), data=json.dumps(data),
+                                          headers=headers).status_code)
