@@ -8,7 +8,7 @@ from flask_monitoringdashboard.core.utils import simplify
 from flask_monitoringdashboard.database import session_scope
 from flask_monitoringdashboard.database.count_group import get_value
 from flask_monitoringdashboard.database.data_grouped import get_endpoint_data_grouped
-from flask_monitoringdashboard.database.request import get_endpoints
+from flask_monitoringdashboard.database.endpoint import get_endpoints
 
 TITLE = 'API Performance'
 
@@ -33,7 +33,7 @@ def endpoint_graph():
     """
     with session_scope() as db_session:
         data = get_endpoint_data_grouped(db_session, lambda x: simplify(x, 10))
-        values = [boxplot(get_value(data, end, default=[]), name=end)
+        values = [boxplot(get_value(data, end.id, default=[]), name=end.name)
                   for end in get_endpoints(db_session)]
 
     layout = get_layout(

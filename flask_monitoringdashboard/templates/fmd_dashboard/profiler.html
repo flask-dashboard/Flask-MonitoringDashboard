@@ -3,7 +3,7 @@
 {% macro request_title(request) -%}
     {# request is a Request-object #}
     <div class="card-header">
-        <h6>Request {{ request.id|string + ': ' + "{:,.1f} ms".format(request.execution_time) }}</h6>
+        <h6>Request {{ "{}: {:%Y-%m-%d %H:%M:%S }".format(request.id, request.time_requested) }}</h6>
     </div>
 {%- endmacro %}
 
@@ -18,43 +18,41 @@
     {{ 'rgb({},{},{})'.format(color_0, color_1, color_2) }}
 {%- endmacro %}
 
-{% macro table_row(index, lines, execution_time, request) -%}
-    {% set line = lines[index] %}
-    {% set total_hits = lines[0].value %}
-    {% set body = get_body(index, lines) %}
-    {% set percentage = line.value / lines[0].value if lines[0].value > 0 else 1 %}
-
-    <tr>
-        <td hidden>{{ line.line_number }}</td>
-        <td style="padding-left: {{ 10 + 15 * line.indent }}px; width: 60%">
-            {{ line.line_text }}
-            {% if body %}
-                <i class="fa fa-minus-square" style="cursor: pointer;"
-                   onclick="toggle_rows( {{'{}, {}, this'.format(body, request.id) }})"></i>
-            {% endif %}
-        </td>
-        <td style="text-align: right; width: 20%">
-            {{ "{:,.1f} ms".format(percentage * execution_time) }}
-        </td>
-        <td style="text-align: right; background-color: {{ compute_color(percentage) }}; width: 20%">
-            {{ "{:.1f} %".format(percentage * 100) }}
-        </td>
-    </tr>
-{%- endmacro %}
-
-
 {% block graph_content %}
+    {% macro table_row(request, index) -%}
+        {% set line = request.stack_lines[index] %}
+        {% set sum = request.stack_lines[0].duration %}
+        {% set percentage = line.duration / sum if sum > 0 else 1 %}
+
+        <tr>
+            <td hidden>{{ line.position }}</td>
+            <td style="padding-left: {{ 10 + 15 * line.indent }}px; width: 60%">
+                {{ line.code.code }}
+                {% if body %}
+                    <i class="fa fa-minus-square" style="cursor: pointer;"
+                       onclick="toggle_rows( {{'{}, {}, this'.format(body[request.id][index], request.id) }})"></i>
+                {% endif %}
+            </td>
+            <td style="text-align: right; width: 20%">
+                {{ "{:,.1f} ms".format(line.duration) }}
+            </td>
+            <td style="text-align: right; background-color: {{ compute_color(percentage) }}; width: 20%">
+                {{ "{:.1f} %".format(percentage * 100) }}
+            </td>
+        </tr>
+    {%- endmacro %}
+
+
     {% if pagination %}
         {{ pagination.info }}
         {{ pagination.links }}
     {% endif %}
-    {% for request, lines in table %}
+    {% for request in requests %}
         <div class="card">
             <div class="card">
                 {{ request_title(request) }}
                 <div class="card-body table-responsive">
                     <table class="table table-bordered req-id{{ request.id }}" id="dataTable" width="100%" cellspacing="0" >
-                        {% set total_hits = lines[0].value %}
                         <thead>
                             <tr>
                                 <th hidden>Line number</th>
@@ -64,8 +62,8 @@
                             </tr>
                         </thead>
                         <tbody>
-                            {% for index in range(lines|length) %}
-                                {{ table_row(index, lines, request.execution_time, request) }}
+                            {% for index in range(request.stack_lines|length) %}
+                                {{ table_row(request, index) }}
                             {% endfor %}
                         </tbody>
                     </table>

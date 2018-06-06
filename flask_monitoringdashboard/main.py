@@ -14,26 +14,19 @@ def create_app():
     app = Flask(__name__)
 
     dashboard.config.outlier_detection_constant = 0
-    dashboard.config.database_name = 'sqlite:///flask_monitoringdashboard_v4.db'
+    dashboard.config.database_name = 'sqlite:///flask_monitoringdashboard_v10.db'
     dashboard.bind(app)
 
-    def f():
-        time.sleep(1)
+    def f(duration=3):
+        time.sleep(duration)
 
     def g():
-        f()
+        f(duration=10)
 
     @app.route('/endpoint')
     def endpoint():
-        i = 0
-        while i < 500:
-            time.sleep(0.001)
-            i += 1
 
-        if random.randint(0, 1) == 0:
-            f()
-        else:
-            g()
+        f()
 
         return 'Ok'
 

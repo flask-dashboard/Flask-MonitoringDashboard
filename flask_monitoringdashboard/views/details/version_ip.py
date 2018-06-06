@@ -10,7 +10,7 @@ from flask_monitoringdashboard.core.plot import get_average_bubble_size, scatter
 from flask_monitoringdashboard.core.info_box import get_plot_info
 from flask_monitoringdashboard.core.utils import get_endpoint_details
 from flask_monitoringdashboard.database import Request, session_scope
-from flask_monitoringdashboard.database.count import count_ip, count_versions_end
+from flask_monitoringdashboard.database.count import count_ip, count_versions_endpoint
 from flask_monitoringdashboard.database.count_group import get_value
 from flask_monitoringdashboard.database.data_grouped import get_two_columns_grouped
 from flask_monitoringdashboard.database.endpoint import get_ips
@@ -27,33 +27,37 @@ address in a certain version. A larger execution time is presented by a larger c
 graph you don\'t need any configuration to see a difference between the performance of different 
 IP-addresses.'''
 
+FORM_SUBTITLE = ['IP-addresses', 'Versions']
+FORM_TITLE = 'Select the number of IP-addresses and versions'
 
-@blueprint.route('/endpoint/<end>/version_ip', methods=['GET', 'POST'])
+
+@blueprint.route('/endpoint/<endpoint_id>/version_ip', methods=['GET', 'POST'])
 @secure
-def version_ip(end):
+def version_ip(endpoint_id):
     with session_scope() as db_session:
-        details = get_endpoint_details(db_session, end)
-        form = get_double_slider_form([count_ip(db_session, end), count_versions_end(db_session, end)],
-                                      subtitle=['IP-addresses', 'Versions'],
-                                      title='Select the number of IP-addresses and versions')
-        graph = version_ip_graph(db_session, end, form)
+        details = get_endpoint_details(db_session, endpoint_id)
+        end = details['endpoint']
+
+        slider_max = [count_ip(db_session, endpoint_id), count_versions_endpoint(db_session, endpoint_id)]
+        form = get_double_slider_form(slider_max, subtitle=FORM_SUBTITLE, title=FORM_TITLE)
+        graph = version_ip_graph(db_session, endpoint_id, form)
     return render_template('fmd_dashboard/graph-details.html', details=details, graph=graph, form=form,
                            title='{} for {}'.format(TITLE, end),
                            information=get_plot_info(AXES_INFO, CONTENT_INFO))
 
 
-def version_ip_graph(db_session, end, form):
+def version_ip_graph(db_session, endpoint_id, form):
     """
     :param db_session: session for the database
-    :param end: the endpoint to filter the data on
+    :param endpoint_id: the endpoint to filter the data on
     :param form: form for reducing the size of the graph
     :return: an HTML bubble plot
     """
-    users = get_ips(db_session, end, form.get_slider_value(0))
-    versions = get_versions(db_session, end, form.get_slider_value(1))
+    users = get_ips(db_session, endpoint_id, form.get_slider_value(0))
+    versions = get_versions(db_session, endpoint_id, form.get_slider_value(1))
 
     first_request = get_first_requests(db_session)
-    values = get_two_columns_grouped(db_session, Request.ip, Request.endpoint == end)
+    values = get_two_columns_grouped(db_session, Request.ip, Request.endpoint_id == endpoint_id)
     data = [[get_value(values, (user, v)) for v in versions] for user in users]
 
     average = get_average_bubble_size(data)

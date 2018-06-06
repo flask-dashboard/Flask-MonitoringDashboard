@@ -70,4 +70,7 @@ def get_average_bubble_size(data):
     :param data: a list with lists: [[a, b, c], [d, e, f]]
     :return: a constant for the bubble size
     """
-    return math.sqrt(max([max([r for r in row]) for row in data])) / BUBBLE_SIZE_RATIO
+    try:
+        return math.sqrt(max([max([r for r in row]) for row in data])) / BUBBLE_SIZE_RATIO
+    except ValueError:
+        return BUBBLE_SIZE_RATIO

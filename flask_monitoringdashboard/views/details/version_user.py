@@ -10,7 +10,7 @@ from flask_monitoringdashboard.core.plot import scatter, get_figure, get_margin,
 from flask_monitoringdashboard.core.info_box import get_plot_info
 from flask_monitoringdashboard.core.utils import get_endpoint_details
 from flask_monitoringdashboard.database import Request, session_scope
-from flask_monitoringdashboard.database.count import count_users, count_versions_end
+from flask_monitoringdashboard.database.count import count_users, count_versions_endpoint
 from flask_monitoringdashboard.database.count_group import get_value
 from flask_monitoringdashboard.database.data_grouped import get_two_columns_grouped
 from flask_monitoringdashboard.database.endpoint import get_users
@@ -28,31 +28,36 @@ A larger execution time is presented by a larger circle. With this graph you can
 there is a difference in performance across users.'''
 
 
-@blueprint.route('/endpoint/<end>/version_user', methods=['GET', 'POST'])
+FORM_SUBTITLE = ['Users', 'Versions']
+FORM_TITLE = 'Select the number of users and versions'
+
+
+@blueprint.route('/endpoint/<endpoint_id>/version_user', methods=['GET', 'POST'])
 @secure
-def version_user(end):
+def version_user(endpoint_id):
     with session_scope() as db_session:
-        details = get_endpoint_details(db_session, end)
-        form = get_double_slider_form([count_users(db_session, end), count_versions_end(db_session, end)],
-                                      subtitle=['Users', 'Versions'], title='Select the number of users and versions')
-        graph = version_user_graph(db_session, end, form)
+        details = get_endpoint_details(db_session, endpoint_id)
+
+        slider_max = [count_users(db_session, endpoint_id), count_versions_endpoint(db_session, endpoint_id)]
+        form = get_double_slider_form(slider_max, subtitle=FORM_SUBTITLE, title=FORM_TITLE)
+        graph = version_user_graph(db_session, endpoint_id, form)
     return render_template('fmd_dashboard/graph-details.html', details=details, graph=graph, form=form,
-                           title='{} for {}'.format(TITLE, end),
+                           title='{} for {}'.format(TITLE, details['endpoint']),
                            information=get_plot_info(AXES_INFO, CONTENT_INFO))
 
 
-def version_user_graph(db_session, end, form):
+def version_user_graph(db_session, endpoint_id, form):
     """
     :param db_session: session for the database
-    :param end: the endpoint to filter the data on
+    :param endpoint_id: the endpoint_id to filter the data on
     :param form: form for reducing the size of the graph
     :return: an HTML bubble plot
     """
-    users = get_users(db_session, end, form.get_slider_value(0))
-    versions = get_versions(db_session, end, form.get_slider_value(1))
+    users = get_users(db_session, endpoint_id, form.get_slider_value(0))
+    versions = get_versions(db_session, endpoint_id, form.get_slider_value(1))
 
     first_request = get_first_requests(db_session)
-    values = get_two_columns_grouped(db_session, Request.group_by, Request.endpoint == end)
+    values = get_two_columns_grouped(db_session, Request.group_by, Request.endpoint_id == endpoint_id)
     data = [[get_value(values, (user, v)) for v in versions] for user in users]
 
     average = get_average_bubble_size(data)

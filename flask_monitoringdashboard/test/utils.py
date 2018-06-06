@@ -3,9 +3,11 @@
 """
 import datetime
 
-from flask import Flask
+from flask import Flask, json
 
 NAME = 'main'
+ENDPOINT_ID = 1
+REQUEST_IDS = [1, 2, 3, 4, 5]
 IP = '127.0.0.1'
 GROUP_BY = '1'
 EXECUTION_TIMES = [1000, 2000, 3000, 4000, 50000]
@@ -34,31 +36,26 @@ def clear_db():
 
 def add_fake_data():
     """ Adds data to the database for testing purposes. Module flask_monitoringdashboard must be imported locally. """
-    from flask_monitoringdashboard.database import session_scope, Request, MonitorRule, Outlier, TestsGrouped
+    from flask_monitoringdashboard.database import session_scope, Request, Endpoint, Outlier
     from flask_monitoringdashboard import config
 
-    # Add functionCalls
+    # Add requests
     with session_scope() as db_session:
         for i in range(len(EXECUTION_TIMES)):
-            call = Request(endpoint=NAME, execution_time=EXECUTION_TIMES[i], version=config.version,
-                           time=TIMES[i], group_by=GROUP_BY, ip=IP)
+            call = Request(id=REQUEST_IDS[i], endpoint_id=ENDPOINT_ID, duration=EXECUTION_TIMES[i],
+                           version_requested=config.version,
+                           time_requested=TIMES[i], group_by=GROUP_BY, ip=IP)
             db_session.add(call)
 
-    # Add MonitorRule
+    # Add endpoint
     with session_scope() as db_session:
-        db_session.add(MonitorRule(endpoint=NAME, monitor_level=1, time_added=datetime.datetime.utcnow(),
-                                   version_added=config.version, last_accessed=TIMES[0]))
+        db_session.add(Endpoint(id=ENDPOINT_ID, name=NAME, monitor_level=1, time_added=datetime.datetime.utcnow(),
+                                version_added=config.version, last_requested=TIMES[0]))
 
     # Add Outliers
     with session_scope() as db_session:
         for i in range(OUTLIER_COUNT):
-            db_session.add(Outlier(endpoint=NAME, cpu_percent='[%d, %d, %d, %d]' % (i, i + 1, i + 2, i + 3),
-                                   execution_time=BASE_OUTLIER_EXEC_TIME * (i + 1), time=TIMES[i]))
-
-    # Add TestsGrouped
-    with session_scope() as db_session:
-        for test_name in TEST_NAMES:
-            db_session.add(TestsGrouped(endpoint=NAME, test_name=test_name))
+            db_session.add(Outlier(request_id=i, cpu_percent='[%d, %d, %d, %d]' % (i, i + 1, i + 2, i + 3)))
 
 
 def add_fake_test_runs():
@@ -155,4 +152,7 @@ def test_post_data(test_case, page, data):
     :param data: the data that should be posted to the page
     """
     with test_case.app.test_client() as c:
-        test_case.assertEqual(204, c.post('dashboard/{}'.format(page), json=data).status_code)
+        headers = {'content-type': 'application/json'}
+
+        test_case.assertEqual(204, c.post('dashboard/{}'.format(page), data=json.dumps(data),
+                                          headers=headers).status_code)
