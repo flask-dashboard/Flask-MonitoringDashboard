@@ -161,4 +161,4 @@ def session_scope():
 
 
 def get_tables():
-    return [Endpoint, Request, Outlier, CodeLine, StackLine, Test, TestRun, TestEndpoint]
+    return [Endpoint, Request, Outlier, CodeLine, StackLine, Test, TestResult, TestEndpoint]

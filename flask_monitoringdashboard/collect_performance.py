@@ -46,7 +46,7 @@ if not url:
     print('The performance results will not be submitted.')
 
 # Initialize result dictionary and logs.
-data = {'test_runs': [], 'grouped_tests': [], 'endpoint_exec_times': []}
+data = {'test_runs': [], 'endpoint_exec_times': []}
 home = os.path.expanduser("~")
 log = open(home + '/start_endpoint_hits.log', 'w')
 log.write('"time","endpoint"\n')
@@ -114,16 +114,6 @@ for hit in range(number_of_hits):
             data['endpoint_exec_times'].append(
                 {'endpoint': finish_endpoint_hits[hit][ENDPOINT_NAME], 'exec_time': exec_time,
                  'test_name': test_run[TEST_NAME]})
-            break
-
-# Analyze the two arrays to find out which endpoints were hit by which unit tests.
-# Add the endpoint_name/test_name combination to the result dictionary.
-for endpoint_hit in finish_endpoint_hits:
-    for test_run in test_runs:
-        if test_run[START_TIME] <= endpoint_hit[HIT_TIME] <= test_run[END_TIME]:
-            if {'endpoint': endpoint_hit[ENDPOINT_NAME], 'test_name': test_run[TEST_NAME]} not in data['grouped_tests']:
-                data['grouped_tests'].append(
-                    {'endpoint': endpoint_hit[ENDPOINT_NAME], 'test_name': test_run[TEST_NAME]})
             break
 
 # Retrieve the current version of the user app that is being tested.

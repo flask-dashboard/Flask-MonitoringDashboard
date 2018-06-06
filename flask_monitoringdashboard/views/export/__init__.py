@@ -6,9 +6,8 @@ import flask_monitoringdashboard.views.export.csv
 import flask_monitoringdashboard.views.export.json
 from flask_monitoringdashboard import blueprint
 from flask_monitoringdashboard.database import session_scope
-from flask_monitoringdashboard.database.tests import add_test_result
-from flask_monitoringdashboard.database.tests_grouped import reset_tests_grouped, add_tests_grouped
 from flask_monitoringdashboard.database.tested_endpoints import add_endpoint_hit
+from flask_monitoringdashboard.database.tests import add_test_result
 
 
 @blueprint.route('/submit-test-results', methods=['POST'])
@@ -25,7 +24,6 @@ def submit_test_results():
     if 'app_version' in results:
         app_version = results['app_version']
     test_runs = results['test_runs']
-    groups = results['grouped_tests']
     endpoint_hits = results['endpoint_exec_times']
 
     with session_scope() as db_session:
@@ -37,9 +35,5 @@ def submit_test_results():
         for endpoint_hit in endpoint_hits:
             add_endpoint_hit(db_session, endpoint_hit['endpoint'], endpoint_hit['exec_time'], endpoint_hit['test_name'],
                              app_version, travis_job_id)
-
-        if groups:
-            reset_tests_grouped(db_session)
-            add_tests_grouped(db_session, groups)
 
     return '', 204

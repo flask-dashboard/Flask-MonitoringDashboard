@@ -6,13 +6,13 @@ from flask_monitoringdashboard.core.colors import get_color
 from flask_monitoringdashboard.core.forms import get_slider_form
 from flask_monitoringdashboard.core.info_box import get_plot_info
 from flask_monitoringdashboard.core.plot import get_layout, get_figure, boxplot
-from flask_monitoringdashboard.database import session_scope, TestedEndpoints
+from flask_monitoringdashboard.database import session_scope, TestEndpoint
 from flask_monitoringdashboard.database.count import count_test_builds, count_builds_endpoint
 from flask_monitoringdashboard.database.count_group import get_value, count_times_tested, get_latest_test_version
 from flask_monitoringdashboard.database.data_grouped import get_test_data_grouped
+from flask_monitoringdashboard.database.tested_endpoints import get_tested_endpoint_names
 from flask_monitoringdashboard.database.tests import get_test_suites, get_travis_builds, \
     get_endpoint_measurements_job, get_suite_measurements, get_last_tested_times, get_endpoint_measurements
-from flask_monitoringdashboard.database.tests_grouped import get_endpoint_names
 
 AXES_INFO = '''The X-axis presents the execution time in ms. The Y-axis presents the
 Travis builds of the Flask application.'''
@@ -75,23 +75,23 @@ def testmonitor():
 
     with session_scope() as db_session:
         tests_latest = count_times_tested(db_session,
-                                          TestedEndpoints.app_version == get_latest_test_version(db_session))
+                                          TestEndpoint.app_version == get_latest_test_version(db_session))
         tests = count_times_tested(db_session)
         median_latest = get_test_data_grouped(db_session, median,
-                                              TestedEndpoints.app_version == get_latest_test_version(db_session))
+                                              TestEndpoint.app_version == get_latest_test_version(db_session))
         median = get_test_data_grouped(db_session, median)
         tested_times = get_last_tested_times(db_session)
 
         result = []
-        for endpoint in get_endpoint_names(db_session):
+        for endpoint in get_tested_endpoint_names(db_session):
             result.append({
-                'name': endpoint,
-                'color': get_color(endpoint),
-                'tests-latest-version': get_value(tests_latest, endpoint),
-                'tests-overall': get_value(tests, endpoint),
-                'median-latest-version': get_value(median_latest, endpoint),
-                'median-overall': get_value(median, endpoint),
-                'last-tested': get_value(tested_times, endpoint, default=None)
+                'name': endpoint.name,
+                'color': get_color(endpoint.name),
+                'tests-latest-version': get_value(tests_latest, endpoint.name),
+                'tests-overall': get_value(tests, endpoint.name),
+                'median-latest-version': get_value(median_latest, endpoint.name),
+                'median-overall': get_value(median, endpoint.name),
+                'last-tested': get_value(tested_times, endpoint.name, default=None)
             })
 
         return render_template('fmd_testmonitor/testmonitor.html', result=result)

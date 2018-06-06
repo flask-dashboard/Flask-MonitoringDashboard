@@ -4,10 +4,10 @@ import jwt
 from flask import json, jsonify
 
 from flask_monitoringdashboard import blueprint, config
-from flask_monitoringdashboard.database import session_scope
-from flask_monitoringdashboard.database.request import get_data_between
-from flask_monitoringdashboard.database.monitor_rules import get_monitor_data
 from flask_monitoringdashboard.core.utils import get_details
+from flask_monitoringdashboard.database import session_scope
+from flask_monitoringdashboard.database.monitor_rules import get_monitor_data
+from flask_monitoringdashboard.database.request import get_data_between
 
 
 @blueprint.route('/get_json_data', defaults={'time_from': 0})
