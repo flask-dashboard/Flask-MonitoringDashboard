@@ -32,7 +32,7 @@ def rules():
             if original:
                 user_app.view_functions[endpoint] = original
 
-            add_decorator(endpoint, value)
+            add_decorator(endpoint)
             return 'OK'
 
         last_accessed = get_last_requested(db_session)

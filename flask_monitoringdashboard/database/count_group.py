@@ -56,8 +56,8 @@ def count_times_tested(db_session, *where):
     :param db_session: session for the database
     :param where: additional arguments
     """
-    result = db_session.query(TestEndpoint.endpoint.name, func.count(TestEndpoint.endpoint.name)).filter(
-        *where).group_by(TestEndpoint.endpoint.name).all()
+    result = db_session.query(TestEndpoint.endpoint, func.count(TestEndpoint.endpoint)).filter(
+        *where).group_by(TestEndpoint.endpoint).all()
     return result
 
 
