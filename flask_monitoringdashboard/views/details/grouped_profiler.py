@@ -11,15 +11,12 @@ from flask_monitoringdashboard.core.utils import get_endpoint_details
 from flask_monitoringdashboard.database import session_scope
 from flask_monitoringdashboard.database.stack_line import get_grouped_profiled_requests
 
-SEPARATOR = ' / '
-
 
 @blueprint.route('/endpoint/<endpoint_id>/grouped-profiler')
 @secure
 def grouped_profiler(endpoint_id):
     with session_scope() as db_session:
         details = get_endpoint_details(db_session, endpoint_id)
-        end = details['endpoint']
         requests = get_grouped_profiled_requests(db_session, endpoint_id)
         db_session.expunge_all()
     total_execution_time = sum([r.duration for r in requests])
@@ -41,4 +38,4 @@ def grouped_profiler(endpoint_id):
         table[index].compute_body(index, table)
 
     return render_template('fmd_dashboard/profiler_grouped.html', details=details, table=table,
-                           title='Grouped Profiler results for {}'.format(end))
+                           title='Grouped Profiler results for {}'.format(details['endpoint']))

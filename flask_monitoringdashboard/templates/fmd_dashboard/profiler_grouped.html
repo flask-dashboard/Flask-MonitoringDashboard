@@ -16,10 +16,10 @@
             </td>
             <td style="text-align: right;">{{ row.hits }}</td>
             <td style="text-align: right; width: 12%">
-                {{ "{:,.1f} ms".format(row.sum) }}
+                {{ "{:,.1f} ms".format(row.average) }}
             </td>
             <td style="text-align: right; width: 12%">
-                {{ "{:,.1f} ms".format(row.average) }}
+                {{ "{:,.1f} ms".format(row.sum) }}
             </td>
             <td style="text-align: right; background-color: {{ compute_color(row.percentage) }}; width: 10%">
                 {{ "{:.1f} %".format(row.percentage * 100) }}
@@ -33,8 +33,8 @@
                 <th hidden>Line number</th>
                 <th>Codestack</th>
                 <th>Hits</th>
-                <th>Total time</th>
                 <th>Average time</th>
+                <th>Total time</th>
                 <th>Percentage</th>
             </tr>
         </thead>

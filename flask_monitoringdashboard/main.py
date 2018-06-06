@@ -17,7 +17,7 @@ def create_app():
     dashboard.config.database_name = 'sqlite:///flask_monitoringdashboard_v10.db'
     dashboard.bind(app)
 
-    def f(duration=1):
+    def f(duration=3):
         time.sleep(duration)
 
     def g():
@@ -25,10 +25,8 @@ def create_app():
 
     @app.route('/endpoint')
     def endpoint():
-        if random.randint(0, 1) == 0:
-            f()
-        else:
-            g()
+
+        f()
 
         return 'Ok'
 
