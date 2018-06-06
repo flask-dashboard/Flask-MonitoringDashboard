@@ -5,7 +5,7 @@ import jwt
 from flask import json
 
 from flask_monitoringdashboard.test.utils import set_test_environment, clear_db, add_fake_data, get_test_app, \
-    EXECUTION_TIMES, NAME, GROUP_BY, IP, TIMES, test_admin_secure, test_post_data
+    EXECUTION_TIMES, NAME, GROUP_BY, IP, TIMES, test_admin_secure, test_post_data, ENDPOINT_ID
 
 
 class TestExportData(unittest.TestCase):
@@ -52,13 +52,13 @@ class TestExportData(unittest.TestCase):
         data = json.loads(decoded['data'])
         self.assertEqual(len(data), len(EXECUTION_TIMES))
         for row in data:
-            self.assertEqual(row['endpoint'], NAME)
-            self.assertIn(row['execution_time'], EXECUTION_TIMES)
-            self.assertEqual(row['version'], config.version)
+            self.assertEqual(row['endpoint_id'], ENDPOINT_ID)
+            self.assertIn(row['duration'], EXECUTION_TIMES)
+            self.assertEqual(row['version_requested'], config.version)
             self.assertEqual(row['group_by'], GROUP_BY)
             self.assertEqual(row['ip'], IP)
 
-    def test_get_json_monitor_rules(self):
+    def test_get_json_endpoints(self):
         """
             Test whether the response is as it should be.
         """
@@ -69,8 +69,8 @@ class TestExportData(unittest.TestCase):
         data = json.loads(decoded['data'])
         self.assertEqual(len(data), 3)
         row = data[0]
-        self.assertEqual(row['endpoint'], NAME)
-        self.assertEqual(row['last_accessed'], str(TIMES[0]))
+        self.assertEqual(row['name'], NAME)
+        self.assertEqual(row['last_requested'], str(TIMES[0]))
         self.assertEqual(row['monitor_level'], 1)
         self.assertEqual(row['version_added'], config.version)
 

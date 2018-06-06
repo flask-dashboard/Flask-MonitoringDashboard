@@ -40,19 +40,18 @@ def get_plot_info(axes='', content=''):
 def get_rules_info():
     """ :return: a string with information in HTML """
     info = b(MONITOR_CHOICES[0][1]) + \
-           p('When the monitoring-level is set to 0, you don\'t monitor anything about this endpoint. Only the time of '
-             'the most recent request will be stored.')
+           p('When the monitoring-level is set to 0, you don\'t monitor anything about the performance of this '
+             'endpoint. The only data that is stored is when the ' + b('endpoint is last requested.'))
 
     info += b(MONITOR_CHOICES[1][1]) + \
-            p('When the monitoring-level is set to 1, you get all functionality from 0, plus functionality that '
-              'collects data about the performance and utilization of this endpoint (as a black-box).')
+            p('When the monitoring-level is set to 1, you collect data when the endpoint is last requested, plus '
+              'data about the ' + b('performance and utilization') + ' of this endpoint (as a black-box).')
 
     info += b(MONITOR_CHOICES[2][1]) + \
-            p('When the monitoring-level is set to 2, you get all the functionality from 1, plus functionality that '
-              'collects data about the performance and utilization of this endpoint per line of code. The data is only '
-              'stored if the request is an outlier.')
+            p('When the monitoring-level is set to 2, you get all the functionality from 1, plus data about the ' +
+              b('performance per line of code') + ' from all requests.')
 
     info += b(MONITOR_CHOICES[3][1]) + \
-            p('When the monitoring-level is set to 3, you get all the functionality from 2, but now every request is '
-              'stored in the database, instead of only outliers.')
+            p('When the monitoring-level is set to 3, you get all the functionality from 2, including ' + b('more data'
+              ' if a request is an outlier.'))
     return info

@@ -8,9 +8,9 @@ from .slider import get_slider_form
 
 MONITOR_CHOICES = [
     (0, '0 - Disabled'),
-    (1, '1 - Execution time'),
-    (2, '2 - Outliers'),
-    (3, '3 - All requests')]
+    (1, '1 - Performance'),
+    (2, '2 - Profiler'),
+    (3, '3 - Profiler + Outliers')]
 
 
 class Login(FlaskForm):

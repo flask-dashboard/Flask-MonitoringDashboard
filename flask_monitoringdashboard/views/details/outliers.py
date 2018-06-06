@@ -8,31 +8,31 @@ from flask_monitoringdashboard.core.auth import secure
 from flask_monitoringdashboard.core.colors import get_color
 from flask_monitoringdashboard.core.timezone import to_local_datetime
 from flask_monitoringdashboard.core.utils import get_endpoint_details, simplify
-from flask_monitoringdashboard.database import Outlier, session_scope
+from flask_monitoringdashboard.database import Outlier, session_scope, Request
 from flask_monitoringdashboard.database.count import count_outliers
-from flask_monitoringdashboard.database.outlier import get_outliers_sorted, delete_outliers_without_stacktrace, \
-    get_outliers_cpus
+from flask_monitoringdashboard.database.outlier import get_outliers_sorted, get_outliers_cpus
 from flask_monitoringdashboard.core.plot import boxplot, get_figure, get_layout, get_margin
 
 NUM_DATAPOINTS = 50
 
 
-@blueprint.route('/endpoint/<end>/outliers')
+@blueprint.route('/endpoint/<endpoint_id>/outliers')
 @secure
-def outliers(end):
+def outliers(endpoint_id):
     with session_scope() as db_session:
-        details = get_endpoint_details(db_session, end)
-        delete_outliers_without_stacktrace(db_session)
+        details = get_endpoint_details(db_session, endpoint_id)
         page, per_page, offset = get_page_args(page_parameter='page', per_page_parameter='per_page')
-        table = get_outliers_sorted(db_session, end, Outlier.execution_time, offset, per_page)
-        for outl in table:
-            outl.time = to_local_datetime(outl.time)
-        all_cpus = get_outliers_cpus(db_session, end)
+        table = get_outliers_sorted(db_session, endpoint_id, offset, per_page)
+        for outlier in table:
+            outlier.request.time_requested = to_local_datetime(outlier.request.time_requested)
+        all_cpus = get_outliers_cpus(db_session, endpoint_id)
         graph = cpu_load_graph(all_cpus)
-        pagination = Pagination(page=page, per_page=per_page, total=count_outliers(db_session, end), format_number=True,
+
+        total = count_outliers(db_session, endpoint_id)
+        pagination = Pagination(page=page, per_page=per_page, total=total, format_number=True,
                                 css_framework='bootstrap4', format_total=True, record_name='outliers')
     return render_template('fmd_dashboard/outliers.html', details=details, table=table, pagination=pagination,
-                           title='Outliers for {}'.format(end), graph=graph)
+                           title='Outliers for {}'.format(details['endpoint']), graph=graph)
 
 
 def cpu_load_graph(all_cpus):
@@ -41,7 +41,7 @@ def cpu_load_graph(all_cpus):
     for cpu in all_cpus:
         if not cpu:
             continue
-        x = ast.literal_eval(cpu[0])
+        x = ast.literal_eval(cpu)
         values.append(x)
         count += 1
 

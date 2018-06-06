@@ -7,7 +7,7 @@ from flask_monitoringdashboard.core.auth import admin_secure
 from flask_monitoringdashboard.database import session_scope
 from flask_monitoringdashboard.database.request import get_data
 
-CSV_COLUMNS = ['endpoint', 'execution_time', 'time', 'version', 'group_by', 'ip']
+CSV_COLUMNS = ['endpoint_id', 'duration', 'time_requested', 'version_requested', 'group_by', 'ip']
 
 
 @blueprint.route('/download-csv')

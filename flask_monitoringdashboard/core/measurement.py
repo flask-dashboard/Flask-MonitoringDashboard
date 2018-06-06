@@ -5,17 +5,11 @@
 import time
 from functools import wraps
 
-from flask_monitoringdashboard import config, user_app
-from flask_monitoringdashboard.core.profiler import start_profile_thread
+from flask_monitoringdashboard import user_app
+from flask_monitoringdashboard.core.profiler import thread_after_request, threads_before_request
 from flask_monitoringdashboard.core.rules import get_rules
 from flask_monitoringdashboard.database import session_scope
-from flask_monitoringdashboard.database.endpoint import get_monitor_rule
-
-# count and sum are dicts and used for calculating the averages
-endpoint_count = {}
-endpoint_sum = {}
-
-MIN_NUM_REQUESTS = 10
+from flask_monitoringdashboard.database.endpoint import get_endpoint_by_name
 
 
 def init_measurement():
@@ -26,97 +20,35 @@ def init_measurement():
     """
     with session_scope() as db_session:
         for rule in get_rules():
-            db_rule = get_monitor_rule(db_session, rule.endpoint)
-            add_decorator(rule.endpoint, db_rule.monitor_level)
+            endpoint = get_endpoint_by_name(db_session, rule.endpoint)
+            add_decorator(endpoint)
 
 
-def add_decorator(endpoint, monitor_level):
+def add_decorator(endpoint):
     """
     Add a wrapper to the Flask-Endpoint based on the monitoring-level.
-    :param endpoint: name of the endpoint
-    :param monitor_level: int-value with the wrapper that should be added. This value is either 0, 1, 2 or 3.
-    :return:
+    :param endpoint: endpoint object
+    :return: the wrapper
     """
-    func = user_app.view_functions[endpoint]
+    func = user_app.view_functions[endpoint.name]
 
     @wraps(func)
     def wrapper(*args, **kwargs):
-        thread = start_profile_thread(endpoint, monitor_level)
-        start_time = time.time()
-        result = func(*args, **kwargs)
-        thread.stop(time.time() - start_time)
+        if endpoint.monitor_level == 2 or endpoint.monitor_level == 3:
+            threads = threads_before_request(endpoint)
+            start_time = time.time()
+            result = func(*args, **kwargs)
+            stop_time = time.time() - start_time
+            for thread in threads:
+                thread.stop(stop_time)
+        else:
+            start_time = time.time()
+            result = func(*args, **kwargs)
+            stop_time = time.time() - start_time
+            thread_after_request(endpoint, stop_time)
         return result
 
     wrapper.original = func
-    user_app.view_functions[endpoint] = wrapper
+    user_app.view_functions[endpoint.name] = wrapper
 
     return wrapper
-
-
-# def track_performance(endpoint, monitor_level):
-#     """
-#     Measure the execution time of a function and store result in the database
-#     :param endpoint: the name of the endpoint
-#     :param monitor_level: the level of monitoring (0 = not monitoring).
-#     """
-#     func = user_app.view_functions[endpoint]
-#
-#     @wraps(func)
-#     def wrapper(*args, **kwargs):
-#         try:
-#             # compute average
-#             average = get_average(endpoint)
-#
-#             stack_info = None
-#
-#             if average:
-#                 average *= config.outlier_detection_constant
-#
-#                 # start a thread to log the stacktrace after 'average' ms
-#                 stack_info = StackInfo(average)
-#
-#             thread = start_profile_thread(endpoint)
-#             time1 = time.time()
-#             result = func(*args, **kwargs)
-#             thread.stop()
-#
-#             if stack_info:
-#                 stack_info.stop()
-#
-#             time2 = time.time()
-#             t = (time2 - time1) * 1000
-#             with session_scope() as db_session:
-#                 add_function_call(db_session, execution_time=t, endpoint=endpoint, ip=request.environ['REMOTE_ADDR'])
-#
-#             # outlier detection
-#             endpoint_count[endpoint] = endpoint_count.get(endpoint, 0) + 1
-#             endpoint_sum[endpoint] = endpoint_sum.get(endpoint, 0) + t
-#
-#             if stack_info:
-#                 with session_scope() as db_session:
-#                     add_outlier(db_session, endpoint, t, stack_info, request)
-#
-#             return result
-#         except:
-#             traceback.print_exc()
-#             # Execute the endpoint that was called, even if the tracking fails.
-#             return func(*args, **kwargs)
-#
-#     wrapper.original = func
-#
-#     return wrapper
-
-
-def get_average(endpoint):
-    if not config.outliers_enabled:
-        return None
-
-    if endpoint in endpoint_count:
-        if endpoint_count[endpoint] < MIN_NUM_REQUESTS:
-            return None
-    else:
-        # initialize endpoint
-        endpoint_count[endpoint] = 0
-        endpoint_sum[endpoint] = 0
-        return None
-    return endpoint_sum[endpoint] / endpoint_count[endpoint]

@@ -8,7 +8,7 @@ from flask_monitoringdashboard.core.plot import boxplot, get_figure, get_layout,
 from flask_monitoringdashboard.core.info_box import get_plot_info
 from flask_monitoringdashboard.core.utils import get_endpoint_details, simplify
 from flask_monitoringdashboard.database import Request, session_scope
-from flask_monitoringdashboard.database.count import count_versions_end
+from flask_monitoringdashboard.database.count import count_versions_endpoint
 from flask_monitoringdashboard.database.count_group import get_value
 from flask_monitoringdashboard.database.data_grouped import get_version_data_grouped
 from flask_monitoringdashboard.database.endpoint import to_local_datetime
@@ -23,15 +23,16 @@ CONTENT_INFO = '''This graph shows a horizontal boxplot for the versions that ar
 graph you can found out whether the performance changes across different versions.'''
 
 
-@blueprint.route('/endpoint/<end>/versions', methods=['GET', 'POST'])
+@blueprint.route('/endpoint/<endpoint_id>/versions', methods=['GET', 'POST'])
 @secure
-def versions(end):
+def versions(endpoint_id):
     with session_scope() as db_session:
-        form = get_slider_form(count_versions_end(db_session, end), title='Select the number of versions')
-        details = get_endpoint_details(db_session, end)
-        graph = versions_graph(db_session, end, form)
+        details = get_endpoint_details(db_session, endpoint_id)
+        form = get_slider_form(count_versions_endpoint(db_session, endpoint_id), title='Select the number of versions')
+
+        graph = versions_graph(db_session, endpoint_id, form)
         return render_template('fmd_dashboard/graph-details.html', details=details, graph=graph,
-                               title='{} for {}'.format(TITLE, end), form=form,
+                               title='{} for {}'.format(TITLE, details['endpoint']), form=form,
                                information=get_plot_info(AXES_INFO, CONTENT_INFO))
 
 
@@ -46,11 +47,13 @@ def format_version(version, first_used):
     return '{}<br>{}'.format(version, to_local_datetime(first_used).strftime('%Y-%m-%d %H:%M'))
 
 
-def versions_graph(db_session, end, form):
-    times = get_version_data_grouped(db_session, lambda x: simplify(x, 10), Request.endpoint == end)
+def versions_graph(db_session, endpoint_id, form):
+    times = get_version_data_grouped(db_session, lambda x: simplify(x, 10), Request.endpoint_id == endpoint_id)
     first_requests = get_first_requests(db_session, form.get_slider_value())
-    data = [boxplot(name=format_version(request.version, get_value(first_requests, request.version)),
-                    values=get_value(times, request.version), marker={'color': get_color(request.version)})
+    data = [boxplot(
+                name=format_version(request.version_requested, get_value(first_requests, request.version_requested)),
+                values=get_value(times, request.version_requested),
+                marker={'color': get_color(request.version_requested)})
             for request in first_requests]
 
     layout = get_layout(

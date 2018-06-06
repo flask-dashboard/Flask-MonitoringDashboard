@@ -31,11 +31,11 @@ def hourly_load():
                            information=get_plot_info(AXES_INFO, CONTENT_INFO))
 
 
-def hourly_load_graph(form, end=None):
+def hourly_load_graph(form, endpoint_id=None):
     """
     Return HTML string for generating a Heatmap.
     :param form: A SelectDateRangeForm, which is used to filter the selection
-    :param end: optionally, filter the data on a specific endpoint
+    :param endpoint_id: optionally, filter the data on a specific endpoint
     :return: HTML code with the graph
     """
     # list of hours: 0:00 - 23:00
@@ -50,7 +50,7 @@ def hourly_load_graph(form, end=None):
     end_datetime = to_utc_datetime(datetime.datetime.combine(form.end_date.data, datetime.time(23, 59, 59)))
 
     with session_scope() as db_session:
-        for time, count in get_num_requests(db_session, end, start_datetime, end_datetime):
+        for time, count in get_num_requests(db_session, endpoint_id, start_datetime, end_datetime):
             parsed_time = datetime.datetime.strptime(time, '%Y-%m-%d %H:%M:%S')
             day_index = (parsed_time - start_datetime).days
             hour_index = int(to_local_datetime(parsed_time).strftime('%H'))

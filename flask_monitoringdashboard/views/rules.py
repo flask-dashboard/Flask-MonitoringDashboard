@@ -9,7 +9,7 @@ from flask_monitoringdashboard.core.measurement import add_decorator
 from flask_monitoringdashboard.core.rules import get_rules
 from flask_monitoringdashboard.database import session_scope
 from flask_monitoringdashboard.database.count_group import get_value
-from flask_monitoringdashboard.database.endpoint import get_monitor_rule, update_monitor_rule, get_last_accessed_times
+from flask_monitoringdashboard.database.endpoint import get_endpoint_by_name, update_endpoint, get_last_requested
 
 
 @blueprint.route('/rules', methods=['GET', 'POST'])
@@ -25,7 +25,7 @@ def rules():
         if request.method == 'POST':
             endpoint = request.form['name']
             value = int(request.form['value'])
-            update_monitor_rule(db_session, endpoint, value=value)
+            update_endpoint(db_session, endpoint, value=value)
 
             # Remove wrapper
             original = getattr(user_app.view_functions[endpoint], 'original', None)
@@ -35,10 +35,10 @@ def rules():
             add_decorator(endpoint, value)
             return 'OK'
 
-        last_accessed = get_last_accessed_times(db_session)
+        last_accessed = get_last_requested(db_session)
         all_rules = []
         for rule in get_rules():
-            db_rule = get_monitor_rule(db_session, rule.endpoint)
+            db_rule = get_endpoint_by_name(db_session, rule.endpoint)
             all_rules.append({
                 'color': get_color(rule.endpoint),
                 'rule': rule.rule,

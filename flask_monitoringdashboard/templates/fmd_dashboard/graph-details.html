@@ -2,7 +2,7 @@
 
 {% block endpoint_menu %}
     {% macro endpoint_submenu(endpoint, name) -%}
-        <li><a class="{{ active_if_is(endpoint) }}" href="{{ url_for(endpoint, end=details.endpoint) }}">{{ name }}</a>
+        <li><a class="{{ active_if_is(endpoint) }}" href="{{ url_for(endpoint, endpoint_id=details.id) }}">{{ name }}</a>
         </li>
     {%- endmacro %}
 
@@ -12,9 +12,10 @@
     {% set url_version='dashboard.versions' %}
     {% set url_user='dashboard.users' %}
     {% set url_profiler='dashboard.profiler' %}
+    {% set url_grouped_profiler='dashboard.grouped_profiler' %}
     {% set url_outliers='dashboard.outliers' %}
     {% set endpoint_list=[url_heatmap, url_version_user, url_version_ip, url_version, url_user, url_profiler,
-  url_outliers] %}
+    url_grouped_profiler, url_outliers] %}
 
     <li class="nav-item" data-toggle="tooltip" data-placement="right" title="{{ details.endpoint }}">
         <a class="nav-link nav-link-collapse {{ "my-active" if request.endpoint in endpoint_list }}"
@@ -22,14 +23,14 @@
             <i class="fa fa-fw fa-asterisk"></i>
             <span class="nav-link-text">{{ details.endpoint }}</span>
         </a>
-        <ul class="sidenav-second-level show"
-            id="collapseEndpoint">
+        <ul class="sidenav-second-level show" id="collapseEndpoint">
             {{ endpoint_submenu(url_heatmap, 'Hourly API Utilization') }}
             {{ endpoint_submenu(url_version_user, 'User-Focused Multi-Version Performance') }}
             {{ endpoint_submenu(url_version_ip, 'IP-Focused Multi-Version Performance') }}
             {{ endpoint_submenu(url_version, 'Per-Version Performance') }}
             {{ endpoint_submenu(url_user, 'Per-User Performance') }}
             {{ endpoint_submenu(url_profiler, 'Profiler') }}
+            {{ endpoint_submenu(url_grouped_profiler, 'Grouped Profiler') }}
             {{ endpoint_submenu(url_outliers, 'Outliers') }}
         </ul>
     </li>
@@ -65,7 +66,8 @@
                     {% endif %}
                     <tr>
                         <td><b>Last accessed</b></td>
-                        <td>{{ "{:%Y-%m-%d %H:%M:%S }".format(details.rule.last_accessed) }}</td>
+                        <td>{{ "{:%Y-%m-%d %H:%M:%S }".format(details.rule.last_requested)
+                                if details.rule.last_requested }}</td>
                     </tr>
                     <tr>
                         <td><b>Total number of hits</b></td>

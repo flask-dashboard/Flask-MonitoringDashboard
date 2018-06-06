@@ -1,0 +1,47 @@
+{% extends "fmd_dashboard/profiler.html" %}
+
+
+{% block graph_content %}
+
+    {% macro table_row(index, table) -%}
+        {% set row = table[index] %}
+        <tr>
+            <td hidden>{{ row.index }}</td>
+            <td style="padding-left: {{ 10 + 15 * row.indent }}px; width: 60%">
+                {{ row.code }}
+                {% if row.body %}
+                    <i class="fa fa-minus-square" style="cursor: pointer;"
+                       onclick="toggle_rows( {{'{}, 0, this'.format(row.body) }})"></i>
+                {% endif %}
+            </td>
+            <td style="text-align: right;">{{ row.hits }}</td>
+            <td style="text-align: right; width: 12%">
+                {{ "{:,.1f} ms".format(row.sum) }}
+            </td>
+            <td style="text-align: right; width: 12%">
+                {{ "{:,.1f} ms".format(row.average) }}
+            </td>
+            <td style="text-align: right; background-color: {{ compute_color(row.percentage) }}; width: 10%">
+                {{ "{:.1f} %".format(row.percentage * 100) }}
+            </td>
+        </tr>
+    {%- endmacro %}
+
+    <table class="table table-bordered req-id0" id="dataTable" width="100%" cellspacing="0" >
+        <thead>
+            <tr>
+                <th hidden>Line number</th>
+                <th>Codestack</th>
+                <th>Hits</th>
+                <th>Total time</th>
+                <th>Average time</th>
+                <th>Percentage</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for index in range(table|length) %}
+                {{ table_row(index, table) }}
+            {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}

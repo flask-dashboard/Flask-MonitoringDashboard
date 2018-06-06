@@ -6,7 +6,7 @@ from flask import json, jsonify
 from flask_monitoringdashboard import blueprint, config
 from flask_monitoringdashboard.core.utils import get_details
 from flask_monitoringdashboard.database import session_scope
-from flask_monitoringdashboard.database.monitor_rules import get_monitor_data
+from flask_monitoringdashboard.database.endpoint import get_endpoint_data
 from flask_monitoringdashboard.database.request import get_data_between
 
 
@@ -33,10 +33,10 @@ def get_json_data_from(time_from, time_to=None):
             for entry in get_data_between(db_session, time1, time2):
                 # nice conversion to json-object
                 data.append({
-                    'endpoint': entry.endpoint,
-                    'execution_time': entry.execution_time,
-                    'time': str(entry.time),
-                    'version': entry.version,
+                    'endpoint_id': entry.endpoint_id,
+                    'duration': entry.duration,
+                    'time_requested': str(entry.time_requested),
+                    'version_requested': entry.version_requested,
                     'group_by': entry.group_by,
                     'ip': entry.ip
                 })
@@ -55,11 +55,11 @@ def get_json_monitor_rules():
     data = []
     try:
         with session_scope() as db_session:
-            for entry in get_monitor_data(db_session):
+            for entry in get_endpoint_data(db_session):
                 # nice conversion to json-object
                 data.append({
-                    'endpoint': entry.endpoint,
-                    'last_accessed': str(entry.last_accessed),
+                    'name': entry.name,
+                    'last_requested': str(entry.last_requested),
                     'monitor_level': entry.monitor_level,
                     'time_added': str(entry.time_added),
                     'version_added': entry.version_added
