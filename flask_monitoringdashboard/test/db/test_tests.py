@@ -7,8 +7,8 @@
 import unittest
 
 from flask_monitoringdashboard.database import session_scope
-from flask_monitoringdashboard.test.utils import set_test_environment, clear_db, add_fake_data, EXECUTION_TIMES, NAME, \
-    TEST_NAMES
+from flask_monitoringdashboard.test.utils import set_test_environment, clear_db, add_fake_data, add_fake_test_runs,\
+    EXECUTION_TIMES, NAME, TEST_NAMES
 
 NAME2 = 'main2'
 SUITE = 3
@@ -20,6 +20,7 @@ class TestDBTests(unittest.TestCase):
         set_test_environment()
         clear_db()
         add_fake_data()
+        add_fake_test_runs()
 
     def test_add_test_result(self):
         """
