@@ -4,7 +4,22 @@ Contains all functions that returns results of all tests
 from sqlalchemy import func
 from sqlalchemy.orm import joinedload
 
-from flask_monitoringdashboard.database import Test, TestResult, TestEndpoint
+from flask_monitoringdashboard.database import Endpoint, Test, TestResult, TestEndpoint
+
+
+def add_or_update_test(db_session, name, passing, last_tested, version_added, time_added):
+    """ Add a unit test or update it. """
+    test = db_session.query(Test).filter(Test.name == name).first()
+    if test:
+        test.name = name
+        test.passing = passing
+        test.last_tested = last_tested
+        test.version_added = version_added
+        test.time_added = time_added
+    else:
+        db_session.add(Test(name=name, passing=passing, last_tested=last_tested, version_added=version_added,
+                            time_added=time_added))
+    db_session.commit()
 
 
 def add_test_result(db_session, name, exec_time, time, version, job_id, iteration):
@@ -48,10 +63,11 @@ def get_endpoint_measurements(db_session, suite):
 
 def get_endpoint_measurements_job(db_session, name, job_id):
     """ Return all measurements for some test of some Travis build. Used for creating a box plot. """
-    result = db_session.query(TestEndpoint.execution_time).filter(
-        TestEndpoint.endpoint.name == name).filter(TestEndpoint.travis_job_id == job_id).options(
+    endpoint_id = db_session.query(Endpoint.id).filter(Endpoint.name == name).first()[0]
+    result = db_session.query(TestEndpoint).filter(
+        TestEndpoint.endpoint_id == endpoint_id).filter(TestEndpoint.travis_job_id == job_id).options(
         joinedload(TestEndpoint.endpoint)).all()
-    return [r[0] for r in result] if len(result) > 0 else [0]
+    return [r.execution_time for r in result] if len(result) > 0 else [0]
 
 
 def get_last_tested_times(db_session):
