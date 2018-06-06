@@ -7,8 +7,8 @@
 import unittest
 
 from flask_monitoringdashboard.database import session_scope
-from flask_monitoringdashboard.test.utils import set_test_environment, clear_db, add_fake_data, mean, \
-    EXECUTION_TIMES, NAME, TEST_NAMES
+from flask_monitoringdashboard.test.utils import set_test_environment, clear_db, add_fake_data, EXECUTION_TIMES, NAME, \
+    TEST_NAMES
 
 NAME2 = 'main2'
 SUITE = 3
@@ -25,21 +25,18 @@ class TestDBTests(unittest.TestCase):
         """
             Test whether the function returns the right values.
         """
-        from flask_monitoringdashboard.database.tests import get_test_cnt_avg, add_test_result
+        from flask_monitoringdashboard.database.tests import add_test_result, get_suite_measurements
         from flask_monitoringdashboard.database.tested_endpoints import add_endpoint_hit
         from flask_monitoringdashboard import config
         import datetime
         with session_scope() as db_session:
-            self.assertEqual(get_test_cnt_avg(db_session), [])
+            self.assertEqual(get_suite_measurements(db_session, SUITE), [0])
             for exec_time in EXECUTION_TIMES:
                 for test in TEST_NAMES:
                     add_test_result(db_session, test, exec_time, datetime.datetime.utcnow(), config.version, SUITE, 0)
                 add_endpoint_hit(db_session, NAME, exec_time, test, config.version, SUITE)
-            result = get_test_cnt_avg(db_session)
-            self.assertEqual(2, len(result))
-            self.assertEqual(TEST_NAMES[0], result[0].name)
-            self.assertEqual(len(EXECUTION_TIMES), result[0].count)
-            self.assertEqual(mean(EXECUTION_TIMES), result[0].average)
+            result = get_suite_measurements(db_session, SUITE)
+            self.assertEqual(len(result), len(EXECUTION_TIMES) * len(TEST_NAMES))
 
     def test_get_results(self):
         """

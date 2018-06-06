@@ -1,6 +1,6 @@
 from numpy import median
 
-from flask_monitoringdashboard.database import Request, TestedEndpoints
+from flask_monitoringdashboard.database import Request, TestEndpoint
 
 
 def get_data_grouped(db_session, column, func, *where):
@@ -48,8 +48,8 @@ def get_test_data_grouped(db_session, func, *where):
     :param func: the function to reduce the data
     :param where: additional where clause
     """
-    result = db_session.query(TestedEndpoints.endpoint_name, TestedEndpoints.execution_time). \
-        filter(*where).order_by(TestedEndpoints.execution_time).all()
+    result = db_session.query(TestEndpoint.endpoint.name, TestEndpoint.execution_time). \
+        filter(*where).order_by(TestEndpoint.execution_time).all()
     return group_result(result, func)
 
 
@@ -81,4 +81,3 @@ def get_two_columns_grouped(db_session, column, *where):
         filter(*where).all()
     result = [((g, v), t) for g, v, t in result]
     return group_result(result, median)
-

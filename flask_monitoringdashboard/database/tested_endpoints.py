@@ -1,4 +1,4 @@
-from flask_monitoringdashboard.database import TestedEndpoints
+from flask_monitoringdashboard.database import Endpoint, Test, TestEndpoint
 
 
 def add_endpoint_hit(db_session, endpoint, time, test, version, job_id):
@@ -12,5 +12,7 @@ def add_endpoint_hit(db_session, endpoint, time, test, version, job_id):
     :param job_id: Travis job ID in which the hit occurred.
     :return:
     """
-    db_session.add(TestedEndpoints(endpoint_name=endpoint, execution_time=time, test_name=test, app_version=version,
-                                   travis_job_id=job_id))
+    endpoint_id = db_session.query(Endpoint.id).filter(Endpoint.name == endpoint).first().id
+    test_id = db_session.query(Test.id).filter(Test.name == test).first().id
+    db_session.add(TestEndpoint(endpoint_id=endpoint_id, test_id=test_id, execution_time=time, app_version=version,
+                                travis_job_id=job_id))

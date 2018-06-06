@@ -1,6 +1,6 @@
 from sqlalchemy import func, distinct
 
-from flask_monitoringdashboard.database import Request, Outlier, TestRun, ExecutionPathLine, TestedEndpoints
+from flask_monitoringdashboard.database import Request, Outlier, ExecutionPathLine, TestResult, TestEndpoint
 
 
 def count_rows(db_session, column, *criterion):
@@ -39,18 +39,18 @@ def count_versions(db_session):
     return count_rows(db_session, Request.version)
 
 
-def count_builds(db_session):
+def count_test_builds(db_session):
     """
     :return: The number of Travis builds that are available
     """
-    return count_rows(db_session, TestRun.suite)
+    return count_rows(db_session, TestResult.travis_job_id)
 
 
 def count_builds_endpoint(db_session):
     """
     :return: The number of Travis builds that are available
     """
-    return count_rows(db_session, TestedEndpoints.travis_job_id)
+    return count_rows(db_session, TestEndpoint.travis_job_id)
 
 
 def count_versions_end(db_session, endpoint):

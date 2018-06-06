@@ -7,7 +7,7 @@ from flask_monitoringdashboard.core.forms import get_slider_form
 from flask_monitoringdashboard.core.info_box import get_plot_info
 from flask_monitoringdashboard.core.plot import get_layout, get_figure, boxplot
 from flask_monitoringdashboard.database import session_scope, TestedEndpoints
-from flask_monitoringdashboard.database.count import count_builds, count_builds_endpoint
+from flask_monitoringdashboard.database.count import count_test_builds, count_builds_endpoint
 from flask_monitoringdashboard.database.count_group import get_value, count_times_tested, get_latest_test_version
 from flask_monitoringdashboard.database.data_grouped import get_test_data_grouped
 from flask_monitoringdashboard.database.tests import get_test_suites, get_travis_builds, \
@@ -29,7 +29,7 @@ def test_build_performance():
     :return:
     """
     with session_scope() as db_session:
-        form = get_slider_form(count_builds(db_session), title='Select the number of builds')
+        form = get_slider_form(count_test_builds(db_session), title='Select the number of builds')
     graph = get_boxplot_tests(form=form)
     return render_template('fmd_dashboard/graph.html', graph=graph, title='Per-Build Test Performance',
                            information=get_plot_info(AXES_INFO, CONTENT_INFO), form=form)
