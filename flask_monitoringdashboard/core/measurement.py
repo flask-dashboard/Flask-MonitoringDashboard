@@ -6,7 +6,8 @@ import time
 from functools import wraps
 
 from flask_monitoringdashboard import user_app
-from flask_monitoringdashboard.core.profiler import thread_after_request, threads_before_request
+from flask_monitoringdashboard.core.profiler import start_thread_last_requested, start_performance_thread, \
+    start_profiler_thread, start_profiler_and_outlier_thread
 from flask_monitoringdashboard.core.rules import get_rules
 from flask_monitoringdashboard.database import session_scope
 from flask_monitoringdashboard.database.endpoint import get_endpoint_by_name
@@ -25,30 +26,70 @@ def init_measurement():
 
 
 def add_decorator(endpoint):
-    """
-    Add a wrapper to the Flask-Endpoint based on the monitoring-level.
-    :param endpoint: endpoint object
-    :return: the wrapper
-    """
-    func = user_app.view_functions[endpoint.name]
+    fun = user_app.view_functions[endpoint.name]
+    if endpoint.monitor_level == 0:
+        add_wrapper0(endpoint, fun)
+    elif endpoint.monitor_level == 1:
+        add_wrapper1(endpoint, fun)
+    elif endpoint.monitor_level == 2:
+        add_wrapper2(endpoint, fun)
+    elif endpoint.monitor_level == 3:
+        add_wrapper3(endpoint, fun)
+    else:
+        raise ValueError('Incorrect monitoringLevel')
 
-    @wraps(func)
+
+def add_wrapper0(endpoint, fun):
+    @wraps(fun)
     def wrapper(*args, **kwargs):
-        if endpoint.monitor_level == 2 or endpoint.monitor_level == 3:
-            threads = threads_before_request(endpoint)
-            start_time = time.time()
-            result = func(*args, **kwargs)
-            stop_time = time.time() - start_time
-            for thread in threads:
-                thread.stop(stop_time)
-        else:
-            start_time = time.time()
-            result = func(*args, **kwargs)
-            stop_time = time.time() - start_time
-            thread_after_request(endpoint, stop_time)
+        result = fun(*args, **kwargs)
+        start_thread_last_requested(endpoint)
         return result
 
-    wrapper.original = func
+    wrapper.original = fun
     user_app.view_functions[endpoint.name] = wrapper
+    return wrapper
 
+
+def add_wrapper1(endpoint, fun):
+    @wraps(fun)
+    def wrapper(*args, **kwargs):
+        start_time = time.time()
+        result = fun(*args, **kwargs)
+        duration = time.time() - start_time
+        start_performance_thread(endpoint, duration)
+        return result
+
+    wrapper.original = fun
+    user_app.view_functions[endpoint.name] = wrapper
+    return wrapper
+
+
+def add_wrapper2(endpoint, fun):
+    @wraps(fun)
+    def wrapper(*args, **kwargs):
+        thread = start_profiler_thread(endpoint)
+        start_time = time.time()
+        result = fun(*args, **kwargs)
+        duration = time.time() - start_time
+        thread.stop(duration)
+        return result
+
+    wrapper.original = fun
+    user_app.view_functions[endpoint.name] = wrapper
+    return wrapper
+
+
+def add_wrapper3(endpoint, fun):
+    @wraps(fun)
+    def wrapper(*args, **kwargs):
+        thread = start_profiler_and_outlier_thread(endpoint)
+        start_time = time.time()
+        result = fun(*args, **kwargs)
+        duration = time.time() - start_time
+        thread.stop(duration)
+        return result
+
+    wrapper.original = fun
+    user_app.view_functions[endpoint.name] = wrapper
     return wrapper

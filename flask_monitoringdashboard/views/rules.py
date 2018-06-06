@@ -23,16 +23,17 @@ def rules():
     """
     with session_scope() as db_session:
         if request.method == 'POST':
-            endpoint = request.form['name']
+            endpoint_name = request.form['name']
             value = int(request.form['value'])
-            update_endpoint(db_session, endpoint, value=value)
+            update_endpoint(db_session, endpoint_name, value=value)
 
             # Remove wrapper
-            original = getattr(user_app.view_functions[endpoint], 'original', None)
+            original = getattr(user_app.view_functions[endpoint_name], 'original', None)
             if original:
-                user_app.view_functions[endpoint] = original
+                user_app.view_functions[endpoint_name] = original
 
-            add_decorator(endpoint, value)
+            # Add new wrapper
+            add_decorator(get_endpoint_by_name(db_session, endpoint_name))
             return 'OK'
 
         last_accessed = get_last_requested(db_session)
