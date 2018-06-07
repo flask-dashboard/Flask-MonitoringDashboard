@@ -6,7 +6,7 @@
 
 import sqlite3
 
-DB_PATH = '/home/bogdan/flask_monitoringdashboard.db'
+DB_PATH = '/path/to/db/database.db'
 # DB_PATH = '/home/bogdan/school_tmp/RI/stacktrace_view/flask-dashboard_copy.db'
 
 sql_drop_temp = """DROP TABLE IF EXISTS temp"""
