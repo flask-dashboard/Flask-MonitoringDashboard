@@ -55,7 +55,7 @@ def add_fake_data():
     # Add Outliers
     with session_scope() as db_session:
         for i in range(OUTLIER_COUNT):
-            db_session.add(Outlier(request_id=i, cpu_percent='[%d, %d, %d, %d]' % (i, i + 1, i + 2, i + 3)))
+            db_session.add(Outlier(request_id=i+1, cpu_percent='[%d, %d, %d, %d]' % (i, i + 1, i + 2, i + 3)))
 
 
 def add_fake_test_runs():
