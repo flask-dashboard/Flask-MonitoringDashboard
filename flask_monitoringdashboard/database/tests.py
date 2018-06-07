@@ -7,24 +7,21 @@ from sqlalchemy.orm import joinedload
 from flask_monitoringdashboard.database import Endpoint, Test, TestResult, TestEndpoint
 
 
-def add_or_update_test(db_session, name, passing, last_tested, version_added, time_added):
+def add_or_update_test(db_session, name, passing, last_tested, version_added):
     """ Add a unit test or update it. """
     test = db_session.query(Test).filter(Test.name == name).first()
     if test:
         test.name = name
         test.passing = passing
         test.last_tested = last_tested
-        test.version_added = version_added
-        test.time_added = time_added
     else:
-        db_session.add(Test(name=name, passing=passing, last_tested=last_tested, version_added=version_added,
-                            time_added=time_added))
+        db_session.add(Test(name=name, passing=passing, last_tested=last_tested, version_added=version_added))
     db_session.commit()
 
 
 def add_test_result(db_session, name, exec_time, time, version, job_id, iteration):
     """ Add a test result to the database. """
-    test_id = db_session.query(Test.id).filter(Test.name == name).first().id
+    test_id = db_session.query(Test).filter(Test.name == name).first().id
     db_session.add(TestResult(test_id=test_id, execution_time=exec_time, time_added=time, app_version=version,
                               travis_job_id=job_id, run_nr=iteration))
 
@@ -72,5 +69,5 @@ def get_endpoint_measurements_job(db_session, name, job_id):
 
 def get_last_tested_times(db_session):
     """ Returns the last tested time of each of the endpoints. """
-    return db_session.query(TestEndpoint.endpoint.name, func.max(TestEndpoint.time_added)).group_by(
-        TestEndpoint.endpoint.name).options(joinedload(TestEndpoint.endpoint)).all()
+    return db_session.query(TestEndpoint.endpoint, func.max(TestEndpoint.time_added)).group_by(
+        TestEndpoint.endpoint).options(joinedload('TestEndpoint.endpoint')).all()

@@ -7,7 +7,7 @@ import flask_monitoringdashboard.views.export.json
 from flask_monitoringdashboard import blueprint
 from flask_monitoringdashboard.database import session_scope
 from flask_monitoringdashboard.database.tested_endpoints import add_endpoint_hit
-from flask_monitoringdashboard.database.tests import add_test_result
+from flask_monitoringdashboard.database.tests import add_test_result, add_or_update_test
 
 
 @blueprint.route('/submit-test-results', methods=['POST'])
@@ -29,6 +29,7 @@ def submit_test_results():
     with session_scope() as db_session:
         for test_run in test_runs:
             time = datetime.datetime.strptime(test_run['time'], '%Y-%m-%d %H:%M:%S.%f')
+            add_or_update_test(db_session, test_run['name'], test_run['successful'], time, app_version)
             add_test_result(db_session, test_run['name'], test_run['exec_time'], time, app_version,
                             int(float(travis_job_id)), test_run['iter'])
 

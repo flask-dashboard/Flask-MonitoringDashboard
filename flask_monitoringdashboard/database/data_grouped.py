@@ -48,7 +48,7 @@ def get_test_data_grouped(db_session, func, *where):
     :param func: the function to reduce the data
     :param where: additional where clause
     """
-    result = db_session.query(TestEndpoint.endpoint.name, TestEndpoint.execution_time). \
+    result = db_session.query(TestEndpoint.endpoint, TestEndpoint.execution_time). \
         filter(*where).order_by(TestEndpoint.execution_time).all()
     return group_result(result, func)
 
