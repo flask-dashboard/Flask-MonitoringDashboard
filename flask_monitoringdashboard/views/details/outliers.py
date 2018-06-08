@@ -6,12 +6,12 @@ from flask_paginate import get_page_args, Pagination
 from flask_monitoringdashboard import blueprint
 from flask_monitoringdashboard.core.auth import secure
 from flask_monitoringdashboard.core.colors import get_color
+from flask_monitoringdashboard.core.plot import boxplot, get_figure, get_layout, get_margin
 from flask_monitoringdashboard.core.timezone import to_local_datetime
 from flask_monitoringdashboard.core.utils import get_endpoint_details, simplify
-from flask_monitoringdashboard.database import Outlier, session_scope, Request
+from flask_monitoringdashboard.database import session_scope
 from flask_monitoringdashboard.database.count import count_outliers
 from flask_monitoringdashboard.database.outlier import get_outliers_sorted, get_outliers_cpus
-from flask_monitoringdashboard.core.plot import boxplot, get_figure, get_layout, get_margin
 
 NUM_DATAPOINTS = 50
 

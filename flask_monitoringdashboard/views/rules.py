@@ -21,20 +21,23 @@ def rules():
     monitored
     :return:
     """
-    with session_scope() as db_session:
-        if request.method == 'POST':
-            endpoint = request.form['name']
+    if request.method == 'POST':
+        with session_scope() as db_session:
+            endpoint_name = request.form['name']
             value = int(request.form['value'])
-            update_endpoint(db_session, endpoint, value=value)
+            update_endpoint(db_session, endpoint_name, value=value)
 
             # Remove wrapper
-            original = getattr(user_app.view_functions[endpoint], 'original', None)
+            original = getattr(user_app.view_functions[endpoint_name], 'original', None)
             if original:
-                user_app.view_functions[endpoint] = original
+                user_app.view_functions[endpoint_name] = original
 
-            add_decorator(endpoint, value)
-            return 'OK'
+        with session_scope() as db_session:
+            add_decorator(get_endpoint_by_name(db_session, endpoint_name))
 
+        return 'OK'
+
+    with session_scope() as db_session:
         last_accessed = get_last_requested(db_session)
         all_rules = []
         for rule in get_rules():

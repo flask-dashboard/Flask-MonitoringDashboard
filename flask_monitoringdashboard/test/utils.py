@@ -55,20 +55,24 @@ def add_fake_data():
     # Add Outliers
     with session_scope() as db_session:
         for i in range(OUTLIER_COUNT):
-            db_session.add(Outlier(request_id=i, cpu_percent='[%d, %d, %d, %d]' % (i, i + 1, i + 2, i + 3)))
+            db_session.add(Outlier(request_id=i+1, cpu_percent='[%d, %d, %d, %d]' % (i, i + 1, i + 2, i + 3)))
 
 
 def add_fake_test_runs():
     """ Adds test run data to the database for testing purposes. """
-    from flask_monitoringdashboard.database import session_scope, TestRun
+    from flask_monitoringdashboard.database import session_scope, TestResult, Test
     from flask_monitoringdashboard import config
 
     with session_scope() as db_session:
         for test_name in TEST_NAMES:
+            test = Test(name=test_name, passing=True, version_added=config.version)
+            db_session.add(test)
+            db_session.flush()
+            id = test.id
             for i in range(len(EXECUTION_TIMES)):
                 db_session.add(
-                    TestRun(name=test_name, execution_time=EXECUTION_TIMES[i], time=datetime.datetime.utcnow(),
-                            version=config.version, suite=1, run=i))
+                    TestResult(test_id=id, execution_time=EXECUTION_TIMES[i], time_added=datetime.datetime.utcnow(),
+                               app_version=config.version, travis_job_id="1", run_nr=i))
 
 
 def get_test_app():

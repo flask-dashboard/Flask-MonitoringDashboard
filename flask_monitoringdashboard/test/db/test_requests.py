@@ -8,6 +8,8 @@ import time
 import unittest
 
 from flask_monitoringdashboard.database import session_scope
+from flask_monitoringdashboard.database.count import count_requests
+from flask_monitoringdashboard.database.endpoint import get_endpoint_by_name
 from flask_monitoringdashboard.test.utils import set_test_environment, clear_db, add_fake_data, EXECUTION_TIMES, \
     TIMES, NAME, GROUP_BY, IP
 
@@ -24,18 +26,14 @@ class TestRequest(unittest.TestCase):
             Test whether the function returns the right values.
         """
         from flask_monitoringdashboard.database.request import add_request
-        from flask_monitoringdashboard.database.endpoint import Endpoint
-        from flask_monitoringdashboard.database.data_grouped import get_endpoint_data_grouped
         name2 = 'main2'
         execution_time = 1234
         self.assertNotEqual(NAME, name2, 'Both cannot be equal, otherwise the test will fail')
         with session_scope() as db_session:
-            self.assertEqual(get_endpoint_data_grouped(db_session, lambda x: x, Endpoint.name == name2),
-                             dict().items())
-            add_request(db_session, execution_time, name2, ip=IP)
-
-            result2 = get_endpoint_data_grouped(db_session, lambda x: x, Endpoint.name == name2)
-            self.assertEqual(len(result2), 1)
+            endpoint = get_endpoint_by_name(db_session, name2)
+            self.assertEqual(count_requests(db_session, endpoint.id), 0)
+            add_request(db_session, execution_time, endpoint.id, ip=IP)
+            self.assertEqual(count_requests(db_session, endpoint.id), 1)
 
     def test_get_data_from(self):
         """
@@ -47,9 +45,9 @@ class TestRequest(unittest.TestCase):
         with session_scope() as db_session:
             result = get_data_between(db_session, TIMES[-size - 2], TIMES[-1])
             for i in range(size):
-                self.assertEqual(result[i].endpoint, NAME)
-                self.assertEqual(result[i].execution_time, EXECUTION_TIMES[first + i])
-                self.assertEqual(result[i].time, TIMES[first + i])
+                self.assertEqual(result[i].endpoint.name, NAME)
+                self.assertEqual(result[i].duration, EXECUTION_TIMES[first + i])
+                self.assertEqual(result[i].time_requested, TIMES[first + i])
                 self.assertEqual(result[i].group_by, GROUP_BY)
                 self.assertEqual(result[i].ip, IP)
 
@@ -63,11 +61,11 @@ class TestRequest(unittest.TestCase):
             result = get_data(db_session)
             self.assertEqual(len(result), len(EXECUTION_TIMES))
             for i in range(len(EXECUTION_TIMES)):
-                self.assertEqual(result[i].endpoint, NAME)
-                self.assertEqual(result[i].execution_time, EXECUTION_TIMES[i])
-                self.assertEqual(result[i].time, TIMES[i])
+                self.assertEqual(result[i].endpoint.name, NAME)
+                self.assertEqual(result[i].duration, EXECUTION_TIMES[i])
+                self.assertEqual(result[i].time_requested, TIMES[i])
                 self.assertEqual(result[i].group_by, GROUP_BY)
-                self.assertEqual(result[i].version, config.version)
+                self.assertEqual(result[i].version_requested, config.version)
                 self.assertEqual(result[i].ip, IP)
 
     def test_get_versions(self):
@@ -89,7 +87,7 @@ class TestRequest(unittest.TestCase):
         with session_scope() as db_session:
             result = get_endpoints(db_session)
             self.assertEqual(len(result), 1)
-            self.assertEqual(result[0], NAME)
+            self.assertEqual(result[0].name, NAME)
 
     def test_get_date_of_first_request(self):
         """

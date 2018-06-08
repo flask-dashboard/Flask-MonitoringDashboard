@@ -13,7 +13,7 @@ def create_app():
 
     app = Flask(__name__)
 
-    dashboard.config.outlier_detection_constant = 0
+    dashboard.config.outlier_detection_constant = 1
     dashboard.config.database_name = 'sqlite:///flask_monitoringdashboard_v10.db'
     dashboard.bind(app)
 
@@ -26,7 +26,7 @@ def create_app():
     @app.route('/endpoint')
     def endpoint():
 
-        f()
+        g()
 
         return 'Ok'
 

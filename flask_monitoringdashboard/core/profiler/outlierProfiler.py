@@ -32,7 +32,7 @@ class OutlierProfiler(threading.Thread):
         # sleep for average * ODC ms
         with session_scope() as db_session:
             average = get_avg_execution_time(db_session, self._endpoint.id) * config.outlier_detection_constant
-        time.sleep(average / 1000.0)
+        time.sleep(average / 1000)
         if not self._stopped:
             stack_list = []
             frame = sys._current_frames()[self._current_thread]
@@ -52,8 +52,9 @@ class OutlierProfiler(threading.Thread):
             self._cpu_percent = str(psutil.cpu_percent(interval=None, percpu=True))
             self._memory = str(psutil.virtual_memory())
 
-    def stop(self, duration):
+    def stop(self):
         self._stopped = True
 
-    def set_request_id(self, db_session, request_id):
-        add_outlier(db_session, request_id, self._cpu_percent, self._memory, self._stacktrace, self._request)
+    def add_outlier(self, db_session, request_id):
+        if self._memory:
+            add_outlier(db_session, request_id, self._cpu_percent, self._memory, self._stacktrace, self._request)

@@ -8,5 +8,7 @@ def get_rules(endpoint_name=None):
         rules = user_app.url_map.iter_rules(endpoint=endpoint_name)
     except KeyError:
         return []
-    return [r for r in rules if not r.rule.startswith('/' + config.link)
-            and not r.rule.startswith('/static-' + config.link)]
+    return [r for r in rules
+            if not r.rule.startswith('/' + config.link)
+            and not r.rule.startswith('/static-' + config.link)
+            and not r.endpoint == 'static']

@@ -32,11 +32,10 @@ class TestExportData(unittest.TestCase):
         """
             Submit some collect_performance data.
         """
-        test_results = {'test_runs': [], 'grouped_tests': [], 'endpoint_exec_times': []}
+        test_results = {'test_runs': [], 'endpoint_exec_times': []}
         test_results['test_runs'].append(
             {'name': 'test_1', 'exec_time': 50, 'time': str(datetime.datetime.now()), 'successful': True, 'iter': 1})
-        test_results['grouped_tests'].append({'endpoint': 'endpoint_1', 'test_name': 'test_1'})
-        test_results['endpoint_exec_times'].append({'endpoint': 'endpoint_1', 'exec_time': 30, 'test_name': 'test_1'})
+        test_results['endpoint_exec_times'].append({'endpoint': 'main', 'exec_time': 30, 'test_name': 'test_1'})
         test_results['app_version'] = '1.0'
         test_results['travis_job'] = '133.7'
         test_post_data(self, 'submit-test-results', test_results)
@@ -67,7 +66,7 @@ class TestExportData(unittest.TestCase):
             result = c.get('dashboard/get_json_monitor_rules').data
         decoded = jwt.decode(result, config.security_token, algorithms=['HS256'])
         data = json.loads(decoded['data'])
-        self.assertEqual(len(data), 3)
+        self.assertEqual(len(data), 2)
         row = data[0]
         self.assertEqual(row['name'], NAME)
         self.assertEqual(row['last_requested'], str(TIMES[0]))

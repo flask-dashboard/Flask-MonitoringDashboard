@@ -8,38 +8,32 @@ from flask_monitoringdashboard.core.profiler.performanceProfiler import Performa
 from flask_monitoringdashboard.core.profiler.stacktraceProfiler import StacktraceProfiler
 
 
-def threads_before_request(endpoint):
-    """
-    Starts a thread before the request has been processed
-    :param endpoint: endpoint object that is wrapped
-    :return: a list with either 1 or 2 threads
-    """
+def start_thread_last_requested(endpoint):
+    """ Starts a thread that updates the last_requested time in the database"""
+    BaseProfiler(endpoint.id).start()
+
+
+def start_performance_thread(endpoint, duration):
+    """ Starts a thread that updates performance, utilization and last_requested in the databse. """
+    ip = request.environ['REMOTE_ADDR']
+    PerformanceProfiler(endpoint, ip, duration).start()
+
+
+def start_profiler_thread(endpoint):
+    """ Starts a thread that monitors the main thread. """
     current_thread = threading.current_thread().ident
     ip = request.environ['REMOTE_ADDR']
-
-    if endpoint.monitor_level == 2:
-        threads = [StacktraceProfiler(current_thread, endpoint, ip)]
-    elif endpoint.monitor_level == 3:
-        outlier = OutlierProfiler(current_thread, endpoint)
-        threads = [StacktraceProfiler(current_thread, endpoint, ip, outlier), outlier]
-    else:
-        raise ValueError("MonitorLevel should be 2 or 3.")
-
-    for thread in threads:
-        thread.start()
-    return threads
+    thread = StacktraceProfiler(current_thread, endpoint, ip)
+    thread.start()
+    return thread
 
 
-def thread_after_request(endpoint, duration):
-    """
-    Starts a thread after the request has been processed
-    :param endpoint: endpoint object that is wrapped
-    :param duration: time elapsed for processing the request (in ms)
-    """
-    if endpoint.monitor_level == 0:
-        BaseProfiler(endpoint.id).start()
-    elif endpoint.monitor_level == 1:
-        ip = request.environ['REMOTE_ADDR']
-        PerformanceProfiler(endpoint, ip, duration).start()
-    else:
-        raise ValueError("MonitorLevel should be 0 or 1.")
+def start_profiler_and_outlier_thread(endpoint):
+    """ Starts two threads: PerformanceProfiler and StacktraceProfiler.  """
+    current_thread = threading.current_thread().ident
+    ip = request.environ['REMOTE_ADDR']
+    outlier = OutlierProfiler(current_thread, endpoint)
+    thread = StacktraceProfiler(current_thread, endpoint, ip, outlier)
+    thread.start()
+    outlier.start()
+    return thread
