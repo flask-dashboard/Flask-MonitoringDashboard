@@ -110,6 +110,7 @@ def update_endpoint(db_session, endpoint_name, value):
     """ Update the value of a specific monitor rule. """
     db_session.query(Endpoint).filter(Endpoint.name == endpoint_name). \
         update({Endpoint.monitor_level: value})
+    db_session.flush()
 
 
 def get_last_requested(db_session):

@@ -28,7 +28,7 @@
             <td hidden>{{ line.position }}</td>
             <td style="padding-left: {{ 10 + 15 * line.indent }}px; width: 60%">
                 {{ line.code.code }}
-                {% if body %}
+                {% if body[request.id][index] %}
                     <i class="fa fa-minus-square" style="cursor: pointer;"
                        onclick="toggle_rows( {{'{}, {}, this'.format(body[request.id][index], request.id) }})"></i>
                 {% endif %}

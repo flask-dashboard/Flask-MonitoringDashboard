@@ -24,7 +24,7 @@ def get_outliers_sorted(db_session, endpoint_id, offset, per_page):
     """
     result = db_session.query(Outlier).\
         join(Outlier.request). \
-        options(joinedload(Outlier.request)). \
+        options(joinedload(Outlier.request).joinedload(Request.endpoint)). \
         filter(Request.endpoint_id == endpoint_id). \
         order_by(desc(Request.time_requested)). \
         offset(offset).limit(per_page).all()
