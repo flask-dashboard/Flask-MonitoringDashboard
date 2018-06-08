@@ -82,6 +82,7 @@
             "info": false,
             "searching": false
         });
+
         function toggle_rows(rows, request_id, icon){
             var table = $(".table.table-bordered.req-id" + request_id);
 
@@ -108,5 +109,14 @@
                 });
             }
         }
+
+        $('tr').children().each( function(index, element){
+           var value = $(this).css("padding-left").replace("px", "");
+           var number = parseInt(value);
+
+           if (number == 25){
+               var td = $(this).parent().find('i').trigger("click");
+           }
+        });
     </script>
 {% endblock %}

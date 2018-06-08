@@ -82,7 +82,6 @@
                value += ", " + hr + " hr";
            }
         }
-
         return value;
     });
 })(jQuery);

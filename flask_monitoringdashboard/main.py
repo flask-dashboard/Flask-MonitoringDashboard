@@ -18,15 +18,21 @@ def create_app():
     dashboard.config.sampling_period = .1
     dashboard.bind(app)
 
-    def f(duration=3):
+    def f(duration=1):
         time.sleep(duration)
 
     def g():
-        f(duration=10)
+        f()
+
+    def h():
+        g()
+
+    def i():
+        h()
 
     @app.route('/endpoint')
     def endpoint():
-        f()
+        i()
         return 'Ok'
 
     return app
