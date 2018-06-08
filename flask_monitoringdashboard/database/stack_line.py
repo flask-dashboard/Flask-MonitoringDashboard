@@ -36,6 +36,7 @@ def get_profiled_requests(db_session, endpoint_id, offset, per_page):
     t = db_session.query(distinct(StackLine.request_id).label('id')). \
         filter(Request.endpoint_id == endpoint_id). \
         join(Request.stack_lines). \
+        order_by(desc(Request.id)). \
         offset(offset).limit(per_page).subquery('t')
 
     result = db_session.query(Request). \

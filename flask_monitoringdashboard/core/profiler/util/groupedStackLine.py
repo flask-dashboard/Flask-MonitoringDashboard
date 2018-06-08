@@ -9,8 +9,10 @@ class GroupedStackLine(object):
         self.values = values
         self.total = total
         self.body = []
+        self.index = 0
 
     def compute_body(self, index, table):
+        self.index = index
         self.body = get_body(index, table)
 
     @property

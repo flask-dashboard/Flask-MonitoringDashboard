@@ -1,10 +1,11 @@
 import inspect
 import sys
 import threading
+import time
 import traceback
 from collections import defaultdict
 
-from flask_monitoringdashboard import user_app
+from flask_monitoringdashboard import user_app, config
 from flask_monitoringdashboard.core.profiler.util import order_histogram
 from flask_monitoringdashboard.core.profiler.util.pathHash import PathHash
 from flask_monitoringdashboard.database import session_scope
@@ -26,7 +27,7 @@ class StacktraceProfiler(threading.Thread):
         self._endpoint = endpoint
         self._ip = ip
         self._duration = 0
-        self._histogram = defaultdict(int)
+        self._histogram = defaultdict(float)
         self._path_hash = PathHash()
         self._lines_body = []
         self._total = 0
@@ -39,10 +40,16 @@ class StacktraceProfiler(threading.Thread):
         Directly computes the histogram, since this is more efficient for performance
         :return:
         """
+        current_time = time.time()
         while self._keeprunning:
+            newcurrent_time = time.time()
+            duration = newcurrent_time - current_time
+            current_time = newcurrent_time
+
             frame = sys._current_frames()[self._thread_to_monitor]
             in_endpoint_code = False
             self._path_hash.set_path('')
+
             for fn, ln, fun, line in traceback.extract_stack(frame):
                 # fn: filename
                 # ln: line number
@@ -52,23 +59,31 @@ class StacktraceProfiler(threading.Thread):
                     in_endpoint_code = True
                 if in_endpoint_code:
                     key = (self._path_hash.get_path(fn, ln), fun, line)
-                    self._histogram[key] += 1
+                    self._histogram[key] += duration
             if in_endpoint_code:
-                self._total += 1
+                self._total += duration
+
+            elapsed = time.time() - current_time
+            if config.sampling_period and config.sampling_period > elapsed:
+                time.sleep(config.sampling_period - elapsed)
+
         self._on_thread_stopped()
 
     def stop(self, duration):
         self._duration = duration * 1000
-        self._outlier_profiler.stop()
+        if self._outlier_profiler:
+            self._outlier_profiler.stop()
         self._keeprunning = False
 
     def _on_thread_stopped(self):
         with session_scope() as db_session:
             update_last_accessed(db_session, endpoint_name=self._endpoint.name)
             request_id = add_request(db_session, duration=self._duration, endpoint_id=self._endpoint.id, ip=self._ip)
-            self._outlier_profiler.add_outlier(db_session, request_id)
             self._lines_body = order_histogram(self._histogram.items())
             self.insert_lines_db(db_session, request_id)
+
+            if self._outlier_profiler:
+                self._outlier_profiler.add_outlier(db_session, request_id)
 
     def insert_lines_db(self, db_session, request_id):
         position = 0

@@ -38,9 +38,9 @@
                                 <td style="text-align: right;">{{ "{:,d}".format(row['hits-today']) }}</td>
                                 <td style="text-align: right;">{{ "{:,d}".format(row['hits-week']) }}</td>
                                 <td style="text-align: right;">{{ "{:,d}".format(row['hits-overall']) }}</td>
-                                <td style="text-align: right;">{{ "{:,.1f}".format(row['median-today']) }}</td>
-                                <td style="text-align: right;">{{ "{:,.1f}".format(row['median-week']) }}</td>
-                                <td style="text-align: right;">{{ "{:,.1f}".format(row['median-overall']) }}</td>
+                                <td style="text-align: right;"><time>{{ row['median-today'] }}</time></td>
+                                <td style="text-align: right;"><time>{{ row['median-week'] }}</time></td>
+                                <td style="text-align: right;"><time>{{ row['median-overall'] }}</time></td>
                                 <td style="text-align: center;">{{ "{:%Y-%m-%d %H:%M:%S }".format(row['last-accessed'])
                                                     if row['last-accessed'] }}</td>
                             </tr>

@@ -25,9 +25,14 @@ def create_app():
 
     @app.route('/endpoint')
     def endpoint():
-
-        g()
-
+        time.sleep(1)
+        time.sleep(1)
+        time.sleep(1)
+        time.sleep(1)
+        time.sleep(1)
+        time.sleep(1)
+        time.sleep(1)
+        time.sleep(1)
         return 'Ok'
 
     return app
