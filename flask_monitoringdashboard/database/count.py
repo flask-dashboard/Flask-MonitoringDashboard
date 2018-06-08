@@ -1,4 +1,5 @@
 from sqlalchemy import func, distinct
+from sqlalchemy.orm import joinedload
 
 from flask_monitoringdashboard.database import Request, StackLine, TestResult, TestEndpoint
 
@@ -92,9 +93,9 @@ def count_profiled_requests(db_session, endpoint_id):
     :param endpoint_id: filter on this endpoint_id
     :return: An integer
     """
-    count = db_session.query(func.count(distinct(Request.id))). \
-        join(StackLine, Request.id == StackLine.request_id). \
-        filter(Request.endpoint_id == endpoint_id).first()
+    count = db_session.query(func.count(distinct(StackLine.request_id))). \
+        filter(Request.endpoint_id == endpoint_id).\
+        join(Request.stack_lines).first()
     if count:
         return count[0]
     return 0

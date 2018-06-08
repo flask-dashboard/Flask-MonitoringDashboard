@@ -1,7 +1,7 @@
 """
 Contains all functions that access an StackLine object.
 """
-from sqlalchemy import desc
+from sqlalchemy import desc, distinct
 from sqlalchemy.orm import joinedload
 
 from flask_monitoringdashboard.database import StackLine, Request
@@ -33,9 +33,16 @@ def get_profiled_requests(db_session, endpoint_id, offset, per_page):
         :return: A list with tuples. Each tuple consists first of a Request-object, and the second part of the tuple
             is a list of StackLine-objects.
     """
-    result = db_session.query(Request).filter(Request.endpoint_id == endpoint_id).\
-        order_by(desc(Request.id)).offset(offset).limit(per_page)\
-        .options(joinedload(Request.stack_lines).joinedload(StackLine.code)).all()
+    t = db_session.query(distinct(StackLine.request_id).label('id')). \
+        filter(Request.endpoint_id == endpoint_id). \
+        join(Request.stack_lines). \
+        offset(offset).limit(per_page).subquery('t')
+
+    result = db_session.query(Request). \
+        join(Request.stack_lines).\
+        filter(Request.id == t.c.id).\
+        order_by(desc(Request.id)).\
+        options(joinedload(Request.stack_lines).joinedload(StackLine.code)).all()
     db_session.expunge_all()
     return result
 
@@ -47,5 +54,14 @@ def get_grouped_profiled_requests(db_session, endpoint_id):
         :return: A list with tuples. Each tuple consists first of a Request-object, and the second part of the tuple
             is a list of StackLine-objects.
     """
-    return db_session.query(Request).filter(Request.endpoint_id == endpoint_id). \
-        order_by(desc(Request.id)).options(joinedload(Request.stack_lines).joinedload(StackLine.code)).all()
+    t = db_session.query(distinct(StackLine.request_id).label('id')). \
+        filter(Request.endpoint_id == endpoint_id). \
+        join(Request.stack_lines).subquery('t')
+
+    result = db_session.query(Request). \
+        join(Request.stack_lines). \
+        filter(Request.id == t.c.id). \
+        order_by(desc(Request.id)). \
+        options(joinedload(Request.stack_lines).joinedload(StackLine.code)).all()
+    db_session.expunge_all()
+    return result
