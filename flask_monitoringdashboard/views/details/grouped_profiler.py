@@ -25,17 +25,16 @@ def grouped_profiler(endpoint_id):
 
     for r in requests:
         for index, stack_line in enumerate(r.stack_lines):
-            key = path_hash.get_stacklines_path(r.stack_lines, index), stack_line.code.code
+            key = path_hash.get_stacklines_path(r.stack_lines, index)
             histogram[key].append(stack_line.duration)
 
     table = []
-    for key, duration_list in order_histogram(histogram.items()):
-        table.append(GroupedStackLine(indent=path_hash.get_indent(key[0]), code=key[1], values=duration_list,
-                                      total=total_duration))
+    for key, duration_list in sorted(histogram.items(), key=lambda row: row[0]):
+        table.append(GroupedStackLine(indent=path_hash.get_indent(key), code=path_hash.get_code(key), values=duration_list,
+                                      total_sum=total_duration, total_hits=len(requests)))
 
     for index, item in enumerate(table):
-        print('{}. [{}] {}'.format(index, item.indent, item.code))
-        item.compute_body(index, table)
+        table[index].compute_body(index, table)
 
     return render_template('fmd_dashboard/profiler_grouped.html', details=details, table=table,
                            title='Grouped Profiler results for {}'.format(details['endpoint']))

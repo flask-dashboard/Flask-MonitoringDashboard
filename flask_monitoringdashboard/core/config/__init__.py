@@ -22,7 +22,7 @@ class Config(object):
         self.link = 'dashboard'
         self.monitor_level = 3
         self.outlier_detection_constant = 2.5
-        self.sampling_period = None
+        self.sampling_period = 0
 
         # database
         self.database_name = 'sqlite:///flask_monitoringdashboard.db'
@@ -104,9 +104,7 @@ class Config(object):
             self.monitor_level = parse_literal(parser, 'dashboard', 'MONITOR_LEVEL', self.monitor_level)
             self.outlier_detection_constant = parse_literal(parser, 'dashboard', 'OUTlIER_DETECTION_CONSTANT',
                                                             self.outlier_detection_constant)
-            self.sampling_period = parse_literal(parser, 'dashboard', 'SAMPLING_RATE', None)
-            if self.sampling_period:
-                self.sampling_period /= 1000  # ms to seconds
+            self.sampling_period = parse_literal(parser, 'dashboard', 'SAMPLING_RATE', self.sampling_period) / 1000
 
             # parse 'authentication'
             self.username = parse_string(parser, 'authentication', 'USERNAME', self.username)

@@ -64,7 +64,7 @@ class StacktraceProfiler(threading.Thread):
                 self._total += duration
 
             elapsed = time.time() - current_time
-            if config.sampling_period and config.sampling_period > elapsed:
+            if config.sampling_period > elapsed:
                 time.sleep(config.sampling_period - elapsed)
 
         self._on_thread_stopped()
