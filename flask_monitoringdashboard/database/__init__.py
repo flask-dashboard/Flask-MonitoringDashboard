@@ -92,7 +92,7 @@ class StackLine(Base):
 
 class Test(Base):
     """ Stores all of the tests that exist in the project. """
-    __tablename__ = '{}test'.format(config.table_prefix)
+    __tablename__ = '{}Test'.format(config.table_prefix)
     id = Column(Integer, primary_key=True)
     name = Column(String(250), unique=True)
     passing = Column(Boolean, nullable=False)
@@ -103,11 +103,11 @@ class Test(Base):
 
 class TestResult(Base):
     """ Stores unit test performance results obtained from Travis. """
-    __tablename__ = '{}testResult'.format(config.table_prefix)
+    __tablename__ = '{}TestResult'.format(config.table_prefix)
     id = Column(Integer, primary_key=True)
     test_id = Column(Integer, ForeignKey(Test.id))
     test = relationship(Test)
-    execution_time = Column(Float, nullable=False)
+    duration = Column(Float, nullable=False)
     time_added = Column(DateTime, default=datetime.datetime.utcnow)
     app_version = Column(String(100), nullable=False)
     travis_job_id = Column(String(10), nullable=False)
@@ -116,7 +116,7 @@ class TestResult(Base):
 
 class TestEndpoint(Base):
     """ Stores the endpoint hits that came from unit tests. """
-    __tablename__ = '{}testEndpoint'.format(config.table_prefix)
+    __tablename__ = '{}TestEndpoint'.format(config.table_prefix)
     id = Column(Integer, primary_key=True)
     endpoint_id = Column(Integer, ForeignKey(Endpoint.id))
     endpoint = relationship(Endpoint)

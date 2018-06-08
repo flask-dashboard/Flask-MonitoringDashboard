@@ -9,18 +9,20 @@ from contextlib import contextmanager
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker, joinedload
 
-from flask_monitoringdashboard.database import Endpoint, Request, Outlier
+from flask_monitoringdashboard.database import Endpoint, Request, Outlier, Test, TestResult
 
 # OLD_DB_URL = 'dialect+driver://username:password@host:port/old_db'
 # NEW_DB_URL = 'dialect+driver://username:password@host:port/new_db'
 OLD_DB_URL = 'sqlite://///home/bogdan/school_tmp/RI/stacktrace_view/copy.db'
 NEW_DB_URL = 'sqlite://///home/bogdan/school_tmp/RI/stacktrace_view/new.db'
-TABLES = ["rules", "functionCalls", "outliers", "testRun", "testsGrouped"]
+TABLES = ["rules", "functionCalls", "outliers", "tests", "testRun"]
 DATE_FORMAT = "%Y-%m-%d %H:%M:%S.%f"
 SEARCH_REQUEST_TIME = datetime.timedelta(seconds=10)
 
 endpoint_dict = {}
 outlier_dict = {}
+tests_dict = {}
+
 
 def create_new_db(db_url):
     from flask_monitoringdashboard.database import Base
@@ -137,6 +139,37 @@ def move_outliers(old_connection):
         db_session.bulk_save_objects(outliers)
 
 
+def move_tests(old_connection):
+    old_tests = old_connection.execute("select * from {}".format(TABLES[3]))
+    tests = []
+    with session_scope() as db_session:
+        for t in old_tests:
+            test = Test(name=t['name'], passing=t['succeeded'],
+                        version_added='', last_tested=parse(t['lastRun']))
+            tests.append(test)
+        db_session.bulk_save_objects(tests)
+
+
+def populate_tests_dict(db_session):
+    global tests_dict
+    tests = db_session.query(Test).all()
+    for test in tests:
+        tests_dict[test.name] = test.id
+
+
+def move_test_runs(old_connection):
+    test_runs = old_connection.execute("select * from {}".format(TABLES[4]))
+    test_results = []
+    with session_scope() as db_session:
+        populate_tests_dict(db_session)
+        for tr in test_runs:
+            test_result = TestResult(test_id=tests_dict[tr['name']], duration=tr['execution_time'],
+                                     time_added=parse(tr['time']), app_version=tr['version'],
+                                     travis_job_id=tr['suite'], run_nr=tr['run'])
+            test_results.append(test_result)
+        db_session.bulk_save_objects(test_results)
+
+
 def main():
     create_new_db(NEW_DB_URL)
     old_connection = get_connection(OLD_DB_URL)
@@ -151,8 +184,14 @@ def main():
     move_outliers(old_connection)
     t3 = timeit.default_timer()
     print("Moving outliers took %f seconds" % (t3 - t2))
+    move_tests(old_connection)
+    t4 = timeit.default_timer()
+    print("Moving tests took %f seconds" % (t4 - t3))
+    move_test_runs(old_connection)
+    t5 = timeit.default_timer()
+    print("Moving testRuns took %f seconds" % (t5 - t4))
 
-    print("Total time was %f seconds" % (t3 - start))
+    print("Total time was %f seconds" % (t5 - start))
 
 
 if __name__ == "__main__":

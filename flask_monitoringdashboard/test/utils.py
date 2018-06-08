@@ -71,7 +71,7 @@ def add_fake_test_runs():
             id = test.id
             for i in range(len(EXECUTION_TIMES)):
                 db_session.add(
-                    TestResult(test_id=id, execution_time=EXECUTION_TIMES[i], time_added=datetime.datetime.utcnow(),
+                    TestResult(test_id=id, duration=EXECUTION_TIMES[i], time_added=datetime.datetime.utcnow(),
                                app_version=config.version, travis_job_id="1", run_nr=i))
 
 
