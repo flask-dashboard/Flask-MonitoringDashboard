@@ -1,102 +1,158 @@
-#!/usr/bin/env python3
 """
     Use this file for migrating the Database from v1.X.X to v2.X.X
-    Before you can execute this script, change the DB_PATH on line 9.
+    Before running the script, make sure to change the OLD_DB_URL and NEW_DB_URL on lines 9 and 10.
+    Refer to http://docs.sqlalchemy.org/en/latest/core/engines.html on how to configure this.
 """
+import datetime
+from contextlib import contextmanager
 
-import sqlite3
+from sqlalchemy import create_engine
+from sqlalchemy.orm import sessionmaker, joinedload
 
-DB_PATH = '/path/to/db/database.db'
-# DB_PATH = '/home/bogdan/school_tmp/RI/stacktrace_view/flask-dashboard_copy.db'
+from flask_monitoringdashboard.database import Endpoint, Request, Outlier
 
-sql_drop_temp = """DROP TABLE IF EXISTS temp"""
-sql_drop_fc = """DROP TABLE IF EXISTS functionCalls"""
-sql_drop_rules = """DROP TABLE IF EXISTS rules"""
+# OLD_DB_URL = 'dialect+driver://username:password@host:port/old_db'
+# NEW_DB_URL = 'dialect+driver://username:password@host:port/new_db'
+OLD_DB_URL = 'sqlite://///home/bogdan/school_tmp/RI/stacktrace_view/copy.db'
+NEW_DB_URL = 'sqlite://///home/bogdan/school_tmp/RI/stacktrace_view/new.db'
+TABLES = ["rules", "functionCalls", "outliers", "testRun", "testsGrouped"]
+DATE_FORMAT = "%Y-%m-%d %H:%M:%S.%f"
+SEARCH_REQUEST_TIME = datetime.timedelta(seconds=10)
 
-sql_create_fc_temp = """CREATE TABLE temp(
-                                    id integer PRIMARY KEY,
-                                    endpoint text,
-                                    execution_time real,
-                                    time text,
-                                    version text,
-                                    group_by text,
-                                    ip text
-                                );"""
+endpoint_dict = {}
+outlier_dict = {}
 
-sql_copy_into_fc_temp = """INSERT INTO temp 
-                            SELECT id, endpoint, execution_time, time, version, group_by, ip 
-                            FROM functionCalls"""
-
-sql_create_requests_new = """CREATE TABLE requests(
-                                    id integer PRIMARY KEY,
-                                    endpoint text,
-                                    execution_time real,
-                                    time text,
-                                    version text,
-                                    group_by text,
-                                    ip text,
-                                    is_outlier integer DEFAULT 0
-                                );"""
+def create_new_db(db_url):
+    from flask_monitoringdashboard.database import Base
+    engine = create_engine(db_url)
+    Base.metadata.drop_all(engine)
+    Base.metadata.create_all(engine)
+    Base.metadata.bind = engine
+    global DBSession
+    DBSession = sessionmaker(bind=engine)
 
 
-sql_copy_from_fc_temp = """INSERT INTO requests (id, endpoint, execution_time, time, version, group_by, ip)
-                        SELECT id, endpoint, execution_time, time, version, group_by, ip 
-                        FROM temp"""
+def get_connection(db_url):
+    engine = create_engine(db_url)
+    connection = engine.connect()
+    return connection
 
 
-sql_create_rules_temp = """CREATE TABLE temp(
-                                    endpoint text PRIMARY KEY,
-                                    monitor text,
-                                    time_added text,
-                                    version_added text,
-                                    last_accessed text
-                                );"""
+@contextmanager
+def session_scope():
+    """
+    When accessing the database, use the following syntax:
+        with session_scope() as db_session:
+            db_session.query(...)
 
-sql_copy_into_rules_temp = """INSERT INTO temp 
-                            SELECT endpoint, monitor, time_added, version_added, last_accessed 
-                            FROM rules"""
-
-sql_create_rules_new = """CREATE TABLE rules(
-                                    endpoint text PRIMARY KEY,
-                                    monitor_level integer,
-                                    time_added text,
-                                    version_added text,
-                                    last_accessed text
-                                );"""
-
-sql_copy_from_rules_temp = """INSERT INTO rules (endpoint, monitor_level, time_added, version_added, last_accessed)
-                        SELECT endpoint, monitor, time_added, version_added, last_accessed 
-                        FROM temp"""
+    :return: the session for accessing the database
+    """
+    session = DBSession()
+    try:
+        yield session
+        session.commit()
+    except Exception:
+        session.rollback()
+        raise
+    finally:
+        session.close()
 
 
-def update_requests(connection):
-    c = connection.cursor()
-    c.execute(sql_drop_temp)
-    c.execute(sql_create_fc_temp)
-    c.execute(sql_copy_into_fc_temp)
-    c.execute(sql_drop_fc)
-    c.execute(sql_create_requests_new)
-    c.execute(sql_copy_from_fc_temp)
-    c.execute(sql_drop_temp)
-    connection.commit()
+def get_session(db_url):
+    """This creates the new database and returns the session scope."""
+    from flask_monitoringdashboard import config
+    config.database_name = db_url
+
+    import flask_monitoringdashboard.database
+    return flask_monitoringdashboard.database.session_scope()
 
 
-def update_rules(connection):
-    c = connection.cursor()
-    c.execute(sql_drop_temp)
-    c.execute(sql_create_rules_temp)
-    c.execute(sql_copy_into_rules_temp)
-    c.execute(sql_drop_rules)
-    c.execute(sql_create_rules_new)
-    c.execute(sql_copy_from_rules_temp)
-    c.execute(sql_drop_temp)
-    connection.commit()
+def parse(date_string):
+    if not date_string:
+        return None
+    return datetime.datetime.strptime(date_string, DATE_FORMAT)
+
+
+def move_rules(old_connection):
+    rules = old_connection.execute("select * from {}".format(TABLES[0]))
+    endpoints = []
+    with session_scope() as db_session:
+        for rule in rules:
+            end = Endpoint(name=rule['endpoint'], monitor_level=rule['monitor'],
+                           time_added=parse(rule['time_added']), version_added=rule['version_added'],
+                           last_requested=parse(rule['last_accessed']))
+            endpoints.append(end)
+        db_session.bulk_save_objects(endpoints)
+
+
+def populate_endpoint_dict(db_session):
+    global endpoint_dict
+    endpoints = db_session.query(Endpoint).all()
+    for endpoint in endpoints:
+        endpoint_dict[endpoint.name] = endpoint.id
+
+
+def move_function_calls(old_connection):
+    function_calls = old_connection.execute("select * from {}".format(TABLES[1]))
+    requests = []
+    with session_scope() as db_session:
+        populate_endpoint_dict(db_session)
+        for fc in function_calls:
+            request = Request(endpoint_id=endpoint_dict[fc['endpoint']], duration=fc['execution_time'],
+                              time_requested=parse(fc['time']), version_requested=fc['version'],
+                              group_by=fc['group_by'], ip=fc['ip'])
+            requests.append(request)
+        db_session.bulk_save_objects(requests)
+
+
+def get_request_id(requests, time, execution_time, start_index):
+    for index, r in enumerate(requests):
+        if index >= start_index:
+            if abs(r.time_requested - parse(time)) < SEARCH_REQUEST_TIME and r.duration == execution_time:
+                return r.id, index
+    return None, start_index
+
+
+def populate_outlier_dict(connection, db_session):
+    global outlier_dict
+    outliers = connection.execute("select * from {}".format(TABLES[2]))
+    requests = db_session.query(Request).options(joinedload(Request.endpoint)).all()
+    index = 0
+    for outlier in outliers:
+        req_id, index = get_request_id(requests, outlier['time'], outlier['execution_time'], start_index=index)
+        outlier_dict[outlier['id']] = req_id
+
+
+def move_outliers(old_connection):
+    global outlier_dict
+    old_outliers = old_connection.execute("select * from {}".format(TABLES[2]))
+    outliers = []
+    with session_scope() as db_session:
+        populate_outlier_dict(old_connection, db_session)
+        for o in old_outliers:
+            outlier = Outlier(request_id=outlier_dict[o['id']], request_header=o['request_headers'],
+                              request_environment=o['request_environment'], request_url=o['request_url'],
+                              cpu_percent=o['cpu_percent'], memory=o['memory'], stacktrace=o['stacktrace'])
+            outliers.append(outlier)
+        db_session.bulk_save_objects(outliers)
 
 
 def main():
-    conn = sqlite3.connect(DB_PATH)
-    update_requests(conn)
-    update_rules(conn)
+    create_new_db(NEW_DB_URL)
+    old_connection = get_connection(OLD_DB_URL)
+    import timeit
+    start = timeit.default_timer()
+    move_rules(old_connection)
+    t1 = timeit.default_timer()
+    print("Moving rules took %f seconds" % (t1 - start))
+    move_function_calls(old_connection)
+    t2 = timeit.default_timer()
+    print("Moving functionCalls took %f seconds" % (t2 - t1))
+    move_outliers(old_connection)
+    t3 = timeit.default_timer()
+    print("Moving outliers took %f seconds" % (t3 - t2))
+
+    print("Total time was %f seconds" % (t3 - start))
 
 
 if __name__ == "__main__":
