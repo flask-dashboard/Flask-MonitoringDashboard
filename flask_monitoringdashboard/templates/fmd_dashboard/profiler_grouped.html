@@ -5,12 +5,11 @@
 
     {% macro table_row(index, table) -%}
         {% set row = table[index] %}
-        <tr>
+        <tr content="{{ row.body }}" index="{{ index }}" indent="{{ row.indent }}">
             <td style="padding-left: {{ 10 + 15 * row.indent }}px; width: 52%"><hide>{{ "{:05d}".format(row.index) }}</hide>
                 {{ row.code }}
                 {% if row.body %}
-                    <i class="fa fa-minus-square" style="cursor: pointer;"
-                       onclick="toggle_rows( {{'{}, 0, this'.format(row.body) }})"></i>
+                    <i class="fa fa-minus-square" style="cursor: pointer;" onclick="toggleRows($(this).parent().parent())"></i>
                 {% endif %}
             </td>
             <td style="text-align: right; width: 5%;">{{ row.hits }}</td>

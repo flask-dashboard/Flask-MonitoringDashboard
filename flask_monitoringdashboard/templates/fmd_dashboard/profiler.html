@@ -24,12 +24,11 @@
         {% set sum = request.stack_lines[0].duration %}
         {% set percentage = line.duration / sum if sum > 0 else 1 %}
 
-        <tr>
+        <tr content="{{ body[request.id][index] }}" index="{{ index }}" indent="{{ line.indent }}">
             <td style="padding-left: {{ 10 + 15 * line.indent }}px;"><hide>{{ line.position }}</hide>
                 {{ line.code.code }}
                 {% if body[request.id][index] %}
-                    <i class="fa fa-minus-square" style="cursor: pointer;"
-                       onclick="toggle_rows( {{'{}, {}, this'.format(body[request.id][index], request.id) }})"></i>
+                    <i class="fa fa-minus-square" style="cursor: pointer;" onclick="toggleRows($(this).parent().parent())"></i>
                 {% endif %}
             </td>
             <td style="text-align: right;"><time>{{ line.duration }}</time></td>
@@ -83,40 +82,41 @@
             "searching": false
         });
 
-        function toggle_rows(rows, request_id, icon){
-            var table = $(".table.table-bordered.req-id" + request_id);
-
-            if (icon.className.indexOf("fa-minus-square") >= 0){
-                $(icon).removeClass("fa-minus-square");
-                $(icon).addClass("fa-plus-square");
-
-                rows.forEach(function(i){
-                    var element = table.find('tr:eq(' + (i + 1) + ')');
-                    element.find('.fa').removeClass("fa-plus-square").addClass("fa-minus-square");
-                    if (element.is(":visible")){
-                        element.hide();
-                    }
-                });
+        function toggleFa(tr){
+            var fa = tr.find(".fa");
+            if (fa.hasClass("fa-minus-square")){
+                fa.removeClass("fa-minus-square").addClass("fa-plus-square");
             } else {
-                $(icon).removeClass("fa-plus-square");
-                $(icon).addClass("fa-minus-square");
-
-                rows.forEach(function(i){
-                    var element = table.find('tr:eq(' + (i + 1) + ')');
-                    if (!element.is(":visible")){
-                        element.show();
-                    }
-                });
+                fa.removeClass("fa-plus-square").addClass("fa-minus-square");
             }
         }
 
-        $('tr').children().each( function(index, element){
-           var value = $(this).css("padding-left").replace("px", "");
-           var number = parseInt(value);
+        function toggleRows(tr){
+            var fa = tr.find(".fa");
+            var indent = parseInt(tr.attr("indent"));
+            var children = tr.attr("content").replace("[", "").replace("]", "").split(",");
+            var table = tr.parent().parent();
 
-           if (number == 25){
-               var td = $(this).parent().find('i').trigger("click");
-           }
-        });
+            for (var i in children) {
+                if (children[i] !== "") {
+
+                    if (fa.hasClass("fa-minus-square")) {
+                        table.find("[index=" + children[i] + "]").hide();
+                    } else {
+                        var object = table.find("[index=" + children[i] + "]");
+                        if (parseInt(object.attr("indent")) === indent + 1) {
+                            object.show();
+                            var objectFa = object.find(".fa");
+                            objectFa.removeClass("fa-minus-square").addClass("fa-plus-square");
+                        }
+                    }
+                }
+             }
+             toggleFa(tr);
+        }
+
+        // toggle all rows with indent == 2:
+        toggleRows($("[indent=2]"))
+
     </script>
 {% endblock %}
