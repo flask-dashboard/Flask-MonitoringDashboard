@@ -333,7 +333,6 @@ body.sidenav-toggled #mainNav.fixed-top #sidenavToggler i {
     -moz-transform: scaleX(-1);
     -o-transform: scaleX(-1);
     transform: scaleX(-1);
-    filter: FlipH;
     -ms-filter: 'FlipH';
 }
 
@@ -352,7 +351,6 @@ body.sidenav-toggled #mainNav.static-top #sidenavToggler i {
     -moz-transform: scaleX(-1);
     -o-transform: scaleX(-1);
     transform: scaleX(-1);
-    filter: FlipH;
     -ms-filter: 'FlipH';
 }
 

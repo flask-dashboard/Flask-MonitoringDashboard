@@ -6,6 +6,7 @@ from werkzeug.routing import BuildError
 
 from flask_monitoringdashboard import config
 from flask_monitoringdashboard.core.rules import get_rules
+from flask_monitoringdashboard.core.timezone import to_local_datetime
 from flask_monitoringdashboard.database.count import count_requests, count_total_requests
 from flask_monitoringdashboard.database.endpoint import get_endpoint_by_id
 from flask_monitoringdashboard.database.request import get_date_of_first_request
@@ -14,6 +15,8 @@ from flask_monitoringdashboard.database.request import get_date_of_first_request
 def get_endpoint_details(db_session, endpoint_id):
     """ Return details about an endpoint"""
     endpoint = get_endpoint_by_id(db_session, endpoint_id)
+    endpoint.last_requested = to_local_datetime(endpoint.last_requested)
+    endpoint.time_added = to_local_datetime(endpoint.time_added)
     return {
         'id': endpoint_id,
         'endpoint': endpoint.name,

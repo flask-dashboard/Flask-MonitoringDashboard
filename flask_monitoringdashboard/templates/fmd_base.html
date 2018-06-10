@@ -162,10 +162,11 @@
 <script src="https://cdn.datatables.net/1.10.16/js/jquery.dataTables.min.js"></script>
 <script src="https://cdn.datatables.net/1.10.16/js/dataTables.bootstrap4.min.js"></script>
 
-<script src="{{ url_for('dashboard.static', filename='js/custom.js') }}"></script>
-<script src="{{ url_for('dashboard.static', filename='js/custom-datatables.js') }}"></script>
 {% block script %}
 {% endblock %}
+<script src="{{ url_for('dashboard.static', filename='js/custom.js') }}"></script>
+<script src="{{ url_for('dashboard.static', filename='js/custom-datatables.js') }}"></script>
+
 </div>
 </body>
 </html>

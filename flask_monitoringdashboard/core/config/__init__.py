@@ -22,6 +22,7 @@ class Config(object):
         self.link = 'dashboard'
         self.monitor_level = 3
         self.outlier_detection_constant = 2.5
+        self.sampling_period = 0
 
         # database
         self.database_name = 'sqlite:///flask_monitoringdashboard.db'
@@ -53,6 +54,8 @@ class Config(object):
             - OUTLIER_DETECTION_CONSTANT: When the execution time is more than this constant *
                 average, extra information is logged into the database. A default value for this
                 variable is 2.5.
+            - SAMPLING_PERIOD: Time between two profiler-samples. The time must be specified in ms.
+                If this value is not set, the profiler continuously monitors.
 
             The config_file must at least contains the following variables in section 'authentication':
             - USERNAME: for logging into the dashboard, a username and password is required. The
@@ -101,6 +104,8 @@ class Config(object):
             self.monitor_level = parse_literal(parser, 'dashboard', 'MONITOR_LEVEL', self.monitor_level)
             self.outlier_detection_constant = parse_literal(parser, 'dashboard', 'OUTlIER_DETECTION_CONSTANT',
                                                             self.outlier_detection_constant)
+            self.sampling_period = parse_literal(parser, 'dashboard', 'SAMPLING_RATE', self.sampling_period) / 1000
+
             # parse 'authentication'
             self.username = parse_string(parser, 'authentication', 'USERNAME', self.username)
             self.password = parse_string(parser, 'authentication', 'PASSWORD', self.password)
