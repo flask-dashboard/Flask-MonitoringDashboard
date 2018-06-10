@@ -33,6 +33,23 @@ def group_result(result, func):
     return data.items()
 
 
+def group_result_endpoint(result, func):
+    """
+    :param result: A list of rows from the database: e.g. [(key, data1), (key, data2)]
+    :param func: the function to reduce the data e.g. func=median
+    :return: the data that is reduced. e.g. [(key, (data1+data2)/2)]
+    """
+    data = {}
+    for key, value in result:
+        if key.endpoint.name in data.keys():
+            data[key.endpoint.name].append(value)
+        else:
+            data[key.endpoint.name] = [value]
+    for key in data:
+        data[key] = func(data[key])
+    return data.items()
+
+
 def get_endpoint_data_grouped(db_session, func, *where):
     """
     :param db_session: session for the database
@@ -48,9 +65,9 @@ def get_test_data_grouped(db_session, func, *where):
     :param func: the function to reduce the data
     :param where: additional where clause
     """
-    result = db_session.query(TestEndpoint.endpoint, TestEndpoint.execution_time). \
-        filter(*where).order_by(TestEndpoint.execution_time).all()
-    return group_result(result, func)
+    result = db_session.query(TestEndpoint, TestEndpoint.duration). \
+        filter(*where).all()
+    return group_result_endpoint(result, func)
 
 
 def get_version_data_grouped(db_session, func, *where):

@@ -31,7 +31,7 @@ def submit_test_results():
             time = datetime.datetime.strptime(test_run['time'], '%Y-%m-%d %H:%M:%S.%f')
             add_or_update_test(db_session, test_run['name'], test_run['successful'], time, app_version)
             add_test_result(db_session, test_run['name'], test_run['exec_time'], time, app_version,
-                            int(float(travis_job_id)), test_run['iter'])
+                            travis_job_id, test_run['iter'])
 
         for endpoint_hit in endpoint_hits:
             add_endpoint_hit(db_session, endpoint_hit['endpoint'], endpoint_hit['exec_time'], endpoint_hit['test_name'],
