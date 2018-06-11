@@ -1,7 +1,7 @@
 TODO List
 =========================================================================
 
-All things that can improved in Flask-MonitoringDashboard are listed below.
+All things that can be improved in Flask-MonitoringDashboard are listed below.
 
 Features to be implemented
 --------------------------
