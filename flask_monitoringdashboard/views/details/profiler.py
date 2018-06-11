@@ -44,7 +44,7 @@ def profiler(endpoint_id):
     body = {}  # dict with the request.id as a key, and the values is a list for every stack_line.
     for request in requests:
         request.time_requested = to_local_datetime(request.time_requested)
-        body[request.id] = [get_body(index, request.stack_lines) for index in range(len(request.stack_lines))]
+        body[request.id] = [get_body(index, request.stack_lines) for index, _ in enumerate(request.stack_lines)]
 
     return render_template('fmd_dashboard/profiler.html', details=details, requests=requests, pagination=pagination,
                            title='Profiler results for {}'.format(details['endpoint']), body=body)
