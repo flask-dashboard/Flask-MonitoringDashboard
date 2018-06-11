@@ -85,13 +85,13 @@ def testmonitor():
         result = []
         for endpoint in get_tested_endpoint_names(db_session):
             result.append({
-                'name': endpoint.name,
-                'color': get_color(endpoint.name),
-                'tests-latest-version': get_value(tests_latest, endpoint.name),
-                'tests-overall': get_value(tests, endpoint.name),
-                'median-latest-version': get_value(median_latest, endpoint.name),
-                'median-overall': get_value(median, endpoint.name),
-                'last-tested': get_value(tested_times, endpoint.name, default=None)
+                'name': endpoint,
+                'color': get_color(endpoint),
+                'tests-latest-version': get_value(tests_latest, endpoint),
+                'tests-overall': get_value(tests, endpoint),
+                'median-latest-version': get_value(median_latest, endpoint),
+                'median-overall': get_value(median, endpoint),
+                'last-tested': get_value(tested_times, endpoint, default=None)
             })
 
         return render_template('fmd_testmonitor/testmonitor.html', result=result)
@@ -113,8 +113,8 @@ def get_boxplot_tests(form=None):
         if not suites:
             return None
         for s in suites:
-            values = get_suite_measurements(db_session, suite=s.suite)
-            trace.append(boxplot(values=values, label='{} -'.format(s.suite)))
+            values = get_suite_measurements(db_session, suite=s)
+            trace.append(boxplot(values=values, label='{} -'.format(s)))
 
         layout = get_layout(
             xaxis={'title': 'Execution time (ms)'},

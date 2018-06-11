@@ -122,7 +122,7 @@ class TestEndpoint(Base):
     endpoint = relationship(Endpoint)
     test_id = Column(Integer, ForeignKey(Test.id))
     test = relationship(Test)
-    execution_time = Column(Integer, nullable=False)
+    duration = Column(Float, nullable=False)
     app_version = Column(String(100), nullable=False)
     travis_job_id = Column(String(10), nullable=False)
     time_added = Column(DateTime, default=datetime.datetime.utcnow)

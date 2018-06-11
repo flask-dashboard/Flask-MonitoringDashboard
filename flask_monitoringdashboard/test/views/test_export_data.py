@@ -34,7 +34,7 @@ class TestExportData(unittest.TestCase):
         """
         test_results = {'test_runs': [], 'endpoint_exec_times': []}
         test_results['test_runs'].append(
-            {'name': 'test_1', 'exec_time': 50, 'time': str(datetime.datetime.now()), 'successful': True, 'iter': 1})
+            {'name': 'test_1', 'exec_time': 50, 'time': str(datetime.datetime.utcnow()), 'successful': True, 'iter': 1})
         test_results['endpoint_exec_times'].append({'endpoint': 'main', 'exec_time': 30, 'test_name': 'test_1'})
         test_results['app_version'] = '1.0'
         test_results['travis_job'] = '133.7'

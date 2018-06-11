@@ -2,8 +2,8 @@
 Contains all functions that returns results of all tests
 """
 from sqlalchemy import func
-from sqlalchemy.orm import joinedload
 
+from flask_monitoringdashboard.core.timezone import to_local_datetime
 from flask_monitoringdashboard.database import Endpoint, Test, TestResult, TestEndpoint
 
 
@@ -31,7 +31,7 @@ def get_sorted_job_ids(db_session, column, limit):
     query = db_session.query(column).group_by(column)
     if limit:
         query = query.limit(limit)
-    return sorted([int(float(build[0])) for build in query.all()], reverse=True)
+    return sorted([float(build[0]) for build in query.all()], reverse=True)
 
 
 def get_test_suites(db_session, limit=None):
@@ -47,27 +47,27 @@ def get_travis_builds(db_session, limit=None):
 def get_suite_measurements(db_session, suite):
     """ Return all measurements for some Travis build. Used for creating a box plot. """
     result = [result[0] for result in
-              db_session.query(TestResult.duration).filter(TestResult.travis_job_id == suite).all()]
+              db_session.query(TestResult.duration).filter(TestResult.travis_job_id == str(suite)).all()]
     return result if len(result) > 0 else [0]
 
 
 def get_endpoint_measurements(db_session, suite):
     """ Return all measurements for some Travis build. Used for creating a box plot. """
     result = [result[0] for result in
-              db_session.query(TestEndpoint.execution_time).filter(TestEndpoint.travis_job_id == suite).all()]
+              db_session.query(TestEndpoint.duration).filter(TestEndpoint.travis_job_id == str(suite)).all()]
     return result if len(result) > 0 else [0]
 
 
 def get_endpoint_measurements_job(db_session, name, job_id):
     """ Return all measurements for some test of some Travis build. Used for creating a box plot. """
     endpoint_id = db_session.query(Endpoint.id).filter(Endpoint.name == name).first()[0]
-    result = db_session.query(TestEndpoint).filter(
-        TestEndpoint.endpoint_id == endpoint_id).filter(TestEndpoint.travis_job_id == job_id).options(
-        joinedload(TestEndpoint.endpoint)).all()
-    return [r.execution_time for r in result] if len(result) > 0 else [0]
+    result = db_session.query(TestEndpoint).join(TestEndpoint.endpoint).filter(
+        TestEndpoint.endpoint_id == endpoint_id).filter(TestEndpoint.travis_job_id == job_id).all()
+    return [r.duration for r in result] if len(result) > 0 else [0]
 
 
 def get_last_tested_times(db_session):
     """ Returns the last tested time of each of the endpoints. """
-    return db_session.query(TestEndpoint.endpoint, func.max(TestEndpoint.time_added)).group_by(
-        TestEndpoint.endpoint).options(joinedload('TestEndpoint.endpoint')).all()
+    results = db_session.query(TestEndpoint, func.max(TestEndpoint.time_added)).join(
+        TestEndpoint.endpoint).group_by(TestEndpoint.endpoint_id).all()
+    return [(result[0].endpoint.name, to_local_datetime(result[1])) for result in results]
