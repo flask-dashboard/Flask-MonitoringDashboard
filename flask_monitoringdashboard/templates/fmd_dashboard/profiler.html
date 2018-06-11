@@ -25,8 +25,7 @@
         {% set percentage = line.duration / sum if sum > 0 else 1 %}
 
         <tr content="{{ body[request.id][index] }}" index="{{ index }}" indent="{{ line.indent }}">
-            <td style="padding-left: {{ 10 + 15 * line.indent }}px;"><hide>{{ line.position }}</hide>
-                {{ line.code.code }}
+            <td style="padding-left: {{ 10 + 15 * line.indent }}px;"><hide>{{ "{:05d}".format(line.position) }}</hide>{{ line.code.code }}
                 {% if body[request.id][index] %}
                     <i class="fa fa-minus-square" style="cursor: pointer;" onclick="toggleRows($(this).parent().parent())"></i>
                 {% endif %}
@@ -115,8 +114,10 @@
              toggleFa(tr);
         }
 
-        // toggle all rows with indent == 2:
-        toggleRows($("[indent=2]"))
+        // toggle all rows with indent == 1:
+        $("[indent=1]").each(function(){
+            toggleRows($(this));
+        })
 
     </script>
 {% endblock %}

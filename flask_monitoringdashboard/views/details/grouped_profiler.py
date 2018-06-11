@@ -4,7 +4,6 @@ from flask import render_template
 
 from flask_monitoringdashboard import blueprint
 from flask_monitoringdashboard.core.auth import secure
-from flask_monitoringdashboard.core.profiler.util import order_histogram
 from flask_monitoringdashboard.core.profiler.util.groupedStackLine import GroupedStackLine
 from flask_monitoringdashboard.core.profiler.util.pathHash import PathHash
 from flask_monitoringdashboard.core.utils import get_endpoint_details
@@ -30,9 +29,8 @@ def grouped_profiler(endpoint_id):
 
     table = []
     for key, duration_list in sorted(histogram.items(), key=lambda row: row[0]):
-        table.append(GroupedStackLine(indent=path_hash.get_indent(key), code=path_hash.get_code(key), values=duration_list,
-                                      total_sum=total_duration, total_hits=len(requests)))
-
+        table.append(GroupedStackLine(indent=path_hash.get_indent(key) - 1, code=path_hash.get_code(key),
+                                      values=duration_list, total_sum=total_duration, total_hits=len(requests)))
     for index, item in enumerate(table):
         table[index].compute_body(index, table)
 
