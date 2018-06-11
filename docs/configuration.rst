@@ -1,6 +1,6 @@
 Configuration
 =============
-Once you have successfully installed the Flask Monitoring Dashboard with information from 
+Once you have successfully installed the Flask-MonitoringDashboard with information from 
 `this page <installation.html>`_, you can use the advanced features by correctly configuring the Dashboard.
 
 Using a configuration file
@@ -33,8 +33,8 @@ Thus, it becomes:
    if __name__ == '__main__':
      app.run(debug=True)
 
-Instead of having a hard-coded string containing the location of the config file in the code above, it is also possible
-to define an environment variable that specifies the location of this config file.
+Instead of having a hard-coded string containing the location of the config file in the code above, 
+it is also possible to define an environment variable that specifies the location of this config file.
 The line should then be:
 
 .. code-block:: python
@@ -45,8 +45,10 @@ This will configure the Dashboard based on the file provided in the environment 
 
 The content of the configuration file
 -------------------------------------
-Once the setup is complete, a configuration file (e.g. 'config.cfg') should be set next to the python file that 
-contains the entry point of the app. The following things can be configured:
+Once the setup is complete, a `configuration file`_ (e.g. 'config.cfg') should be set next to the python 
+file that contains the entry point of the app. The following things can be configured:
+
+.. _`configuration file`: https://github.com/flask-dashboard/Flask-MonitoringDashboard/tree/master/config.cfg
 
 .. code-block:: python
 
@@ -56,6 +58,7 @@ contains the entry point of the app. The following things can be configured:
    CUSTOM_LINK='dashboard'
    MONITOR_LEVEL=3
    OUTLIER_DETECTION_CONSTANT=2.5
+   SAMPLING_PERIOD=20
 
    [authentication]
    USERNAME='admin'
@@ -94,6 +97,9 @@ Dashboard
 
 - **OUTLIER_DETECTION_CONSTANT:** When the execution time is more than this :math:`constant * average`,
   extra information is logged into the database. A default value for this variable is :math:`2.5`.
+
+- **SAMPLING_PERIOD:** Time between two profiler-samples. The time must be specified in ms.
+  If this value is not set, the profiler continuously monitors.
 
 Authentication
 ~~~~~~~~~~~~~~

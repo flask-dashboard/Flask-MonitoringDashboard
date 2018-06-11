@@ -1,18 +1,18 @@
 Developing
 ==========
-This page provides information about contributing to the Flask Monitoring Dashboard.
+This page provides information about contributing to the Flask-MonitoringDashboard.
 Furthermore, a number of useful tools for improving the quality of the code are discussed.
 
 
 Implementation
 --------------
-The Dashboard is implemented in the following 6 folders: core, database, static, templates, test 
+The Dashboard is implemented in the following 6 directories: core, database, static, templates, test 
 and views. Together this forms a Model-View-Controller-pattern:
 
 - **Model**: The model consists of the database-code. To be more specific, it is defined in
   'Flask-MonitoringDashboard/database.__init__.py'.
 
-- **View**: The view is a combination of the following three folders:
+- **View**: The view is a combination of the following three directories:
   
   - **static**: contains some CSS and JS files.
 
@@ -27,13 +27,15 @@ and views. Together this forms a Model-View-Controller-pattern:
        fmd_base.html
        ├──fmd_dashboard/overview.html
        │  └──fmd_dashboard/graph.html
-       │     └──fmd_dashboard/graph-details.html
-       │        └──fmd_dashboard/outliers.html
+       │     ├──fmd_dashboard/graph-details.html
+       │     │  └──fmd_dashboard/outliers.html
+       │     ├──fmd_dashboard/profiler.html
+       │     │  └──fmd_dashboard/grouped_profiler.html
+       │     └──fmd_testmonitor/endpoint.html
        ├──fmd_testmonitor/testmonitor.html
-       ├──fmd_testmonitor/testresult.html
        ├──fmd_config.html
        ├──fmd_login.html
-       └──fmd_urles.html
+       └──fmd_rules.html
        fmd_export-data.html
 
 
@@ -61,7 +63,7 @@ and views. Together this forms a Model-View-Controller-pattern:
 
     - **fmd_testmonitor/testmonitor.html**: For rendering the `Testmonitor-page`_.
 
-    - **fmd_testmonitor/testresult.html**: For rendering the results of the Testmonitor.
+    - **fmd_testmonitor/endpoint.html**: For rendering the results of the Testmonitor.
 
     .. _`Configuration-page`: http://localhost:5000/dashboard/configuration
     .. _`Login-page`: http://localhost:5000/dashboard/login
@@ -135,6 +137,22 @@ The following tools are used for helping the development of the Dashboard:
 
   .. _Sphinx: www.sphinx-doc.org
   .. _ReadTheDocs: http://flask-monitoringdashboard.readthedocs.io
+
+Database Scheme
+---------------
+If you're interested in the data that the Flask-MonitoringDashboard stores, have a look at the database scheme below.
+
+Note the following:
+
+  - A key represents the Primary Key of the corresponding table. In the StackLine-table, the Primary Key consists 
+    of a combination of two fields (request_id and position).
+
+  - The blue arrow points to the Foreign Key that is used to combine the results of multiple tables. 
+
+.. figure :: img/database_scheme.png
+   :width: 100%
+
+
 
 Versions
 --------
