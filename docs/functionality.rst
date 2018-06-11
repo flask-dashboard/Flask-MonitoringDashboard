@@ -204,7 +204,7 @@ This provides the following information (thus, all information below is specific
      graph consists of 3 dimensions (execution time, users, versions). A larger circle represents a higher execution
      time.
 
-   - **IP-Focused Multi-Version Performance:** The same type of plot as 'Time per version per user', but now that users are replaced
+   - **IP-Focused Multi-Version Performance:** The same type of plot as 'User-Focused Multi-Version Performance', but now that users are replaced
      by IP-addresses.
 
    - **Per-Version Performance:** A horizontal box plot with the execution times for a specific version. This graph is
