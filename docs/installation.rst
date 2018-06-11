@@ -48,15 +48,15 @@ It is (again) one simple command:
 
    source bin/activate
 
-Installing the Flask Monitoring Dashboard Package
+Installing the Flask-MonitoringDashboard Package
 -------------------------------------------------
-You can install the Flask Monitoring Dashboard using the command below:
+You can install the Flask-MonitoringDashboard using the command below:
 
 .. code-block:: bash
 
    pip install flask_monitoringdashboard
 
-Alternatively, you can install the Flask Monitoring Dashboard from
+Alternatively, you can install the Flask-MonitoringDashboard from
 `Github <https://github.com/flask-dashboard/Flask-MonitoringDashboard>`_:
 
 .. code-block:: bash
@@ -65,7 +65,7 @@ Alternatively, you can install the Flask Monitoring Dashboard from
    cd Flask-MonitoringDashboard
    python setup.py install
 
-Setup the Flask Monitoring Dashboard
+Setup the Flask-MonitoringDashboard
 -------------------------------------
 After you've successfully installed the package, you can use it in your code.
 Suppose that you've already a Flask application that looks like this:
@@ -114,6 +114,6 @@ Together, it becomes:
 
 Further configuration
 ---------------------
-You are now ready for using the Flask Monitoring Dashboard, and you can already view the Dashboard at: `dashboard <http://localhost:5000/dashboard>`_.
+You are now ready for using the Flask-MonitoringDashboard, and you can already view the Dashboard at: `dashboard <http://localhost:5000/dashboard>`_.
 
 However, the Dashboard offers many functionality which has to be configured. This is explained on `the configuration page <configuration.html>`_.
