@@ -24,19 +24,14 @@
         {% set sum = request.stack_lines[0].duration %}
         {% set percentage = line.duration / sum if sum > 0 else 1 %}
 
-        <tr>
-            <td hidden>{{ line.position }}</td>
-            <td style="padding-left: {{ 10 + 15 * line.indent }}px; width: 60%">
-                {{ line.code.code }}
+        <tr content="{{ body[request.id][index] }}" index="{{ index }}" indent="{{ line.indent }}">
+            <td style="padding-left: {{ 10 + 15 * line.indent }}px;"><hide>{{ "{:05d}".format(line.position) }}</hide>{{ line.code.code }}
                 {% if body[request.id][index] %}
-                    <i class="fa fa-minus-square" style="cursor: pointer;"
-                       onclick="toggle_rows( {{'{}, {}, this'.format(body[request.id][index], request.id) }})"></i>
+                    <i class="fa fa-minus-square" style="cursor: pointer;" onclick="toggleRows($(this).parent().parent())"></i>
                 {% endif %}
             </td>
-            <td style="text-align: right; width: 20%">
-                {{ "{:,.1f} ms".format(line.duration) }}
-            </td>
-            <td style="text-align: right; background-color: {{ compute_color(percentage) }}; width: 20%">
+            <td style="text-align: right;"><time>{{ line.duration }}</time></td>
+            <td style="text-align: right; background-color: {{ compute_color(percentage) }};">
                 {{ "{:.1f} %".format(percentage * 100) }}
             </td>
         </tr>
@@ -52,13 +47,14 @@
             <div class="card">
                 {{ request_title(request) }}
                 <div class="card-body table-responsive">
+                    <input type="button" class="btn btn-primary" onclick="expand_all($(this))" value="Expand all" />
+
                     <table class="table table-bordered req-id{{ request.id }}" id="dataTable" width="100%" cellspacing="0" >
                         <thead>
                             <tr>
-                                <th hidden>Line number</th>
-                                <th>Code-line</th>
-                                <th>Duration</th>
-                                <th>Percentage</th>
+                                <th style="width: 80%">Code-line</th>
+                                <th style="width: 10%;">Duration</th>
+                                <th style="width: 10%;">Percentage</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -86,31 +82,68 @@
             "info": false,
             "searching": false
         });
-        function toggle_rows(rows, request_id, icon){
-            var table = $(".table.table-bordered.req-id" + request_id);
 
-            if (icon.className.indexOf("fa-minus-square") >= 0){
-                $(icon).removeClass("fa-minus-square");
-                $(icon).addClass("fa-plus-square");
-
-                rows.forEach(function(i){
-                    var element = table.find('tr:eq(' + (i + 1) + ')');
-                    element.find('.fa').removeClass("fa-plus-square").addClass("fa-minus-square");
-                    if (element.is(":visible")){
-                        element.hide();
-                    }
-                });
+        function toggleFa(tr){
+            var fa = tr.find(".fa");
+            if (fa.hasClass("fa-minus-square")){
+                fa.removeClass("fa-minus-square").addClass("fa-plus-square");
             } else {
-                $(icon).removeClass("fa-plus-square");
-                $(icon).addClass("fa-minus-square");
-
-                rows.forEach(function(i){
-                    var element = table.find('tr:eq(' + (i + 1) + ')');
-                    if (!element.is(":visible")){
-                        element.show();
-                    }
-                });
+                fa.removeClass("fa-plus-square").addClass("fa-minus-square");
             }
         }
+
+        function toggleRows(tr){
+            var fa = tr.find(".fa");
+            var indent = parseInt(tr.attr("indent"));
+            var children = tr.attr("content").replace("[", "").replace("]", "").split(",");
+            var table = tr.parent().parent();
+
+            for (var i in children) {
+                if (children[i] !== "") {
+
+                    if (fa.hasClass("fa-minus-square")) {
+                        table.find("[index=" + children[i] + "]").hide();
+                    } else {
+                        var object = table.find("[index=" + children[i] + "]");
+                        if (parseInt(object.attr("indent")) === indent + 1) {
+                            object.show();
+                            var objectFa = object.find(".fa");
+                            objectFa.removeClass("fa-minus-square").addClass("fa-plus-square");
+                        }
+                    }
+                }
+             }
+             toggleFa(tr);
+        }
+
+        // toggle all rows with indent == 1:
+        $("[indent=1]").each(function(){
+            toggleRows($(this));
+        });
+
+        function expand_all(button){
+            var table = button.parent().find("table");
+
+            if (button.attr("value") === "Expand all"){
+                table.find("[content]").each(function(){
+                    $(this).show();
+                    $(this).find(".fa").removeClass("fa-plus-square").addClass("fa-minus-square");
+                });
+
+                button.attr("value", "Hide all");
+            } else {
+                table.find("[content]").each(function () {
+                    var indent = parseInt($(this).attr("indent"));
+                    if (indent === 1){
+                        $(this).find(".fa").removeClass("fa-minus-square").addClass("fa-plus-square");
+                    } else if (indent > 1){
+                        $(this).hide();
+                    }
+                });
+
+                button.attr("value", "Expand all");
+            }
+        }
+
     </script>
 {% endblock %}

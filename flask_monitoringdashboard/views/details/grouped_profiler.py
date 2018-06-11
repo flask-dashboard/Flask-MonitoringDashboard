@@ -4,7 +4,6 @@ from flask import render_template
 
 from flask_monitoringdashboard import blueprint
 from flask_monitoringdashboard.core.auth import secure
-from flask_monitoringdashboard.core.profiler.util import order_histogram
 from flask_monitoringdashboard.core.profiler.util.groupedStackLine import GroupedStackLine
 from flask_monitoringdashboard.core.profiler.util.pathHash import PathHash
 from flask_monitoringdashboard.core.utils import get_endpoint_details
@@ -19,22 +18,20 @@ def grouped_profiler(endpoint_id):
         details = get_endpoint_details(db_session, endpoint_id)
         requests = get_grouped_profiled_requests(db_session, endpoint_id)
         db_session.expunge_all()
-    total_execution_time = sum([r.duration for r in requests])
+    total_duration = sum([r.duration for r in requests])
     histogram = defaultdict(list)  # path -> [list of values]
     path_hash = PathHash()
 
     for r in requests:
-        for index in range(len(r.stack_lines)):
-            line = r.stack_lines[index]
-            key = path_hash.get_stacklines_path(r.stack_lines, index), line.code.code
-            histogram[key].append(line.duration)
+        for index, stack_line in enumerate(r.stack_lines):
+            key = path_hash.get_stacklines_path(r.stack_lines, index)
+            histogram[key].append(stack_line.duration)
 
     table = []
-    for key, duration_list in order_histogram(histogram.items()):
-        table.append(GroupedStackLine(indent=path_hash.get_indent(key[0]), code=key[1], values=duration_list,
-                                      total=total_execution_time))
-
-    for index in range(len(table)):
+    for key, duration_list in sorted(histogram.items(), key=lambda row: row[0]):
+        table.append(GroupedStackLine(indent=path_hash.get_indent(key) - 1, code=path_hash.get_code(key),
+                                      values=duration_list, total_sum=total_duration, total_hits=len(requests)))
+    for index, item in enumerate(table):
         table[index].compute_body(index, table)
 
     return render_template('fmd_dashboard/profiler_grouped.html', details=details, table=table,

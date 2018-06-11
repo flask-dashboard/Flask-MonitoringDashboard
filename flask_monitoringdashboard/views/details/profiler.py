@@ -3,6 +3,7 @@ from flask_paginate import get_page_args, Pagination
 
 from flask_monitoringdashboard import blueprint
 from flask_monitoringdashboard.core.auth import secure
+from flask_monitoringdashboard.core.timezone import to_local_datetime
 from flask_monitoringdashboard.core.utils import get_endpoint_details
 from flask_monitoringdashboard.database import session_scope
 from flask_monitoringdashboard.database.count import count_profiled_requests
@@ -42,7 +43,8 @@ def profiler(endpoint_id):
 
     body = {}  # dict with the request.id as a key, and the values is a list for every stack_line.
     for request in requests:
-        body[request.id] = [get_body(index, request.stack_lines) for index in range(len(request.stack_lines))]
+        request.time_requested = to_local_datetime(request.time_requested)
+        body[request.id] = [get_body(index, request.stack_lines) for index, _ in enumerate(request.stack_lines)]
 
     return render_template('fmd_dashboard/profiler.html', details=details, requests=requests, pagination=pagination,
                            title='Profiler results for {}'.format(details['endpoint']), body=body)
