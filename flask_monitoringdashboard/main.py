@@ -3,24 +3,32 @@
     It is not used when the flask_monitoring_dashboard is attached to an existing flask application.
 """
 
-from flask import Flask, redirect, url_for
+from flask import Flask
 
 
 def create_app():
     import flask_monitoringdashboard as dashboard
+    import time
 
     app = Flask(__name__)
 
     dashboard.config.outlier_detection_constant = 0
-    dashboard.config.group_by = 'User', 2
-    dashboard.config.version = 1.5
-    dashboard.config.link = 'admin/dashboard'
-    dashboard.config.database_name = 'sqlite:///flask_monitoringdashboard.db'
+    dashboard.config.database_name = 'sqlite:///flask_monitoring_dashboard_v10.db'
     dashboard.bind(app)
 
-    @app.route('/')
-    def main():
-        return redirect(url_for('dashboard.index'))
+    def f(duration=1):
+        time.sleep(duration)
+
+    def g():
+        f()
+
+    @app.route('/endpoint')
+    def endpoint():
+        if random.randint(0, 1) == 0:
+            g()
+        else:
+            f()
+        return 'Ok'
 
     return app
 

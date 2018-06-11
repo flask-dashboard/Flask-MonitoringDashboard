@@ -6,8 +6,8 @@ You can find detailed information about every component below:
 Endpoint Monitoring
 -------------------
 The core functionality of the Dashboard is monitoring which Endpoints are heavily used and which are not.
-If you have successfully configured the Dashboard from `this page <configuration.html>`_, then you are ready to use it.
-In order to monitor a number of endpoints, you have to do the following:
+If you have successfully configured the Dashboard from `this page <configuration.html>`_, then you are 
+ready to use it. In order to monitor a number of endpoints, you have to do the following:
 
 1. Log into the Dashboard at: http://localhost:5000/dashboard/login
 
@@ -23,11 +23,11 @@ Collected data
 ~~~~~~~~~~~~~~
 For each request that is being to a monitored endpoint, the following data is recorded:
 
-- **Execution time:** measured in ms.
+- **Duration:** the duration of processing that request.
 
-- **Time:** the current timestamp of when the request is being made.
+- **Time_requested:** the current timestamp of when the request is being made.
 
-- **Version:** the version of the Flask-application.
+- **Version_requested:** the version of the Flask-application at the moment when the request arrived.
   This can either be retrieved via the `CUSTOM_VERSION` value, or via the `GIT` value.
   If both are configured, the `GIT` value is used.
 
@@ -96,25 +96,8 @@ For each request that is being to a monitored endpoint, the following data is re
      from flask import request
      print(request.environ['REMOTE_ADDR'])
 
-Observations
-~~~~~~~~~~~~
-Using the collected data, a number of observations can be made:
-
-- Is there a difference in execution time between different versions of the application?
-
-- Is there a difference in execution time between different users of the application?
-
-- Is there a difference in execution time between different IP addresses?
-  *As tracking the performance between different users requires more configuration, this can be a quick alternative.*
-
-- On which moments of the day does the Flask application process the most requests?
-
-- What are the users that produce the most requests?
-
-- Do users experience different execution times in different version of the application?
-
 Monitoring Unit Test Performance
-------------------------
+--------------------------------
 In addition to monitoring the performance of a live deployed version of some web service,
 the performance of such a web service can also be monitored by making use of its unit tests.
 This of course assumes that several unit tests were written for the web service project it concerns.
@@ -185,7 +168,7 @@ The data that is collected from outliers, can be seen by the following procedure
 
 Visualizations
 --------------
-There are a number of visualization generated to view the results that have been collected in (Endpoint-Monitoring)
+There are a number of visualizations generated to view the results that have been collected in (Endpoint-Monitoring)
 and (Test-Coverage Monitoring).
 
 The main difference is that visualizations from (Endpoint-Monitoring) can be found in the menu 'Dashboard' (in the
@@ -198,37 +181,41 @@ The 'Dashboard'-menu contains the following content:
    This table provides information about when the endpoint is last being requested, how often it is requested and what 
    the median execution time is. Furthermore, it has a 'Details' button on the right. This is explained further in (6).
 
-2. **Hourly load:** This graph provides information for each hour of the day of how often the endpoint is being requested. In 
+2. **Hourly API Utilization:** This graph provides information for each hour of the day of how often the endpoint is being requested. In 
    this graph it is possible to detect popular hours during the day.
 
-3. **Version Usage**: This graph provides information about the distribution of the utilization of the requests per version.
+3. **Multi Version API Utilization**: This graph provides information about the distribution of the utilization of the requests per version.
    That is, how often (in percentages) is a certain endpoint requested in a certain version.
 
-4. **Requests per endpoint:** This graph provides a row of information per day. In this graph, you can find
+4. **Daily API Utilization:** This graph provides a row of information per day. In this graph, you can find
    whether the total number of requests grows over days.
 
-5. **Time per endpoint:** This graph provides a row of information per endpoint. In that row, you can find all the
+5. **API Performance:** This graph provides a row of information per endpoint. In that row, you can find all the
    requests for that endpoint. This provides information whether certain endpoints perform better (in terms of
    execution time) than other endpoints.
 
-6. For each endpoint, there is a 'Details'-button (alternatively, you can click on the row itself). This provides the following 
-   information (thus, all information below is specific for a single endpoint):
+6. For each endpoint in the Overview page, you can click on the endpoint to get more details. 
+This provides the following information (thus, all information below is specific for a single endpoint):
 
-   - **Hourly load:** The same hourly load as explained in (2), but this time it is focused on the data of that particular
+   - **Hourly API Utilization:** The same hourly load as explained in (2), but this time it is focused on the data of that particular
      endpoint only.
 
-   - **Time per version per user:** A circle plot with the average execution time per user per version. Thus, this
+   - **User-Focused Multi-Version Performance:** A circle plot with the average execution time per user per version. Thus, this
      graph consists of 3 dimensions (execution time, users, versions). A larger circle represents a higher execution
      time.
 
-   - **Time per version per ip:** The same type of plot as 'Time per version per user', but now that users are replaced
+   - **IP-Focused Multi-Version Performance:** The same type of plot as 'User-Focused Multi-Version Performance', but now that users are replaced
      by IP-addresses.
 
-   - **Time per version:** A horizontal box plot with the execution times for a specific version. This graph is
+   - **Per-Version Performance:** A horizontal box plot with the execution times for a specific version. This graph is
      equivalent to (4.), but now it is focused on the data of that particular endpoint only.
 
-   - **Time per user:** A horizontal box plot with the execution time per user. In this graph, it is possible
+   - **Per-User Performance:** A horizontal box plot with the execution time per user. In this graph, it is possible
      to detect if there is a difference in the execution time between users.
+
+   - **Profiler:** A tree with the execution path for all requests.
+
+   - **Grouped Profiler:** A tree with the combined execution paths for this endpoint.
 
    - **Outliers:** See Section (Outliers) above.
 

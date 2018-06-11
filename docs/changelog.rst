@@ -9,7 +9,28 @@ Unreleased
 ----------
 Changed
 
-- Restructuring of Test-Monitoring page
+- 
+
+
+v2.0.0
+----------
+Changed
+
+- Added a configuration option to prefix a table in the database
+
+- Optimize queries, such that viewing data is faster
+
+- Updated database scheme
+
+- Implemented functionality to customize time window of graphs
+
+- Implemented a profiler for Request profiling
+
+- Implemented a profiler for Endpoint profiling
+
+- Refactored current code, which improves readability
+
+- Refactoring of Test-Monitoring page
 
 - Identify testRun by Travis build number
 

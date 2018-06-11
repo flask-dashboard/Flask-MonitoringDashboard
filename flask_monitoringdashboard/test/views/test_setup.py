@@ -44,13 +44,6 @@ class TestSetup(unittest.TestCase):
         add_fake_test_runs()
         test_admin_secure(self, 'testmonitor/{}'.format(NAME))
 
-    def test_testmonitor(self):
-        """
-            Just retrieve the content and check if nothing breaks
-        """
-        add_fake_test_runs()
-        test_admin_secure(self, 'testmonitor')
-
     def test_build_performance(self):
         """
             Just retrieve the content and check if nothing breaks
@@ -58,11 +51,18 @@ class TestSetup(unittest.TestCase):
         add_fake_test_runs()
         test_admin_secure(self, 'testmonitor/test_build_performance')
 
+    def test_build_performance_endpoints(self):
+        """
+            Just retrieve the content and check if nothing breaks
+        """
+        add_fake_test_runs()
+        test_admin_secure(self, 'testmonitor/endpoint_build_performance')
+
     def test_monitor_rule(self):
         """
             Test whether it is possible to monitor a rule
         """
-        data = {'name': 'checkbox-static', 'value': 'true'}
+        data = {'name': NAME, 'value': 0}
         with self.app.test_client() as c:
             login(c)
             self.assertEqual(200, c.post('dashboard/rules', data=data).status_code)

@@ -1,0 +1,149 @@
+{% extends "fmd_dashboard/graph-details.html" %}
+
+{% macro request_title(request) -%}
+    {# request is a Request-object #}
+    <div class="card-header">
+        <h6>Request {{ "{}: {:%Y-%m-%d %H:%M:%S }".format(request.id, request.time_requested) }}</h6>
+    </div>
+{%- endmacro %}
+
+{% macro compute_color(percentage) -%}
+    {% set red = 230, 74, 54 %}
+{#    {% set green = 205, 220, 57 %}#}
+    {% set green = 198, 220, 0 %}
+
+    {% set color_0 = red[0] * percentage + green[0] * (1 - percentage) %}
+    {% set color_1 = red[1] * percentage + green[1] * (1 - percentage) %}
+    {% set color_2 = red[2] * percentage + green[2] * (1 - percentage) %}
+    {{ 'rgb({},{},{})'.format(color_0, color_1, color_2) }}
+{%- endmacro %}
+
+{% block graph_content %}
+    {% macro table_row(request, index) -%}
+        {% set line = request.stack_lines[index] %}
+        {% set sum = request.stack_lines[0].duration %}
+        {% set percentage = line.duration / sum if sum > 0 else 1 %}
+
+        <tr content="{{ body[request.id][index] }}" index="{{ index }}" indent="{{ line.indent }}">
+            <td style="padding-left: {{ 10 + 15 * line.indent }}px;"><hide>{{ "{:05d}".format(line.position) }}</hide>{{ line.code.code }}
+                {% if body[request.id][index] %}
+                    <i class="fa fa-minus-square" style="cursor: pointer;" onclick="toggleRows($(this).parent().parent())"></i>
+                {% endif %}
+            </td>
+            <td style="text-align: right;"><time>{{ line.duration }}</time></td>
+            <td style="text-align: right; background-color: {{ compute_color(percentage) }};">
+                {{ "{:.1f} %".format(percentage * 100) }}
+            </td>
+        </tr>
+    {%- endmacro %}
+
+
+    {% if pagination %}
+        {{ pagination.info }}
+        {{ pagination.links }}
+    {% endif %}
+    {% for request in requests %}
+        <div class="card">
+            <div class="card">
+                {{ request_title(request) }}
+                <div class="card-body table-responsive">
+                    <input type="button" class="btn btn-primary" onclick="expand_all($(this))" value="Expand all" />
+
+                    <table class="table table-bordered req-id{{ request.id }}" id="dataTable" width="100%" cellspacing="0" >
+                        <thead>
+                            <tr>
+                                <th style="width: 80%">Code-line</th>
+                                <th style="width: 10%;">Duration</th>
+                                <th style="width: 10%;">Percentage</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for index in range(request.stack_lines|length) %}
+                                {{ table_row(request, index) }}
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div><br/>
+
+    {% endfor %}
+    {% if pagination %}
+        {{ pagination.info }}
+        {{ pagination.links }}
+    {% endif %}
+{% endblock %}
+
+{% block script %}
+    <script type="text/javascript">
+        $('#loading').hide();
+        $('#dataTable').DataTable({
+            "paging": false,
+            "info": false,
+            "searching": false
+        });
+
+        function toggleFa(tr){
+            var fa = tr.find(".fa");
+            if (fa.hasClass("fa-minus-square")){
+                fa.removeClass("fa-minus-square").addClass("fa-plus-square");
+            } else {
+                fa.removeClass("fa-plus-square").addClass("fa-minus-square");
+            }
+        }
+
+        function toggleRows(tr){
+            var fa = tr.find(".fa");
+            var indent = parseInt(tr.attr("indent"));
+            var children = tr.attr("content").replace("[", "").replace("]", "").split(",");
+            var table = tr.parent().parent();
+
+            for (var i in children) {
+                if (children[i] !== "") {
+
+                    if (fa.hasClass("fa-minus-square")) {
+                        table.find("[index=" + children[i] + "]").hide();
+                    } else {
+                        var object = table.find("[index=" + children[i] + "]");
+                        if (parseInt(object.attr("indent")) === indent + 1) {
+                            object.show();
+                            var objectFa = object.find(".fa");
+                            objectFa.removeClass("fa-minus-square").addClass("fa-plus-square");
+                        }
+                    }
+                }
+             }
+             toggleFa(tr);
+        }
+
+        // toggle all rows with indent == 1:
+        $("[indent=1]").each(function(){
+            toggleRows($(this));
+        });
+
+        function expand_all(button){
+            var table = button.parent().find("table");
+
+            if (button.attr("value") === "Expand all"){
+                table.find("[content]").each(function(){
+                    $(this).show();
+                    $(this).find(".fa").removeClass("fa-plus-square").addClass("fa-minus-square");
+                });
+
+                button.attr("value", "Hide all");
+            } else {
+                table.find("[content]").each(function () {
+                    var indent = parseInt($(this).attr("indent"));
+                    if (indent === 1){
+                        $(this).find(".fa").removeClass("fa-minus-square").addClass("fa-plus-square");
+                    } else if (indent > 1){
+                        $(this).hide();
+                    }
+                });
+
+                button.attr("value", "Expand all");
+            }
+        }
+
+    </script>
+{% endblock %}

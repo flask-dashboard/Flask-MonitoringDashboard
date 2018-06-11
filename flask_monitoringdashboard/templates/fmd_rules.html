@@ -5,7 +5,7 @@
         <div class="card-body">
             <div class="table-responsive">
                 <form id="myForm">
-                    <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0"
+                    <table class="table table-striped table-bordered" id="dataTable" width="100%" cellspacing="0"
                            data-page-length="10">
                         <thead>
                         <tr>
@@ -13,24 +13,21 @@
                             <th>Rule</th>
                             <th>HTTP Method</th>
                             <th>Endpoint</th>
-                            <th>Last accessed</th>
-                            <th>Monitor</th>
+                            <th>Last requested</th>
+                            <th>Monitoring-level<sup>*</sup></th>
                         </tr>
                         </thead>
                         <tbody>
                         {% for row in rules %}
-                            <tr style="cursor: pointer"
-                                onclick='toggleCheck("checkbox-{{ row.endpoint }}")'>
+                            <tr>
                                 <td style="background-color: {{ row.color }}"></td>
                                 <td style="max-width: 200px;">{{ row.rule }}</td>
                                 <td>{{ ", ".join(row.methods) }}</td>
                                 <td style="max-width: 200px;">{{ row.endpoint }}</td>
                                 <td style="text-align: center;">{{ "{:%Y-%m-%d %H:%M:%S }".format(row.last_accessed) if row.last_accessed }}</td>
                                 <td>
-                                    <input id="checkbox-{{ row.endpoint }}" name="checkbox-{{ row.endpoint }}"
-                                           type="checkbox" {{ 'checked' if row.monitor }} class="checkbox"
-                                           onchange="sendForm(this)">
-                                    <label for="checkbox-{{ row.endpoint }}"></label>
+                                    <span hidden>{{ row.form.monitor.data }}</span>
+                                    {{ row.form.monitor(onchange='sendForm("{}", this.value);'.format(row.endpoint)) }}
                                 </td>
                             </tr>
                         {% endfor %}
@@ -41,33 +38,25 @@
         </div>
     </div>
 
+    <div class="card mb-3">
+        <div class="card-header"><h5><sup>*</sup>Monitoring-level</h5></div>
+        <div class="card-body">{{ information|safe }}</div>
+    </div>
+
 {% endblock %}
 
 {% block script %}
     <script>
-        function toggleCheck(checkbox_id) {
-            box = document.getElementById(checkbox_id);
-            if (box.hasAttribute("checked")) {
-                box.removeAttribute("checked")
-            } else {
-                box.setAttribute("checked", "")
-            }
-            sendForm(box)
-        }
-
-        function sendForm(checkbox) {
+        function sendForm(endpoint, value) {
             $.ajax({
                 url: '#',
                 data: {
-                    'name': checkbox.name,
-                    'value': checkbox.checked
+                    'name': endpoint,
+                    'value': value
                 },
                 type: 'post',
                 dataType: 'json'
             });
         }
-    </script>
-    <script type="text/javascript">
-        $('#dataTable').DataTable().order([[4, "desc"]]).draw();
     </script>
 {% endblock %}

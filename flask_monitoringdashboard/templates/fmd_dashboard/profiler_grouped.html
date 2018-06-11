@@ -1,0 +1,52 @@
+{% extends "fmd_dashboard/profiler.html" %}
+
+
+{% block graph_content %}
+
+    {% macro table_row(index, table) -%}
+        {% set row = table[index] %}
+        <tr content="{{ row.body }}" index="{{ index }}" indent="{{ row.indent }}">
+            <td style="padding-left: {{ 10 + 15 * row.indent }}px; width: 52%"><hide>{{ "{:05d}".format(row.index) }}</hide>
+                {{ row.code }}
+                {% if row.body %}
+                    <i class="fa fa-minus-square" style="cursor: pointer;" onclick="toggleRows($(this).parent().parent())"></i>
+                {% endif %}
+            </td>
+            <td style="text-align: right; width: 5%;">{{ row.hits }}</td>
+            <td style="text-align: right; width: 8%; background-color: {{ compute_color(row.hits_percentage) }};">
+                {{ "{:.1f} %".format(row.hits_percentage * 100) }}
+            </td>
+            <td style="text-align: right; width: 8%;"><time>{{ row.average }}</time></td>
+            <td style="text-align: right; width: 8%"><time> {{ row.standard_deviation }}</time></td>
+            <td style="text-align: right; width: 8%;"><time>{{ row.sum }}</time></td>
+            <td style="text-align: right; width: 8%; background-color: {{ compute_color(row.percentage) }};">
+                {{ "{:.1f} %".format(row.percentage * 100) }}
+            </td>
+        </tr>
+    {%- endmacro %}
+
+    <input type="button" class="btn btn-primary" onclick="expand_all($(this))" value="Expand all" />
+
+    <table class="table table-bordered req-id0" id="dataTable" width="100%" cellspacing="0" >
+        <thead>
+            <tr>
+                <th rowspan="2">Code-line</th>
+                <th colspan="2" style="text-align: center; width: 16%;">Hits</th>
+                <th rowspan="2" style="width: 8%;">Average time</th>
+                <th rowspan="2" style="width: 8%;">SD</th>
+                <th colspan="2" style="text-align: center; width: 16%;">Total</th>
+            </tr>
+            <tr>
+                <th style="width: 8%;">Absolute</th>
+                <th style="width: 8%;">%</th>
+                <th style="width: 8%;">Absolute</th>
+                <th style="width: 8%;">%</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for index in range(table|length) %}
+                {{ table_row(index, table) }}
+            {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}
