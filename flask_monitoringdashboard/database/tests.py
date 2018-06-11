@@ -22,7 +22,7 @@ def add_or_update_test(db_session, name, passing, last_tested, version_added):
 def add_test_result(db_session, name, exec_time, time, version, job_id, iteration):
     """ Add a test result to the database. """
     test_id = db_session.query(Test).filter(Test.name == name).first().id
-    db_session.add(TestResult(test_id=test_id, execution_time=exec_time, time_added=time, app_version=version,
+    db_session.add(TestResult(test_id=test_id, duration=exec_time, time_added=time, app_version=version,
                               travis_job_id=job_id, run_nr=iteration))
 
 
@@ -47,7 +47,7 @@ def get_travis_builds(db_session, limit=None):
 def get_suite_measurements(db_session, suite):
     """ Return all measurements for some Travis build. Used for creating a box plot. """
     result = [result[0] for result in
-              db_session.query(TestResult.execution_time).filter(TestResult.travis_job_id == suite).all()]
+              db_session.query(TestResult.duration).filter(TestResult.travis_job_id == suite).all()]
     return result if len(result) > 0 else [0]
 
 
