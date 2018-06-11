@@ -47,6 +47,8 @@
             <div class="card">
                 {{ request_title(request) }}
                 <div class="card-body table-responsive">
+                    <input type="button" class="btn btn-primary" onclick="expand_all($(this))" value="Expand all" />
+
                     <table class="table table-bordered req-id{{ request.id }}" id="dataTable" width="100%" cellspacing="0" >
                         <thead>
                             <tr>
@@ -117,7 +119,31 @@
         // toggle all rows with indent == 1:
         $("[indent=1]").each(function(){
             toggleRows($(this));
-        })
+        });
+
+        function expand_all(button){
+            var table = button.parent().find("table");
+
+            if (button.attr("value") === "Expand all"){
+                table.find("[content]").each(function(){
+                    $(this).show();
+                    $(this).find(".fa").removeClass("fa-plus-square").addClass("fa-minus-square");
+                });
+
+                button.attr("value", "Hide all");
+            } else {
+                table.find("[content]").each(function () {
+                    var indent = parseInt($(this).attr("indent"));
+                    if (indent === 1){
+                        $(this).find(".fa").removeClass("fa-minus-square").addClass("fa-plus-square");
+                    } else if (indent > 1){
+                        $(this).hide();
+                    }
+                });
+
+                button.attr("value", "Expand all");
+            }
+        }
 
     </script>
 {% endblock %}

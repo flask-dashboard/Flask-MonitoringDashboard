@@ -76,11 +76,19 @@ class PathHash(object):
 
     @staticmethod
     def get_indent(string):
+        """
+        Compute the amount of callers given a path.
+        :return: an integer
+        """
         if string:
             return len(string.split(STRING_SPLIT))
         return 0
 
     def get_code(self, path):
+        """
+        :param path: only take the last tuple of the path. the last part contains the code line, but hashed.
+        :return: the line of code, based on the given path
+        """
         last = path.rpartition(STRING_SPLIT)[-1]
         return self._string_hash.unhash(int(last.split(LINE_SPLIT, 1)[1]))
 
@@ -90,6 +98,7 @@ class PathHash(object):
 
     def get_stacklines_path(self, stack_lines, index):
         """
+        Used for grouping multiple requests
         :param stack_lines: list of StackLine objects.
         :param index: index in the stack_lines, so 0 <= index < len(stack_lines)
         :return: the StackLinePath that belongs to the given index
