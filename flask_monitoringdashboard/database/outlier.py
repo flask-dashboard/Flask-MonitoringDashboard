@@ -38,6 +38,8 @@ def get_outliers_cpus(db_session, endpoint_id):
     :param endpoint_id: endpoint_id for filtering the requests
     :return: a list of all cpu percentages for outliers of a specific endpoint
     """
-    outliers = db_session.query(Outlier).filter(Request.endpoint_id == endpoint_id).all()
-    return [outlier.cpu_percent for outlier in outliers]
+    outliers = db_session.query(Outlier.cpu_percent).\
+        join(Outlier.request).\
+        filter(Request.endpoint_id == endpoint_id).all()
+    return [outlier[0] for outlier in outliers]
 
