@@ -1,13 +1,13 @@
 import datetime
 
-from flask import make_response, render_template, session
+from flask import make_response, render_template
 
-from flask_monitoringdashboard import blueprint, config
+from flask_monitoringdashboard import blueprint
 from flask_monitoringdashboard.core.auth import admin_secure
 from flask_monitoringdashboard.database import session_scope
-from flask_monitoringdashboard.database.function_calls import get_data
+from flask_monitoringdashboard.database.request import get_data
 
-CSV_COLUMNS = ['endpoint', 'execution_time', 'time', 'version', 'group_by', 'ip']
+CSV_COLUMNS = ['endpoint_id', 'duration', 'time_requested', 'version_requested', 'group_by', 'ip']
 
 
 @blueprint.route('/download-csv')

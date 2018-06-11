@@ -333,7 +333,6 @@ body.sidenav-toggled #mainNav.fixed-top #sidenavToggler i {
     -moz-transform: scaleX(-1);
     -o-transform: scaleX(-1);
     transform: scaleX(-1);
-    filter: FlipH;
     -ms-filter: 'FlipH';
 }
 
@@ -352,7 +351,6 @@ body.sidenav-toggled #mainNav.static-top #sidenavToggler i {
     -moz-transform: scaleX(-1);
     -o-transform: scaleX(-1);
     transform: scaleX(-1);
-    filter: FlipH;
     -ms-filter: 'FlipH';
 }
 
@@ -561,7 +559,6 @@ footer.sticky-footer {
 }
 
 .clickable {
-    cursor: pointer;
     cursor: hand;
 }
 
@@ -599,6 +596,5 @@ footer.sticky-footer {
 
 .pagination-page-info b {
     color: black;
-    padding-left: 2px;
     padding: .1em .25em;
 }

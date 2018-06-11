@@ -3,7 +3,7 @@ import datetime
 from sqlalchemy import func
 
 from flask_monitoringdashboard.core.timezone import to_utc_datetime
-from flask_monitoringdashboard.database import FunctionCall, TestRun, TestsGrouped
+from flask_monitoringdashboard.database import Request, TestEndpoint
 
 
 def get_latest_test_version(db_session):
@@ -12,9 +12,9 @@ def get_latest_test_version(db_session):
     :param db_session: session for the database
     :return: latest test version
     """
-    latest_time = db_session.query(func.max(TestRun.time)).one()[0]
+    latest_time = db_session.query(func.max(TestEndpoint.time_added)).one()[0]
     if latest_time:
-        return db_session.query(TestRun.version).filter(TestRun.time == latest_time).one()[0]
+        return db_session.query(TestEndpoint.app_version).filter(TestEndpoint.time_added == latest_time).one()[0]
     return None
 
 
@@ -26,8 +26,8 @@ def count_rows_group(db_session, column, *criterion):
     :param criterion: where-clause of the query
     :return: list with the number of rows per endpoint
     """
-    return db_session.query(FunctionCall.endpoint, func.count(column)). \
-        filter(*criterion).group_by(FunctionCall.endpoint).all()
+    return db_session.query(Request.endpoint_id, func.count(column)). \
+        filter(*criterion).group_by(Request.endpoint_id).all()
 
 
 def get_value(list, name, default=0):
@@ -48,7 +48,7 @@ def count_requests_group(db_session, *where):
     :param db_session: session for the database
     :param where: additional arguments
     """
-    return count_rows_group(db_session, FunctionCall.id, *where)
+    return count_rows_group(db_session, Request.id, *where)
 
 
 def count_times_tested(db_session, *where):
@@ -56,13 +56,14 @@ def count_times_tested(db_session, *where):
     :param db_session: session for the database
     :param where: additional arguments
     """
-    result = {}
-    test_endpoint_groups = db_session.query(TestsGrouped).all()
-    for group in test_endpoint_groups:
-        times = db_session.query(func.count(TestRun.name)).filter(TestRun.name == group.test_name).\
-                                                           filter(*where).one()[0]
-        result[group.endpoint] = result.get(group.endpoint, 0) + int(times)
-    return result.items()
+    result = db_session.query(TestEndpoint, func.count(TestEndpoint.endpoint_id)).join(
+        TestEndpoint.endpoint).filter(*where).group_by(TestEndpoint.endpoint_id).all()
+    if not result:
+        return []
+    counts = []
+    for endpoint, count in result:
+        counts.append((endpoint.endpoint.name, count))
+    return counts
 
 
 def count_requests_per_day(db_session, list_of_days):
@@ -74,6 +75,6 @@ def count_requests_per_day(db_session, list_of_days):
         dt_begin = to_utc_datetime(datetime.datetime.combine(day, datetime.time(0, 0, 0)))
         dt_end = dt_begin + datetime.timedelta(days=1)
 
-        result.append(count_rows_group(db_session, FunctionCall.id, FunctionCall.time >= dt_begin,
-                                       FunctionCall.time < dt_end))
+        result.append(count_rows_group(db_session, Request.id, Request.time_requested >= dt_begin,
+                                       Request.time_requested < dt_end))
     return result

@@ -11,7 +11,7 @@
                     <tr>
                         <th colspan="2"></th>
                         <th colspan="2" style="text-align: center; font-size: large;">Number of times tested</th>
-                        <th colspan="2" style="text-align: center; font-size: large;">Median execution time (ms)</th>
+                        <th colspan="2" style="text-align: center; font-size: large;">Median request duration</th>
                         <th></th>
                     </tr>
                     <tr>
@@ -32,8 +32,8 @@
                             <td style="max-width: 200px;">{{ record.name }}</td>
                             <td style="text-align: right;">{{ "{:,d}".format(record['tests-latest-version']) }}</td>
                             <td style="text-align: right;">{{ "{:,d}".format(record['tests-overall']) }}</td>
-                            <td style="text-align: right;">{{ "{:,.1f}".format(record['median-latest-version']) }}</td>
-                            <td style="text-align: right;">{{ "{:,.1f}".format(record['median-overall']) }}</td>
+                            <td style="text-align: right;"><time>{{ record['median-latest-version'] }}</time></td>
+                            <td style="text-align: right;"><time>{{ record['median-overall'] }}</time></td>
                             <td style="text-align: center;">{{ "{:%Y-%m-%d %H:%M:%S }".format(record['last-tested']) }}</td>
                         </tr>
                     {% endfor %}

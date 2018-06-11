@@ -12,7 +12,7 @@
                         <tr>
                             <th colspan="2"></th>
                             <th colspan="3" style="text-align: center; font-size: large;">Number of hits</th>
-                            <th colspan="3" style="text-align: center; font-size: large;">Median execution time (ms)
+                            <th colspan="3" style="text-align: center; font-size: large;">Median request duration
                             </th>
                             <th></th>
                         </tr>
@@ -25,22 +25,24 @@
                             <th>Today</th>
                             <th>Last 7 days</th>
                             <th>Overall</th>
-                            <th>Last accessed</th>
+                            <th>Last requested</th>
                         </tr>
                         </thead>
                         <tbody>
-                        {% for record in result %}
+                        {% for row in result %}
                             <tr style="cursor: pointer"
-                                onclick="window.location='{{ url_for('dashboard.endpoint_hourly_load', end=record.name) }}';">
-                                <td style="background-color: {{ record.color }}"></td>
-                                <td style="max-width: 200px;">{{ record.name }}</td>
-                                <td style="text-align: right;">{{ "{:,d}".format(record['hits-today']) }}</td>
-                                <td style="text-align: right;">{{ "{:,d}".format(record['hits-week']) }}</td>
-                                <td style="text-align: right;">{{ "{:,d}".format(record['hits-overall']) }}</td>
-                                <td style="text-align: right;">{{ "{:,.1f}".format(record['median-today']) }}</td>
-                                <td style="text-align: right;">{{ "{:,.1f}".format(record['median-week']) }}</td>
-                                <td style="text-align: right;">{{ "{:,.1f}".format(record['median-overall']) }}</td>
-                                <td style="text-align: center;">{{ "{:%Y-%m-%d %H:%M:%S }".format(record['last-accessed']) }}</td>
+                                onclick="window.location='{{ url_for('dashboard.endpoint_hourly_load',
+                                endpoint_id=row['id']) }}';">
+                                <td style="background-color: {{ row.color }}"></td>
+                                <td style="max-width: 200px;">{{ row.name }}</td>
+                                <td style="text-align: right;">{{ "{:,d}".format(row['hits-today']) }}</td>
+                                <td style="text-align: right;">{{ "{:,d}".format(row['hits-week']) }}</td>
+                                <td style="text-align: right;">{{ "{:,d}".format(row['hits-overall']) }}</td>
+                                <td style="text-align: right;"><time>{{ row['median-today'] }}</time></td>
+                                <td style="text-align: right;"><time>{{ row['median-week'] }}</time></td>
+                                <td style="text-align: right;"><time>{{ row['median-overall'] }}</time></td>
+                                <td style="text-align: center;">{{ "{:%Y-%m-%d %H:%M:%S }".format(row['last-accessed'])
+                                                    if row['last-accessed'] }}</td>
                             </tr>
                         {% endfor %}
                         </tbody>
