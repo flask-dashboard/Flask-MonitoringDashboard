@@ -34,13 +34,15 @@ class TestProfiler(unittest.TestCase):
             from flask import request
             request.environ['REMOTE_ADDR'] = '127.0.0.1'
             num_threads = threading.active_count()
-            start_profiler_thread(Endpoint(id=3, name=NAME))
+            thread = start_profiler_thread(Endpoint(id=3, name=NAME))
             self.assertEqual(threading.active_count(), num_threads + 1)
+            thread.stop(1)
 
     def test_start_profiler_and_outlier_thread(self):
         with self.app.test_request_context():
             from flask import request
             request.environ['REMOTE_ADDR'] = '127.0.0.1'
             num_threads = threading.active_count()
-            start_profiler_and_outlier_thread(Endpoint(id=3, name=NAME))
+            thread = start_profiler_and_outlier_thread(Endpoint(id=3, name=NAME))
             self.assertEqual(threading.active_count(), num_threads + 2)
+            thread.stop(1)
