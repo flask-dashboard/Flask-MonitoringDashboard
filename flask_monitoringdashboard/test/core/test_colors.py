@@ -10,4 +10,4 @@ class TestColors(unittest.TestCase):
         config.colors['endpoint'] = '[0, 1, 2]'
 
         self.assertEqual(get_color('endpoint'), 'rgb(0, 1, 2)')
-        self.assertAlmostEqual(get_color('main'), 'rgb(140, 191, 64)')
+        self.assertIn(get_color('main'), ['rgb(140, 191, 64)', 'rgb(140.0, 191.0, 64.0)'])
