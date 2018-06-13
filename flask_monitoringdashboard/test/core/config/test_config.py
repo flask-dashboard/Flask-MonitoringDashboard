@@ -10,7 +10,7 @@ class TestConfig(unittest.TestCase):
         """
         import flask_monitoringdashboard as dashboard
         dashboard.config.init_from()
-        dashboard.config.init_from(file='../config.cfg')
+        dashboard.config.init_from(file='../../config.cfg')
 
     def test_parser(self):
         """

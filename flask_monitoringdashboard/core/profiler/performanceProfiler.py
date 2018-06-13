@@ -21,5 +21,4 @@ class PerformanceProfiler(BaseProfiler):
     def run(self):
         with session_scope() as db_session:
             update_last_accessed(db_session, endpoint_name=self._endpoint.name)
-            print("mao")
             add_request(db_session, duration=self._duration, endpoint_id=self._endpoint.id, ip=self._ip)

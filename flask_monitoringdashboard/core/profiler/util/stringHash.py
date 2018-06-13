@@ -34,4 +34,4 @@ class StringHash(object):
             if v == hash:
                 return k
 
-        ValueError('Value not possible to unhash: {}'.format(hash))
+        raise ValueError('Value not possible to unhash: {}'.format(hash))
