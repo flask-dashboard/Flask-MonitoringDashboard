@@ -31,7 +31,7 @@ The Flask Monitoring Dashboard is an extension that offers four main functionali
 The dashboard is automatically added to your existing Flask application.
 You can view the results by default using the default endpoint (this can be configured to another route):
 
-    [/dashboard](http://localhost:5000/dashboard)
+   [/dashboard](http://localhost:5000/dashboard)
 
 For more advanced documentation, take a look at the information on [this site](http://flask-monitoringdashboard.readthedocs.io/en/latest/functionality.html).
 
