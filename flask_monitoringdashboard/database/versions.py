@@ -25,7 +25,7 @@ def get_first_requests(db_session, limit=None):
     Returns a list with all versions and when they're first used
     :param db_session: session for the database
     :param limit: only return the most recent versions
-    :return:
+    :return list of tuples with versions
     """
     query = db_session.query(Request.version_requested, func.min(Request.time_requested).label('first_used')). \
         group_by(Request.version_requested).order_by(desc('first_used'))

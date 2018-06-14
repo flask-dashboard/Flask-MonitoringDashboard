@@ -10,7 +10,7 @@ def get_latest_test_version(db_session):
     """
     Retrieves the latest version of the user app that was tested.
     :param db_session: session for the database
-    :return: latest test version
+    :return latest test version
     """
     latest_time = db_session.query(func.max(TestEndpoint.time_added)).one()[0]
     if latest_time:
@@ -24,7 +24,7 @@ def count_rows_group(db_session, column, *criterion):
     :param db_session: session for the database
     :param column: column to count
     :param criterion: where-clause of the query
-    :return: list with the number of rows per endpoint
+    :return list with the number of rows per endpoint
     """
     return db_session.query(Request.endpoint_id, func.count(column)). \
         filter(*criterion).group_by(Request.endpoint_id).all()
@@ -35,7 +35,7 @@ def get_value(list, name, default=0):
     :param list: must be structured as: [(a, b), (c, d), ..]
     :param name: name to filter on, e.g.: if name == a, it returns b
     :param default: returned if the name was not found in the list
-    :return: value corresponding to the name in the list.
+    :return value corresponding to the name in the list.
     """
     for key, value in list:
         if key == name:
@@ -44,7 +44,8 @@ def get_value(list, name, default=0):
 
 
 def count_requests_group(db_session, *where):
-    """ Return the number of hits for all endpoints (possible with more filter arguments).
+    """
+    Return the number of hits for all endpoints (possible with more filter arguments).
     :param db_session: session for the database
     :param where: additional arguments
     """
