@@ -1,5 +1,4 @@
 from sqlalchemy import func, distinct
-from sqlalchemy.orm import joinedload
 
 from flask_monitoringdashboard.database import Request, StackLine, TestResult, TestEndpoint
 

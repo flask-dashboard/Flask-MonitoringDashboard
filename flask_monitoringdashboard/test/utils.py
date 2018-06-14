@@ -10,12 +10,12 @@ ENDPOINT_ID = 1
 REQUEST_IDS = [1, 2, 3, 4, 5]
 IP = '127.0.0.1'
 GROUP_BY = '1'
-EXECUTION_TIMES = [1000, 2000, 3000, 4000, 50000]
+REQUESTS = [1000, 2000, 3000, 4000, 50000]
 BASE_OUTLIER_EXEC_TIME = 100
 TIMES = [datetime.datetime.utcnow()] * 5
 OUTLIER_COUNT = 3
-for i in range(len(TIMES)):
-    TIMES[i] -= datetime.timedelta(seconds=len(EXECUTION_TIMES) - i)
+for index, _ in enumerate(TIMES):
+    TIMES[index] -= datetime.timedelta(seconds=len(REQUESTS) - index)
 TEST_NAMES = ['test_name1', 'test_name2']
 
 
@@ -41,19 +41,17 @@ def add_fake_data():
 
     # Add requests
     with session_scope() as db_session:
-        for i in range(len(EXECUTION_TIMES)):
-            call = Request(id=REQUEST_IDS[i], endpoint_id=ENDPOINT_ID, duration=EXECUTION_TIMES[i],
+        for i in range(len(REQUESTS)):
+            call = Request(id=REQUEST_IDS[i], endpoint_id=ENDPOINT_ID, duration=REQUESTS[i],
                            version_requested=config.version,
                            time_requested=TIMES[i], group_by=GROUP_BY, ip=IP)
             db_session.add(call)
 
-    # Add endpoint
-    with session_scope() as db_session:
+        # Add endpoint
         db_session.add(Endpoint(id=ENDPOINT_ID, name=NAME, monitor_level=1, time_added=datetime.datetime.utcnow(),
                                 version_added=config.version, last_requested=TIMES[0]))
 
-    # Add Outliers
-    with session_scope() as db_session:
+        # Add Outliers
         for i in range(OUTLIER_COUNT):
             db_session.add(Outlier(request_id=i+1, cpu_percent='[%d, %d, %d, %d]' % (i, i + 1, i + 2, i + 3)))
 
@@ -69,9 +67,9 @@ def add_fake_test_runs():
             db_session.add(test)
             db_session.flush()
             id = test.id
-            for i in range(len(EXECUTION_TIMES)):
+            for i in range(len(REQUESTS)):
                 db_session.add(
-                    TestResult(test_id=id, duration=EXECUTION_TIMES[i], time_added=datetime.datetime.utcnow(),
+                    TestResult(test_id=id, duration=REQUESTS[i], time_added=datetime.datetime.utcnow(),
                                app_version=config.version, travis_job_id="1", run_nr=i))
 
 

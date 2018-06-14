@@ -7,6 +7,7 @@
 import unittest
 
 from flask_monitoringdashboard.database import session_scope
+from flask_monitoringdashboard.database.outlier import add_outlier
 from flask_monitoringdashboard.test.utils import set_test_environment, clear_db, add_fake_data, NAME, OUTLIER_COUNT, \
     ENDPOINT_ID
 
@@ -25,7 +26,10 @@ class TestMonitorRule(unittest.TestCase):
         from flask_monitoringdashboard.database.outlier import Outlier
         with session_scope() as db_session:
             self.assertEqual(len(db_session.query(Outlier).all()), OUTLIER_COUNT)
-        # TODO: Complete function
+            request = "headers", "environ", "url"
+            add_outlier(db_session, request_id=1, cpu_percent="cpu_percent", memory="memory",
+                        stacktrace="stacktrace", request=request)
+            self.assertEqual(len(db_session.query(Outlier).all()), OUTLIER_COUNT+1)
 
     def test_get_outliers(self):
         """
