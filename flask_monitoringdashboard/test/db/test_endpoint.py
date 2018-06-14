@@ -9,7 +9,6 @@ import unittest
 from flask_monitoringdashboard.core.timezone import to_utc_datetime
 from flask_monitoringdashboard.database import session_scope
 from flask_monitoringdashboard.test.utils import set_test_environment, clear_db, add_fake_data, NAME, TIMES
-import pytz
 
 
 class TestEndpoint(unittest.TestCase):

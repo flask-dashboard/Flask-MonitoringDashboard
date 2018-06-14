@@ -50,3 +50,15 @@
         </tbody>
     </table>
 {% endblock %}
+
+{% block sunburst %}
+    <div class="card mb-3" style="margin-top: 10px;">
+        <div class="card-header"><h4>Sunburst</h4></div>
+        <div class="card-body">
+            <script src="http://d3js.org/d3.v3.min.js"></script>
+            <div id="sunburst"></div>
+            <script src="{{ url_for('dashboard.static', filename='js/sunburst.js') }}"></script>
+            <script type="text/javascript">sunburst({{ sunburst|safe }});</script>
+        </div>
+    </div>
+{% endblock %}

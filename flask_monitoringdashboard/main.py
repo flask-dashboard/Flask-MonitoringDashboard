@@ -17,16 +17,18 @@ def create_app():
     dashboard.config.database_name = 'sqlite:///flask_monitoring_dashboard_v10.db'
     dashboard.bind(app)
 
-    def f(count=10):
-        if count == 0:
-            time.sleep(1)
-            time.sleep(1)
-        else:
-            f(count-1)
+    def f():
+        time.sleep(1)
+
+    def g():
+        time.sleep(1)
 
     @app.route('/endpoint')
     def endpoint():
-        f()
+        if random.randint(0, 1):
+            f()
+        else:
+            g()
         return 'Ok'
 
     return app

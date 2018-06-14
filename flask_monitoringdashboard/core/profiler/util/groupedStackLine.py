@@ -41,4 +41,3 @@ class GroupedStackLine(object):
     @property
     def average(self):
         return self.sum / self.hits
-

@@ -34,5 +34,59 @@ def grouped_profiler(endpoint_id):
     for index, item in enumerate(table):
         table[index].compute_body(index, table)
 
-    return render_template('fmd_dashboard/profiler_grouped.html', details=details, table=table,
+    sunburst = table_to_json(table)
+    return render_template('fmd_dashboard/profiler_grouped.html', details=details, table=table, sunburst=sunburst,
                            title='Grouped Profiler results for {}'.format(details['endpoint']))
+
+
+def table_to_json(table, parent=None):
+    if not parent:
+        root_list = [row for row in table if row.indent == 0]
+        root = root_list[len(root_list)-1]
+        return {
+            "name": root.code,
+            "children": table_to_json(table, parent=root)
+        }
+
+    children = []
+    for child in [table[index] for index in parent.body if table[index].indent == parent.indent + 1]:
+        if child.body:
+            children.append({
+                'name': child.code,
+                'children': table_to_json(table, child)
+            })
+        else:
+            children.append({
+                'name': child.code,
+                'size': child.sum
+            })
+
+    return children
+
+
+
+
+json = {
+        "name": "endpoint()",
+        "children": [
+            {
+                "name": "f()",
+                "children": [
+                    {
+                        "name": "sleep(duration)", "size": 6
+                    }
+                ]
+            },
+            {
+                "name": "g()",
+                "children": [
+                    {
+                        "name": "f()",
+                        "children": [
+                            {"name": "sleep(duration)", "size": 1}
+                        ]
+                    }
+                ]
+            }
+        ]
+    }
