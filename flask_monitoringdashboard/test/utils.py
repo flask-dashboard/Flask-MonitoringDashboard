@@ -110,10 +110,6 @@ def login(test_app):
         sess[config.link + '_admin'] = True
 
 
-def mean(numbers):
-    return float(sum(numbers)) / max(len(numbers), 1)
-
-
 def test_admin_secure(test_case, page):
     """
     Test whether the page is only accessible with admin credentials.

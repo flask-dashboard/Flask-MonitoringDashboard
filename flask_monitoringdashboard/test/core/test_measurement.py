@@ -12,11 +12,6 @@ class TestMeasurement(unittest.TestCase):
         add_fake_data()
         self.app = get_test_app()
 
-    @staticmethod
-    def func():
-        """ function for testing the performance """
-        return 'Hello World!'
-
     def test_init_measurement(self):
         from flask_monitoringdashboard.core.measurement import init_measurement
         with self.app.app_context():
