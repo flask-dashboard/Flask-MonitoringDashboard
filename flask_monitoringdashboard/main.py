@@ -2,6 +2,7 @@
     This file can be executed for developing purposes.
     It is not used when the flask_monitoring_dashboard is attached to an existing flask application.
 """
+import random
 
 from flask import Flask
 
@@ -16,18 +17,16 @@ def create_app():
     dashboard.config.database_name = 'sqlite:///flask_monitoring_dashboard_v10.db'
     dashboard.bind(app)
 
-    def f(duration=1):
-        time.sleep(duration)
-
-    def g():
-        f()
+    def f(count=10):
+        if count == 0:
+            time.sleep(1)
+            time.sleep(1)
+        else:
+            f(count-1)
 
     @app.route('/endpoint')
     def endpoint():
-        if random.randint(0, 1) == 0:
-            g()
-        else:
-            f()
+        f()
         return 'Ok'
 
     return app

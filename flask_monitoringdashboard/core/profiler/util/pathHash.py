@@ -21,25 +21,16 @@ class PathHash(object):
     def __init__(self):
         self._string_hash = StringHash()
         self._current_path = ''
-        self._last_fn = None
-        self._last_ln = None
 
     def set_path(self, path):
         self._current_path = path
-        self._last_fn = None
-        self._last_ln = None
 
     def get_path(self, fn, ln):
         """
         :param fn: String with the filename
         :param ln: line number
-        :param text: String with the text on the given line.
         :return: Encoded path name.
         """
-        if self._last_fn == fn and self._last_ln == ln:
-            return self._current_path
-        self._last_fn = fn
-        self._last_ln = ln
         self._current_path = self.append(fn, ln)
         return self._current_path
 
@@ -48,7 +39,6 @@ class PathHash(object):
         Concatenate the current_path with the new path.
         :param fn: filename
         :param ln: line number
-        :param text: String with the text on the given line.
         :return: The new current_path
         """
         if self._current_path:
