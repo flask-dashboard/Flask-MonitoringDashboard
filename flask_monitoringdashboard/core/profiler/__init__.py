@@ -10,7 +10,7 @@ from flask_monitoringdashboard.core.profiler.stacktraceProfiler import Stacktrac
 
 def start_thread_last_requested(endpoint):
     """ Starts a thread that updates the last_requested time in the database"""
-    BaseProfiler(endpoint.id).start()
+    BaseProfiler(endpoint).start()
 
 
 def start_performance_thread(endpoint, duration):

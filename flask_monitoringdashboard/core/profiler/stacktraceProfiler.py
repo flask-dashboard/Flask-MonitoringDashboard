@@ -103,7 +103,10 @@ class StacktraceProfiler(threading.Thread):
 
     def get_funcheader(self):
         lines_returned = []
-        fun = user_app.view_functions[self._endpoint.name]
+        try:
+            fun = user_app.view_functions[self._endpoint.name]
+        except AttributeError:
+            fun = None
         if hasattr(fun, 'original'):
             original = fun.original
             fn = inspect.getfile(original)

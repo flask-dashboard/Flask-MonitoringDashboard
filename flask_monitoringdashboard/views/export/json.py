@@ -6,7 +6,7 @@ from flask import json, jsonify
 from flask_monitoringdashboard import blueprint, config
 from flask_monitoringdashboard.core.utils import get_details
 from flask_monitoringdashboard.database import session_scope
-from flask_monitoringdashboard.database.endpoint import get_endpoint_data
+from flask_monitoringdashboard.database.endpoint import get_endpoints
 from flask_monitoringdashboard.database.request import get_data_between
 
 
@@ -55,7 +55,7 @@ def get_json_monitor_rules():
     data = []
     try:
         with session_scope() as db_session:
-            for entry in get_endpoint_data(db_session):
+            for entry in get_endpoints(db_session):
                 # nice conversion to json-object
                 data.append({
                     'name': entry.name,
