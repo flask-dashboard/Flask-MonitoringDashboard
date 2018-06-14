@@ -7,7 +7,7 @@
             <div class="table-responsive">
                 <table class="table table-striped table-bordered table-hover">
                     <tr>
-                        <td><b>Dashboard link</b></td>
+                        <td style="width: 50%"><b>Dashboard link</b></td>
                         <td><a href="{{ url_for('dashboard.index') }}">/{{ details.link }}</a></td>
                     </tr>
                     <tr>
@@ -66,19 +66,19 @@
             <div class="table-responsive">
                 <table class="table table-striped table-bordered table-hover">
                     <tr>
-                        <td><b>Current deployed version</b></td>
+                        <td style="width: 50%"><b>Currently deployed version</b></td>
                         <td>{{ details['config-version'] }}</td>
+                    </tr>
+                    <tr>
+                        <td><b>First request in the currently deployed version</b></td>
+                        <td>{{ details['first-request-version'] }}</td>
                     </tr>
                     <tr>
                         <td><b>Monitoring Dashboard version</b></td>
                         <td>{{ details['dashboard-version'] }}</td>
                     </tr>
                     <tr>
-                        <td><b>Measurements database</b></td>
-                        <td>{{ config.database_name }}</td>
-                    </tr>
-                    <tr>
-                        <td><b>First Request</b></td>
+                        <td><b>First request since using the Monitoring Dashboard</b></td>
                         <td>{{ details['first-request'] }}</td>
                     </tr>
                     <tr>
