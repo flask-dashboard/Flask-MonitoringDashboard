@@ -1,7 +1,7 @@
 import unittest
 
 from flask_monitoringdashboard.test.utils import set_test_environment, clear_db, add_fake_data, get_test_app, \
-    ENDPOINT_ID, test_admin_secure
+    test_admin_secure, NAME
 
 
 class TestTestMonitor(unittest.TestCase):
