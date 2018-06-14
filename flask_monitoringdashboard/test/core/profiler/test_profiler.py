@@ -17,7 +17,7 @@ class TestProfiler(unittest.TestCase):
 
     def test_start_thread_last_requested(self):
         num_threads = threading.active_count()
-        start_thread_last_requested(Endpoint(id=3, name=NAME))
+        start_thread_last_requested(Endpoint(id=1, name=NAME))
         self.assertEqual(threading.active_count(), num_threads + 1)
 
     def test_start_performance_thread(self):
@@ -25,8 +25,7 @@ class TestProfiler(unittest.TestCase):
             from flask import request
             request.environ['REMOTE_ADDR'] = '127.0.0.1'
             num_threads = threading.active_count()
-            start_performance_thread(Endpoint(id=3, name=NAME), 1234)
-
+            start_performance_thread(Endpoint(id=1, name=NAME), 1234)
             self.assertEqual(threading.active_count(), num_threads + 1)
 
     def test_start_profiler_thread(self):
@@ -34,7 +33,7 @@ class TestProfiler(unittest.TestCase):
             from flask import request
             request.environ['REMOTE_ADDR'] = '127.0.0.1'
             num_threads = threading.active_count()
-            thread = start_profiler_thread(Endpoint(id=3, name=NAME))
+            thread = start_profiler_thread(Endpoint(id=1, name=NAME))
             self.assertEqual(threading.active_count(), num_threads + 1)
             thread.stop(1)
 
@@ -43,6 +42,6 @@ class TestProfiler(unittest.TestCase):
             from flask import request
             request.environ['REMOTE_ADDR'] = '127.0.0.1'
             num_threads = threading.active_count()
-            thread = start_profiler_and_outlier_thread(Endpoint(id=3, name=NAME))
+            thread = start_profiler_and_outlier_thread(Endpoint(id=1, name=NAME))
             self.assertEqual(threading.active_count(), num_threads + 2)
             thread.stop(1)
