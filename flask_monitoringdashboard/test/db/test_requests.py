@@ -7,7 +7,7 @@
 import time
 import unittest
 
-from flask_monitoringdashboard.database.request import get_avg_execution_time
+from flask_monitoringdashboard.database.request import get_avg_duration
 
 from flask_monitoringdashboard.database import session_scope
 from flask_monitoringdashboard.database.count import count_requests
@@ -101,4 +101,4 @@ class TestRequest(unittest.TestCase):
 
     def test_get_avg_duration(self):
         with session_scope() as db_session:
-            self.assertEqual(get_avg_execution_time(db_session, ENDPOINT_ID), 12000)
+            self.assertEqual(get_avg_duration(db_session, ENDPOINT_ID), 12000)
