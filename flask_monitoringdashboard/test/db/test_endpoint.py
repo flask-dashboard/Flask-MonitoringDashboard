@@ -68,4 +68,3 @@ class TestEndpoint(unittest.TestCase):
             self.assertEqual(result[0].monitor_level, 1)
             self.assertEqual(result[0].version_added, config.version)
             self.assertEqual(result[0].last_requested, TIMES[0])
-

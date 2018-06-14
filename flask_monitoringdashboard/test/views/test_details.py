@@ -47,3 +47,15 @@ class TestResult(unittest.TestCase):
             Just retrieve the content and check if nothing breaks
         """
         test_admin_secure(self, 'endpoint/{}/outliers'.format(ENDPOINT_ID))
+
+    def test_profiler(self):
+        """
+            Just retrieve the content and check if nothing breaks
+        """
+        test_admin_secure(self, 'endpoint/{}/profiler'.format(ENDPOINT_ID))
+
+    def test_grouped_profiler(self):
+        """
+            Just retrieve the content and check if nothing breaks
+        """
+        test_admin_secure(self, 'endpoint/{}/grouped-profiler'.format(ENDPOINT_ID))

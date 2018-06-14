@@ -5,7 +5,7 @@ import jwt
 from flask import json
 
 from flask_monitoringdashboard.test.utils import set_test_environment, clear_db, add_fake_data, get_test_app, \
-    EXECUTION_TIMES, NAME, GROUP_BY, IP, TIMES, test_admin_secure, test_post_data, ENDPOINT_ID
+    REQUESTS, NAME, GROUP_BY, IP, TIMES, test_admin_secure, test_post_data, ENDPOINT_ID
 
 
 class TestExportData(unittest.TestCase):
@@ -49,10 +49,10 @@ class TestExportData(unittest.TestCase):
             result = c.get('dashboard/get_json_data').data
         decoded = jwt.decode(result, config.security_token, algorithms=['HS256'])
         data = json.loads(decoded['data'])
-        self.assertEqual(len(data), len(EXECUTION_TIMES))
+        self.assertEqual(len(data), len(REQUESTS))
         for row in data:
             self.assertEqual(row['endpoint_id'], ENDPOINT_ID)
-            self.assertIn(row['duration'], EXECUTION_TIMES)
+            self.assertIn(row['duration'], REQUESTS)
             self.assertEqual(row['version_requested'], config.version)
             self.assertEqual(row['group_by'], GROUP_BY)
             self.assertEqual(row['ip'], IP)
