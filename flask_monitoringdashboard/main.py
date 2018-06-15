@@ -17,7 +17,7 @@ def create_app():
     dashboard.config.version = '3.1'
     dashboard.bind(app)
 
-    def f(i=100):
+    def f(i=5):
         if i == 0:
             time.sleep(1)
         else:
