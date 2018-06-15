@@ -6,6 +6,7 @@ from flask_monitoringdashboard import blueprint
 from flask_monitoringdashboard.core.auth import secure, is_admin
 from flask_monitoringdashboard.core.colors import get_color
 from flask_monitoringdashboard.core.timezone import to_local_datetime, to_utc_datetime
+from flask_monitoringdashboard.core.utils import get_details
 from flask_monitoringdashboard.database import Request, session_scope
 from flask_monitoringdashboard.database.count_group import count_requests_group, get_value
 from flask_monitoringdashboard.database.data_grouped import get_endpoint_data_grouped
@@ -46,6 +47,6 @@ def overview():
                 'median-overall': get_value(median, endpoint.id),
                 'last-accessed': get_value(access_times, endpoint.name, default=None)
             })
-
+        version = get_details(db_session)['dashboard-version']
     return render_template('fmd_dashboard/overview.html', result=result, is_admin=is_admin(),
-                           title='Dashboard Overview')
+                           title='Dashboard Overview', version=version)
