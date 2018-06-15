@@ -9,7 +9,11 @@ Unreleased
 ----------
 Changed
 
-- 
+- Implemented a Sunburst visualization of the Grouped Profiler
+
+- Improved test coverage
+
+- Improved python-doc
 
 
 v2.0.0
