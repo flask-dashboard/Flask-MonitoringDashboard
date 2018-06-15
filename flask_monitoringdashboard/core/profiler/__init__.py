@@ -13,7 +13,7 @@ def start_thread_last_requested(endpoint):
     Starts a thread that updates the last_requested time in the database.
     :param endpoint: Endpoint object
     """
-    BaseProfiler(endpoint.id).start()
+    BaseProfiler(endpoint).start()
 
 
 def start_performance_thread(endpoint, duration):

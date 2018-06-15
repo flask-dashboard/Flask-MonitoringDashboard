@@ -17,16 +17,21 @@ def create_app():
     dashboard.config.version = '3.1'
     dashboard.bind(app)
 
-    def f(count=10):
-        if count == 0:
-            time.sleep(1)
+    def f(i=5):
+        if i == 0:
             time.sleep(1)
         else:
-            f(count-1)
+            f(i-1)
+
+    def g():
+        time.sleep(1)
 
     @app.route('/endpoint')
     def endpoint():
-        f()
+        if random.randint(0, 1):
+            f()
+        else:
+            g()
         return 'Ok'
 
     return app
