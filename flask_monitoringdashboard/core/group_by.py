@@ -4,11 +4,13 @@ PRIMITIVES = (bool, bytes, float, int, str)
 
 
 def recursive_group_by(argument):
-    """ Returns the result of the given argument. The result is computed as:
+    """
+    Returns the result of the given argument. The result is computed as:
     - If the argument is a primitive (i.e. str, bool, int, ...) return its value.
     - If the argument is a function, call the function.
     - If the argument is iterable (i.e. list or tuple), compute the result by iterating over the argument
-    Return type is always a string"""
+    Return type is always a string
+    """
 
     if type(argument) in PRIMITIVES:
         return str(argument)

@@ -1,4 +1,3 @@
-import datetime
 import threading
 
 from flask_monitoringdashboard.database import session_scope
