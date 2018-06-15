@@ -13,7 +13,12 @@ from flask_monitoringdashboard.database.request import get_date_of_first_request
 
 
 def get_endpoint_details(db_session, endpoint_id):
-    """ Return details about an endpoint"""
+    """
+    Returns details about an endpoint.
+    :param db_session: session for the database
+    :param endpoint_id: id of the endpoint
+    :return dictionary
+    """
     endpoint = get_endpoint_by_id(db_session, endpoint_id)
     endpoint.last_requested = to_local_datetime(endpoint.last_requested)
     endpoint.time_added = to_local_datetime(endpoint.time_added)
@@ -28,7 +33,11 @@ def get_endpoint_details(db_session, endpoint_id):
 
 
 def get_details(db_session):
-    """ Return details about the deployment """
+    """
+    Returns details about the deployment.
+    :param db_session: session for the database
+    :return dictionary
+    """
     import json
     from flask_monitoringdashboard import loc
     with open(loc() + 'constants.json', 'r') as f:

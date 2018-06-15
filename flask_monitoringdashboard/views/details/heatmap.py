@@ -4,11 +4,9 @@ from flask_monitoringdashboard import blueprint
 from flask_monitoringdashboard.core.auth import secure
 from flask_monitoringdashboard.core.forms import get_daterange_form
 from flask_monitoringdashboard.core.info_box import get_plot_info
-from flask_monitoringdashboard.database import session_scope
-from flask_monitoringdashboard.database.endpoint import get_endpoint_by_id
-from flask_monitoringdashboard.views.dashboard.heatmap import hourly_load_graph, TITLE, AXES_INFO
 from flask_monitoringdashboard.core.utils import get_endpoint_details
-
+from flask_monitoringdashboard.database import session_scope
+from flask_monitoringdashboard.views.dashboard.heatmap import hourly_load_graph, TITLE, AXES_INFO
 
 CONTENT_INFO = '''The color of the cell presents the number of requests that the application received 
 in a single hour. The darker the cell, the more requests it has processed. This information can be used 

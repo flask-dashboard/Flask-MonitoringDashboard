@@ -65,13 +65,14 @@ class PathHash(object):
         return self._string_hash.unhash(int(hash)), int(ln)
 
     @staticmethod
-    def get_indent(string):
+    def get_indent(path):
         """
         Compute the amount of callers given a path.
+        :param path: the path from the root to the statement
         :return: an integer
         """
-        if string:
-            return len(string.split(STRING_SPLIT))
+        if path:
+            return len(path.split(STRING_SPLIT))
         return 0
 
     def get_code(self, path):
@@ -101,6 +102,5 @@ class PathHash(object):
             while index >= 0 and stack_lines[index].indent != current_indent - 1:
                 index -= 1
         for code_line in reversed(path):
-            # self._current_path = self.append(code_line.filename, code_line.line_number, code_line.code)
             self._current_path = self.append(code_line.filename, self._string_hash.hash(code_line.code))
         return self._current_path

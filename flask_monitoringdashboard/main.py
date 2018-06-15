@@ -2,7 +2,6 @@
     This file can be executed for developing purposes.
     It is not used when the flask_monitoring_dashboard is attached to an existing flask application.
 """
-import random
 
 from flask import Flask
 

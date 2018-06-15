@@ -49,12 +49,8 @@ class StacktraceProfiler(threading.Thread):
             frame = sys._current_frames()[self._thread_to_monitor]
             in_endpoint_code = False
             self._path_hash.set_path('')
-
+            # filename, line number, function name, source code line
             for fn, ln, fun, line in traceback.extract_stack(frame):
-                # fn: filename
-                # ln: line number
-                # fun: function name
-                # line: source code line
                 if self._endpoint.name == fun:
                     in_endpoint_code = True
                 if in_endpoint_code:

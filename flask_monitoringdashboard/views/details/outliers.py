@@ -13,7 +13,7 @@ from flask_monitoringdashboard.database import session_scope
 from flask_monitoringdashboard.database.count import count_outliers
 from flask_monitoringdashboard.database.outlier import get_outliers_sorted, get_outliers_cpus
 
-NUM_DATAPOINTS = 50
+DATA_POINTS = 50
 
 
 @blueprint.route('/endpoint/<endpoint_id>/outliers')
@@ -45,7 +45,7 @@ def cpu_load_graph(all_cpus):
         values.append(x)
         count += 1
 
-    simplified = [simplify(x, NUM_DATAPOINTS) for x in zip(*values)]
+    simplified = [simplify(x, DATA_POINTS) for x in zip(*values)]
     cores = []
     for i in range(len(simplified)):
         cores.append('CPU core %d:' % i)

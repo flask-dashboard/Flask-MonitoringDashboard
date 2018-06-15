@@ -26,6 +26,10 @@ def init_measurement():
 
 
 def add_decorator(endpoint):
+    """
+    Adds a wrapper to an endpoint in the app, depending on the monitor level.
+    :param endpoint: Endpoint object to be monitored
+    """
     fun = user_app.view_functions[endpoint.name]
     if endpoint.monitor_level == 0:
         add_wrapper0(endpoint, fun)
