@@ -5,10 +5,10 @@ from flask import session, redirect, url_for
 
 def admin_secure(func):
     """
-        When the user is not logged into the system, the user is requested to the login page.
-        There are two types of user-modes:
-        - admin: Can be visited with this wrapper.
-        - guest: Cannot be visited with this wrapper.
+    When the user is not logged into the system, the user is requested to the login page.
+    There are two types of user-modes:
+    - admin: Can be visited with this wrapper.
+    - guest: Cannot be visited with this wrapper.
     :param func: the endpoint to be wrapped.
     """
 
@@ -24,10 +24,10 @@ def admin_secure(func):
 
 def secure(func):
     """
-        When the user is not logged into the system, the user is requested to the login page.
-        There are two types of user-modes:
-        - admin: Can be visited with this wrapper.
-        - guest: Can be visited with this wrapper.
+    When the user is not logged into the system, the user is requested to the login page.
+    There are two types of user-modes:
+    - admin: Can be visited with this wrapper.
+    - guest: Can be visited with this wrapper.
     :param func: the endpoint to be wrapped.
     """
 

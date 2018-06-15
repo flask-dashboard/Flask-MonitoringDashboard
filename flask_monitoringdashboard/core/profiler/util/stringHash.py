@@ -1,3 +1,6 @@
+"""
+Class used for hashing the paths.
+"""
 
 
 class StringHash(object):
@@ -34,4 +37,4 @@ class StringHash(object):
             if v == hash:
                 return k
 
-        ValueError('Value not possible to unhash: {}'.format(hash))
+        raise ValueError('Value not possible to unhash: {}'.format(hash))

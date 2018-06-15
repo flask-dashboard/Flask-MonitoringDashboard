@@ -21,25 +21,16 @@ class PathHash(object):
     def __init__(self):
         self._string_hash = StringHash()
         self._current_path = ''
-        self._last_fn = None
-        self._last_ln = None
 
     def set_path(self, path):
         self._current_path = path
-        self._last_fn = None
-        self._last_ln = None
 
     def get_path(self, fn, ln):
         """
         :param fn: String with the filename
         :param ln: line number
-        :param text: String with the text on the given line.
         :return: Encoded path name.
         """
-        if self._last_fn == fn and self._last_ln == ln:
-            return self._current_path
-        self._last_fn = fn
-        self._last_ln = ln
         self._current_path = self.append(fn, ln)
         return self._current_path
 
@@ -48,7 +39,6 @@ class PathHash(object):
         Concatenate the current_path with the new path.
         :param fn: filename
         :param ln: line number
-        :param text: String with the text on the given line.
         :return: The new current_path
         """
         if self._current_path:
@@ -75,13 +65,14 @@ class PathHash(object):
         return self._string_hash.unhash(int(hash)), int(ln)
 
     @staticmethod
-    def get_indent(string):
+    def get_indent(path):
         """
         Compute the amount of callers given a path.
+        :param path: the path from the root to the statement
         :return: an integer
         """
-        if string:
-            return len(string.split(STRING_SPLIT))
+        if path:
+            return len(path.split(STRING_SPLIT))
         return 0
 
     def get_code(self, path):
@@ -111,6 +102,5 @@ class PathHash(object):
             while index >= 0 and stack_lines[index].indent != current_indent - 1:
                 index -= 1
         for code_line in reversed(path):
-            # self._current_path = self.append(code_line.filename, code_line.line_number, code_line.code)
             self._current_path = self.append(code_line.filename, self._string_hash.hash(code_line.code))
         return self._current_path

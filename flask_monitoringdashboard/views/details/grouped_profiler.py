@@ -1,6 +1,7 @@
 from collections import defaultdict
 
 from flask import render_template
+import json
 
 from flask_monitoringdashboard import blueprint
 from flask_monitoringdashboard.core.auth import secure
@@ -34,5 +35,33 @@ def grouped_profiler(endpoint_id):
     for index, item in enumerate(table):
         table[index].compute_body(index, table)
 
-    return render_template('fmd_dashboard/profiler_grouped.html', details=details, table=table,
+    sunburst = json.dumps(table_to_json(table))
+    return render_template('fmd_dashboard/profiler_grouped.html', details=details, table=table, sunburst=sunburst,
                            title='Grouped Profiler results for {}'.format(details['endpoint']))
+
+
+def table_to_json(table, parent=None):
+    if not parent:
+        root_list = [row for row in table if row.indent == 0]
+        if root_list:
+            root = root_list[len(root_list)-1]
+            return {
+                'name': root.code,
+                'children': table_to_json(table, parent=root)
+            }
+        else:
+            return {}
+
+    children = []
+    for child in [table[index] for index in parent.body if table[index].indent == parent.indent + 1]:
+        if child.body:
+            children.append({
+                'name': child.code,
+                'children': table_to_json(table, child)
+            })
+        else:  # child is leaf
+            children.append({
+                'name': child.code,
+                'size': child.sum
+            })
+    return children

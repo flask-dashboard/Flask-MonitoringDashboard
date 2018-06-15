@@ -7,11 +7,13 @@
 import time
 import unittest
 
+from flask_monitoringdashboard.database.request import get_avg_duration
+
 from flask_monitoringdashboard.database import session_scope
 from flask_monitoringdashboard.database.count import count_requests
 from flask_monitoringdashboard.database.endpoint import get_endpoint_by_name
-from flask_monitoringdashboard.test.utils import set_test_environment, clear_db, add_fake_data, EXECUTION_TIMES, \
-    TIMES, NAME, GROUP_BY, IP
+from flask_monitoringdashboard.test.utils import set_test_environment, clear_db, add_fake_data, REQUESTS, \
+    TIMES, NAME, GROUP_BY, IP, ENDPOINT_ID
 
 
 class TestRequest(unittest.TestCase):
@@ -46,7 +48,7 @@ class TestRequest(unittest.TestCase):
             result = get_data_between(db_session, TIMES[-size - 2], TIMES[-1])
             for i in range(size):
                 self.assertEqual(result[i].endpoint.name, NAME)
-                self.assertEqual(result[i].duration, EXECUTION_TIMES[first + i])
+                self.assertEqual(result[i].duration, REQUESTS[first + i])
                 self.assertEqual(result[i].time_requested, TIMES[first + i])
                 self.assertEqual(result[i].group_by, GROUP_BY)
                 self.assertEqual(result[i].ip, IP)
@@ -59,10 +61,10 @@ class TestRequest(unittest.TestCase):
         from flask_monitoringdashboard import config
         with session_scope() as db_session:
             result = get_data(db_session)
-            self.assertEqual(len(result), len(EXECUTION_TIMES))
-            for i in range(len(EXECUTION_TIMES)):
+            self.assertEqual(len(result), len(REQUESTS))
+            for i in range(len(REQUESTS)):
                 self.assertEqual(result[i].endpoint.name, NAME)
-                self.assertEqual(result[i].duration, EXECUTION_TIMES[i])
+                self.assertEqual(result[i].duration, REQUESTS[i])
                 self.assertEqual(result[i].time_requested, TIMES[i])
                 self.assertEqual(result[i].group_by, GROUP_BY)
                 self.assertEqual(result[i].version_requested, config.version)
@@ -96,3 +98,7 @@ class TestRequest(unittest.TestCase):
         from flask_monitoringdashboard.database.request import get_date_of_first_request
         with session_scope() as db_session:
             self.assertEqual(get_date_of_first_request(db_session), int(time.mktime(TIMES[0].timetuple())))
+
+    def test_get_avg_duration(self):
+        with session_scope() as db_session:
+            self.assertEqual(get_avg_duration(db_session, ENDPOINT_ID), 12000)

@@ -6,7 +6,7 @@ def order_histogram(items, path=''):
     Finds the order of self._text_dict and assigns this order to self._lines_body
     :param items: list of key, value. Obtained by histogram.items()
     :param path: used to filter the results
-    :return: The items, but sorted
+    :return The items, but sorted
     """
     sorted_list = []
     indent = PathHash.get_indent(path) + 1

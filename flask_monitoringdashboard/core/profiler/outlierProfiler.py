@@ -9,7 +9,7 @@ from flask import request
 from flask_monitoringdashboard import config
 from flask_monitoringdashboard.database import session_scope
 from flask_monitoringdashboard.database.outlier import add_outlier
-from flask_monitoringdashboard.database.request import get_avg_execution_time
+from flask_monitoringdashboard.database.request import get_avg_duration
 
 
 class OutlierProfiler(threading.Thread):
@@ -31,17 +31,14 @@ class OutlierProfiler(threading.Thread):
     def run(self):
         # sleep for average * ODC ms
         with session_scope() as db_session:
-            average = get_avg_execution_time(db_session, self._endpoint.id) * config.outlier_detection_constant
+            average = get_avg_duration(db_session, self._endpoint.id) * config.outlier_detection_constant
         time.sleep(average / 1000)
         if not self._stopped:
             stack_list = []
             frame = sys._current_frames()[self._current_thread]
             in_endpoint_code = False
+            # filename, line number, function name, source code line
             for fn, ln, fun, line in traceback.extract_stack(frame):
-                # fn: filename
-                # ln: line number
-                # fun: function name
-                # text: source code line
                 if self._endpoint.name == fun:
                     in_endpoint_code = True
                 if in_endpoint_code:

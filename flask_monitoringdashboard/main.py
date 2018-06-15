@@ -14,20 +14,24 @@ def create_app():
 
     dashboard.config.outlier_detection_constant = 0
     dashboard.config.database_name = 'sqlite:///flask_monitoring_dashboard_v10.db'
+    dashboard.config.version = '3.1'
     dashboard.bind(app)
 
-    def f(duration=1):
-        time.sleep(duration)
+    def f(i=5):
+        if i == 0:
+            time.sleep(1)
+        else:
+            f(i-1)
 
     def g():
-        f()
+        time.sleep(1)
 
     @app.route('/endpoint')
     def endpoint():
-        if random.randint(0, 1) == 0:
-            g()
-        else:
+        if random.randint(0, 1):
             f()
+        else:
+            g()
         return 'Ok'
 
     return app

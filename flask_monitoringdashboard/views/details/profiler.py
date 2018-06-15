@@ -9,8 +9,6 @@ from flask_monitoringdashboard.database import session_scope
 from flask_monitoringdashboard.database.count import count_profiled_requests
 from flask_monitoringdashboard.database.stack_line import get_profiled_requests
 
-OUTLIERS_PER_PAGE = 10
-
 
 def get_body(index, stack_lines):
     """

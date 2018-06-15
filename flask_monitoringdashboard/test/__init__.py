@@ -6,9 +6,6 @@
 
     Another option is to run the main function at the bottom of this file.
 """
-import os
-import re
-import sys
 import unittest
 
 
