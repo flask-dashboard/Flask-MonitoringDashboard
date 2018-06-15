@@ -17,8 +17,11 @@ def create_app():
     dashboard.config.database_name = 'sqlite:///flask_monitoring_dashboard_v10.db'
     dashboard.bind(app)
 
-    def f():
-        time.sleep(1)
+    def f(i=100):
+        if i == 0:
+            time.sleep(1)
+        else:
+            f(i-1)
 
     def g():
         time.sleep(1)
