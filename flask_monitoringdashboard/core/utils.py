@@ -9,11 +9,16 @@ from flask_monitoringdashboard.core.rules import get_rules
 from flask_monitoringdashboard.core.timezone import to_local_datetime
 from flask_monitoringdashboard.database.count import count_requests, count_total_requests
 from flask_monitoringdashboard.database.endpoint import get_endpoint_by_id
-from flask_monitoringdashboard.database.request import get_date_of_first_request
+from flask_monitoringdashboard.database.request import get_date_of_first_request, get_date_of_first_request_version
 
 
 def get_endpoint_details(db_session, endpoint_id):
-    """ Return details about an endpoint"""
+    """
+    Returns details about an endpoint.
+    :param db_session: session for the database
+    :param endpoint_id: id of the endpoint
+    :return dictionary
+    """
     endpoint = get_endpoint_by_id(db_session, endpoint_id)
     endpoint.last_requested = to_local_datetime(endpoint.last_requested)
     endpoint.time_added = to_local_datetime(endpoint.time_added)
@@ -28,7 +33,11 @@ def get_endpoint_details(db_session, endpoint_id):
 
 
 def get_details(db_session):
-    """ Return details about the deployment """
+    """
+    Returns details about the deployment.
+    :param db_session: session for the database
+    :return dictionary
+    """
     import json
     from flask_monitoringdashboard import loc
     with open(loc() + 'constants.json', 'r') as f:
@@ -39,6 +48,7 @@ def get_details(db_session):
         'dashboard-version': constants['version'],
         'config-version': config.version,
         'first-request': get_date_of_first_request(db_session),
+        'first-request-version': get_date_of_first_request_version(db_session, config.version),
         'total-requests': count_total_requests(db_session)
     }
 

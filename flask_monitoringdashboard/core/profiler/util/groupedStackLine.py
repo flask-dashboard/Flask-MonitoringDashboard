@@ -1,3 +1,4 @@
+from __future__ import division
 from numpy import std
 
 from flask_monitoringdashboard.views.details.profiler import get_body

@@ -1,11 +1,19 @@
-from sqlalchemy import desc, asc
+from sqlalchemy import desc
 from sqlalchemy.orm import joinedload
 
 from flask_monitoringdashboard.database import Outlier, Request
 
 
 def add_outlier(db_session, request_id, cpu_percent, memory, stacktrace, request):
-    """ Collects information (request-parameters, memory, stacktrace) about the request and adds it in the database."""
+    """
+    Adds an Outlier object in the database.
+    :param db_session: session for the database
+    :param request_id: id of the request
+    :param cpu_percent: cpu load of the server when processing the request
+    :param memory: memory load of the server when processing the request
+    :param stacktrace: stack trace of the request
+    :param request: triple containing the headers, environment and url
+    """
     headers, environ, url = request
     outlier = Outlier(request_id=request_id, request_header=headers,
                       request_environment=environ,
@@ -16,11 +24,12 @@ def add_outlier(db_session, request_id, cpu_percent, memory, stacktrace, request
 
 def get_outliers_sorted(db_session, endpoint_id, offset, per_page):
     """
-    :param db_session: the session containing the query
-    :param endpoint_id: endpoint_id for filtering the requests
+    Gets a list of Outlier objects for a certain endpoint, sorted by most recent request time
+    :param db_session: session for the database
+    :param endpoint_id: id of the endpoint for filtering the requests
     :param offset: number of items to skip
     :param per_page: number of items to return
-    :return: a list of all outliers of a specific endpoint. The list is sorted based on request time.
+    :return list of Outlier objects of a specific endpoint
     """
     result = db_session.query(Outlier).\
         join(Outlier.request). \
@@ -34,12 +43,12 @@ def get_outliers_sorted(db_session, endpoint_id, offset, per_page):
 
 def get_outliers_cpus(db_session, endpoint_id):
     """
-    :param db_session: the session containing the query
-    :param endpoint_id: endpoint_id for filtering the requests
-    :return: a list of all cpu percentages for outliers of a specific endpoint
+    Gets list of CPU loads of all outliers of a certain endpoint
+    :param db_session: session for the database
+    :param endpoint_id: id of the endpoint
+    :return list of cpu percentages as strings
     """
     outliers = db_session.query(Outlier.cpu_percent).\
         join(Outlier.request).\
         filter(Request.endpoint_id == endpoint_id).all()
     return [outlier[0] for outlier in outliers]
-

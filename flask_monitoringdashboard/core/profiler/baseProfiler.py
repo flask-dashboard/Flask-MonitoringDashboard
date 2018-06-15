@@ -1,4 +1,3 @@
-import datetime
 import threading
 
 from flask_monitoringdashboard.database import session_scope
@@ -12,9 +11,9 @@ class BaseProfiler(threading.Thread):
     """
 
     def __init__(self, endpoint):
-        threading.Thread.__init__(self)
         self._endpoint = endpoint
+        threading.Thread.__init__(self)
 
     def run(self):
         with session_scope() as db_session:
-            update_last_accessed(db_session, endpoint=self._endpoint)
+            update_last_accessed(db_session, endpoint_name=self._endpoint.name)

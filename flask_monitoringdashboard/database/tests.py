@@ -19,10 +19,10 @@ def add_or_update_test(db_session, name, passing, last_tested, version_added):
     db_session.commit()
 
 
-def add_test_result(db_session, name, exec_time, time, version, job_id, iteration):
+def add_test_result(db_session, name, duration, time, version, job_id, iteration):
     """ Add a test result to the database. """
     test_id = db_session.query(Test).filter(Test.name == name).first().id
-    db_session.add(TestResult(test_id=test_id, duration=exec_time, time_added=time, app_version=version,
+    db_session.add(TestResult(test_id=test_id, duration=duration, time_added=time, app_version=version,
                               travis_job_id=job_id, run_nr=iteration))
 
 

@@ -1,5 +1,5 @@
 """
-    Contains all endpoints that present information about specific endpoints.
+    Contains all views that present information about specific endpoints.
     The endpoints are the following:
     - heatmap/<endpoint_id>: shows a heatmap of the usage for <endpoint_id>
     - Time per version per user/<endpoint_id>: shows an overview of the time per user per version for a given
