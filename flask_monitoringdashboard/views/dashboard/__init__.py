@@ -1,12 +1,11 @@
 """
-    Contains all endpoints that can be found in the Dashboard-menu on the left.
+    Contains all menu items that can be found in the Dashboard-menu on the left.
     The endpoints are the following:
     - Overview: shows a quick overview of every endpoint.
-    - Heatmap: shows a heatmap of the number of requests.
-    - Version usage: shows how much a certain version is used.
-    - Requests per endpoint: shows how much requests a certain endpoint received.
-    - Time per version: Shows the overall execution time for all versions.
-    - Time per endpoint: Shows the overall execution time for all endpoints.
+    - Hourly API Utilization: shows a heatmap of the number of requests.
+    - Multi Version API Utilization: shows how much a certain version is used.
+    - Daily API Utilization: shows how many requests are received per day.
+    - API Performance: Shows performance box plots for every endpoint.
 """
 
 from flask_monitoringdashboard.views.dashboard.endpoints import endpoints

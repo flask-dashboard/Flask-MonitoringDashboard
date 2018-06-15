@@ -10,7 +10,7 @@ from flask_monitoringdashboard.database.code_line import get_code_line
 
 def add_stack_line(db_session, request_id, position, indent, duration, code_line):
     """
-    Adds a StackLine to the database (and possible a CodeLine)
+    Adds a StackLine to the database (and possibly a CodeLine)
     :param db_session: Session for the database
     :param request_id: id of the request
     :param position: position of the StackLine
@@ -26,11 +26,12 @@ def add_stack_line(db_session, request_id, position, indent, duration, code_line
 
 def get_profiled_requests(db_session, endpoint_id, offset, per_page):
     """
-        :param db_session: session for the database
-        :param endpoint_id: filter profiled requests on this endpoint
-        :param offset: number of items to skip
-        :param per_page: number of items to return
-        :return: A list with tuples. Each tuple consists first of a Request-object, and the second part of the tuple
+    Gets the requests of an endpoint sorted by request time, together with the stack lines.
+    :param db_session: session for the database
+    :param endpoint_id: filter profiled requests on this endpoint
+    :param offset: number of items to skip
+    :param per_page: number of items to return
+    :return: A list with tuples. Each tuple consists first of a Request-object, and the second part of the tuple
             is a list of StackLine-objects.
     """
     t = db_session.query(distinct(StackLine.request_id).label('id')). \
@@ -50,9 +51,10 @@ def get_profiled_requests(db_session, endpoint_id, offset, per_page):
 
 def get_grouped_profiled_requests(db_session, endpoint_id):
     """
-        :param db_session: session for the database
-        :param endpoint_id: filter profiled requests on this endpoint
-        :return: A list with tuples. Each tuple consists first of a Request-object, and the second part of the tuple
+    Gets the grouped stack lines of all requests of an endpoint.
+    :param db_session: session for the database
+    :param endpoint_id: filter profiled requests on this endpoint
+    :return: A list with tuples. Each tuple consists first of a Request-object, and the second part of the tuple
             is a list of StackLine-objects.
     """
     t = db_session.query(distinct(StackLine.request_id).label('id')). \

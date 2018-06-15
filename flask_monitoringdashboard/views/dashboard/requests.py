@@ -31,7 +31,7 @@ def requests():
 
 def requests_graph(form):
     """
-    Returns a horizontal boxplot with the number of requests per day.
+    Returns a horizontal box plot with the number of requests per day.
     :param form: must be the form that is obtained by get_daterange_form
     :return:
     """

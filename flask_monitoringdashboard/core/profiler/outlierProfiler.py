@@ -37,11 +37,8 @@ class OutlierProfiler(threading.Thread):
             stack_list = []
             frame = sys._current_frames()[self._current_thread]
             in_endpoint_code = False
+            # filename, line number, function name, source code line
             for fn, ln, fun, line in traceback.extract_stack(frame):
-                # fn: filename
-                # ln: line number
-                # fun: function name
-                # text: source code line
                 if self._endpoint.name == fun:
                     in_endpoint_code = True
                 if in_endpoint_code:

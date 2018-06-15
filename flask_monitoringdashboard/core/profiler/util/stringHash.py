@@ -1,3 +1,6 @@
+"""
+Class used for hashing the paths.
+"""
 
 
 class StringHash(object):

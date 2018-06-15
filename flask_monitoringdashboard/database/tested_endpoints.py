@@ -10,7 +10,6 @@ def add_endpoint_hit(db_session, endpoint, time, test, version, job_id):
     :param test: Name of the test that caused the hit.
     :param version: Version of the user app in which the hit occurred.
     :param job_id: Travis job ID in which the hit occurred.
-    :return:
     """
     endpoint_id = db_session.query(Endpoint.id).filter(Endpoint.name == endpoint).first().id
     test_id = db_session.query(Test.id).filter(Test.name == test).first().id
@@ -22,7 +21,7 @@ def get_tested_endpoint_names(db_session):
     """
     Returns the names of all of the endpoint for which test data is collected.
     :param db_session:
-    :return:
+    :return list of strings
     """
     results = db_session.query(TestEndpoint).join(TestEndpoint.endpoint).group_by(TestEndpoint.endpoint_id).all()
     return [result.endpoint.name for result in results]
