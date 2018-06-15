@@ -43,11 +43,14 @@ def grouped_profiler(endpoint_id):
 def table_to_json(table, parent=None):
     if not parent:
         root_list = [row for row in table if row.indent == 0]
-        root = root_list[len(root_list)-1]
-        return {
-            'name': root.code,
-            'children': table_to_json(table, parent=root)
-        }
+        if root_list:
+            root = root_list[len(root_list)-1]
+            return {
+                'name': root.code,
+                'children': table_to_json(table, parent=root)
+            }
+        else:
+            return {}
 
     children = []
     for child in [table[index] for index in parent.body if table[index].indent == parent.indent + 1]:
