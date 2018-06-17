@@ -49,7 +49,7 @@ def format_version(version, first_used):
 
 def versions_graph(db_session, endpoint_id, form):
     times = get_version_data_grouped(db_session, lambda x: simplify(x, 10), Request.endpoint_id == endpoint_id)
-    first_requests = get_first_requests(db_session, form.get_slider_value())
+    first_requests = get_first_requests(db_session, endpoint_id, form.get_slider_value())
     data = [boxplot(
                 name=format_version(request.version_requested, get_value(first_requests, request.version_requested)),
                 values=get_value(times, request.version_requested),

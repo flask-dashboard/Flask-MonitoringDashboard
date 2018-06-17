@@ -20,14 +20,16 @@ def get_versions(db_session, endpoint_id=None, limit=None):
     return list(reversed([r[0] for r in query.all()]))
 
 
-def get_first_requests(db_session, limit=None):
+def get_first_requests(db_session, endpoint_id, limit=None):
     """
     Returns a list with all versions and when they're first used
     :param db_session: session for the database
     :param limit: only return the most recent versions
+    :param endpoint_id: id of the endpoint
     :return list of tuples with versions
     """
-    query = db_session.query(Request.version_requested, func.min(Request.time_requested).label('first_used')). \
+    query = db_session.query(Request.version_requested, func.min(Request.time_requested).label('first_used')).\
+        filter(Request.endpoint_id == endpoint_id).\
         group_by(Request.version_requested).order_by(desc('first_used'))
     if limit:
         query = query.limit(limit)
