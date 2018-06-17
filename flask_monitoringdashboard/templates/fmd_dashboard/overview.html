@@ -2,6 +2,7 @@
 {% block content %}
 
     {% block subcontent %}
+        <div id="alert"></div>
         <div class="card mb-3">
             <div class="card-header"><h4>{{ title }}</h4></div>
             <div class="card-body">
@@ -71,5 +72,20 @@
 {% block script %}
     <script type="text/javascript">
         $('#dataTable').DataTable().order([[4, "desc"]]).draw();
+
+        $.get( "https://pypi.org/pypi/Flask-MonitoringDashboard/json", function( data ) {
+
+            var pypi_version = data['info']['version'];
+
+            if (pypi_version !== "{{ version }}"){
+                var alert = $('#alert');
+                alert.addClass("alert alert-warning alert-dismissible");
+                alert.html(
+                    "<a href=\"#\" class=\"close\" data-dismiss=\"alert\" aria-label=\"close\">&times;</a>" +
+                    "<strong>Warning:</strong> Version " + pypi_version + " is now available, while you " +
+                    "are still using version {{ version }}.");
+            }
+        });
+
     </script>
 {% endblock %}

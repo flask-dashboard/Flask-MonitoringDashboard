@@ -56,7 +56,7 @@ def version_ip_graph(db_session, endpoint_id, form):
     users = get_ips(db_session, endpoint_id, form.get_slider_value(0))
     versions = get_versions(db_session, endpoint_id, form.get_slider_value(1))
 
-    first_request = get_first_requests(db_session)
+    first_request = get_first_requests(db_session, endpoint_id)
     values = get_two_columns_grouped(db_session, Request.ip, Request.endpoint_id == endpoint_id)
     data = [[get_value(values, (user, v)) for v in versions] for user in users]
 
