@@ -15,7 +15,6 @@ def create_app():
 
     dashboard.config.outlier_detection_constant = 0
     # dashboard.config.database_name = 'sqlite:///flask_monitoring_dashboard_v10.db'
-    dashboard.config.database_name = 'sqlite:////home/bogdan/databases/flask-dashboard-2.0.db'
     dashboard.config.version = '3.1'
     dashboard.bind(app)
 
