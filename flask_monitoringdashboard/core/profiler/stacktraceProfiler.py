@@ -14,6 +14,9 @@ from flask_monitoringdashboard.database.request import add_request
 from flask_monitoringdashboard.database.stack_line import add_stack_line
 
 
+FILENAME = 'flask_monitoringdashboard/core/measurement.py'
+FILENAME_LEN = len(FILENAME)
+
 class StacktraceProfiler(threading.Thread):
     """
     Used for profiling the performance per line code.
@@ -46,7 +49,11 @@ class StacktraceProfiler(threading.Thread):
             duration = newcurrent_time - current_time
             current_time = newcurrent_time
 
-            frame = sys._current_frames()[self._thread_to_monitor]
+            try:
+                frame = sys._current_frames()[self._thread_to_monitor]
+            except KeyError:
+                print("key error")
+                continue
             in_endpoint_code = False
             self._path_hash.set_path('')
             # filename, line number, function name, source code line
@@ -56,6 +63,8 @@ class StacktraceProfiler(threading.Thread):
                 if in_endpoint_code:
                     key = (self._path_hash.get_path(fn, ln), fun, line)
                     self._histogram[key] += duration
+                if len(fn) > FILENAME_LEN and fn[-FILENAME_LEN:] == FILENAME and fun == "wrapper":
+                    in_endpoint_code = True
             if in_endpoint_code:
                 self._total += duration
 
