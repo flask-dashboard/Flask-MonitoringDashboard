@@ -46,7 +46,10 @@ class StacktraceProfiler(threading.Thread):
             duration = newcurrent_time - current_time
             current_time = newcurrent_time
 
-            frame = sys._current_frames()[self._thread_to_monitor]
+            try:
+                frame = sys._current_frames()[self._thread_to_monitor]
+            except KeyError:
+                continue
             in_endpoint_code = False
             self._path_hash.set_path('')
             # filename, line number, function name, source code line
