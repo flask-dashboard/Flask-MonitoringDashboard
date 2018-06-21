@@ -35,7 +35,10 @@ class OutlierProfiler(threading.Thread):
         time.sleep(average / 1000)
         if not self._stopped:
             stack_list = []
-            frame = sys._current_frames()[self._current_thread]
+            try:
+                frame = sys._current_frames()[self._current_thread]
+            except KeyError:
+                return
             in_endpoint_code = False
             # filename, line number, function name, source code line
             for fn, ln, fun, line in traceback.extract_stack(frame):
