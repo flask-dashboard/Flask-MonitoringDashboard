@@ -4,7 +4,7 @@ Contains all functions that access an StackLine object.
 from sqlalchemy import desc, distinct
 from sqlalchemy.orm import joinedload
 
-from flask_monitoringdashboard.database import StackLine, Request
+from flask_monitoringdashboard.database import StackLine, Request, CodeLine
 from flask_monitoringdashboard.database.code_line import get_code_line
 
 
@@ -47,6 +47,31 @@ def get_profiled_requests(db_session, endpoint_id, offset, per_page):
         options(joinedload(Request.stack_lines).joinedload(StackLine.code)).all()
     db_session.expunge_all()
     return result
+
+
+def get_profiled_requests_filtered(db_session, endpoint_id, code_line="g()", offset=0, per_page=10):
+    """
+    Gets the requests of an endpoint containing a particular stack line,
+    sorted by request time, together with the stack lines.
+    :param db_session: session for the database
+    :param endpoint_id: filter profiled requests on this endpoint
+    :param code_line: line of code to filter on
+    :param offset: number of items to skip
+    :param per_page: number of items to return
+    :return list of Request objects. Each Request contains a list of StackLine objects. Each StackLine object
+            contains a Code object.
+    """
+    result = db_session.query(Request).filter(Request.endpoint_id == endpoint_id).\
+        join(StackLine, Request.stack_lines).join(CodeLine, StackLine.code). \
+        options(joinedload(Request.stack_lines).joinedload(StackLine.code)). \
+        filter(CodeLine.code == code_line). \
+        order_by(desc(Request.id)).offset(offset).limit(per_page)
+    result = result.all()
+    print(len(result))
+    for r in result:
+        print(r.id)
+        for sl in r.stack_lines:
+            print(sl.code.code)
 
 
 def get_grouped_profiled_requests(db_session, endpoint_id):

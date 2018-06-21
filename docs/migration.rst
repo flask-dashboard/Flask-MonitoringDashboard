@@ -13,6 +13,10 @@ There are two migrations that you have to do, before you can use version 2.0.0.
    We have created a script for you that can achieve this. It migrates the data in the existing 
    database into a new database, without removing the existing database.
 
+   You can find `the migration script here`_.
+
+   .. _`the migration script here`: https://github.com/flask-dashboard/Flask-MonitoringDashboard/tree/master/flask_monitoringdashboard/migrate_v1_to_v2.py
+
    If you want to run this script, you need to be aware of the following:
 
    - If you already have version 1.X.X of the Flask-MonitoringDashboard installed, first update to 
@@ -28,9 +32,6 @@ There are two migrations that you have to do, before you can use version 2.0.0.
 
    - Once you have migrated your database, you have to update the database location in your configuration-file.
 
-   - You can find `the migration script here`_.
-
-     .. _`the migration script here`: https://github.com/flask-dashboard/Flask-MonitoringDashboard/tree/master/flask_monitoringdashboard/migrate_v1_to_v2.py
 
 2. **Migrate the configuration file**: You also have to update the configuration file completely, since we've 
    re factored this to make it more clear. The main difference is that several properties have been re factored

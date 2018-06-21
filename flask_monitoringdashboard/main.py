@@ -2,6 +2,7 @@
     This file can be executed for developing purposes.
     It is not used when the flask_monitoring_dashboard is attached to an existing flask application.
 """
+import random
 
 from flask import Flask
 
@@ -13,7 +14,8 @@ def create_app():
     app = Flask(__name__)
 
     dashboard.config.outlier_detection_constant = 0
-    dashboard.config.database_name = 'sqlite:///flask_monitoring_dashboard_v10.db'
+    # dashboard.config.database_name = 'sqlite:///flask_monitoring_dashboard_v10.db'
+    dashboard.config.database_name = 'sqlite:////home/bogdan/databases/flask-dashboard-2.0.db'
     dashboard.config.version = '3.1'
     dashboard.bind(app)
 
