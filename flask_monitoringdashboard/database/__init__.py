@@ -7,7 +7,7 @@ from contextlib import contextmanager
 
 from sqlalchemy import Column, Integer, String, DateTime, create_engine, Float, Boolean, TEXT, ForeignKey
 from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.orm import sessionmaker, relationship
+from sqlalchemy.orm import sessionmaker, relationship, scoped_session
 
 from flask_monitoringdashboard import config
 from flask_monitoringdashboard.core.group_by import get_group_by
@@ -172,7 +172,8 @@ def session_scope():
             
     :return: the session for accessing the database
     """
-    session = DBSession()
+    session_obj = scoped_session(DBSession)
+    session = session_obj()
     try:
         yield session
         session.commit()
