@@ -9,6 +9,10 @@ Unreleased
 ----------
 Changed
 
+- Fixed Issue #174
+
+- Fixed issue with profiler not going into code
+
 - Implemented a Sunburst visualization of the Grouped Profiler
 
 - Improved test coverage
