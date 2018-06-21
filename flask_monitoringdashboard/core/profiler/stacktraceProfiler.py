@@ -52,6 +52,7 @@ class StacktraceProfiler(threading.Thread):
             try:
                 frame = sys._current_frames()[self._thread_to_monitor]
             except KeyError:
+                print("key error")
                 continue
             in_endpoint_code = False
             self._path_hash.set_path('')
