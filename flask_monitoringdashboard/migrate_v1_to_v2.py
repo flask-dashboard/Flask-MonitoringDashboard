@@ -13,8 +13,10 @@ from flask_monitoringdashboard.database import Endpoint, Request, Outlier, Test,
 
 # OLD_DB_URL = 'dialect+driver://username:password@host:port/old_db'
 # NEW_DB_URL = 'dialect+driver://username:password@host:port/new_db'
-OLD_DB_URL = 'mysql+pymysql://root:admin@localhost/migration1'
-NEW_DB_URL = 'mysql+pymysql://root:admin@localhost/migration2'
+OLD_DB_URL = 'sqlite:////home/bogdan/databases/flask-dashboard.db'
+NEW_DB_URL = 'sqlite:////home/bogdan/databases/flask-dashboard-2.0.db'
+# OLD_DB_URL = 'mysql+pymysql://root:admin@localhost/migration1'
+# NEW_DB_URL = 'mysql+pymysql://root:admin@localhost/migration2'
 
 
 TABLES = ["rules", "functionCalls", "outliers", "tests", "testRun"]

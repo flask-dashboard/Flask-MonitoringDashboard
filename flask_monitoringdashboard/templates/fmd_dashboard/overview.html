@@ -71,7 +71,13 @@
 
 {% block script %}
     <script type="text/javascript">
-        $('#dataTable').DataTable().order([[4, "desc"]]).draw();
+        $('#dataTable').DataTable({
+            "createdRow": function( row, data, dataIndex ) {
+                $(row).find("time").text(function (i, ms) {
+                    return format_time(ms);
+                });
+            }
+        }).order([[4, "desc"]]).draw();
 
         $.get( "https://pypi.org/pypi/Flask-MonitoringDashboard/json", function( data ) {
 
