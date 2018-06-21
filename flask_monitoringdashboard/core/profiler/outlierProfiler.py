@@ -55,6 +55,7 @@ class OutlierProfiler(threading.Thread):
     def stop(self):
         self._stopped = True
 
-    def add_outlier(self, db_session, request_id):
+    def add_outlier(self, request_id):
         if self._memory:
-            add_outlier(db_session, request_id, self._cpu_percent, self._memory, self._stacktrace, self._request)
+            with session_scope() as db_session:
+                add_outlier(db_session, request_id, self._cpu_percent, self._memory, self._stacktrace, self._request)

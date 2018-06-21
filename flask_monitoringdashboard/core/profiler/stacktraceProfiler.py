@@ -87,8 +87,8 @@ class StacktraceProfiler(threading.Thread):
             self._lines_body = order_histogram(self._histogram.items())
             self.insert_lines_db(db_session, request_id)
 
-            if self._outlier_profiler:
-                self._outlier_profiler.add_outlier(db_session, request_id)
+        if self._outlier_profiler:
+            self._outlier_profiler.add_outlier(request_id)
 
     def insert_lines_db(self, db_session, request_id):
         position = 0
