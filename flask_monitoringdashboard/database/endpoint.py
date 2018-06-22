@@ -132,7 +132,7 @@ def get_last_requested(db_session):
     """
     result = db_session.query(Endpoint.name, Endpoint.last_requested).all()
     db_session.expunge_all()
-    return [(end, to_local_datetime(time)) for end, time in result]
+    return result
 
 
 def update_last_accessed(db_session, endpoint_name):

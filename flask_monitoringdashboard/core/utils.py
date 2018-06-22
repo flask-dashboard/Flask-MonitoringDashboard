@@ -20,7 +20,6 @@ def get_endpoint_details(db_session, endpoint_id):
     :return dictionary
     """
     endpoint = get_endpoint_by_id(db_session, endpoint_id)
-    endpoint.last_requested = to_local_datetime(endpoint.last_requested)
     endpoint.time_added = to_local_datetime(endpoint.time_added)
     return {
         'id': endpoint_id,

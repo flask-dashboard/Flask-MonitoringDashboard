@@ -50,4 +50,8 @@
     $("time").text(function(i, ms){
         return format_time(ms);
     });
+
+    $("date").text(function(i, date){
+        return format_date(date);
+    });
 })(jQuery);
