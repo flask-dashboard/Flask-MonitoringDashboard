@@ -1,4 +1,5 @@
 from flask_monitoringdashboard import config
+from flask_monitoringdashboard.core.logger import log
 
 PRIMITIVES = (bool, bytes, float, int, str)
 
@@ -37,5 +38,5 @@ def get_group_by():
         if config.group_by:
             group_by = recursive_group_by(config.group_by)
     except Exception as e:
-        print('Can\'t execute group_by function: {}'.format(e))
+        log('Can\'t execute group_by function: {}'.format(e))
     return str(group_by)
