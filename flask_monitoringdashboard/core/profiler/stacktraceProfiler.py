@@ -6,6 +6,7 @@ import traceback
 from collections import defaultdict
 
 from flask_monitoringdashboard import user_app, config
+from flask_monitoringdashboard.core.logger import log
 from flask_monitoringdashboard.core.profiler.util import order_histogram
 from flask_monitoringdashboard.core.profiler.util.pathHash import PathHash
 from flask_monitoringdashboard.database import session_scope
@@ -52,8 +53,8 @@ class StacktraceProfiler(threading.Thread):
             try:
                 frame = sys._current_frames()[self._thread_to_monitor]
             except KeyError:
-                print("key error")
-                continue
+                log('Can\'t get the stacktrace of the main thread. Stopping StacktraceProfiler')
+                break
             in_endpoint_code = False
             self._path_hash.set_path('')
             # filename, line number, function name, source code line

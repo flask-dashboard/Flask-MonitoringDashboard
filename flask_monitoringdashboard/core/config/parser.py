@@ -4,6 +4,8 @@
 import ast
 import os
 
+from flask_monitoringdashboard.core.logger import log
+
 
 def parse_version(parser, header, version):
     """
@@ -25,7 +27,7 @@ def parse_version(parser, header, version):
             # cut version to at most 6 chars
             return version[:6]
         except IOError:
-            print("Error reading one of the files to retrieve the current git-version.")
+            log("Error reading one of the files to retrieve the current git-version.")
             raise
     return version
 

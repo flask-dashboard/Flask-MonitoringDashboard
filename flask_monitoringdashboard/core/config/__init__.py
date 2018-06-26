@@ -6,6 +6,8 @@ import pytz
 from flask_monitoringdashboard.core.config.parser import parse_string, parse_version, parse_bool, parse_literal
 from tzlocal import get_localzone
 
+from flask_monitoringdashboard.core.logger import log
+
 
 class Config(object):
     """
@@ -23,6 +25,7 @@ class Config(object):
         self.monitor_level = 3
         self.outlier_detection_constant = 2.5
         self.sampling_period = 0
+        self.enable_logging = False
 
         # database
         self.database_name = 'sqlite:///flask_monitoringdashboard.db'
@@ -56,6 +59,8 @@ class Config(object):
                 variable is 2.5.
             - SAMPLING_PERIOD: Time between two profiler-samples. The time must be specified in ms.
                 If this value is not set, the profiler continuously monitors.
+            - ENABLE_LOGGING: Boolean if you want additional logs to be printed to the console. Default
+            value is False
 
             The config_file must at least contains the following variables in section 'authentication':
             - USERNAME: for logging into the dashboard, a username and password is required. The
@@ -91,7 +96,7 @@ class Config(object):
             # Travis does not need a config file.
             if '/home/travis/build/' in os.getcwd():
                 return
-            print("No configuration file specified. Please do so.")
+            log("No configuration file specified. Please do so.")
             return
 
         parser = configparser.RawConfigParser()
@@ -105,6 +110,7 @@ class Config(object):
             self.outlier_detection_constant = parse_literal(parser, 'dashboard', 'OUTlIER_DETECTION_CONSTANT',
                                                             self.outlier_detection_constant)
             self.sampling_period = parse_literal(parser, 'dashboard', 'SAMPLING_RATE', self.sampling_period) / 1000
+            self.enable_logging = parse_bool(parser, 'dashboard', 'ENABLE_LOGGING', self.enable_logging)
 
             # parse 'authentication'
             self.username = parse_string(parser, 'authentication', 'USERNAME', self.username)
