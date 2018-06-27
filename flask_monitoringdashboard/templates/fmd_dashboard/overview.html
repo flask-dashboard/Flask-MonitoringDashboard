@@ -42,8 +42,8 @@
                                 <td style="text-align: right;"><time>{{ row['median-today'] }}</time></td>
                                 <td style="text-align: right;"><time>{{ row['median-week'] }}</time></td>
                                 <td style="text-align: right;"><time>{{ row['median-overall'] }}</time></td>
-                                <td style="text-align: center;">{{ "{:%Y-%m-%d %H:%M:%S }".format(row['last-accessed'])
-                                                    if row['last-accessed'] }}</td>
+                                <td style="text-align: center;"><date>{{ "{:%Y-%m-%d %H:%M:%S}".format(row['last-accessed'])
+                                                    if row['last-accessed'] }}</date></td>
                             </tr>
                         {% endfor %}
                         </tbody>
@@ -75,6 +75,9 @@
             "createdRow": function( row, data, dataIndex ) {
                 $(row).find("time").text(function (i, ms) {
                     return format_time(ms);
+                });
+                $(row).find("date").text(function (i, date) {
+                    return format_date(date);
                 });
             }
         }).order([[4, "desc"]]).draw();

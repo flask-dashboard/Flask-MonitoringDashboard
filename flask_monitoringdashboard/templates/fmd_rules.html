@@ -24,7 +24,7 @@
                                 <td style="max-width: 200px;">{{ row.rule }}</td>
                                 <td>{{ ", ".join(row.methods) }}</td>
                                 <td style="max-width: 200px;">{{ row.endpoint }}</td>
-                                <td style="text-align: center;">{{ "{:%Y-%m-%d %H:%M:%S }".format(row.last_accessed) if row.last_accessed }}</td>
+                                <td style="text-align: center;"><date>{{ "{:%Y-%m-%d %H:%M:%S}".format(row.last_accessed) if row.last_accessed }}</date></td>
                                 <td>
                                     <span hidden>{{ row.form.monitor.data }}</span>
                                     {{ row.form.monitor(onchange='sendForm("{}", this.value);'.format(row.endpoint)) }}

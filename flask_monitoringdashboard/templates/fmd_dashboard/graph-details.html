@@ -66,8 +66,8 @@
                     {% endif %}
                     <tr>
                         <td><b>Last accessed</b></td>
-                        <td>{{ "{:%Y-%m-%d %H:%M:%S }".format(details.rule.last_requested)
-                                if details.rule.last_requested }}</td>
+                        <td><date>{{ "{:%Y-%m-%d %H:%M:%S}".format(details.rule.last_requested)
+                                if details.rule.last_requested }}</date></td>
                     </tr>
                     <tr>
                         <td><b>Total number of hits</b></td>

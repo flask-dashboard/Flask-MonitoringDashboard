@@ -55,24 +55,25 @@ file that contains the entry point of the app. The following properties can be c
    [dashboard]
    APP_VERSION=1.0
    GIT=/<path to your project>/.git/
-   CUSTOM_LINK='dashboard'
+   CUSTOM_LINK=dashboard
    MONITOR_LEVEL=3
    OUTLIER_DETECTION_CONSTANT=2.5
    SAMPLING_PERIOD=20
+   ENABLE_LOGGING=True
 
    [authentication]
-   USERNAME='admin'
-   PASSWORD='admin'
-   GUEST_USERNAME='guest'
-   GUEST_PASSWORD='[dashboardguest!, second_pw!]'
-   SECURITY_TOKEN='cc83733cb0af8b884ff6577086b87909'
+   USERNAME=admin
+   PASSWORD=admin
+   GUEST_USERNAME=guest
+   GUEST_PASSWORD=['dashboardguest!', 'second_pw!']
+   SECURITY_TOKEN=cc83733cb0af8b884ff6577086b87909
 
    [database]
-   TABLE_PREFIX=''
+   TABLE_PREFIX=fmd
    DATABASE=sqlite:////<path to your project>/dashboard.db
 
    [visualization]
-   TIMEZONE='Europe/Amsterdam'
+   TIMEZONE=Europe/Amsterdam
    COLORS={'main':'[0,97,255]',
            'static':'[255,153,0]'}
 
@@ -100,6 +101,9 @@ Dashboard
 
 - **SAMPLING_PERIOD:** Time between two profiler-samples. The time must be specified in ms.
   If this value is not set, the profiler monitors continuously.
+
+- **ENABLE_LOGGING:** Boolean if you want additional logs to be printed to the console. Default
+  value is False.
 
 Authentication
 ~~~~~~~~~~~~~~

@@ -1,5 +1,3 @@
-import datetime
-
 from flask_monitoringdashboard.core.profiler.baseProfiler import BaseProfiler
 from flask_monitoringdashboard.database import session_scope
 from flask_monitoringdashboard.database.endpoint import update_last_accessed
