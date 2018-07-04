@@ -11,7 +11,7 @@ def get_versions(db_session, endpoint_id=None, limit=None):
     :param limit: only return the most recent versions
     :return: a list with the versions (as a string)
     """
-    query = db_session.query(distinct(Request.version_requested))
+    query = db_session.query(distinct(Request.version_requested), Request.time_requested)
     if endpoint_id:
         query = query.filter(Request.endpoint_id == endpoint_id)
     query = query.order_by(desc(Request.time_requested))

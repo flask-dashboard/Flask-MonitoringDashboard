@@ -23,7 +23,7 @@ def get_num_requests(db_session, endpoint_id, start_date, end_date):
     query = db_session.query(Request.time_requested)
     if endpoint_id:
         query = query.filter(Request.endpoint_id == endpoint_id)
-    result = query.filter(Request.time_requested >= start_date, Request.duration <= end_date).all()
+    result = query.filter(Request.time_requested >= start_date, Request.time_requested <= end_date).all()
 
     return group_request_times([r[0] for r in result])
 
