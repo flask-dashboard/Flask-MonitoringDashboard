@@ -26,6 +26,16 @@ def create_app():
         f()
         return 'Ok'
 
+    @app.route('/endpoint2')
+    def endpoint2():
+        time.sleep(1.5)
+        return 'Ok'
+
+    @app.route('/endpoint3')
+    def endpoint3():
+        time.sleep(2)
+        return 'Ok'
+
     return app
 
 
