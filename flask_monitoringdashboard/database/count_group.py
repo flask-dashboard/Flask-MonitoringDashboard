@@ -3,7 +3,7 @@ import datetime
 from sqlalchemy import func
 
 from flask_monitoringdashboard.core.timezone import to_utc_datetime
-from flask_monitoringdashboard.database import Request, TestEndpoint
+from flask_monitoringdashboard.database import Request, TestEndpoint, Endpoint
 
 
 def get_latest_test_version(db_session):
@@ -57,9 +57,9 @@ def count_times_tested(db_session, *where):
     :param db_session: session for the database
     :param where: additional arguments
     """
-    result = db_session.query(TestEndpoint, func.count(TestEndpoint.endpoint_id)).join(
-        TestEndpoint.endpoint).filter(*where).group_by(TestEndpoint.endpoint_id).all()
-    return [(endpoint.endpoint.name, count) for endpoint, count in result]
+    result = db_session.query(Endpoint.name, func.count(TestEndpoint.endpoint_id)).join(
+        TestEndpoint.endpoint).filter(*where).group_by(Endpoint.name).all()
+    return result
 
 
 def count_requests_per_day(db_session, list_of_days):
