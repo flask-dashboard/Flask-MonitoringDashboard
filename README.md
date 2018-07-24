@@ -52,6 +52,12 @@ Adding the extension to your Flask app is simple:
 
     app = Flask(__name__)
     dashboard.bind(app)
+
+## Feedback
+In order to improve our Flask-MonitoringDashboard, we would like to hear from you! Therefore, we made a questionnaire
+with a few questions. Filling in this form takes less than 3 minutes. You can find the form [here](https://goo.gl/forms/IqRrjGDDXe44q5ZV2).
+
+Alternatively, feel free to write to [our email-address](mailto:flask.monitoringdashboard@gmail.com).
  
 ## Documentation
 For more advanced documentation, see [this site](http://flask-monitoringdashboard.readthedocs.io).
