@@ -37,13 +37,14 @@ def bind(app):
         methods below. Thus, the importing statement is part of this function.
         :param app: the app for which the performance has to be tracked
     """
+    from flask_monitoringdashboard.core.logger import log
     assert app is not None
     global user_app, blueprint
     user_app = app
 
     # Provide a secret-key for using WTF-forms
     if not user_app.secret_key:
-        print('WARNING: You should provide a security key.')
+        log('WARNING: You should provide a security key.')
         user_app.secret_key = 'my-secret-key'
 
     import os
@@ -59,8 +60,8 @@ def bind(app):
             :return:
             """
             home = os.path.expanduser("~")
-            with open(home + '/app_version.log', 'w') as log:
-                log.write(config.version)
+            with open(home + '/app_version.log', 'w') as app_log:
+                app_log.write(config.version)
 
         @user_app.before_request
         def log_start_endpoint_hit():
@@ -70,8 +71,8 @@ def bind(app):
             """
             hit_time_stamp = str(datetime.datetime.utcnow())
             home = os.path.expanduser("~")
-            with open(home + '/start_endpoint_hits.log', 'a') as log:
-                log.write('"{}","{}"\n'.format(hit_time_stamp, request.endpoint))
+            with open(home + '/start_endpoint_hits.log', 'a') as hits_log:
+                hits_log.write('"{}","{}"\n'.format(hit_time_stamp, request.endpoint))
 
         @user_app.after_request
         def log_finish_endpoint_hit(response):
@@ -82,8 +83,8 @@ def bind(app):
             """
             hit_time_stamp = str(datetime.datetime.utcnow())
             home = os.path.expanduser("~")
-            with open(home + '/finish_endpoint_hits.log', 'a') as log:
-                log.write('"{}","{}"\n'.format(hit_time_stamp, request.endpoint))
+            with open(home + '/finish_endpoint_hits.log', 'a') as hits2_log:
+                hits2_log.write('"{}","{}"\n'.format(hit_time_stamp, request.endpoint))
 
             return response
 

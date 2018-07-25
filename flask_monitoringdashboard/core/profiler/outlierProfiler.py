@@ -7,6 +7,7 @@ import psutil
 from flask import request
 
 from flask_monitoringdashboard import config
+from flask_monitoringdashboard.core.logger import log
 from flask_monitoringdashboard.database import session_scope
 from flask_monitoringdashboard.database.outlier import add_outlier
 from flask_monitoringdashboard.database.request import get_avg_duration
@@ -38,6 +39,7 @@ class OutlierProfiler(threading.Thread):
             try:
                 frame = sys._current_frames()[self._current_thread]
             except KeyError:
+                log('Can\'t get the stacktrace of the main thread.')
                 return
             in_endpoint_code = False
             # filename, line number, function name, source code line
