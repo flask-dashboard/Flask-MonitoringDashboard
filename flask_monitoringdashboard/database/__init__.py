@@ -3,9 +3,11 @@
     For information about how to access the database via a session-variable, see: session_scope() 
 """
 import datetime
+import random
+import time
 from contextlib import contextmanager
 
-from sqlalchemy import Column, Integer, String, DateTime, create_engine, Float, Boolean, TEXT, ForeignKey
+from sqlalchemy import Column, Integer, String, DateTime, create_engine, Float, Boolean, TEXT, ForeignKey, exc
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker, relationship, scoped_session
 
@@ -177,9 +179,13 @@ def session_scope():
     try:
         yield session
         session.commit()
-    except Exception:
+    except exc.OperationalError:
         session.rollback()
-        raise
+        time.sleep(0.5 + random.random)
+        session.commit()
+    except Exception as e:
+        session.rollback()
+        print('Didn\'t commited, due to the following error: {}'.format(e))
     finally:
         session.close()
 
