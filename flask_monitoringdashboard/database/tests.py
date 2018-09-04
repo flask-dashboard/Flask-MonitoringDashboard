@@ -3,7 +3,6 @@ Contains all functions that returns results of all tests
 """
 from sqlalchemy import func
 
-from flask_monitoringdashboard.core.timezone import to_local_datetime
 from flask_monitoringdashboard.database import Endpoint, Test, TestResult, TestEndpoint
 
 
@@ -68,6 +67,6 @@ def get_endpoint_measurements_job(db_session, name, job_id):
 
 def get_last_tested_times(db_session):
     """ Returns the last tested time of each of the endpoints. """
-    results = db_session.query(TestEndpoint, func.max(TestEndpoint.time_added)).join(
-        TestEndpoint.endpoint).group_by(TestEndpoint.endpoint_id).all()
-    return [(result[0].endpoint.name, to_local_datetime(result[1])) for result in results]
+    results = db_session.query(Endpoint.name, func.max(TestEndpoint.time_added)).join(
+        TestEndpoint.endpoint).group_by(Endpoint.name).all()
+    return results

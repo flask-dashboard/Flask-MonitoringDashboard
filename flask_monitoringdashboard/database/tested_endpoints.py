@@ -23,5 +23,6 @@ def get_tested_endpoint_names(db_session):
     :param db_session:
     :return list of strings
     """
-    results = db_session.query(TestEndpoint).join(TestEndpoint.endpoint).group_by(TestEndpoint.endpoint_id).all()
-    return [result.endpoint.name for result in results]
+    results = db_session.query(Endpoint.name).join(TestEndpoint.endpoint).\
+        group_by(Endpoint.name).all()
+    return [result[0] for result in results]

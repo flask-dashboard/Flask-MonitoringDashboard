@@ -34,17 +34,11 @@ def get_profiled_requests(db_session, endpoint_id, offset, per_page):
     :return: A list with tuples. Each tuple consists first of a Request-object, and the second part of the tuple
             is a list of StackLine-objects.
     """
-    t = db_session.query(distinct(StackLine.request_id).label('id')). \
-        filter(Request.endpoint_id == endpoint_id). \
-        join(Request.stack_lines). \
-        order_by(desc(Request.id)). \
-        offset(offset).limit(per_page).subquery('t')
-
-    result = db_session.query(Request). \
-        join(Request.stack_lines).\
-        filter(Request.id == t.c.id).\
-        order_by(desc(Request.id)).\
-        options(joinedload(Request.stack_lines).joinedload(StackLine.code)).all()
+    result = db_session.query(Request).filter(Request.endpoint_id == endpoint_id). \
+        options(joinedload(Request.stack_lines).joinedload(StackLine.code)). \
+        filter(Request.stack_lines.any()). \
+        order_by(desc(Request.time_requested)). \
+        offset(offset).limit(per_page).all()
     db_session.expunge_all()
     return result
 
