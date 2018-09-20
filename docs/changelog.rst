@@ -19,6 +19,8 @@ Changed
 
 - Improved python-doc
 
+- Added functionality to download the outlier data
+
 
 v2.0.0
 ----------
