@@ -78,9 +78,9 @@ def get_grouped_profiled_requests(db_session, endpoint_id):
     """
     t = db_session.query(distinct(StackLine.request_id).label('id')). \
         filter(Request.endpoint_id == endpoint_id). \
-        join(Request.stack_lines).limit(100).subquery('t')
+        join(Request.stack_lines).order_by(Request.id.desc()).limit(100).subquery('t')
     # Limit the number of results by 100, otherwise the profiler gets too large
-    # and the page doesn't load anymore.
+    # and the page doesn't load anymore. We show the most recent 100 requests.
 
     result = db_session.query(Request). \
         join(Request.stack_lines). \
