@@ -16,17 +16,17 @@ class TestExportData(unittest.TestCase):
         add_fake_data()
         self.app = get_test_app()
 
-    def test_download_csv(self):
+    def test_download_requests(self):
         """
             Just retrieve the content and check if nothing breaks
         """
-        test_admin_secure(self, 'download-csv')
+        test_admin_secure(self, 'download-requests')
 
-    def test_export_data(self):
+    def test_download_outliers(self):
         """
             Just retrieve the content and check if nothing breaks
         """
-        test_admin_secure(self, 'view-csv')
+        test_admin_secure(self, 'download-outliers')
 
     def test_submit_test_results(self):
         """
