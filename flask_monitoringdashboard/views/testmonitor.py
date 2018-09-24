@@ -74,11 +74,12 @@ def testmonitor():
     from numpy import median
 
     with session_scope() as db_session:
+        latest_version = get_latest_test_version(db_session)
         tests_latest = count_times_tested(db_session,
-                                          TestEndpoint.app_version == get_latest_test_version(db_session))
+                                          TestEndpoint.app_version == latest_version)
         tests = count_times_tested(db_session)
         median_latest = get_test_data_grouped(db_session, median,
-                                              TestEndpoint.app_version == get_latest_test_version(db_session))
+                                              TestEndpoint.app_version == latest_version)
         median = get_test_data_grouped(db_session, median)
         tested_times = get_last_tested_times(db_session)
 
