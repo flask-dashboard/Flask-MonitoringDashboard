@@ -19,6 +19,10 @@ Changed
 
 - Improved python-doc
 
+- Added functionality to download the outlier data
+
+- Dropped support for Python 3.3 and 3.4
+
 
 v2.0.0
 ----------
