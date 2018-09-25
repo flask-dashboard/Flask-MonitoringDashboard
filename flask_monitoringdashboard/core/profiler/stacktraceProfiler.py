@@ -103,6 +103,13 @@ class StacktraceProfiler(threading.Thread):
             fn, ln = self._path_hash.get_last_fn_ln(path)
             indent = self._path_hash.get_indent(path)
             duration = val * self._duration / self._total
+            """
+             repair ZeroDivisionError: float division by zero
+            """
+            if(self._total == 0 ):
+                  duration = 0
+            else:
+                  duration = val * self._duration / self._total
             add_stack_line(db_session, request_id, position=position, indent=indent, duration=duration,
                            code_line=(fn, ln, fun, line))
             position += 1
