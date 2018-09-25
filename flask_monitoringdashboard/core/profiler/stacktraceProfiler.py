@@ -102,7 +102,7 @@ class StacktraceProfiler(threading.Thread):
             path, fun, line = key
             fn, ln = self._path_hash.get_last_fn_ln(path)
             indent = self._path_hash.get_indent(path)
-            duration = val * self._duration / self._total
+            #duration = val * self._duration / self._total
             """
              repair ZeroDivisionError: float division by zero
             """
