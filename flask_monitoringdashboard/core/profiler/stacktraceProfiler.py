@@ -18,6 +18,7 @@ from flask_monitoringdashboard.database.stack_line import add_stack_line
 FILENAME = 'flask_monitoringdashboard/core/measurement.py'
 FILENAME_LEN = len(FILENAME)
 
+
 class StacktraceProfiler(threading.Thread):
     """
     Used for profiling the performance per line code.
@@ -102,7 +103,7 @@ class StacktraceProfiler(threading.Thread):
             path, fun, line = key
             fn, ln = self._path_hash.get_last_fn_ln(path)
             indent = self._path_hash.get_indent(path)
-            duration = val * self._duration / self._total
+            duration = val * self._duration / self._total if self._total != 0 else 0
             add_stack_line(db_session, request_id, position=position, indent=indent, duration=duration,
                            code_line=(fn, ln, fun, line))
             position += 1
