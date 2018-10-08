@@ -22,4 +22,4 @@ class TestStacktraceProfiler(unittest.TestCase):
             ip = request.environ['REMOTE_ADDR']
             thread = StacktraceProfiler(current_thread, Endpoint(id=0, name=NAME), ip)
             thread._keeprunning = False
-            self.assertRaises(ValueError, thread.run)
+            thread.run()
