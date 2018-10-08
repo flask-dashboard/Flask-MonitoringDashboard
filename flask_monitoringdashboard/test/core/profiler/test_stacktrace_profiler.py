@@ -23,4 +23,3 @@ class TestStacktraceProfiler(unittest.TestCase):
             thread = StacktraceProfiler(current_thread, Endpoint(id=0, name=NAME), ip)
             thread._keeprunning = False
             thread.run()
-            # self.assertRaises(ValueError, thread.run)

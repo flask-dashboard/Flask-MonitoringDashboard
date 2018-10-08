@@ -1,5 +1,4 @@
 flask>=0.9            # for monitoring the web-service
-asyncio               # for fixing a bug
 sqlalchemy>=1.1.9     # for database support
 wtforms>=2.1          # for generating forms
 flask_wtf>=0.13       # also for generating forms
