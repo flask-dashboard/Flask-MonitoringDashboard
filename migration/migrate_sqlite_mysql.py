@@ -16,9 +16,10 @@ from sqlalchemy.orm import sessionmaker
 from flask_monitoringdashboard.database import Base, Endpoint, Request, Outlier, CodeLine, StackLine, Test, \
     TestResult, TestEndpoint
 
-SQLITE_URL = 'sqlite:////Users/user/Flask-MonitoringDashboard/fmd_copy.db'
-MYSQL_URL = 'mysql+pymysql://user:password@localhost:3306/db2'
+SQLITE_URL = 'sqlite:////Users/user/Flask-MonitoringDashboard/fmd.db'
+MYSQL_URL = 'mysql+pymysql://user:password@localhost:3306/database'
 ENTITIES = [Endpoint, Request, Outlier, CodeLine, StackLine, Test, TestResult, TestEndpoint]
+CHUNK_SIZE = 10000
 
 
 def create_db_session(db_url, clean=False):
@@ -43,21 +44,36 @@ def session_scope(db_session):
         session.close()
 
 
-def get_old_instances(db_session_old, entity_class):
+def get_row_count(db_session_old, entity_class):
     with session_scope(db_session_old) as db_session:
-        old_instances = db_session.query(entity_class).all()
+        count = db_session.query(entity_class).count()
+        db_session.expunge_all()
+    return count
+
+
+def get_old_instances(db_session_old, entity_class, start, end):
+    with session_scope(db_session_old) as db_session:
+        old_instances = db_session.query(entity_class).slice(start, end).all()
         db_session.expunge_all()
     return old_instances
 
 
-def migrate_entity(db_session_old, db_session_new, entity_class):
-    old_instances = get_old_instances(db_session_old, entity_class)
+def migrate_batch(old_instances, db_session_new, entity_class):
     new_instances = []
     with session_scope(db_session_new) as db_session:
-        for old_instance in old_instances:
+        for (index, old_instance) in enumerate(old_instances):
+            # _sa_instance_state is a non-db value used internally by SQLAlchemy
             del old_instance.__dict__['_sa_instance_state']
             new_instances.append(entity_class(**old_instance.__dict__))
         db_session.bulk_save_objects(new_instances)
+
+
+def migrate_all(db_session_old, db_session_new, entity_class, count):
+    chunks = count // CHUNK_SIZE
+    for i in range(chunks+1):
+        print("Moving batch %d of %d for entity %s..." % (i+1, chunks+1, entity_class.__name__))
+        old_instances = get_old_instances(db_session_old, entity_class, i * CHUNK_SIZE, (i + 1) * CHUNK_SIZE)
+        migrate_batch(old_instances, db_session_new, entity_class)
 
 
 def main():
@@ -66,7 +82,8 @@ def main():
     t0 = timeit.default_timer()
     t_previous = t0
     for entity_class in ENTITIES:
-        migrate_entity(db_session_old, db_session_new, entity_class)
+        count = get_row_count(db_session_old, entity_class)
+        migrate_all(db_session_old, db_session_new, entity_class, count)
         t_now = timeit.default_timer()
         print("Moving %s took %f seconds" % (entity_class.__name__, t_now - t_previous))
         t_previous = t_now
