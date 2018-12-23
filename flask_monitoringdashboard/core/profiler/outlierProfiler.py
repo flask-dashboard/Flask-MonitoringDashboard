@@ -27,7 +27,7 @@ class OutlierProfiler(threading.Thread):
         self._memory = ''
         self._stacktrace = ''
 
-        self._request = str(request.headers), str(request.environ), str(request.url)
+        self._request = str(request.headers), str(request.environ), request.url.encode('utf-8')
 
     def run(self):
         # sleep for average * ODC ms
