@@ -1,0 +1,51 @@
+<div>
+    <div id="alert" class="alert alert-warning alert-dismissible" ng-show="alert_show">
+        <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+        <strong>Warning:</strong>
+        Version {{ pypi_version }} is now available, while you are still using version {{ dashboard_version }}.
+    </div>
+
+    <div class="card mb-3">
+        <div class="card-header"><h4>{{ title }}</h4></div>
+        <div class="card-body">
+
+            <table datatable="ng" class="table table-striped table-bordered">
+                <thead>
+                <tr>
+                    <th colspan="2"></th>
+                    <th colspan="3" style="text-align: center; font-size: large;">Number of hits</th>
+                    <th colspan="3" style="text-align: center; font-size: large;">Median request duration
+                    </th>
+                    <th></th>
+                </tr>
+                <tr>
+                    <th></th>
+                    <th>Endpoint</th>
+                    <th>Today</th>
+                    <th>Last 7 days</th>
+                    <th>Overall</th>
+                    <th>Today</th>
+                    <th>Last 7 days</th>
+                    <th>Overall</th>
+                    <th>Last requested</th>
+                </tr>
+                </thead>
+                <tbody>
+
+                <tr ng-repeat="row in $data" style="cursor: pointer" ng-click="go('/endpoint/' + row.id)">
+                    <td style="background-color: {{ row.color }}"></td>
+                    <td style="max-width: 200px;">{{ row.name }}</td>
+                    <td style="text-align: right;">{{ row['hits-today'] | number }}</td>
+                    <td style="text-align: right;">{{ row['hits-week'] | number }}</td>
+                    <td style="text-align: right;">{{ row['hits-overall'] | number }}</td>
+                    <td style="text-align: right;">{{ row['median-today'] | duration }}</td>
+                    <td style="text-align: right;">{{ row['median-week'] | duration }}</td>
+                    <td style="text-align: right;">{{ row['median-overall'] | duration }}</td>
+                    <td style="text-align: center;">{{ row['last-accessed'] | dateDifference }}</td>
+                </tr>
+
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
