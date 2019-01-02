@@ -14,7 +14,9 @@
                 <thead>
                 <tr>
                     <th colspan="2"></th>
-                    <th colspan="3" style="text-align: center; font-size: large;">{{ isHits ? 'Number of hits' : 'Median request duration' }}</th>
+                    <th colspan="3" style="text-align: center; font-size: large;">
+                        {{ isHits ? 'Number of hits' : 'Median request duration' }}</th>
+                    <th></th>
                     <th></th>
                 </tr>
                 <tr>
@@ -24,9 +26,9 @@
                     <th>Last 7 days</th>
                     <th>Overall</th>
                     <th>Last requested</th>
+                    <th>Monitoring-level<sup>*</sup></th>
                 </tr>
                 </thead>
-
 
                 <tbody>
                 <tr ng-repeat="row in table" style="cursor: pointer" ng-click="go('/endpoint/' + row.id)">
@@ -41,15 +43,41 @@
                     <td ng-if="isHits==false" style="text-align: right;">{{ row['median-week'] | duration }}</td>
                     <td ng-if="isHits==false" style="text-align: right;">{{ row['median-overall'] | duration }}</td>
                     <td style="text-align: center;">{{ row['last-accessed'] | dateDifference }}</td>
+                    <td>
+                        <ul class="pagination">
+                            <li class="page-item"><a class="page-link" ng-click="sendForm(row.name, 1)">0</a></li>
+                            <li class="page-item"><a class="page-link" ng-click="sendForm(row.name, 2)">1</a></li>
+                            <li class="page-item"><a class="page-link" ng-click="sendForm(row.name, 3)">2</a></li>
+                            <li class="page-item"><a class="page-link" ng-click="sendForm(row.name, 4)">3</a></li>
+                        </ul>
+                    </td>
                 </tr>
                 </tbody>
             </table>
 
             <ul class="pagination">
-                <li class="page-item" ng-class="{'active': isHits}"><a class="page-link" ng-click="toggleHits()">Number of hits</a></li>
-                <li class="page-item" ng-class="{'active': !isHits}"><a class="page-link" ng-click="toggleHits()">Median request duration</a></li>
+                <li class="page-item" ng-class="{'active': isHits}"><a class="page-link" ng-click="toggleHits()">Number
+                    of hits</a></li>
+                <li class="page-item" ng-class="{'active': !isHits}"><a class="page-link" ng-click="toggleHits()">Median
+                    request duration</a></li>
             </ul>
+        </ul>
 
+    </div>
+
+    <div class="card mb-3">
+        <div class="card-header"><h5><sup>*</sup>Monitoring-level</h5></div>
+        <div class="card-body">
+            <b>0 - Disabled</b>
+            <p>When the monitoring-level is set to 0, you don't monitor anything about the performance of this endpoint.
+                The only data that is stored is when the <b>endpoint is last requested.</b></p><b>1 - Performance</b>
+            <p>When the monitoring-level is set to 1, you collect data when the endpoint is last requested, plus data
+                about the <b>performance and utilization</b> of this endpoint (as a black-box).</p><b>2 - Profiler</b>
+            <p>When the monitoring-level is set to 2, you get all the functionality from 1, plus data about the <b>performance
+                per line of code</b> from all requests.</p><b>3 - Profiler + Outliers</b>
+            <p>When the monitoring-level is set to 3, you get all the functionality from 2, including <b>more data if a
+                request is an outlier.</b>
         </div>
     </div>
+</div>
 </div>

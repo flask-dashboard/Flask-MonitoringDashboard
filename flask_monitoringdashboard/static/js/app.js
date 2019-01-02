@@ -5,7 +5,7 @@ let app = angular.module('fmdApp', ['ngRoute', 'datatables']);
 app.config(function ($locationProvider, $routeProvider) {
 
     $routeProvider
-        .when('/', {
+        .when('/overview', {
             templateUrl: 'static/pages/overview.html',
             controller: OverviewController
         })
@@ -14,7 +14,7 @@ app.config(function ($locationProvider, $routeProvider) {
             controller: EndpointController
         })
         .otherwise({
-            redirectTo: '/'
+            redirectTo: '/overview'
         });
 
     $locationProvider.html5Mode({

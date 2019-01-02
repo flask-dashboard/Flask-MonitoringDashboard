@@ -10,6 +10,12 @@ function OverviewController($scope, $http, $location, DTOptionsBuilder) {
     $scope.table = [];
     $scope.options = DTOptionsBuilder.newOptions().withOption('order', [[4, 'desc']]);
 
+    $scope.selectedItem = 2;
+
+    $scope.sendForm = function(name){
+      console.log(name);
+    };
+
     $scope.toggleHits = function(){
         $scope.isHits = !$scope.isHits;
     };
