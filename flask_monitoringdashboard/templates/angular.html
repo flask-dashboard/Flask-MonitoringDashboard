@@ -8,17 +8,17 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <title>Flask Monitoring Dashboard</title>
 
-    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.2.1/css/bootstrap.css" rel="stylesheet">
     <link href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet"
           type="text/css">
+    <link href="https://cdn.datatables.net/1.10.19/css/dataTables.bootstrap4.min.css" rel="stylesheet" type="text/css">
 
     <link href="{{ url_for('dashboard.static', filename='css/custom.css') }}" rel="stylesheet">
     <link rel="shortcut icon" href="{{ url_for('dashboard.static', filename='img/favicon.ico') }}"/>
-    <link rel="stylesheet" href="https://unpkg.com/ng-table@2.0.2/bundles/ng-table.min.css">
 </head>
 
 <body class="fixed-nav sticky-footer bg-dark" id="page-top">
-<nav class="navbar navbar-expand-lg navbar-dark fixed-top" id="mainNav">
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top" id="mainNav">
     <div class="navbar-brand">
         <h4>Flask Monitoring Dashboard</h4>
     </div>
@@ -74,9 +74,9 @@
         </ul>
         <ul class="navbar-nav ml-auto">
             <li class="nav-item">
-          <span style="color: white">
-          Automatically monitor the evolving performance of Flask/Python web services
-          </span>
+                 <span style="color: white">
+                     Automatically monitor the evolving performance of Flask/Python web services
+                 </span>
             </li>
         </ul>
         <ul class="navbar-nav ml-auto">
@@ -99,10 +99,7 @@
             </div>
         </div>
     </footer>
-    <!-- Scroll to Top Button-->
-    <a class="scroll-to-top rounded" href="#page-top">
-        <i class="fa fa-angle-up"></i>
-    </a>
+
     <!-- Logout Modal-->
     <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
          aria-hidden="true">
@@ -124,11 +121,12 @@
     </div>
 </div>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.2.1/js/bootstrap.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.7.5/angular.min.js"></script>
+<script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+<script src="https://cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/1.10.19/js/dataTables.bootstrap4.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.7.5/angular.js"></script>
 <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.7.5/angular-route.js"></script>
-<script src="https://unpkg.com/ng-table@2.0.2/bundles/ng-table.min.js"></script>
+<script src="{{ url_for('dashboard.static', filename='js/angular-datatables.js') }}"></script>
 
 <script src="{{ url_for('dashboard.static', filename='js/custom.js') }}"></script>
 <script src="{{ url_for('dashboard.static', filename='js/app.js') }}"></script>

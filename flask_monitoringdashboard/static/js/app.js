@@ -1,6 +1,6 @@
 'use strict';
 
-let app = angular.module('fmdApp', ['ngRoute', 'ngTable']);
+let app = angular.module('fmdApp', ['ngRoute', 'datatables']);
 
 app.config(function ($locationProvider, $routeProvider) {
 
