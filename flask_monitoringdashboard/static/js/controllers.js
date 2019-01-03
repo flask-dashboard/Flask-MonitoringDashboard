@@ -1,6 +1,7 @@
 'use strict';
 
-function OverviewController($scope, $http, $location, DTOptionsBuilder) {
+function OverviewController($scope, $http, $location, DTOptionsBuilder, menuHelper) {
+    menuHelper.reset();
     $scope.alertShow = false;
     $scope.pypi_version = '';
     $scope.dashboard_version = '';
@@ -12,11 +13,25 @@ function OverviewController($scope, $http, $location, DTOptionsBuilder) {
 
     $scope.selectedItem = 2;
 
-    $scope.sendForm = function(name){
-      console.log(name);
+    $scope.compare = function (level, n) {
+        return (level == n);
     };
 
-    $scope.toggleHits = function(){
+    $scope.sendForm = function (row, value) {
+        row.monitor = value;
+        $http.post('api/set_rule',
+            $.param({
+                'name': row.name,
+                'value': value
+            }),
+            {
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8;'
+                }
+            });
+    };
+
+    $scope.toggleHits = function () {
         $scope.isHits = !$scope.isHits;
     };
 
@@ -39,6 +54,10 @@ function OverviewController($scope, $http, $location, DTOptionsBuilder) {
     });
 }
 
-function EndpointController($scope, $http, $routeParams) {
-    console.log($routeParams.endpointId);
+function EndpointController($scope, $http, $routeParams, menuHelper) {
+    menuHelper.setId($routeParams.endpointId);
 }
+
+app.controller('MenuController', function ($scope, menuHelper) {
+    $scope.menu = menuHelper;
+});

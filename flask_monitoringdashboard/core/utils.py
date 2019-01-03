@@ -25,7 +25,7 @@ def get_endpoint_details(db_session, endpoint_id):
         'id': endpoint_id,
         'endpoint': endpoint.name,
         'rules': ', '.join([r.rule for r in get_rules(endpoint.name)]),
-        'rule': endpoint,
+        'monitor-level': endpoint.monitor_level,
         'url': get_url(endpoint.name),
         'total_hits': count_requests(db_session, endpoint.id)
     }

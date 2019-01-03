@@ -3,7 +3,7 @@
     It is not used when the flask_monitoring_dashboard is attached to an existing flask application.
 """
 
-from flask import Flask, render_template
+from flask import Flask
 
 
 def create_app():

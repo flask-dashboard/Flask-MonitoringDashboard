@@ -7,24 +7,29 @@
 
     <div class="card mb-3">
         <div class="card-header"><h4>{{ title }}</h4></div>
-        <ul class="card-body">
+        <div class="card-body">
 
 
             <table datatable="ng" class="table table-hover table-bordered" dt-options="options">
                 <thead>
                 <tr>
                     <th colspan="2"></th>
-                    <th colspan="3" style="text-align: center; font-size: large;">
-                        {{ isHits ? 'Number of hits' : 'Median request duration' }}</th>
+                    <th ng-show="isHits" colspan="3" style="text-align: center; font-size: large;">Number of hits</th>
+                    <th ng-show="isHits==false" colspan="3" style="text-align: center; font-size: large;">Median request
+                        duration
+                    </th>
                     <th></th>
                     <th></th>
                 </tr>
                 <tr>
                     <th></th>
                     <th>Endpoint</th>
-                    <th>Today</th>
-                    <th>Last 7 days</th>
-                    <th>Overall</th>
+                    <th ng-show="isHits">Today</th>
+                    <th ng-show="isHits">Last 7 days</th>
+                    <th ng-show="isHits">Overall</th>
+                    <th ng-show="isHits==false">Today</th>
+                    <th ng-show="isHits==false">Last 7 days</th>
+                    <th ng-show="isHits==false">Overall</th>
                     <th>Last requested</th>
                     <th>Monitoring-level<sup>*</sup></th>
                 </tr>
@@ -35,20 +40,19 @@
                     <td style="background-color: {{ row.color }}"></td>
                     <td style="max-width: 200px;">{{ row.name }}</td>
 
-                    <td ng-if="isHits" style="text-align: right;">{{ row['hits-today'] | number }}</td>
-                    <td ng-if="isHits" style="text-align: right;">{{ row['hits-week'] | number }}</td>
-                    <td ng-if="isHits" style="text-align: right;">{{ row['hits-overall'] | number }}</td>
+                    <td ng-show="isHits" style="text-align: right;">{{ row['hits-today'] | number }}</td>
+                    <td ng-show="isHits" style="text-align: right;">{{ row['hits-week'] | number }}</td>
+                    <td ng-show="isHits" style="text-align: right;">{{ row['hits-overall'] | number }}</td>
 
-                    <td ng-if="isHits==false" style="text-align: right;">{{ row['median-today'] | duration }}</td>
-                    <td ng-if="isHits==false" style="text-align: right;">{{ row['median-week'] | duration }}</td>
-                    <td ng-if="isHits==false" style="text-align: right;">{{ row['median-overall'] | duration }}</td>
+                    <td ng-show="isHits==false" style="text-align: right;">{{ row['median-today'] | duration }}</td>
+                    <td ng-show="isHits==false" style="text-align: right;">{{ row['median-week'] | duration }}</td>
+                    <td ng-show="isHits==false" style="text-align: right;">{{ row['median-overall'] | duration }}</td>
                     <td style="text-align: center;">{{ row['last-accessed'] | dateDifference }}</td>
-                    <td>
+                    <td ng-click="$event.stopPropagation()">
                         <ul class="pagination">
-                            <li class="page-item"><a class="page-link" ng-click="sendForm(row.name, 1)">0</a></li>
-                            <li class="page-item"><a class="page-link" ng-click="sendForm(row.name, 2)">1</a></li>
-                            <li class="page-item"><a class="page-link" ng-click="sendForm(row.name, 3)">2</a></li>
-                            <li class="page-item"><a class="page-link" ng-click="sendForm(row.name, 4)">3</a></li>
+                            <li ng-repeat="n in [0, 1, 2, 3]" class="page-item"
+                                ng-class="{'active': compare(row.monitor, n)}">
+                                <a class="page-link" ng-click="sendForm(row, n)">{{ n }}</a></li>
                         </ul>
                     </td>
                 </tr>
@@ -61,7 +65,7 @@
                 <li class="page-item" ng-class="{'active': !isHits}"><a class="page-link" ng-click="toggleHits()">Median
                     request duration</a></li>
             </ul>
-        </ul>
+        </div>
 
     </div>
 

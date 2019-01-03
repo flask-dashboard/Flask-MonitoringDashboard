@@ -23,15 +23,12 @@
         <h4>Flask Monitoring Dashboard</h4>
     </div>
 
-    <div class="collapse navbar-collapse" id="navbarResponsive">
+    <div class="collapse navbar-collapse" id="navbarResponsive" ng-controller="MenuController">
+
+        {% raw %}{{ menuHelper.data }}{% endraw %}
 
         <ul class="navbar-nav navbar-sidenav nav-pills">
-            <li class="nav-item" title="Rules">
-                <a class="nav-link " href="{{ url_for('dashboard.angular') }}page1">
-                    <i class="fa fa-fw fa-wrench"></i>
-                    <span class="nav-link-text">Rules</span>
-                </a>
-            </li>
+
             <li class="nav-item" title="Dashboard">
                 <a class="nav-link nav-link-collapse collapsed"
                    data-toggle="collapse" href="#collapseDashboard">
@@ -39,11 +36,37 @@
                     <span class="nav-link-text">Dashboard</span>
                 </a>
                 <ul class="sidenav-second-level collapse" id="collapseDashboard">
-                    <li><a class="" href="/dashboard/overview">Overview</a></li>
-                    <li><a class="" href="/dashboard/hourly_load">Hourly API Utilization</a></li>
-                    <li><a class="" href="/dashboard/version_usage">Multi Version API Utilization</a></li>
-                    <li><a class="" href="/dashboard/requests">Daily API Utilization</a></li>
-                    <li><a class="" href="/dashboard/endpoints">API Performance</a></li>
+                    <li><a class="" href="{{ url_for('dashboard.angular') }}overview">Overview</a></li>
+                    <li><a class="" href="{{ url_for('dashboard.angular') }}hourly_load">Hourly API Utilization</a></li>
+                    <li><a class="" href="{{ url_for('dashboard.angular') }}version_usage">Multi Version API Utilization</a></li>
+                    <li><a class="" href="{{ url_for('dashboard.angular') }}requests">Daily API Utilization</a></li>
+                    <li><a class="" href="{{ url_for('dashboard.angular') }}endpoints">API Performance</a></li>
+                </ul>
+            </li>
+
+            <li class="nav-item" data-toggle="tooltip" data-placement="right" title="" ng-show="menu.isset"
+                data-original-title="{% raw %}{{ menu.name }}{% endraw %}">
+                <a class="nav-link nav-link-collapse collapsed" data-toggle="collapse" href="#collapseEndpoint">
+                    <i class="fa fa-fw fa-asterisk"></i>
+                    <span class="nav-link-text">{% raw %}{{ menu.name }}{% endraw %}</span>
+                </a>
+                <ul class="sidenav-second-level collapse" id="collapseEndpoint">
+                    <li><a class="my-active" href="{{ url_for('dashboard.angular') }}endpoint/{% raw %}{{ menu.id }}{% endraw %}/hourly_load">
+                        Hourly API Utilization</a></li>
+                    <li><a class="" href="{{ url_for('dashboard.angular') }}endpoint/{% raw %}{{ menu.id }}{% endraw %}/version_user">
+                        User-Focused Multi-Version Performance</a></li>
+                    <li><a class="" href="{{ url_for('dashboard.angular') }}endpoint/{% raw %}{{ menu.id }}{% endraw %}/version_ip">
+                        IP-Focused Multi-Version Performance</a></li>
+                    <li><a class="" href="{{ url_for('dashboard.angular') }}endpoint/{% raw %}{{ menu.id }}{% endraw %}/versions">
+                        Per-Version Performance</a></li>
+                    <li><a class="" href="{{ url_for('dashboard.angular') }}endpoint/{% raw %}{{ menu.id }}{% endraw %}/users">
+                        Per-User Performance</a></li>
+                    <li><a class="" href="{{ url_for('dashboard.angular') }}endpoint/{% raw %}{{ menu.id }}{% endraw %}/profiler">
+                        Profiler</a></li>
+                    <li><a class="" href="{{ url_for('dashboard.angular') }}endpoint/{% raw %}{{ menu.id }}{% endraw %}/grouped-profiler">
+                        Grouped Profiler</a></li>
+                    <li><a class="" href="{{ url_for('dashboard.angular') }}endpoint/{% raw %}{{ menu.id }}{% endraw %}/outliers">
+                        Outliers</a></li>
                 </ul>
             </li>
 
@@ -54,14 +77,14 @@
                     <span class="nav-link-text">Testmonitor</span>
                 </a>
                 <ul class="sidenav-second-level collapse" id="collapseTestmonitor">
-                    <li><a class="" href="/dashboard/testmonitor">Overview</a></li>
-                    <li><a class="" href="/dashboard/endpoint_build_performance">Per-Build Endpoint Performance</a></li>
-                    <li><a class="" href="/dashboard/test_build_performance">Per-Build Test Performance</a></li>
+                    <li><a class="" href="{{ url_for('dashboard.angular') }}testmonitor">Overview</a></li>
+                    <li><a class="" href="{{ url_for('dashboard.angular') }}endpoint_build_performance">Per-Build Endpoint Performance</a></li>
+                    <li><a class="" href="{{ url_for('dashboard.angular') }}test_build_performance">Per-Build Test Performance</a></li>
                 </ul>
             </li>
 
             <li class="nav-item" title="Configuration">
-                <a class="nav-link " href="/dashboard/configuration">
+                <a class="nav-link " href="{{ url_for('dashboard.angular') }}configuration">
                     <i class="fa fa-fw fa-gear"></i>
                     <span class="nav-link-text">Configuration</span>
                 </a>

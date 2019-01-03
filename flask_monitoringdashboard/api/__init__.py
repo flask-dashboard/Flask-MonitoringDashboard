@@ -1,15 +1,17 @@
 import datetime
 
-from flask import jsonify
+from flask import jsonify, request
 
-from flask_monitoringdashboard import blueprint
+from flask_monitoringdashboard import blueprint, user_app
 from flask_monitoringdashboard.core.colors import get_color
+from flask_monitoringdashboard.core.measurement import add_decorator
 from flask_monitoringdashboard.core.timezone import to_local_datetime, to_utc_datetime
-from flask_monitoringdashboard.core.utils import get_details
+from flask_monitoringdashboard.core.utils import get_details, get_endpoint_details
 from flask_monitoringdashboard.database import Request, session_scope
 from flask_monitoringdashboard.database.count_group import count_requests_group, get_value
 from flask_monitoringdashboard.database.data_grouped import get_endpoint_data_grouped
-from flask_monitoringdashboard.database.endpoint import get_last_requested, get_endpoints
+from flask_monitoringdashboard.database.endpoint import get_last_requested, get_endpoints, update_endpoint, \
+    get_endpoint_by_name
 
 
 @blueprint.route('/api/info')
@@ -42,6 +44,7 @@ def get_overview():
             result.append({
                 'id': endpoint.id,
                 'name': endpoint.name,
+                'monitor': endpoint.monitor_level,
                 'color': get_color(endpoint.name),
                 'hits-today': get_value(hits_today, endpoint.id),
                 'hits-week': get_value(hits_week, endpoint.id),
@@ -52,6 +55,33 @@ def get_overview():
                 'last-accessed': get_value(access_times, endpoint.name, default=None)
             })
     return jsonify(result)
+
+
+@blueprint.route('/api/set_rule', methods=['POST'])
+def set_rule():
+    """
+    the data from the form is validated and processed, such that the required rule is monitored
+    """
+    endpoint_name = request.form['name']
+    value = int(request.form['value'])
+    with session_scope() as db_session:
+        update_endpoint(db_session, endpoint_name, value=value)
+
+        # Remove wrapper
+        original = getattr(user_app.view_functions[endpoint_name], 'original', None)
+        if original:
+            user_app.view_functions[endpoint_name] = original
+
+    with session_scope() as db_session:
+        add_decorator(get_endpoint_by_name(db_session, endpoint_name))
+
+    return 'OK'
+
+
+@blueprint.route('api/endpoint_info/<endpoint_id>')
+def endpoint_info(endpoint_id):
+    with session_scope() as db_session:
+        return jsonify(get_endpoint_details(db_session, endpoint_id))
 
 
 @blueprint.route('api/test')

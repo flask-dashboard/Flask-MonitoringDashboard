@@ -43,6 +43,10 @@ app.filter('duration', function () {
 app.filter('dateDifference', function () {
 
     return function (date) {
+        if (date === null){
+            return '';
+        }
+
         let utc = new Date().getTime();
         let parsed = Date.parse(date);
         let diff = utc - parsed;
