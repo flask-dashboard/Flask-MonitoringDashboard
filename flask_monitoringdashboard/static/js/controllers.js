@@ -54,6 +54,22 @@ function OverviewController($scope, $http, $location, DTOptionsBuilder, menuHelp
     });
 }
 
+function ConfigurationController($scope, $http, menuHelper){
+    menuHelper.reset();
+
+    $scope.details = {};
+    $scope.config = {};
+
+    $http.get('api/deploy_details').then(function(response){
+       $scope.details = response.data;
+    });
+    $http.get('api/deploy_config').then(function(response){
+       $scope.config = response.data;
+       console.log(response.data);
+    });
+}
+
+
 function EndpointController($scope, $http, $routeParams, menuHelper) {
     menuHelper.setId($routeParams.endpointId);
 }

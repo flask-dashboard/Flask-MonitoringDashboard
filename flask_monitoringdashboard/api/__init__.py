@@ -2,7 +2,7 @@ import datetime
 
 from flask import jsonify, request
 
-from flask_monitoringdashboard import blueprint, user_app
+from flask_monitoringdashboard import blueprint, user_app, config
 from flask_monitoringdashboard.core.colors import get_color
 from flask_monitoringdashboard.core.measurement import add_decorator
 from flask_monitoringdashboard.core.timezone import to_local_datetime, to_utc_datetime
@@ -76,6 +76,28 @@ def set_rule():
         add_decorator(get_endpoint_by_name(db_session, endpoint_name))
 
     return 'OK'
+
+
+@blueprint.route('api/deploy_details')
+def deploy_details():
+    with session_scope() as db_session:
+        details = get_details(db_session)
+    details['first-request'] = to_local_datetime(datetime.datetime.fromtimestamp(details['first-request']))
+    details['first-request-version'] = to_local_datetime(datetime.datetime.
+                                                         fromtimestamp(details['first-request-version']))
+    return jsonify(details)
+
+
+@blueprint.route('api/deploy_config')
+def deploy_config():
+    return jsonify({
+        'database_name': config.database_name,
+        'username': config.username,
+        'guest_username': config.guest_username,
+        'outlier_detection_constant': config.outlier_detection_constant,
+        'timezone': str(config.timezone),
+        'colors': config.colors
+    })
 
 
 @blueprint.route('api/endpoint_info/<endpoint_id>')

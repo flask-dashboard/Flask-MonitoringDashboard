@@ -13,6 +13,10 @@ app.config(function ($locationProvider, $routeProvider) {
             templateUrl: 'static/pages/page1.html',
             controller: EndpointController
         })
+        .when('/configuration', {
+            templateUrl: 'static/pages/configuration.html',
+            controller: ConfigurationController
+        })
         .otherwise({
             redirectTo: '/overview'
         });
