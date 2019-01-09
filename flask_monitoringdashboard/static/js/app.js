@@ -9,6 +9,10 @@ app.config(function ($locationProvider, $routeProvider) {
             templateUrl: 'static/pages/overview.html',
             controller: OverviewController
         })
+        .when('/hourly_load', {
+            templateUrl: 'static/pages/hourly_load.html',
+            controller: HourlyLoadController
+        })
         .when('/endpoint/:endpointId', {
             templateUrl: 'static/pages/page1.html',
             controller: EndpointController

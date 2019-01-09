@@ -1,0 +1,53 @@
+<div>
+    <div class="card mb-3">
+        <div class="card-header"><h4>Hourly API Utilization</h4></div>
+        <div class="card-body">
+            <div id="chart"></div>
+        </div>
+    </div>
+
+
+    <div class="row">
+        <div class="col-7">
+            <div class="card">
+                <div class="card-header"><h6>Select the date interval</h6></div>
+                <div class="card-body">
+                    <form>
+                        <div class="form-group row">
+                            <label for="startDate" class="col-sm-2 col-form-label">Start date</label>
+                            <div class="col-sm-10">
+                                <input type="date" class="form-control" id="startDate" ng-model="startDate">
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="endDate" class="col-sm-2 col-form-label">End date</label>
+                            <div class="col-sm-10">
+                                <input type="date" class="form-control" id="startDate" ng-model="endDate">
+                            </div>
+                        </div>
+                        <button type="submit" class="btn btn-primary" ng-click="refresh()">Update</button>
+                    </form>
+
+                </div>
+            </div>
+        </div>
+        <div class="col-5" style="float: right">
+            <div class="card">
+                <div class="card-header"><h6>Information</h6></div>
+                <div class="card-body">
+                    <b>Graph</b>
+                    <p> You can hover the graph with your mouse to see the actual values. You can also use
+                        the buttons at the top of the graph to select a subset of graph, scale it accordingly
+                        or save the graph as a PNG image.</p>
+                    <b>Axes</b>
+                    <p> The X-axis presents a number of days. The Y-axis presents every hour of the day.</p>
+                    <b>Content</b>
+                    <p> The color of the cell presents the number of requests that the application received
+                        in a single hour. The darker the cell, the more requests it has processed. This
+                        information can be used to validate on which moment of the day the Flask application
+                        processes to most requests.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

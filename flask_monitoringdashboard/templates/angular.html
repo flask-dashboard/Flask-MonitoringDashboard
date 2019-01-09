@@ -70,19 +70,6 @@
                 </ul>
             </li>
 
-            <li class="nav-item" title="Testmonitor">
-                <a class="nav-link nav-link-collapse collapsed"
-                   data-toggle="collapse" href="#collapseTestmonitor">
-                    <i class="fa fa-fw fa-desktop"></i>
-                    <span class="nav-link-text">Testmonitor</span>
-                </a>
-                <ul class="sidenav-second-level collapse" id="collapseTestmonitor">
-                    <li><a class="" href="{{ url_for('dashboard.angular') }}testmonitor">Overview</a></li>
-                    <li><a class="" href="{{ url_for('dashboard.angular') }}endpoint_build_performance">Per-Build Endpoint Performance</a></li>
-                    <li><a class="" href="{{ url_for('dashboard.angular') }}test_build_performance">Per-Build Test Performance</a></li>
-                </ul>
-            </li>
-
             <li class="nav-item" title="Configuration">
                 <a class="nav-link " href="{{ url_for('dashboard.angular') }}configuration">
                     <i class="fa fa-fw fa-gear"></i>
@@ -146,6 +133,7 @@
     </div>
 </div>
 
+<script src="https://cdn.plot.ly/plotly-1.2.0.min.js"></script>
 <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js"></script>
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js"></script>

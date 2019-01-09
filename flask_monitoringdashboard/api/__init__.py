@@ -1,6 +1,7 @@
 import datetime
 
 from flask import jsonify, request
+from plotly.utils import numpy
 
 from flask_monitoringdashboard import blueprint, user_app, config
 from flask_monitoringdashboard.core.colors import get_color
@@ -11,7 +12,7 @@ from flask_monitoringdashboard.database import Request, session_scope
 from flask_monitoringdashboard.database.count_group import count_requests_group, get_value
 from flask_monitoringdashboard.database.data_grouped import get_endpoint_data_grouped
 from flask_monitoringdashboard.database.endpoint import get_last_requested, get_endpoints, update_endpoint, \
-    get_endpoint_by_name
+    get_endpoint_by_name, get_num_requests
 
 
 @blueprint.route('/api/info')
@@ -104,6 +105,32 @@ def deploy_config():
 def endpoint_info(endpoint_id):
     with session_scope() as db_session:
         return jsonify(get_endpoint_details(db_session, endpoint_id))
+
+
+@blueprint.route('api/hourly_load/<start_date>/<end_date>')
+# both days must be in the form: yyyy-mm-dd
+def hourly_load(start_date, end_date):
+    start_date = datetime.datetime.strptime(start_date, '%Y-%m-%d')
+    end_date = datetime.datetime.strptime(end_date, '%Y-%m-%d')
+    numdays = (end_date - start_date).days
+
+    # list of hours: 0:00 - 23:00
+    hours = ['0{}:00'.format(h) for h in range(0, 10)] + ['{}:00'.format(h) for h in range(10, 24)]
+    heatmap_data = numpy.zeros((len(hours), numdays))
+
+    start_datetime = to_utc_datetime(datetime.datetime.combine(start_date, datetime.time(0, 0, 0, 0)))
+    end_datetime = to_utc_datetime(datetime.datetime.combine(end_date, datetime.time(23, 59, 59)))
+
+    with session_scope() as db_session:
+        for time, count in get_num_requests(db_session, None, start_datetime, end_datetime):
+            parsed_time = datetime.datetime.strptime(time, '%Y-%m-%d %H:%M:%S')
+            day_index = (parsed_time - start_datetime).days
+            hour_index = int(to_local_datetime(parsed_time).strftime('%H'))
+            heatmap_data[hour_index][day_index] = count
+    return jsonify({
+        'days': [(start_date + datetime.timedelta(days=i)).strftime('%Y-%m-%d') for i in range(numdays+1)],
+        "data": heatmap_data.tolist()
+    })
 
 
 @blueprint.route('api/test')
