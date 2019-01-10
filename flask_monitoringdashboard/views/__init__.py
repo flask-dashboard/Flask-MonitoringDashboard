@@ -5,16 +5,9 @@
 from flask import render_template
 from flask.helpers import send_from_directory
 
-from flask_monitoringdashboard import blueprint, loc
-# Import more route-functions
+from flask_monitoringdashboard import loc
+from flask_monitoringdashboard.api import *
 from . import auth
-from flask_monitoringdashboard.api import get_info
-# from . import dashboard
-# from . import details
-# from . import export
-# from . import rules
-# from . import configuration
-# from . import testmonitor
 
 
 @blueprint.route('/static/<path:filename>')
@@ -29,5 +22,6 @@ def static(filename):
 
 @blueprint.route('/', defaults={'path': ''})
 @blueprint.route('/<path:path>')
-def angular(path):
+@secure
+def index(path):
     return render_template('angular.html')

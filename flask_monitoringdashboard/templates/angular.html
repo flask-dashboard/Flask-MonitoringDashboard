@@ -2,7 +2,7 @@
 <html lang="en" ng-app="fmdApp">
 <head>
     <title>Flask-MonitoringDashboard</title>
-    <base href="{{ url_for('dashboard.angular') }}">
+    <base href="{{ url_for('dashboard.index') }}">
     <meta charset="utf-8">
 
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
@@ -36,11 +36,11 @@
                     <span class="nav-link-text">Dashboard</span>
                 </a>
                 <ul class="sidenav-second-level collapse" id="collapseDashboard">
-                    <li><a class="" href="{{ url_for('dashboard.angular') }}overview">Overview</a></li>
-                    <li><a class="" href="{{ url_for('dashboard.angular') }}hourly_load">Hourly API Utilization</a></li>
-                    <li><a class="" href="{{ url_for('dashboard.angular') }}version_usage">Multi Version API Utilization</a></li>
-                    <li><a class="" href="{{ url_for('dashboard.angular') }}requests">Daily API Utilization</a></li>
-                    <li><a class="" href="{{ url_for('dashboard.angular') }}endpoints">API Performance</a></li>
+                    <li><a class="" href="{{ url_for('dashboard.index') }}overview">Overview</a></li>
+                    <li><a class="" href="{{ url_for('dashboard.index') }}hourly_load">Hourly API Utilization</a></li>
+                    <li><a class="" href="{{ url_for('dashboard.index') }}version_usage">Multi Version API Utilization</a></li>
+                    <li><a class="" href="{{ url_for('dashboard.index') }}requests">Daily API Utilization</a></li>
+                    <li><a class="" href="{{ url_for('dashboard.index') }}endpoints">API Performance</a></li>
                 </ul>
             </li>
 
@@ -51,27 +51,27 @@
                     <span class="nav-link-text">{% raw %}{{ menu.name }}{% endraw %}</span>
                 </a>
                 <ul class="sidenav-second-level collapse" id="collapseEndpoint">
-                    <li><a class="my-active" href="{{ url_for('dashboard.angular') }}endpoint/{% raw %}{{ menu.id }}{% endraw %}/hourly_load">
+                    <li><a class="my-active" href="{{ url_for('dashboard.index') }}endpoint/{% raw %}{{ menu.id }}{% endraw %}/hourly_load">
                         Hourly API Utilization</a></li>
-                    <li><a class="" href="{{ url_for('dashboard.angular') }}endpoint/{% raw %}{{ menu.id }}{% endraw %}/version_user">
+                    <li><a class="" href="{{ url_for('dashboard.index') }}endpoint/{% raw %}{{ menu.id }}{% endraw %}/version_user">
                         User-Focused Multi-Version Performance</a></li>
-                    <li><a class="" href="{{ url_for('dashboard.angular') }}endpoint/{% raw %}{{ menu.id }}{% endraw %}/version_ip">
+                    <li><a class="" href="{{ url_for('dashboard.index') }}endpoint/{% raw %}{{ menu.id }}{% endraw %}/version_ip">
                         IP-Focused Multi-Version Performance</a></li>
-                    <li><a class="" href="{{ url_for('dashboard.angular') }}endpoint/{% raw %}{{ menu.id }}{% endraw %}/versions">
+                    <li><a class="" href="{{ url_for('dashboard.index') }}endpoint/{% raw %}{{ menu.id }}{% endraw %}/versions">
                         Per-Version Performance</a></li>
-                    <li><a class="" href="{{ url_for('dashboard.angular') }}endpoint/{% raw %}{{ menu.id }}{% endraw %}/users">
+                    <li><a class="" href="{{ url_for('dashboard.index') }}endpoint/{% raw %}{{ menu.id }}{% endraw %}/users">
                         Per-User Performance</a></li>
-                    <li><a class="" href="{{ url_for('dashboard.angular') }}endpoint/{% raw %}{{ menu.id }}{% endraw %}/profiler">
+                    <li><a class="" href="{{ url_for('dashboard.index') }}endpoint/{% raw %}{{ menu.id }}{% endraw %}/profiler">
                         Profiler</a></li>
-                    <li><a class="" href="{{ url_for('dashboard.angular') }}endpoint/{% raw %}{{ menu.id }}{% endraw %}/grouped-profiler">
+                    <li><a class="" href="{{ url_for('dashboard.index') }}endpoint/{% raw %}{{ menu.id }}{% endraw %}/grouped-profiler">
                         Grouped Profiler</a></li>
-                    <li><a class="" href="{{ url_for('dashboard.angular') }}endpoint/{% raw %}{{ menu.id }}{% endraw %}/outliers">
+                    <li><a class="" href="{{ url_for('dashboard.index') }}endpoint/{% raw %}{{ menu.id }}{% endraw %}/outliers">
                         Outliers</a></li>
                 </ul>
             </li>
 
             <li class="nav-item" title="Configuration">
-                <a class="nav-link " href="{{ url_for('dashboard.angular') }}configuration">
+                <a class="nav-link " href="{{ url_for('dashboard.index') }}configuration">
                     <i class="fa fa-fw fa-gear"></i>
                     <span class="nav-link-text">Configuration</span>
                 </a>
@@ -126,7 +126,7 @@
                 <div class="modal-body">Are you sure you want to logout?</div>
                 <div class="modal-footer">
                     <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
-                    <a class="btn btn-primary" href="{{ url_for('dashboard.logout') }}">Logout</a>
+                    <button class="btn btn-primary" onclick="document.location.href='{{ url_for('dashboard.logout') }}';">Logout</button>
                 </div>
             </div>
         </div>
