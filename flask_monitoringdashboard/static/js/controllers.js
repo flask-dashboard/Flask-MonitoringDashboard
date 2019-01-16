@@ -73,7 +73,6 @@ function HourlyLoadController($scope, $http, menuHelper) {
     $scope.endDate = new Date();
     $scope.startDate = new Date();
     $scope.startDate.setDate($scope.startDate.getDate() - 14);
-    $scope.data = [];
 
     let parseDate = function (date) {
         return date.getFullYear() + "-" + ("0" + (date.getMonth() + 1)).slice(-2)
@@ -153,6 +152,58 @@ function MultiVersionController($scope, $http, menuHelper) {
             });
         });
     }
+}
+
+function DailyUtilizationController($scope, $http, menuHelper) {
+    menuHelper.reset();
+    $scope.endDate = new Date();
+    $scope.startDate = new Date();
+    $scope.startDate.setDate($scope.startDate.getDate() - 10);
+    $scope.endpoints = [];
+
+    $http.get('api/endpoints').then(function (response) {
+        $scope.endpoints = response.data.map(d => d.name);
+    });
+
+    let parseDate = function (date) {
+        return date.getFullYear() + "-" + ("0" + (date.getMonth() + 1)).slice(-2)
+            + "-" + ("0" + date.getDate()).slice(-2);
+    };
+
+    $scope.refresh = function () {
+        let start = parseDate($scope.startDate);
+        let end = parseDate($scope.endDate);
+
+        $http.get('api/requests/' + start + '/' + end).then(function (response) {
+            console.log(response.data);
+
+            let data = response.data.data.map(obj => {
+                return {
+                    x: obj.values,
+                    y: response.data.days,
+                    name: obj.name,
+                    type: 'bar',
+                    orientation: 'h'
+                };
+            });
+
+            Plotly.newPlot('chart', data, {
+                barmode: 'stack',
+                height: 600,
+                xaxis: {
+                    title: 'Number of requests',
+                },
+                yaxis: {
+                    type: 'category',
+                    autorange: 'reversed'
+                }
+            }, {
+                displaylogo: false,
+                responsive: true
+            });
+        });
+    };
+    $scope.refresh();
 }
 
 

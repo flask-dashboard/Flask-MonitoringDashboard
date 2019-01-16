@@ -10,7 +10,7 @@ from flask_monitoringdashboard.core.measurement import add_decorator
 from flask_monitoringdashboard.core.timezone import to_local_datetime, to_utc_datetime
 from flask_monitoringdashboard.core.utils import get_details, get_endpoint_details
 from flask_monitoringdashboard.database import Request, session_scope, row2dict
-from flask_monitoringdashboard.database.count_group import count_requests_group, get_value
+from flask_monitoringdashboard.database.count_group import count_requests_group, get_value, count_requests_per_day
 from flask_monitoringdashboard.database.data_grouped import get_endpoint_data_grouped
 from flask_monitoringdashboard.database.endpoint import get_last_requested, get_endpoints, update_endpoint, \
     get_endpoint_by_name, get_num_requests
@@ -99,6 +99,28 @@ def multi_version():
         return jsonify(hits.tolist())
 
 
+@blueprint.route('/api/requests/<start_date>/<end_date>')
+@secure
+def num_requests(start_date, end_date):
+    with session_scope() as db_session:
+        start_date = datetime.datetime.strptime(start_date, '%Y-%m-%d')
+        end_date = datetime.datetime.strptime(end_date, '%Y-%m-%d')
+        numdays = (end_date - start_date).days + 1
+        days = [start_date + datetime.timedelta(days=i) for i in range(numdays)]
+
+        hits = count_requests_per_day(db_session, days)
+        endpoints = get_endpoints(db_session)
+        data = [{
+            'name': end.name,
+            'values': [get_value(hits_day, end.id) for hits_day in hits]
+        } for end in endpoints]
+
+        return jsonify({
+            'days': [d.strftime('%Y-%m-%d') for d in days],
+            'data': data
+        })
+
+
 @blueprint.route('/api/set_rule', methods=['POST'])
 @admin_secure
 def set_rule():
@@ -158,7 +180,7 @@ def endpoint_info(endpoint_id):
 def hourly_load(start_date, end_date):
     start_date = datetime.datetime.strptime(start_date, '%Y-%m-%d')
     end_date = datetime.datetime.strptime(end_date, '%Y-%m-%d')
-    numdays = (end_date - start_date).days
+    numdays = (end_date - start_date).days + 1
 
     # list of hours: 0:00 - 23:00
     hours = ['0{}:00'.format(h) for h in range(0, 10)] + ['{}:00'.format(h) for h in range(10, 24)]
@@ -174,6 +196,6 @@ def hourly_load(start_date, end_date):
             hour_index = int(to_local_datetime(parsed_time).strftime('%H'))
             heatmap_data[hour_index][day_index] = count
     return jsonify({
-        'days': [(start_date + datetime.timedelta(days=i)).strftime('%Y-%m-%d') for i in range(numdays + 1)],
+        'days': [(start_date + datetime.timedelta(days=i)).strftime('%Y-%m-%d') for i in range(numdays)],
         "data": heatmap_data.tolist()
     })
