@@ -101,12 +101,58 @@ function HourlyLoadController($scope, $http, menuHelper) {
                 displaylogo: false,
                 responsive: true
             });
-
-
         });
     };
 
     $scope.refresh();
+}
+
+function MultiVersionController($scope, $http, menuHelper) {
+    menuHelper.reset();
+    $scope.versions = [];
+    $scope.selectedVersions = $scope.versions;
+    $scope.endpoints = [];
+    $scope.selectedEndpoints = [];
+
+    $http.get('api/versions').then(function (response) {
+        $scope.versions = response.data;
+        $scope.selectedVersions = $scope.versions.slice(-10);
+
+        $http.get('api/endpoints').then(function (response) {
+            $scope.endpoints = response.data.map(d => d.name);
+            $scope.selectedEndpoints = $scope.endpoints;
+
+            $scope.refresh();
+        })
+    });
+
+    $scope.refresh = function () {
+        $http.post('api/multi_version', {
+            data: {
+                versions: $scope.selectedVersions,
+                endpoints: $scope.selectedEndpoints
+            }
+        }).then(function (response) {
+            Plotly.newPlot('chart', [{
+                x: $scope.selectedVersions,
+                y: $scope.selectedEndpoints,
+                z: response.data,
+                type: 'heatmap'
+            }], {
+                height: 600,
+                xaxis: {
+                    type: 'category',
+                    title: 'Versions'
+                },
+                yaxis: {
+                    type: 'category'
+                }
+            }, {
+                displaylogo: false,
+                responsive: true
+            });
+        });
+    }
 }
 
 

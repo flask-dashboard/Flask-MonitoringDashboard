@@ -14,7 +14,7 @@ def login():
     """
     if session.get(config.link + '_logged_in'):
         return redirect(url_for(MAIN_PAGE))
-    
+
     if request.method == 'POST':
         name = request.form['name']
         password = request.form['password']

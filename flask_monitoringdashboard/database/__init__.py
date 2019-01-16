@@ -190,5 +190,20 @@ def session_scope():
         session.close()
 
 
+def row2dict(row):
+    """
+    Converts a database-object to a python dict.
+    This function can be used to serialize an object into JSON, as this cannot be
+    directly done (but a dict can).
+    :param row: any object
+    :return: a python dict
+    """
+    d = {}
+    for column in row.__table__.columns:
+        d[column.name] = str(getattr(row, column.name))
+
+    return d
+
+
 def get_tables():
     return [Endpoint, Request, Outlier, StackLine, CodeLine, Test, TestResult, TestEndpoint]

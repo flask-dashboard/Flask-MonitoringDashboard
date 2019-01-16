@@ -12,7 +12,7 @@ def create_app():
 
     app = Flask(__name__)
 
-    dashboard.config.version = '3.1'
+    dashboard.config.version = '3.0'
     dashboard.config.database_name = 'sqlite:///flask_monitoring_dashboard_v10.db'
     # dashboard.config.database_name = 'postgresql://user:password@localhost:5432/db_name'
     # dashboard.config.database_name = 'mysql+pymysql://user:password@localhost:3306/db_name'
@@ -25,6 +25,10 @@ def create_app():
     @app.route('/endpoint')
     def endpoint():
         f()
+        return 'Ok'
+
+    @app.route('/endpoint2')
+    def endpoint2():
         return 'Ok'
 
     return app

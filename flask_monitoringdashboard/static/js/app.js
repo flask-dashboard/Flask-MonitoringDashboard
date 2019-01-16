@@ -13,6 +13,10 @@ app.config(function ($locationProvider, $routeProvider) {
             templateUrl: 'static/pages/hourly_load.html',
             controller: HourlyLoadController
         })
+        .when('/multi_version', {
+            templateUrl: 'static/pages/multi_version.html',
+            controller: MultiVersionController
+        })
         .when('/endpoint/:endpointId', {
             templateUrl: 'static/pages/page1.html',
             controller: EndpointController

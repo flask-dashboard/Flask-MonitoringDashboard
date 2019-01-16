@@ -1,7 +1,7 @@
 import datetime
+import numpy
 
-from flask import jsonify, request
-from plotly.utils import numpy
+from flask import jsonify, request, json
 
 from flask_monitoringdashboard import blueprint, user_app, config
 from flask_monitoringdashboard.core.auth import secure, admin_secure
@@ -9,11 +9,12 @@ from flask_monitoringdashboard.core.colors import get_color
 from flask_monitoringdashboard.core.measurement import add_decorator
 from flask_monitoringdashboard.core.timezone import to_local_datetime, to_utc_datetime
 from flask_monitoringdashboard.core.utils import get_details, get_endpoint_details
-from flask_monitoringdashboard.database import Request, session_scope
+from flask_monitoringdashboard.database import Request, session_scope, row2dict
 from flask_monitoringdashboard.database.count_group import count_requests_group, get_value
 from flask_monitoringdashboard.database.data_grouped import get_endpoint_data_grouped
 from flask_monitoringdashboard.database.endpoint import get_last_requested, get_endpoints, update_endpoint, \
     get_endpoint_by_name, get_num_requests
+from flask_monitoringdashboard.database.versions import get_versions
 
 
 @blueprint.route('/api/info')
@@ -59,6 +60,43 @@ def get_overview():
                 'last-accessed': get_value(access_times, endpoint.name, default=None)
             })
     return jsonify(result)
+
+
+@blueprint.route('/api/versions')
+@secure
+def versions():
+    with session_scope() as db_session:
+        return jsonify(get_versions(db_session))
+
+
+@blueprint.route('/api/endpoints')
+@secure
+def endpoints():
+    with session_scope() as db_session:
+        return jsonify([row2dict(row) for row in get_endpoints(db_session)])
+
+
+@blueprint.route('api/multi_version', methods=['POST'])
+@secure
+def multi_version():
+    data = json.loads(request.data)['data']
+    endpoints = data['endpoints']
+    versions = data['versions']
+
+    with session_scope() as db_session:
+        endpoints = [get_endpoint_by_name(db_session, name) for name in endpoints]
+        requests = [count_requests_group(db_session, Request.version_requested == v) for v in versions]
+
+        total_hits = numpy.zeros(len(versions))
+        hits = numpy.zeros((len(endpoints), len(versions)))
+
+        for i, _ in enumerate(versions):
+            total_hits[i] = max(1, sum([value for key, value in requests[i]]))
+
+        for j, _ in enumerate(endpoints):
+            for i, _ in enumerate(versions):
+                hits[j][i] = get_value(requests[i], endpoints[j].id) * 100 / total_hits[i]
+        return jsonify(hits.tolist())
 
 
 @blueprint.route('/api/set_rule', methods=['POST'])
@@ -136,6 +174,6 @@ def hourly_load(start_date, end_date):
             hour_index = int(to_local_datetime(parsed_time).strftime('%H'))
             heatmap_data[hour_index][day_index] = count
     return jsonify({
-        'days': [(start_date + datetime.timedelta(days=i)).strftime('%Y-%m-%d') for i in range(numdays+1)],
+        'days': [(start_date + datetime.timedelta(days=i)).strftime('%Y-%m-%d') for i in range(numdays + 1)],
         "data": heatmap_data.tolist()
     })
