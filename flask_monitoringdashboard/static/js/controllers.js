@@ -62,7 +62,7 @@ function ConfigurationController($scope, $http, menuService) {
     });
 }
 
-function HourlyLoadController($scope, $http, menuService, plotlyService, infoService, formService) {
+function HourlyLoadController($http, menuService, plotlyService, infoService, formService) {
     menuService.reset('hourly_load');
 
     // Set the information box
@@ -72,11 +72,14 @@ function HourlyLoadController($scope, $http, menuService, plotlyService, infoSer
         'can be used to validate on which moment of the day the Flask application processes to most requests.';
 
     // Set the form handler
-    $scope.handler = formService;
-    $scope.handler.setForm('daterangeform');
-    $scope.handler.setReload(function () {
-        let start = $scope.handler.getStartDate();
-        let end = $scope.handler.getEndDate();
+    formService.clear();
+    let start = formService.addDate('Start date');
+    formService.addDate('End date');
+    start.value.setDate(start.value.getDate() - 14);
+
+    formService.setReload(function () {
+        let start = formService.getDate('Start date');
+        let end = formService.getDate('End date');
         let times = [...Array(24).keys()].map(d => d + ":00");
 
         $http.get('api/hourly_load/' + start + '/' + end).then(function (response) {
@@ -87,9 +90,10 @@ function HourlyLoadController($scope, $http, menuService, plotlyService, infoSer
             });
         });
     });
+    formService.reload();
 }
 
-function MultiVersionController($scope, $http, menuService, formService, infoService, plotlyService) {
+function MultiVersionController($http, menuService, formService, infoService, plotlyService) {
     menuService.reset('multi_version');
 
     // Set the information box
@@ -102,31 +106,33 @@ function MultiVersionController($scope, $http, menuService, formService, infoSer
         'which endpoints processes the most requests.';
 
     // Set the form handler
-    $scope.handler = formService;
-    $scope.handler.setForm('multiVersionsEndpoints');
+    formService.clear();
+    formService.addVersions();
+    formService.addEndpoints();
 
-    $scope.handler.setReload(function () {
+    formService.setReload(function () {
+        let versions = formService.getMultiSelection('versions');
+        let endpoints = formService.getMultiSelection('endpoints');
         $http.post('api/multi_version', {
             data: {
-                versions: $scope.handler.selectedVersions,
-                endpoints: $scope.handler.selectedEndpoints
+                versions: versions,
+                endpoints: endpoints
             }
         }).then(function (response) {
-            plotlyService.heatmap($scope.handler.selectedVersions, $scope.handler.selectedEndpoints,
-                response.data, {
-                    xaxis: {
-                        type: 'category',
-                        title: 'Versions'
-                    },
-                    yaxis: {
-                        type: 'category'
-                    }
-                });
+            plotlyService.heatmap(versions, endpoints, response.data, {
+                xaxis: {
+                    type: 'category',
+                    title: 'Versions'
+                },
+                yaxis: {
+                    type: 'category'
+                }
+            });
         });
     });
 }
 
-function DailyUtilizationController($scope, $http, menuService, formService, infoService, plotlyService) {
+function DailyUtilizationController($http, menuService, formService, infoService, plotlyService) {
     menuService.reset('daily_load');
 
     // Set the information box
@@ -137,12 +143,14 @@ function DailyUtilizationController($scope, $http, menuService, formService, inf
         'information from this graph can be used to see on which days (a subset of) the endpoints are used to most.';
 
     // Set the form handler
-    $scope.handler = formService;
-    $scope.handler.days_offset = 10;
-    $scope.handler.setForm('daterangeform');
-    $scope.handler.setReload(function () {
-        let start = formService.getStartDate();
-        let end = formService.getEndDate();
+    formService.clear();
+    let start = formService.addDate('Start date');
+    start.value.setDate(start.value.getDate() - 10);
+    formService.addDate('End date');
+
+    formService.setReload(function () {
+        let start = formService.getDate('Start date');
+        let end = formService.getDate('End date');
 
         $http.get('api/requests/' + start + '/' + end).then(function (response) {
             let data = response.data.data.map(obj => {
@@ -167,16 +175,10 @@ function DailyUtilizationController($scope, $http, menuService, formService, inf
             });
         });
     });
-
-    $scope.endpoints = [];
-
-    $http.get('api/endpoints').then(function (response) {
-        $scope.endpoints = response.data.map(d => d.name);
-        $scope.handler.reload();
-    });
+    formService.reload();
 }
 
-function ApiPerformanceController($scope, $http, menuService, formService, infoService, plotlyService) {
+function ApiPerformanceController($http, menuService, formService, infoService, plotlyService) {
     menuService.reset('api_performance');
 
     // Set the information box
@@ -186,12 +188,13 @@ function ApiPerformanceController($scope, $http, menuService, formService, infoS
         'across each other. This information can be used to validate which endpoints needs to be improved.';
 
     // Set the form handler
-    $scope.handler = formService;
-    $scope.handler.setForm('multiEndpoints');
-    $scope.handler.setReload(function () {
+    formService.clear();
+    formService.addEndpoints();
+
+    formService.setReload(function () {
         $http.post('api/api_performance', {
             data: {
-                endpoints: $scope.handler.selectedEndpoints
+                endpoints: formService.getMultiSelection('endpoints')
             }
         }).then(function (response) {
             let data = response.data.map(obj => {
@@ -224,4 +227,8 @@ app.controller('MenuController', function ($scope, menuService) {
 
 app.controller('InfoController', function ($scope, infoService) {
     $scope.info = infoService;
+});
+
+app.controller('FormController', function ($scope, formService) {
+    $scope.handler = formService;
 });

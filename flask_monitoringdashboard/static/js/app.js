@@ -99,45 +99,66 @@ app.service('plotlyService', function () {
 });
 
 app.service('formService', function ($http) {
-
-    // Form variables
-    // - daterangeform
-    this.endDate = new Date();
-    this.startDate = new Date();
-
-    // - multiVersionsEndpoints
-    // - multiEndpoints (only 3rd and 4th)
-    this.versions = [];
-    this.selectedVersions = this.versions;
-    this.endpoints = [];
-    this.selectedEndpoints = [];
-
-    // Service variables
-    this.form = '';
-    this.days_offset = 14;
     let that = this;
 
-    this.setForm = function (formType) {
-        that.form = formType;
-        if (formType == 'multiVersionsEndpoints') {
-            $http.get('api/versions').then(function (response) {
-                that.versions = response.data;
-                that.selectedVersions = that.versions.slice(-10);
-                getEndpointNames();
-            });
-        } else if (formType == 'daterangeform') {
-            that.startDate.setDate(that.startDate.getDate() - that.days_offset);
+    this.dateFields = [];
+    this.multiFields = [];
+
+    this.clear = function(){
+        that.multiFields = [];
+        that.dateFields = [];
+    };
+
+    function addMultiSelect(name){
+        let obj = {
+            'name': name,
+            'values': [],
+            'selected': [], // subset of 'items'
+            'initialized': false
+        };
+        that.multiFields.push(obj);
+        return obj;
+    }
+
+    this.initialize = function(obj){
+        obj.initialized = true;
+        if (that.multiFields.every(o => o.initialized)){
             that.reload();
-        } else { // formType == 'multiEndpoints'
-            getEndpointNames();
         }
     };
 
-    function getEndpointNames() {
-        $http.get('api/endpoints').then(function (response) {
-            that.endpoints = response.data.map(d => d.name);
-            that.selectedEndpoints = that.endpoints;
-            that.reload();
+    this.getMultiSelection = function(name){
+        return that.multiFields.find(o => o.name == name).selected;
+    };
+
+    this.addDate = function(name){
+        let obj = {
+            'name': name,
+            'value': new Date(),
+        };
+        that.dateFields.push(obj);
+        return obj;
+    };
+
+    this.getDate = function(name){
+        return parseDate(that.dateFields.find(o => o.name == name).value);
+    };
+
+    this.addVersions = function(){
+        let obj = addMultiSelect('versions');
+        $http.get('api/versions').then(function (response) {
+            obj.values = response.data;
+            obj.selected = response.data.slice(-10);
+            that.initialize(obj);
+        });
+    };
+
+    this.addEndpoints = function(){
+        let obj = addMultiSelect('endpoints');
+        $http.get('api/endpoints').then(function(response){
+            obj.values = response.data.map(d => d.name);
+            obj.selected = obj.values;
+            that.initialize(obj);
         });
     };
 
@@ -146,16 +167,7 @@ app.service('formService', function ($http) {
             + "-" + ("0" + date.getDate()).slice(-2);
     };
 
-
     this.reload = function () {
-    };
-
-    this.getStartDate = function () {
-        return parseDate(this.startDate);
-    };
-
-    this.getEndDate = function () {
-        return parseDate(this.endDate);
     };
     this.setReload = function (f) {
         this.reload = f;
