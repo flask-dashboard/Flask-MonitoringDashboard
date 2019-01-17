@@ -8,7 +8,7 @@ from flask_monitoringdashboard.core.auth import secure, admin_secure
 from flask_monitoringdashboard.core.colors import get_color
 from flask_monitoringdashboard.core.measurement import add_decorator
 from flask_monitoringdashboard.core.timezone import to_local_datetime, to_utc_datetime
-from flask_monitoringdashboard.core.utils import get_details, get_endpoint_details
+from flask_monitoringdashboard.core.utils import get_details, get_endpoint_details, simplify
 from flask_monitoringdashboard.database import Request, session_scope, row2dict
 from flask_monitoringdashboard.database.count_group import count_requests_group, get_value, count_requests_per_day
 from flask_monitoringdashboard.database.data_grouped import get_endpoint_data_grouped
@@ -119,6 +119,21 @@ def num_requests(start_date, end_date):
             'days': [d.strftime('%Y-%m-%d') for d in days],
             'data': data
         })
+
+
+@blueprint.route('/api/api_performance', methods=['POST'])
+@secure
+def api_performance():
+    data = json.loads(request.data)['data']
+    endpoints = data['endpoints']
+
+    with session_scope() as db_session:
+        db_endpoints = [get_endpoint_by_name(db_session, end) for end in endpoints]
+        data = get_endpoint_data_grouped(db_session, lambda x: simplify(x, 10))
+        return jsonify([{
+            'name': end.name,
+            'values': get_value(data, end.id, default=[])
+        } for end in db_endpoints])
 
 
 @blueprint.route('/api/set_rule', methods=['POST'])

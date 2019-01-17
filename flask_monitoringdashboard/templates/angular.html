@@ -19,16 +19,12 @@
 
 <body class="fixed-nav sticky-footer bg-dark" id="page-top">
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top" id="mainNav">
-    <div class="navbar-brand">
-        <h4>Flask Monitoring Dashboard</h4>
+    <div class="navbar-brand brand-plain">
+        <a href="{{ url_for('dashboard.index') }}overview"><h4>Flask Monitoring Dashboard</h4></a>
     </div>
 
     <div class="collapse navbar-collapse" id="navbarResponsive" ng-controller="MenuController">
-
-        {% raw %}{{ menuHelper.data }}{% endraw %}
-
         <ul class="navbar-nav navbar-sidenav nav-pills">
-
             <li class="nav-item" title="Dashboard">
                 <a class="nav-link nav-link-collapse collapsed"
                    data-toggle="collapse" href="#collapseDashboard">
@@ -36,11 +32,16 @@
                     <span class="nav-link-text">Dashboard</span>
                 </a>
                 <ul class="sidenav-second-level collapse" id="collapseDashboard">
-                    <li><a class="" href="{{ url_for('dashboard.index') }}overview">Overview</a></li>
-                    <li><a class="" href="{{ url_for('dashboard.index') }}hourly_load">Hourly API Utilization</a></li>
-                    <li><a class="" href="{{ url_for('dashboard.index') }}multi_version">Multi Version API Utilization</a></li>
-                    <li><a class="" href="{{ url_for('dashboard.index') }}daily_utilization">Daily API Utilization</a></li>
-                    <li><a class="" href="{{ url_for('dashboard.index') }}endpoints">API Performance</a></li>
+                    <li ng-class="{'active': menu.page=='overview'}">
+                        <a href="{{ url_for('dashboard.index') }}overview">Overview</a></li>
+                    <li ng-class="{'active': menu.page=='hourly_load'}">
+                        <a href="{{ url_for('dashboard.index') }}hourly_load">Hourly API Utilization</a></li>
+                    <li ng-class="{'active': menu.page=='multi_version'}">
+                        <a href="{{ url_for('dashboard.index') }}multi_version">Multi Version API Utilization</a></li>
+                    <li ng-class="{'active': menu.page=='daily_load'}">
+                        <a href="{{ url_for('dashboard.index') }}daily_utilization">Daily API Utilization</a></li>
+                    <li ng-class="{'active': menu.page=='api_performance'}">
+                        <a href="{{ url_for('dashboard.index') }}api_performance">API Performance</a></li>
                 </ul>
             </li>
 
@@ -53,24 +54,24 @@
                 <ul class="sidenav-second-level collapse" id="collapseEndpoint">
                     <li><a class="my-active" href="{{ url_for('dashboard.index') }}endpoint/{% raw %}{{ menu.id }}{% endraw %}/hourly_load">
                         Hourly API Utilization</a></li>
-                    <li><a class="" href="{{ url_for('dashboard.index') }}endpoint/{% raw %}{{ menu.id }}{% endraw %}/version_user">
+                    <li><a href="{{ url_for('dashboard.index') }}endpoint/{% raw %}{{ menu.id }}{% endraw %}/version_user">
                         User-Focused Multi-Version Performance</a></li>
-                    <li><a class="" href="{{ url_for('dashboard.index') }}endpoint/{% raw %}{{ menu.id }}{% endraw %}/version_ip">
+                    <li><a href="{{ url_for('dashboard.index') }}endpoint/{% raw %}{{ menu.id }}{% endraw %}/version_ip">
                         IP-Focused Multi-Version Performance</a></li>
-                    <li><a class="" href="{{ url_for('dashboard.index') }}endpoint/{% raw %}{{ menu.id }}{% endraw %}/versions">
+                    <li><a href="{{ url_for('dashboard.index') }}endpoint/{% raw %}{{ menu.id }}{% endraw %}/versions">
                         Per-Version Performance</a></li>
-                    <li><a class="" href="{{ url_for('dashboard.index') }}endpoint/{% raw %}{{ menu.id }}{% endraw %}/users">
+                    <li><a href="{{ url_for('dashboard.index') }}endpoint/{% raw %}{{ menu.id }}{% endraw %}/users">
                         Per-User Performance</a></li>
-                    <li><a class="" href="{{ url_for('dashboard.index') }}endpoint/{% raw %}{{ menu.id }}{% endraw %}/profiler">
+                    <li><a href="{{ url_for('dashboard.index') }}endpoint/{% raw %}{{ menu.id }}{% endraw %}/profiler">
                         Profiler</a></li>
-                    <li><a class="" href="{{ url_for('dashboard.index') }}endpoint/{% raw %}{{ menu.id }}{% endraw %}/grouped-profiler">
+                    <li><a href="{{ url_for('dashboard.index') }}endpoint/{% raw %}{{ menu.id }}{% endraw %}/grouped-profiler">
                         Grouped Profiler</a></li>
-                    <li><a class="" href="{{ url_for('dashboard.index') }}endpoint/{% raw %}{{ menu.id }}{% endraw %}/outliers">
+                    <li><a href="{{ url_for('dashboard.index') }}endpoint/{% raw %}{{ menu.id }}{% endraw %}/outliers">
                         Outliers</a></li>
                 </ul>
             </li>
 
-            <li class="nav-item" title="Configuration">
+            <li ng-class="{'active': menu.page=='configuration'}" class="nav-item" title="Configuration">
                 <a class="nav-link " href="{{ url_for('dashboard.index') }}configuration">
                     <i class="fa fa-fw fa-gear"></i>
                     <span class="nav-link-text">Configuration</span>
@@ -86,7 +87,7 @@
         </ul>
         <ul class="navbar-nav ml-auto">
             <li class="nav-item">
-                 <span style="color: white">
+                 <span style="color: #adb5bd;">
                      Automatically monitor the evolving performance of Flask/Python web services
                  </span>
             </li>

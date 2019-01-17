@@ -1,7 +1,7 @@
 'use strict';
 
-function OverviewController($scope, $http, $location, DTOptionsBuilder, menuHelper) {
-    menuHelper.reset();
+function OverviewController($scope, $http, $location, DTOptionsBuilder, menuService) {
+    menuService.reset('overview');
     $scope.alertShow = false;
     $scope.pypi_version = '';
     $scope.dashboard_version = '';
@@ -11,10 +11,6 @@ function OverviewController($scope, $http, $location, DTOptionsBuilder, menuHelp
     $scope.options = DTOptionsBuilder.newOptions().withOption('order', [[4, 'desc']]);
 
     $scope.selectedItem = 2;
-
-    $scope.compare = function (level, n) {
-        return (level == n);
-    };
 
     $scope.sendForm = function (row, value) {
         row.monitor = value;
@@ -38,7 +34,6 @@ function OverviewController($scope, $http, $location, DTOptionsBuilder, menuHelp
         $scope.table = response.data;
     });
 
-
     $scope.go = function (path) {
         $location.path(path);
     };
@@ -53,8 +48,8 @@ function OverviewController($scope, $http, $location, DTOptionsBuilder, menuHelp
     });
 }
 
-function ConfigurationController($scope, $http, menuHelper) {
-    menuHelper.reset();
+function ConfigurationController($scope, $http, menuService) {
+    menuService.reset('configuration');
 
     $scope.details = {};
     $scope.config = {};
@@ -67,116 +62,89 @@ function ConfigurationController($scope, $http, menuHelper) {
     });
 }
 
-function HourlyLoadController($scope, $http, menuHelper) {
-    menuHelper.reset();
+function HourlyLoadController($scope, $http, menuService, plotlyService, infoService, formService) {
+    menuService.reset('hourly_load');
 
-    $scope.endDate = new Date();
-    $scope.startDate = new Date();
-    $scope.startDate.setDate($scope.startDate.getDate() - 14);
+    // Set the information box
+    infoService.axesText = 'The X-axis presents a number of days. The Y-axis presents every hour of the day.';
+    infoService.contentText = 'The color of the cell presents the number of requests that the application ' +
+        'received in a single hour. The darker the cell, the more requests it has processed. This information ' +
+        'can be used to validate on which moment of the day the Flask application processes to most requests.';
 
-    let parseDate = function (date) {
-        return date.getFullYear() + "-" + ("0" + (date.getMonth() + 1)).slice(-2)
-            + "-" + ("0" + date.getDate()).slice(-2);
-    };
-
-    $scope.refresh = function () {
-        let start = parseDate($scope.startDate);
-        let end = parseDate($scope.endDate);
+    // Set the form handler
+    $scope.handler = formService;
+    $scope.handler.setForm('daterangeform');
+    $scope.handler.setReload(function () {
+        let start = $scope.handler.getStartDate();
+        let end = $scope.handler.getEndDate();
         let times = [...Array(24).keys()].map(d => d + ":00");
 
         $http.get('api/hourly_load/' + start + '/' + end).then(function (response) {
-
-            Plotly.newPlot('chart', [{
-                x: response.data.days,
-                y: times,
-                z: response.data.data,
-                type: 'heatmap'
-            }], {
-                height: 600,
+            plotlyService.heatmap(response.data.days, times, response.data.data, {
                 yaxis: {
                     autorange: 'reversed'
                 }
-            }, {
-                displaylogo: false,
-                responsive: true
             });
         });
-    };
-
-    $scope.refresh();
+    });
 }
 
-function MultiVersionController($scope, $http, menuHelper) {
-    menuHelper.reset();
-    $scope.versions = [];
-    $scope.selectedVersions = $scope.versions;
-    $scope.endpoints = [];
-    $scope.selectedEndpoints = [];
+function MultiVersionController($scope, $http, menuService, formService, infoService, plotlyService) {
+    menuService.reset('multi_version');
 
-    $http.get('api/versions').then(function (response) {
-        $scope.versions = response.data;
-        $scope.selectedVersions = $scope.versions.slice(-10);
+    // Set the information box
+    infoService.axesText = 'The X-axis presents the versions that are used. The Y-axis presents the' +
+        'endpoints that are found in the Flask application.';
+    infoService.contentText = 'The color of the cell presents the distribution of the amount of requests ' +
+        'that the application received in a single version for a single endpoint. The darker the cell, ' +
+        'the more requests a certain endpoint has processed in that version. Since it displays the ' +
+        'distribution of the load, each column sums up to 100%. This information can be used to validate ' +
+        'which endpoints processes the most requests.';
 
-        $http.get('api/endpoints').then(function (response) {
-            $scope.endpoints = response.data.map(d => d.name);
-            $scope.selectedEndpoints = $scope.endpoints;
+    // Set the form handler
+    $scope.handler = formService;
+    $scope.handler.setForm('multiVersionsEndpoints');
 
-            $scope.refresh();
-        })
-    });
-
-    $scope.refresh = function () {
+    $scope.handler.setReload(function () {
         $http.post('api/multi_version', {
             data: {
-                versions: $scope.selectedVersions,
-                endpoints: $scope.selectedEndpoints
+                versions: $scope.handler.selectedVersions,
+                endpoints: $scope.handler.selectedEndpoints
             }
         }).then(function (response) {
-            Plotly.newPlot('chart', [{
-                x: $scope.selectedVersions,
-                y: $scope.selectedEndpoints,
-                z: response.data,
-                type: 'heatmap'
-            }], {
-                height: 600,
-                xaxis: {
-                    type: 'category',
-                    title: 'Versions'
-                },
-                yaxis: {
-                    type: 'category'
-                }
-            }, {
-                displaylogo: false,
-                responsive: true
-            });
+            plotlyService.heatmap($scope.handler.selectedVersions, $scope.handler.selectedEndpoints,
+                response.data, {
+                    xaxis: {
+                        type: 'category',
+                        title: 'Versions'
+                    },
+                    yaxis: {
+                        type: 'category'
+                    }
+                });
         });
-    }
+    });
 }
 
-function DailyUtilizationController($scope, $http, menuHelper) {
-    menuHelper.reset();
-    $scope.endDate = new Date();
-    $scope.startDate = new Date();
-    $scope.startDate.setDate($scope.startDate.getDate() - 10);
-    $scope.endpoints = [];
+function DailyUtilizationController($scope, $http, menuService, formService, infoService, plotlyService) {
+    menuService.reset('daily_load');
 
-    $http.get('api/endpoints').then(function (response) {
-        $scope.endpoints = response.data.map(d => d.name);
-    });
+    // Set the information box
+    infoService.axesText = 'The X-axis presents the amount of requests. The Y-axis presents a number of days.';
+    infoService.contentText = 'This graph presents a horizontal stacked barplot. Each endpoint is represented ' +
+        'by a color. In the legend on the right, you can disable a certain endpoint by clicking on it. You can ' +
+        'also show in the information of a single endpoint by double clicking that endpoint in the legend. The ' +
+        'information from this graph can be used to see on which days (a subset of) the endpoints are used to most.';
 
-    let parseDate = function (date) {
-        return date.getFullYear() + "-" + ("0" + (date.getMonth() + 1)).slice(-2)
-            + "-" + ("0" + date.getDate()).slice(-2);
-    };
-
-    $scope.refresh = function () {
-        let start = parseDate($scope.startDate);
-        let end = parseDate($scope.endDate);
+    // Set the form handler
+    $scope.handler = formService;
+    $scope.handler.days_offset = 10;
+    $scope.handler.setForm('daterangeform');
+    $scope.handler.setReload(function () {
+        let start = formService.getStartDate();
+        let end = formService.getEndDate();
 
         $http.get('api/requests/' + start + '/' + end).then(function (response) {
-            console.log(response.data);
-
             let data = response.data.data.map(obj => {
                 return {
                     x: obj.values,
@@ -187,9 +155,8 @@ function DailyUtilizationController($scope, $http, menuHelper) {
                 };
             });
 
-            Plotly.newPlot('chart', data, {
+            plotlyService.chart(data, {
                 barmode: 'stack',
-                height: 600,
                 xaxis: {
                     title: 'Number of requests',
                 },
@@ -197,20 +164,64 @@ function DailyUtilizationController($scope, $http, menuHelper) {
                     type: 'category',
                     autorange: 'reversed'
                 }
-            }, {
-                displaylogo: false,
-                responsive: true
             });
         });
-    };
-    $scope.refresh();
+    });
+
+    $scope.endpoints = [];
+
+    $http.get('api/endpoints').then(function (response) {
+        $scope.endpoints = response.data.map(d => d.name);
+        $scope.handler.reload();
+    });
 }
 
+function ApiPerformanceController($scope, $http, menuService, formService, infoService, plotlyService) {
+    menuService.reset('api_performance');
 
-function EndpointController($scope, $http, $routeParams, menuHelper) {
-    menuHelper.setId($routeParams.endpointId);
+    // Set the information box
+    infoService.axesText = 'The X-axis presents the execution time in ms. The Y-axis presents every endpoint of ' +
+        'the Flask application.';
+    infoService.contentText = 'In this graph, it is easy to compare the execution time of the different endpoints ' +
+        'across each other. This information can be used to validate which endpoints needs to be improved.';
+
+    // Set the form handler
+    $scope.handler = formService;
+    $scope.handler.setForm('multiEndpoints');
+    $scope.handler.setReload(function () {
+        $http.post('api/api_performance', {
+            data: {
+                endpoints: $scope.handler.selectedEndpoints
+            }
+        }).then(function (response) {
+            let data = response.data.map(obj => {
+                return {
+                    x: obj.values,
+                    type: 'box',
+                    name: obj.name,
+                };
+            });
+
+            plotlyService.chart(data, {
+                xaxis: {
+                    title: 'Execution time (ms)',
+                },
+                yaxis: {
+                    type: 'category'
+                }
+            });
+        });
+    });
 }
 
-app.controller('MenuController', function ($scope, menuHelper) {
-    $scope.menu = menuHelper;
+function EndpointController($scope, $http, $routeParams, menuService) {
+    menuService.setId($routeParams.endpointId);
+}
+
+app.controller('MenuController', function ($scope, menuService) {
+    $scope.menu = menuService;
+});
+
+app.controller('InfoController', function ($scope, infoService) {
+    $scope.info = infoService;
 });
