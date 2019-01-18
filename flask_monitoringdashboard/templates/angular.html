@@ -45,34 +45,42 @@
                 </ul>
             </li>
 
-            <li class="nav-item" data-toggle="tooltip" data-placement="right" title="" ng-show="menu.isset"
+            <li class="nav-item" data-toggle="tooltip" data-placement="right" ng-show="menu.showEndpoints"
                 data-original-title="{% raw %}{{ menu.name }}{% endraw %}">
                 <a class="nav-link nav-link-collapse collapsed" data-toggle="collapse" href="#collapseEndpoint">
                     <i class="fa fa-fw fa-asterisk"></i>
                     <span class="nav-link-text">{% raw %}{{ menu.name }}{% endraw %}</span>
                 </a>
                 <ul class="sidenav-second-level collapse" id="collapseEndpoint">
-                    <li><a class="my-active" href="{{ url_for('dashboard.index') }}endpoint/{% raw %}{{ menu.id }}{% endraw %}/hourly_load">
+                    <li ng-class="{'active': menu.page=='endpoint_hourly'}">
+                        <a href="{{ url_for('dashboard.index') }}endpoint/{% raw %}{{ menu.getInfo().id }}{% endraw %}/hourly_load">
                         Hourly API Utilization</a></li>
-                    <li><a href="{{ url_for('dashboard.index') }}endpoint/{% raw %}{{ menu.id }}{% endraw %}/version_user">
+                    <li ng-class="{'active': menu.page=='endpoint_user_version'}">
+                        <a href="{{ url_for('dashboard.index') }}endpoint/{% raw %}{{ menu.getInfo().id }}{% endraw %}/version_user">
                         User-Focused Multi-Version Performance</a></li>
-                    <li><a href="{{ url_for('dashboard.index') }}endpoint/{% raw %}{{ menu.id }}{% endraw %}/version_ip">
+                    <li ng-class="{'active': menu.page=='endpoint_ip'}">
+                        <a href="{{ url_for('dashboard.index') }}endpoint/{% raw %}{{ menu.getInfo().id }}{% endraw %}/version_ip">
                         IP-Focused Multi-Version Performance</a></li>
-                    <li><a href="{{ url_for('dashboard.index') }}endpoint/{% raw %}{{ menu.id }}{% endraw %}/versions">
+                    <li ng-class="{'active': menu.page=='endpoint_version'}">
+                        <a href="{{ url_for('dashboard.index') }}endpoint/{% raw %}{{ menu.getInfo().id }}{% endraw %}/versions">
                         Per-Version Performance</a></li>
-                    <li><a href="{{ url_for('dashboard.index') }}endpoint/{% raw %}{{ menu.id }}{% endraw %}/users">
+                    <li ng-class="{'active': menu.page=='endpoint_user'}">
+                        <a href="{{ url_for('dashboard.index') }}endpoint/{% raw %}{{ menu.getInfo().id }}{% endraw %}/users">
                         Per-User Performance</a></li>
-                    <li><a href="{{ url_for('dashboard.index') }}endpoint/{% raw %}{{ menu.id }}{% endraw %}/profiler">
+                    <li ng-class="{'active': menu.page=='endpoint_profiler'}">
+                        <a href="{{ url_for('dashboard.index') }}endpoint/{% raw %}{{ menu.getInfo().id }}{% endraw %}/profiler">
                         Profiler</a></li>
-                    <li><a href="{{ url_for('dashboard.index') }}endpoint/{% raw %}{{ menu.id }}{% endraw %}/grouped-profiler">
+                    <li ng-class="{'active': menu.page=='endpoint_grouped_profiler'}">
+                        <a href="{{ url_for('dashboard.index') }}endpoint/{% raw %}{{ menu.getInfo().id }}{% endraw %}/grouped-profiler">
                         Grouped Profiler</a></li>
-                    <li><a href="{{ url_for('dashboard.index') }}endpoint/{% raw %}{{ menu.id }}{% endraw %}/outliers">
+                    <li ng-class="{'active': menu.page=='endpoint_outlier'}">
+                        <a href="{{ url_for('dashboard.index') }}endpoint/{% raw %}{{ menu.getInfo().id }}{% endraw %}/outliers">
                         Outliers</a></li>
                 </ul>
             </li>
 
             <li ng-class="{'active': menu.page=='configuration'}" class="nav-item" title="Configuration">
-                <a class="nav-link " href="{{ url_for('dashboard.index') }}configuration">
+                <a class="nav-link" href="{{ url_for('dashboard.index') }}configuration">
                     <i class="fa fa-fw fa-gear"></i>
                     <span class="nav-link-text">Configuration</span>
                 </a>

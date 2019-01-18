@@ -25,9 +25,9 @@ app.config(function ($locationProvider, $routeProvider) {
             templateUrl: 'static/pages/plotly_graph.html',
             controller: ApiPerformanceController
         })
-        .when('/endpoint/:endpointId', {
-            templateUrl: 'static/pages/page1.html',
-            controller: EndpointController
+        .when('/endpoint/:endpointId/hourly_load', {
+            templateUrl: 'static/pages/plotly_graph.html',
+            controller: EndpointHourlyLoadController
         })
         .when('/configuration', {
             templateUrl: 'static/pages/configuration.html',
@@ -44,33 +44,25 @@ app.config(function ($locationProvider, $routeProvider) {
 });
 
 app.service('menuService', function ($http) {
-    this.id = 0;
     this.page = '';
     this.name = '';
-    this.isset = false;
-    let that = this;
-
-    this.set = function (id, name) {
-        this.id = id;
-        this.name = name;
-        this.isset = true;
-    };
-
-    this.setId = function (id) {
-        $http.get('api/endpoint_info/' + id).then(function (response) {
-            let name = response.data.endpoint;
-            that.set(id, name);
-        })
-    };
+    this.showEndpoints = false;
 
     this.reset = function (page) {
         this.page = page;
-        this.isset = false;
         if (page == 'overview' || page == 'hourly_load' || page == 'multi_version' ||
             page == 'daily_load' || page == 'api_performance') {
             $('#collapseDashboard').collapse('show');
         } else {
             $('#collapseDashboard').collapse('hide');
+        }
+
+        if (page == 'endpoint_hourly' || page == 'endpoint_user_version' || page == 'endpoint_ip' ||
+            page == 'endpoint_version' || page == 'endpoint_user' || page == 'endpoint_profiler' ||
+            page == 'endpoint_grouped_profiler' || page == 'endpoint_outlier') {
+            $('#collapseEndpoint').collapse('show');
+        } else {
+            $('#collapseEndpoint').collapse('hide');
         }
     }
 });
@@ -104,12 +96,12 @@ app.service('formService', function ($http) {
     this.dateFields = [];
     this.multiFields = [];
 
-    this.clear = function(){
+    this.clear = function () {
         that.multiFields = [];
         that.dateFields = [];
     };
 
-    function addMultiSelect(name){
+    function addMultiSelect(name) {
         let obj = {
             'name': name,
             'values': [],
@@ -120,18 +112,18 @@ app.service('formService', function ($http) {
         return obj;
     }
 
-    this.initialize = function(obj){
+    this.initialize = function (obj) {
         obj.initialized = true;
-        if (that.multiFields.every(o => o.initialized)){
+        if (that.multiFields.every(o => o.initialized)) {
             that.reload();
         }
     };
 
-    this.getMultiSelection = function(name){
+    this.getMultiSelection = function (name) {
         return that.multiFields.find(o => o.name == name).selected;
     };
 
-    this.addDate = function(name){
+    this.addDate = function (name) {
         let obj = {
             'name': name,
             'value': new Date(),
@@ -140,11 +132,11 @@ app.service('formService', function ($http) {
         return obj;
     };
 
-    this.getDate = function(name){
+    this.getDate = function (name) {
         return parseDate(that.dateFields.find(o => o.name == name).value);
     };
 
-    this.addVersions = function(){
+    this.addVersions = function () {
         let obj = addMultiSelect('versions');
         $http.get('api/versions').then(function (response) {
             obj.values = response.data;
@@ -153,9 +145,9 @@ app.service('formService', function ($http) {
         });
     };
 
-    this.addEndpoints = function(){
+    this.addEndpoints = function () {
         let obj = addMultiSelect('endpoints');
-        $http.get('api/endpoints').then(function(response){
+        $http.get('api/endpoints').then(function (response) {
             obj.values = response.data.map(d => d.name);
             obj.selected = obj.values;
             that.initialize(obj);
@@ -180,4 +172,40 @@ app.service('infoService', function () {
         'as a PNG image.';
     this.axesText = '';
     this.contentText = '';
+});
+
+app.service('endpointService', function ($http, $routeParams, menuService) {
+    let that = this;
+    this.info = {
+        id: 0,
+        name: ''
+    };
+
+    this.getInfo = function () {
+        return this.info;
+    };
+
+    this.reset = function () {
+        if (typeof $routeParams.endpointId !== 'undefined') {
+            this.info.id = $routeParams.endpointId;
+            this.getInfo();
+        } else {
+            this.info.id = 0;
+            menuService.showEndpoints = false;
+        }
+    };
+
+    this.onNameChanged = function (name) {
+    };
+
+    this.getInfo = function () {
+        $http.get('api/endpoint_info/' + this.info.id).then(function (response) {
+            that.info = response.data;
+            console.log(that.info);
+            that.info.name = response.data.endpoint;
+            menuService.name = that.info.name;
+            menuService.showEndpoints = true;
+            that.onNameChanged(that.info.name);
+        });
+    };
 });

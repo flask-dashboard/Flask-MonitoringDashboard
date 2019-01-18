@@ -37,7 +37,7 @@
                 </thead>
 
                 <tbody>
-                <tr ng-repeat="row in table" style="cursor: pointer" ng-click="go('/endpoint/' + row.id)">
+                <tr ng-repeat="row in table" style="cursor: pointer" ng-click="go('/endpoint/' + row.id + '/hourly_load')">
                     <td style="background-color: {{ row.color }}"></td>
                     <td style="max-width: 200px;">{{ row.name }}</td>
 

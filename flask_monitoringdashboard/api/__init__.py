@@ -190,9 +190,10 @@ def endpoint_info(endpoint_id):
 
 
 @blueprint.route('api/hourly_load/<start_date>/<end_date>')
+@blueprint.route('api/hourly_load/<start_date>/<end_date>/<endpoint_id>')
 @secure
 # both days must be in the form: yyyy-mm-dd
-def hourly_load(start_date, end_date):
+def hourly_load(start_date, end_date, endpoint_id=None):
     start_date = datetime.datetime.strptime(start_date, '%Y-%m-%d')
     end_date = datetime.datetime.strptime(end_date, '%Y-%m-%d')
     numdays = (end_date - start_date).days + 1
@@ -205,7 +206,7 @@ def hourly_load(start_date, end_date):
     end_datetime = to_utc_datetime(datetime.datetime.combine(end_date, datetime.time(23, 59, 59)))
 
     with session_scope() as db_session:
-        for time, count in get_num_requests(db_session, None, start_datetime, end_datetime):
+        for time, count in get_num_requests(db_session, endpoint_id, start_datetime, end_datetime):
             parsed_time = datetime.datetime.strptime(time, '%Y-%m-%d %H:%M:%S')
             day_index = (parsed_time - start_datetime).days
             hour_index = int(to_local_datetime(parsed_time).strftime('%H'))

@@ -1,6 +1,6 @@
 <div>
     <div class="card mb-3">
-        <div class="card-header"><h4>Hourly API Utilization</h4></div>
+        <div class="card-header"><h4>{{ title }}</h4></div>
         <div class="card-body">
             <div id="chart"></div>
         </div>
@@ -41,6 +41,54 @@
                     <b>Content</b>
                     <p>{{ info.contentText }}</p>
                 </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="card mb-3" style="margin-top: 10px;" ng-controller="EndpointController" ng-show="endpoint.info.id > 0">
+        <div class="card-header"><h4>Endpoint details</h4></div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-striped table-bordered table-hover">
+                    <tr>
+                        <td><b>Endpoint</b></td>
+                        <td>{{ endpoint.info.name }}</td>
+                    </tr>
+                    <tr>
+                        <td><b>ID</b></td>
+                        <td>{{ endpoint.info.id }}</td>
+                    </tr>
+                    <tr>
+                        <td><b>Rule(s)</b></td>
+                        <td>{{ endpoint.info.rules }}</td>
+                    </tr>
+                    <!--<tr>
+                        <td><b>Added since app version</b></td>
+                        <td>{{ details.rule.version_added }}</td>
+                    </tr>
+                    <tr>
+                        <td><b>Date added to app</b></td>
+                        <td>{{ details.rule.time_added }}</td>
+                    </tr>-->
+                    <tr>
+                        <td><b>Monitoring-level</b></td>
+                        <td>
+                            <ul class="pagination">
+                                <li ng-repeat="n in [0, 1, 2, 3]" class="page-item"
+                                    ng-class="{'active': endpoint.info['monitor-level'] == n}">
+                                    <a class="page-link" ng-click="sendForm(endpoint.info, n)">{{ n }}</a></li>
+                            </ul>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><b>URL to endpoint</b></td>
+                        <td><a href="{{ endpoint.info.url }}">{{ endpoint.info.url }}</a></td>
+                    </tr>
+                    <tr>
+                        <td><b>Total number of hits</b></td>
+                        <td>{{ endpoint.info.total_hits | number }}</td>
+                    </tr>
+                </table>
             </div>
         </div>
     </div>
