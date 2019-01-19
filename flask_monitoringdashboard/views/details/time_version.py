@@ -3,9 +3,7 @@ from flask import render_template
 from flask_monitoringdashboard import blueprint
 from flask_monitoringdashboard.core.auth import secure
 from flask_monitoringdashboard.core.colors import get_color
-from flask_monitoringdashboard.core.forms import get_slider_form
 from flask_monitoringdashboard.core.plot import boxplot, get_figure, get_layout, get_margin
-from flask_monitoringdashboard.core.info_box import get_plot_info
 from flask_monitoringdashboard.core.utils import get_endpoint_details, simplify
 from flask_monitoringdashboard.database import Request, session_scope
 from flask_monitoringdashboard.database.count import count_versions_endpoint
@@ -28,12 +26,11 @@ graph you can found out whether the performance changes across different version
 def versions(endpoint_id):
     with session_scope() as db_session:
         details = get_endpoint_details(db_session, endpoint_id)
-        form = get_slider_form(count_versions_endpoint(db_session, endpoint_id), title='Select the number of versions')
 
-        graph = versions_graph(db_session, endpoint_id, form)
+        graph = versions_graph(db_session, endpoint_id, None)
         return render_template('fmd_dashboard/graph-details.html', details=details, graph=graph,
-                               title='{} for {}'.format(TITLE, details['endpoint']), form=form,
-                               information=get_plot_info(AXES_INFO, CONTENT_INFO))
+                               title='{} for {}'.format(TITLE, details['endpoint']),
+                               information=None)
 
 
 def format_version(version, first_used):

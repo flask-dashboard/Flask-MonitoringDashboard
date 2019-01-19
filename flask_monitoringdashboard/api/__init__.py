@@ -11,10 +11,11 @@ from flask_monitoringdashboard.core.timezone import to_local_datetime, to_utc_da
 from flask_monitoringdashboard.core.utils import get_details, get_endpoint_details, simplify
 from flask_monitoringdashboard.database import Request, session_scope, row2dict
 from flask_monitoringdashboard.database.count_group import count_requests_group, get_value, count_requests_per_day
-from flask_monitoringdashboard.database.data_grouped import get_endpoint_data_grouped
+from flask_monitoringdashboard.database.data_grouped import get_endpoint_data_grouped, get_two_columns_grouped, \
+    get_version_data_grouped, get_user_data_grouped
 from flask_monitoringdashboard.database.endpoint import get_last_requested, get_endpoints, update_endpoint, \
-    get_endpoint_by_name, get_num_requests
-from flask_monitoringdashboard.database.versions import get_versions
+    get_endpoint_by_name, get_num_requests, get_users, get_ips
+from flask_monitoringdashboard.database.versions import get_versions, get_first_requests
 
 
 @blueprint.route('/api/info')
@@ -63,10 +64,25 @@ def get_overview():
 
 
 @blueprint.route('/api/versions')
+@blueprint.route('api/versions/<endpoint_id>')
 @secure
-def versions():
+def versions(endpoint_id=None):
     with session_scope() as db_session:
-        return jsonify(get_versions(db_session))
+        return jsonify(get_versions(db_session, endpoint_id))
+
+
+@blueprint.route('/api/users/<endpoint_id>')
+@secure
+def users(endpoint_id):
+    with session_scope() as db_session:
+        return jsonify(get_users(db_session, endpoint_id))
+
+
+@blueprint.route('/api/ip/<endpoint_id>')
+@secure
+def ips(endpoint_id):
+    with session_scope() as db_session:
+        return jsonify(get_ips(db_session, endpoint_id))
 
 
 @blueprint.route('/api/endpoints')
@@ -97,6 +113,48 @@ def multi_version():
             for i, _ in enumerate(versions):
                 hits[j][i] = get_value(requests[i], endpoints[j].id) * 100 / total_hits[i]
         return jsonify(hits.tolist())
+
+
+@blueprint.route('api/version_user/<endpoint_id>', methods=['POST'])
+@secure
+def version_user(endpoint_id):
+    data = json.loads(request.data)['data']
+    versions = data['versions']
+    users = data['users']
+
+    with session_scope() as db_session:
+        first_request = get_first_requests(db_session, endpoint_id)
+        values = get_two_columns_grouped(db_session, Request.group_by, Request.endpoint_id == endpoint_id)
+        data = [[get_value(values, (user, v)) for v in versions] for user in users]
+
+        return jsonify({
+            'versions': [{
+                'version': v,
+                'date': get_value(first_request, v)
+            } for v in versions],
+            'data': data,
+        })
+
+
+@blueprint.route('api/version_ip/<endpoint_id>', methods=['POST'])
+@secure
+def version_ip(endpoint_id):
+    data = json.loads(request.data)['data']
+    versions = data['versions']
+    users = data['ip']
+
+    with session_scope() as db_session:
+        first_request = get_first_requests(db_session, endpoint_id)
+        values = get_two_columns_grouped(db_session, Request.ip, Request.endpoint_id == endpoint_id)
+        data = [[get_value(values, (user, v)) for v in versions] for user in users]
+
+        return jsonify({
+            'versions': [{
+                'version': v,
+                'date': get_value(first_request, v)
+            } for v in versions],
+            'data': data,
+        })
 
 
 @blueprint.route('/api/requests/<start_date>/<end_date>')
@@ -215,3 +273,37 @@ def hourly_load(start_date, end_date, endpoint_id=None):
         'days': [(start_date + datetime.timedelta(days=i)).strftime('%Y-%m-%d') for i in range(numdays)],
         "data": heatmap_data.tolist()
     })
+
+
+@blueprint.route('api/endpoint_versions/<endpoint_id>', methods=['POST'])
+@secure
+def endpoint_versions(endpoint_id):
+    with session_scope() as db_session:
+        data = json.loads(request.data)['data']
+        versions = data['versions']
+
+        times = get_version_data_grouped(db_session, lambda x: simplify(x, 10), Request.endpoint_id == endpoint_id)
+        first_requests = get_first_requests(db_session, endpoint_id)
+        return jsonify([{
+            'version': v,
+            'date': get_value(first_requests, v),
+            'values': get_value(times, v),
+            'color': get_color(v)
+        } for v in versions])
+
+
+@blueprint.route('api/endpoint_users/<endpoint_id>', methods=['POST'])
+@secure
+def endpoint_users(endpoint_id):
+    with session_scope() as db_session:
+        data = json.loads(request.data)['data']
+        users = data['users']
+
+        times = get_user_data_grouped(db_session, lambda x: simplify(x, 10), Request.endpoint_id == endpoint_id)
+        first_requests = get_first_requests(db_session, endpoint_id)
+        return jsonify([{
+            'user': u,
+            'date': get_value(first_requests, u),
+            'values': get_value(times, u),
+            'color': get_color(u)
+        } for u in users])

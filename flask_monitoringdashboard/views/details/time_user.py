@@ -2,9 +2,7 @@ from flask import render_template
 
 from flask_monitoringdashboard import blueprint
 from flask_monitoringdashboard.core.auth import secure
-from flask_monitoringdashboard.core.forms import get_slider_form
 from flask_monitoringdashboard.core.plot import get_layout, get_figure, boxplot
-from flask_monitoringdashboard.core.info_box import get_plot_info
 from flask_monitoringdashboard.core.utils import get_endpoint_details, simplify
 from flask_monitoringdashboard.database import Request, session_scope
 from flask_monitoringdashboard.database.count import count_users
@@ -26,12 +24,11 @@ With this graph you can found out whether the performance is different across di
 def users(endpoint_id):
     with session_scope() as db_session:
         details = get_endpoint_details(db_session, endpoint_id)
-        form = get_slider_form(count_users(db_session, endpoint_id), title='Select the number of users')
-    graph = users_graph(endpoint_id, form)
+    graph = users_graph(endpoint_id, None)
 
-    return render_template('fmd_dashboard/graph-details.html', details=details, graph=graph, form=form,
+    return render_template('fmd_dashboard/graph-details.html', details=details, graph=graph,
                            title='{} for {}'.format(TITLE, details['endpoint']),
-                           information=get_plot_info(AXES_INFO, CONTENT_INFO))
+                           information=None)
 
 
 def users_graph(id, form):

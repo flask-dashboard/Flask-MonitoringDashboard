@@ -50,7 +50,7 @@
                 </tr>
                 <tr>
                     <td><b>First request in the currently deployed version</b></td>
-                    <td>{{ details['first-request-version'] }}</td>
+                    <td>{{ details['first-request-version'] | dateLayout }}</td>
                 </tr>
                 <tr>
                     <td><b>Monitoring Dashboard version</b></td>
@@ -58,7 +58,7 @@
                 </tr>
                 <tr>
                     <td><b>First request since using the Monitoring Dashboard</b></td>
-                    <td>{{ details['first-request'] | date }}</td>
+                    <td>{{ details['first-request'] | dateLayout }}</td>
                 </tr>
                 <tr>
                     <td><b>Total amount of monitored requests</b></td>

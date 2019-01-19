@@ -29,6 +29,22 @@ app.config(function ($locationProvider, $routeProvider) {
             templateUrl: 'static/pages/plotly_graph.html',
             controller: EndpointHourlyLoadController
         })
+        .when('/endpoint/:endpointId/version_user', {
+            templateUrl: 'static/pages/plotly_graph.html',
+            controller: EndpointVersionUserController
+        })
+        .when('/endpoint/:endpointId/version_ip', {
+            templateUrl: 'static/pages/plotly_graph.html',
+            controller: EndpointVersionIPController
+        })
+        .when('/endpoint/:endpointId/versions', {
+            templateUrl: 'static/pages/plotly_graph.html',
+            controller: EndpointVersionController
+        })
+        .when('/endpoint/:endpointId/users', {
+            templateUrl: 'static/pages/plotly_graph.html',
+            controller: EndpointUsersController
+        })
         .when('/configuration', {
             templateUrl: 'static/pages/configuration.html',
             controller: ConfigurationController
@@ -43,10 +59,9 @@ app.config(function ($locationProvider, $routeProvider) {
     });
 });
 
-app.service('menuService', function ($http) {
+app.service('menuService', function ($http, endpointService) {
     this.page = '';
-    this.name = '';
-    this.showEndpoints = false;
+    this.endpoint = endpointService;
 
     this.reset = function (page) {
         this.page = page;
@@ -80,9 +95,10 @@ app.service('plotlyService', function () {
         this.chart([{
             x: x,
             y: y,
-            z: z,
+            z: z.map(l => l.map(i => i == 0 ? 'NaN' : i)),
             type: 'heatmap'
-        }], layout_ext);
+        }], $.extend({}, layout, layout_ext));
+        console.log($.extend({}, layout, layout_ext));
     };
 
     this.chart = function (data, layout_ext) {
@@ -90,7 +106,7 @@ app.service('plotlyService', function () {
     }
 });
 
-app.service('formService', function ($http) {
+app.service('formService', function ($http, endpointService) {
     let that = this;
 
     this.dateFields = [];
@@ -136,9 +152,13 @@ app.service('formService', function ($http) {
         return parseDate(that.dateFields.find(o => o.name == name).value);
     };
 
-    this.addVersions = function () {
+    this.addVersions = function (endpoint_id) {
         let obj = addMultiSelect('versions');
-        $http.get('api/versions').then(function (response) {
+        let url = 'api/versions';
+        if (typeof endpoint_id !== "undefined"){
+            url += '/' + endpoint_id;
+        }
+        $http.get(url).then(function (response) {
             obj.values = response.data;
             obj.selected = response.data.slice(-10);
             that.initialize(obj);
@@ -149,6 +169,24 @@ app.service('formService', function ($http) {
         let obj = addMultiSelect('endpoints');
         $http.get('api/endpoints').then(function (response) {
             obj.values = response.data.map(d => d.name);
+            obj.selected = obj.values;
+            that.initialize(obj);
+        });
+    };
+
+    this.addUsers = function () {
+        let obj = addMultiSelect('users');
+        $http.get('api/users/' + endpointService.info.id).then(function (response) {
+            obj.values = response.data;
+            obj.selected = obj.values;
+            that.initialize(obj);
+        });
+    };
+
+    this.addIP = function () {
+        let obj = addMultiSelect('IP-addresses');
+        $http.get('api/ip/' + endpointService.info.id).then(function (response) {
+            obj.values = response.data;
             obj.selected = obj.values;
             that.initialize(obj);
         });
@@ -174,11 +212,11 @@ app.service('infoService', function () {
     this.contentText = '';
 });
 
-app.service('endpointService', function ($http, $routeParams, menuService) {
+app.service('endpointService', function ($http, $routeParams) {
     let that = this;
     this.info = {
         id: 0,
-        name: ''
+        endpoint: ''
     };
 
     this.getInfo = function () {
@@ -191,7 +229,6 @@ app.service('endpointService', function ($http, $routeParams, menuService) {
             this.getInfo();
         } else {
             this.info.id = 0;
-            menuService.showEndpoints = false;
         }
     };
 
@@ -201,11 +238,7 @@ app.service('endpointService', function ($http, $routeParams, menuService) {
     this.getInfo = function () {
         $http.get('api/endpoint_info/' + this.info.id).then(function (response) {
             that.info = response.data;
-            console.log(that.info);
-            that.info.name = response.data.endpoint;
-            menuService.name = that.info.name;
-            menuService.showEndpoints = true;
-            that.onNameChanged(that.info.name);
+            that.onNameChanged(that.info.endpoint);
         });
     };
 });

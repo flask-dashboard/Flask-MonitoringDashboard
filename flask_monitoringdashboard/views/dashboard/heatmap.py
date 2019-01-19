@@ -6,9 +6,7 @@ from flask import render_template
 
 from flask_monitoringdashboard import blueprint
 from flask_monitoringdashboard.core.auth import secure
-from flask_monitoringdashboard.core.forms import get_daterange_form
 from flask_monitoringdashboard.core.plot import get_layout, get_figure, heatmap as plot_heatmap
-from flask_monitoringdashboard.core.info_box import get_plot_info
 from flask_monitoringdashboard.core.timezone import to_utc_datetime, to_local_datetime
 from flask_monitoringdashboard.database import session_scope
 from flask_monitoringdashboard.database.endpoint import get_num_requests
@@ -26,9 +24,9 @@ to validate on which moment of the day the Flask application processes to most r
 @blueprint.route('/hourly_load', methods=['GET', 'POST'])
 @secure
 def hourly_load():
-    form = get_daterange_form()
+    form = None
     return render_template('fmd_dashboard/graph.html', form=form, graph=hourly_load_graph(form), title=TITLE,
-                           information=get_plot_info(AXES_INFO, CONTENT_INFO))
+                           information=None)
 
 
 def hourly_load_graph(form, endpoint_id=None):

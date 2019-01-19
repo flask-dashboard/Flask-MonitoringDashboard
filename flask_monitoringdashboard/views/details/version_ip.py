@@ -5,9 +5,7 @@ from flask import render_template
 from flask_monitoringdashboard import blueprint
 from flask_monitoringdashboard.core.auth import secure
 from flask_monitoringdashboard.core.colors import get_color
-from flask_monitoringdashboard.core.forms import get_double_slider_form
 from flask_monitoringdashboard.core.plot import get_average_bubble_size, scatter, get_layout, get_margin, get_figure
-from flask_monitoringdashboard.core.info_box import get_plot_info
 from flask_monitoringdashboard.core.utils import get_endpoint_details
 from flask_monitoringdashboard.database import Request, session_scope
 from flask_monitoringdashboard.database.count import count_ip, count_versions_endpoint
@@ -15,7 +13,6 @@ from flask_monitoringdashboard.database.count_group import get_value
 from flask_monitoringdashboard.database.data_grouped import get_two_columns_grouped
 from flask_monitoringdashboard.database.endpoint import get_ips
 from flask_monitoringdashboard.database.versions import get_versions, get_first_requests
-from flask_monitoringdashboard.views.details.time_version import format_version
 
 TITLE = 'IP-Focused Multi-Version Performance'
 
@@ -39,11 +36,10 @@ def version_ip(endpoint_id):
         end = details['endpoint']
 
         slider_max = [count_ip(db_session, endpoint_id), count_versions_endpoint(db_session, endpoint_id)]
-        form = get_double_slider_form(slider_max, subtitle=FORM_SUBTITLE, title=FORM_TITLE)
-        graph = version_ip_graph(db_session, endpoint_id, form)
-    return render_template('fmd_dashboard/graph-details.html', details=details, graph=graph, form=form,
+        graph = version_ip_graph(db_session, endpoint_id, None)
+    return render_template('fmd_dashboard/graph-details.html', details=details, graph=graph, form=None,
                            title='{} for {}'.format(TITLE, end),
-                           information=get_plot_info(AXES_INFO, CONTENT_INFO))
+                           information=None)
 
 
 def version_ip_graph(db_session, endpoint_id, form):

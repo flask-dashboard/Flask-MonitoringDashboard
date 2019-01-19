@@ -5,6 +5,7 @@ from flask import url_for
 from werkzeug.routing import BuildError
 
 from flask_monitoringdashboard import config
+from flask_monitoringdashboard.core.colors import get_color
 from flask_monitoringdashboard.core.rules import get_rules
 from flask_monitoringdashboard.core.timezone import to_local_datetime
 from flask_monitoringdashboard.database.count import count_requests, count_total_requests
@@ -21,10 +22,15 @@ def get_endpoint_details(db_session, endpoint_id):
     """
     endpoint = get_endpoint_by_id(db_session, endpoint_id)
     endpoint.time_added = to_local_datetime(endpoint.time_added)
+    flask_rule = get_rules(endpoint.name)
+    methods = [list(rule.methods) for rule in flask_rule]
+    methods = sum(methods, [])  # flatten list
     return {
         'id': endpoint_id,
+        'color': get_color(endpoint.name),
+        'methods': list(dict.fromkeys(methods)),
         'endpoint': endpoint.name,
-        'rules': ', '.join([r.rule for r in get_rules(endpoint.name)]),
+        'rules': [r.rule for r in get_rules(endpoint.name)],
         'monitor-level': endpoint.monitor_level,
         'url': get_url(endpoint.name),
         'total_hits': count_requests(db_session, endpoint.id)
