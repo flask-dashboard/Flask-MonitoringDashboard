@@ -15,6 +15,7 @@ def create_app():
     dashboard.config.version = '3.0'
     dashboard.config.database_name = 'sqlite:///flask_monitoring_dashboard_v10.db'
     dashboard.config.group_by = '2'
+    dashboard.config.outlier_detection_constant = 0
     # dashboard.config.database_name = 'postgresql://user:password@localhost:5432/db_name'
     # dashboard.config.database_name = 'mysql+pymysql://user:password@localhost:3306/db_name'
     dashboard.bind(app)
@@ -30,6 +31,7 @@ def create_app():
 
     @app.route('/endpoint2')
     def endpoint2():
+        time.sleep(0.1)
         return 'Ok'
 
     return app

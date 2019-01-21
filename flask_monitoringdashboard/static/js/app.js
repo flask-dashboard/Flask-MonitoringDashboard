@@ -45,6 +45,10 @@ app.config(function ($locationProvider, $routeProvider) {
             templateUrl: 'static/pages/plotly_graph.html',
             controller: EndpointUsersController
         })
+        .when('/endpoint/:endpointId/outliers', {
+            templateUrl: 'static/pages/outliers.html',
+            controller: OutlierController
+        })
         .when('/configuration', {
             templateUrl: 'static/pages/configuration.html',
             controller: ConfigurationController
@@ -95,10 +99,9 @@ app.service('plotlyService', function () {
         this.chart([{
             x: x,
             y: y,
-            z: z.map(l => l.map(i => i == 0 ? 'NaN' : i)),
+            z: z.map(l => l.map(i => i == 0 ? NaN : i)),
             type: 'heatmap'
         }], $.extend({}, layout, layout_ext));
-        console.log($.extend({}, layout, layout_ext));
     };
 
     this.chart = function (data, layout_ext) {
@@ -155,7 +158,7 @@ app.service('formService', function ($http, endpointService) {
     this.addVersions = function (endpoint_id) {
         let obj = addMultiSelect('versions');
         let url = 'api/versions';
-        if (typeof endpoint_id !== "undefined"){
+        if (typeof endpoint_id !== "undefined") {
             url += '/' + endpoint_id;
         }
         $http.get(url).then(function (response) {
@@ -241,4 +244,76 @@ app.service('endpointService', function ($http, $routeParams) {
             that.onNameChanged(that.info.endpoint);
         });
     };
+});
+
+app.service('paginationService', function () {
+
+    this.page = 1;
+    this.perPage = 5;
+    this.total = 0;
+
+    this.maxPages = function () {
+        return Math.ceil(this.total / this.perPage);
+    };
+
+    this.onReload = function(){
+    };
+
+    this.getOffset = function () {
+        return (this.page - 1) * this.perPage;
+    };
+
+    this.getFirstPage = function () {
+        let pages = this.getPages();
+        return pages.length > 0 ? pages[0] : this.page;
+    };
+
+    this.getLastPage = function () {
+        let pages = this.getPages();
+        return pages.length > 0 ? pages[pages.length - 1] : this.page;
+    };
+
+    this.goto = function (p) {
+        this.page = p;
+        this.onReload();
+    };
+
+    this.setTotal = function (t) {
+        this.total = t;
+        this.onReload();
+    };
+
+    this.getPages = function () {
+        let left = this.page - 1;
+        let right = this.page + 1;
+        let range = [];
+
+        if (left <= 0) {
+            right -= left - 1;
+            left = 1;
+        }
+        if (right > this.maxPages()) {
+            right = this.maxPages();
+        }
+
+        if (left == 2) {
+            range.push(1);
+        } else if (left == 3) {
+            range.push(1, 2);
+        } else if (left > 3) {
+            range.push(1, '...');
+        }
+
+        for (let i = left; i <= right; i++) {
+            range.push(i);
+        }
+        if (this.maxPages() - right > 2) {
+            range.push('...', this.maxPages());
+        } else if (this.maxPages() - right == 2) {
+            range.push(this.maxPages() - 1, this.maxPages());
+        } else if (this.maxPages() - right == 1) {
+            range.push(this.maxPages());
+        }
+        return range;
+    }
 });

@@ -1,3 +1,4 @@
+import ast
 import datetime
 import numpy
 
@@ -10,11 +11,13 @@ from flask_monitoringdashboard.core.measurement import add_decorator
 from flask_monitoringdashboard.core.timezone import to_local_datetime, to_utc_datetime
 from flask_monitoringdashboard.core.utils import get_details, get_endpoint_details, simplify
 from flask_monitoringdashboard.database import Request, session_scope, row2dict
+from flask_monitoringdashboard.database.count import count_outliers
 from flask_monitoringdashboard.database.count_group import count_requests_group, get_value, count_requests_per_day
 from flask_monitoringdashboard.database.data_grouped import get_endpoint_data_grouped, get_two_columns_grouped, \
     get_version_data_grouped, get_user_data_grouped
 from flask_monitoringdashboard.database.endpoint import get_last_requested, get_endpoints, update_endpoint, \
     get_endpoint_by_name, get_num_requests, get_users, get_ips
+from flask_monitoringdashboard.database.outlier import get_outliers_cpus, get_outliers_sorted
 from flask_monitoringdashboard.database.versions import get_versions, get_first_requests
 
 
@@ -307,3 +310,34 @@ def endpoint_users(endpoint_id):
             'values': get_value(times, u),
             'color': get_color(u)
         } for u in users])
+
+
+@blueprint.route('api/num_outliers/<endpoint_id>')
+@secure
+def num_outliers(endpoint_id):
+    with session_scope() as db_session:
+        return jsonify(count_outliers(db_session, endpoint_id))
+
+
+@blueprint.route('api/outlier_graph/<endpoint_id>')
+@secure
+def outlier_graph(endpoint_id):
+    with session_scope() as db_session:
+        all_cpus = get_outliers_cpus(db_session, endpoint_id)
+        values = [ast.literal_eval(cpu) for cpu in all_cpus]
+
+    return jsonify([{
+        'name': 'CPU core %d' % idx,
+        'values': simplify(values, 50),
+        'color': get_color(idx)
+    } for idx, values in enumerate(zip(*values))])
+
+
+@blueprint.route('api/outlier_table/<endpoint_id>/<offset>/<per_page>')
+@secure
+def outlier_table(endpoint_id, offset, per_page):
+    with session_scope() as db_session:
+        table = get_outliers_sorted(db_session, endpoint_id, offset, per_page)
+        for outlier in table:
+            outlier.time = to_local_datetime(outlier.request.time_requested)
+        return jsonify([row2dict(row) for row in table])

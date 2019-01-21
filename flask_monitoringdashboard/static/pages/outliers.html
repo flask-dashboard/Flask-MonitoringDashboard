@@ -1,0 +1,83 @@
+<div>
+    <div class="card mb-3">
+        <div class="card-header"><h4>{{ title }}</h4></div>
+        <div class="card-body">
+            <div id="chart"></div>
+        </div>
+    </div>
+
+    <div class="card mb-3" style="margin-top: 10px;">
+        <div class="card-header"><h4>Outliers data</h4></div>
+        <div class="card-body">
+
+            <div class="card" ng-repeat="row in table" style="margin-bottom: 10px;">
+                <div class="row">
+                    <div class="col-sm-6">
+                        <div class="well-sm"><strong>Request url: </strong>{{ row.request_url }}</div>
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="well-sm"><strong>Request time: </strong>{{ row.time | dateLayout }}</div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-6">
+                        <div class="well-sm"><strong>Request Headers</strong></div>
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="well-sm"><strong>Request Environment</strong></div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-6">
+                        <div class="well-sm scrollable">{{ row.request_headers }}</div>
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="well-sm scrollable">{{ row.request_environment }}</div>
+                    </div>
+                </div>
+
+                <div class="row" style="margin-top: 10px">
+                    <div class="col-sm-12">
+                        <div class="well-sm">
+                            <strong>CPU Percent: </strong>{{ row.cpu_percent }}
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-12">
+                        <div class="well-sm">
+                            <strong>Memory: </strong>{{ row.memory }}
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-12">
+                        <div class="well-sm"><strong>Stack Trace</strong></div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-12">
+                        <div class="well-sm scrollable">{{ row.stacktrace }}</div>
+                    </div>
+                </div>
+            </div>
+
+
+            <ul class="pagination" style="float: right;">
+
+                <li class="paginate_button page-item previous"
+                    ng-class="{'disabled': pagination.page == pagination.getFirstPage()}">
+                    <a href="#" class="page-link" ng-click="pagination.goto(pagination.page-1)">Previous</a>
+                </li>
+                <li ng-repeat="p in pagination.getPages() track by $index" class="paginate_button page-item"
+                    ng-class="{'active': pagination.page==p, 'disabled': p=='...'}">
+                    <a href="#" class="page-link" ng-click="pagination.goto(p)">{{ p }}</a>
+                </li>
+                <li class="paginate_button page-item next"
+                    ng-class="{'disabled': pagination.page == pagination.getLastPage()}">
+                    <a href="#" class="page-link" ng-click="pagination.goto(pagination.page+1)">Next</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>

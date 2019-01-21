@@ -413,7 +413,7 @@ function EndpointUsersController($scope, $http, infoService, endpointService,
     endpointService.reset();
     menuService.reset('endpoint_user');
     endpointService.onNameChanged = function (name) {
-        $scope.title = 'Per-Version Performance for ' + name;
+        $scope.title = 'Per-User Performance for ' + name;
     };
 
     // Set the information box
@@ -449,6 +449,48 @@ function EndpointUsersController($scope, $http, infoService, endpointService,
                     l: 200
                 }
             });
+        });
+    });
+}
+
+
+function OutlierController($scope, $http, endpointService, menuService,
+                           paginationService, plotlyService) {
+    $scope.table = [];
+
+    endpointService.reset();
+    menuService.reset('endpoint_outlier');
+    endpointService.onNameChanged = function (name) {
+        $scope.title = 'Outliers for ' + name;
+    };
+
+    $scope.pagination = paginationService;
+    $http.get('api/num_outliers/' + endpointService.info.id).then(function (response) {
+        paginationService.setTotal(response.data);
+    });
+    paginationService.onReload = function(){
+        $http.get('api/outlier_table/' + endpointService.info.id + '/' +
+            paginationService.getOffset() + '/' + paginationService.perPage).then(function(response){
+                $scope.table = response.data;
+        });
+    };
+
+    $http.get('api/outlier_graph/' + endpointService.info.id).then(function (response) {
+        plotlyService.chart(response.data.map(row => {
+            return {
+                x: row.values,
+                type: 'box',
+                name: row.name,
+                marker: {color: row.color}
+            };
+        }), {
+            xaxis: {
+                title: 'CPU loads (%)',
+            },
+            yaxis: {
+                type: 'category',
+                autorange: 'reversed'
+            }
         });
     });
 }
