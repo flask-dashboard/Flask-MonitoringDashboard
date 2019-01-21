@@ -338,6 +338,13 @@ def outlier_graph(endpoint_id):
 def outlier_table(endpoint_id, offset, per_page):
     with session_scope() as db_session:
         table = get_outliers_sorted(db_session, endpoint_id, offset, per_page)
-        for outlier in table:
-            outlier.time = to_local_datetime(outlier.request.time_requested)
-        return jsonify([row2dict(row) for row in table])
+        for idx, row in enumerate(table):
+            row.request.time_requested = to_local_datetime(row.request.time_requested)
+            try:
+                row.request_url = row.request_url.decode('utf-8')
+            except:
+                pass
+            dict_request = row2dict(row.request)
+            table[idx] = row2dict(row)
+            table[idx]['request'] = dict_request
+        return jsonify(table)

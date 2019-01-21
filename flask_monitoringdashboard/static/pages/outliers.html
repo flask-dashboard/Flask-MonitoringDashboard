@@ -16,7 +16,7 @@
                         <div class="well-sm"><strong>Request url: </strong>{{ row.request_url }}</div>
                     </div>
                     <div class="col-sm-6">
-                        <div class="well-sm"><strong>Request time: </strong>{{ row.time | dateLayout }}</div>
+                        <div class="well-sm"><strong>Request time: </strong>{{ row.request.time_requested | dateLayout }}</div>
                     </div>
                 </div>
                 <div class="row">
@@ -29,7 +29,7 @@
                 </div>
                 <div class="row">
                     <div class="col-sm-6">
-                        <div class="well-sm scrollable">{{ row.request_headers }}</div>
+                        <div class="well-sm scrollable">{{ row.request_header }}</div>
                     </div>
                     <div class="col-sm-6">
                         <div class="well-sm scrollable">{{ row.request_environment }}</div>

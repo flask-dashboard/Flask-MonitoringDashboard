@@ -434,3 +434,8 @@ footer.sticky-footer {
     color: inherit;
     text-decoration: none;
 }
+
+.scrollable {
+    max-height: 250px;
+    overflow-y: auto;
+}
