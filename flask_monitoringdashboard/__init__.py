@@ -47,47 +47,6 @@ def bind(app):
         log('WARNING: You should provide a security key.')
         user_app.secret_key = 'my-secret-key'
 
-    import os
-    # Only initialize unit test logging when running on Travis.
-    if 'TRAVIS' in os.environ:
-        import datetime
-        from flask import request
-
-        @user_app.before_first_request
-        def log_current_version():
-            """
-            Logs the version of the user app that is currently being tested.
-            :return:
-            """
-            home = os.path.expanduser("~")
-            with open(home + '/app_version.log', 'w') as app_log:
-                app_log.write(config.version)
-
-        @user_app.before_request
-        def log_start_endpoint_hit():
-            """
-            Add log_start_endpoint_hit as before_request function that logs the start of the endpoint hit.
-            :return:
-            """
-            hit_time_stamp = str(datetime.datetime.utcnow())
-            home = os.path.expanduser("~")
-            with open(home + '/start_endpoint_hits.log', 'a') as hits_log:
-                hits_log.write('"{}","{}"\n'.format(hit_time_stamp, request.endpoint))
-
-        @user_app.after_request
-        def log_finish_endpoint_hit(response):
-            """
-            Add log_finish_endpoint_hit as after_request function that logs the finish of the endpoint hit.
-            :param response: the response object that the actual endpoint returns
-            :return: the unchanged response of the original endpoint
-            """
-            hit_time_stamp = str(datetime.datetime.utcnow())
-            home = os.path.expanduser("~")
-            with open(home + '/finish_endpoint_hits.log', 'a') as hits2_log:
-                hits2_log.write('"{}","{}"\n'.format(hit_time_stamp, request.endpoint))
-
-            return response
-
     # Add all route-functions to the blueprint
     import flask_monitoringdashboard.views
 

@@ -52,11 +52,3 @@ def get_outliers_cpus(db_session, endpoint_id):
         join(Outlier.request).\
         filter(Request.endpoint_id == endpoint_id).all()
     return [outlier[0] for outlier in outliers]
-
-
-def get_all_outliers(db_session):
-    """
-    :param db_session: session for the database
-    :return list of all outliers in the Outlier table
-    """
-    return db_session.query(Outlier).all()

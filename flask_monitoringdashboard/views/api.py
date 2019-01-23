@@ -3,7 +3,6 @@ import datetime
 from collections import defaultdict
 
 import numpy
-
 from flask import jsonify, request, json
 
 from flask_monitoringdashboard import blueprint, user_app, config
@@ -11,7 +10,6 @@ from flask_monitoringdashboard.core.auth import secure, admin_secure
 from flask_monitoringdashboard.core.colors import get_color
 from flask_monitoringdashboard.core.measurement import add_decorator
 from flask_monitoringdashboard.core.profiler.util.pathHash import PathHash
-from flask_monitoringdashboard.core.profiler.util.groupedStackLine import GroupedStackLine
 from flask_monitoringdashboard.core.timezone import to_local_datetime, to_utc_datetime
 from flask_monitoringdashboard.core.utils import get_details, get_endpoint_details, simplify
 from flask_monitoringdashboard.database import Request, session_scope, row2dict

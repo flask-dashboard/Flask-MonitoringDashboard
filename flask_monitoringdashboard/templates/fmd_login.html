@@ -1,19 +1,5 @@
-<!DOCTYPE html>
-<html lang="en">
-
-<head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <title>Flask Monitoring Dashboard</title>
-
-    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet"
-          type="text/css">
-    <link href="{{ url_for('dashboard.static', filename='css/custom.css') }}" rel="stylesheet">
-    <link rel="shortcut icon" href="{{ url_for('dashboard.static', filename='img/favicon.ico') }}" />
-</head>
-
+{% extends "fmd_base.html" %}
+{% block body %}
 <body>
     <div class="container py-5">
         <div class="row">
@@ -37,7 +23,7 @@
                     </div>
 
                     <div class="card-body">
-                        <form class="form" method="POST">
+                        <form class="form" method="POST" action="login">
                             <div class="form-group">
                                 <label for="formName"><i class="fa fa-user"></i> Login</label>
                                 <input id="formName" name="name" type="text" class="form-control"
@@ -50,7 +36,7 @@
                                        placeholder="Username" required />
                             </div>
 
-                            <button name="Login" class="btn btn-primary btn-block" >Login</button>
+                            <button name="Login" class="btn btn-primary btn-block">Login</button>
                         </form>
                         <hr/>
 
@@ -64,4 +50,4 @@
         </div>
     </div>
 </body>
-</html>
+{% endblock %}

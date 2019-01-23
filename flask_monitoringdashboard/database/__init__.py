@@ -7,7 +7,7 @@ import random
 import time
 from contextlib import contextmanager
 
-from sqlalchemy import Column, Integer, String, DateTime, create_engine, Float, Boolean, TEXT, ForeignKey, exc
+from sqlalchemy import Column, Integer, String, DateTime, create_engine, Float, TEXT, ForeignKey, exc
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker, relationship, scoped_session
 
@@ -102,60 +102,6 @@ class StackLine(Base):
     code = relationship(CodeLine)
 
 
-class Test(Base):
-    """ Stores all of the tests that exist in the project. """
-    __tablename__ = '{}Test'.format(config.table_prefix)
-    id = Column(Integer, primary_key=True)
-    # name of the test
-    name = Column(String(250), unique=True)
-    # true - the test passed, false - otherwise
-    passing = Column(Boolean, nullable=False)
-    # time of the most recent run of the test
-    last_tested = Column(DateTime, default=datetime.datetime.utcnow)
-    # version when the test was added
-    version_added = Column(String(100), nullable=False)
-    # time when the test was added
-    time_added = Column(DateTime, default=datetime.datetime.utcnow)
-
-
-class TestResult(Base):
-    """ Stores unit test performance results obtained from Travis. """
-    __tablename__ = '{}TestResult'.format(config.table_prefix)
-    id = Column(Integer, primary_key=True)
-    test_id = Column(Integer, ForeignKey(Test.id))
-    # time it took to run the test
-    duration = Column(Float, nullable=False)
-    # time when the test was run
-    time_added = Column(DateTime, default=datetime.datetime.utcnow)
-    # version when the test was run
-    app_version = Column(String(100), nullable=False)
-    # id of the travis job running the test
-    travis_job_id = Column(String(10), nullable=False)
-    # number of the travis run
-    run_nr = Column(Integer, nullable=False)
-
-    test = relationship(Test)
-
-
-class TestEndpoint(Base):
-    """ Stores the endpoint hits that came from unit tests. """
-    __tablename__ = '{}TestEndpoint'.format(config.table_prefix)
-    id = Column(Integer, primary_key=True)
-    endpoint_id = Column(Integer, ForeignKey(Endpoint.id))
-    test_id = Column(Integer, ForeignKey(Test.id))
-    # duration of the tests for an endpoint
-    duration = Column(Float, nullable=False)
-    # version when the endpoint was tested
-    app_version = Column(String(100), nullable=False)
-    # id of the travis job running the test
-    travis_job_id = Column(String(10), nullable=False)
-    # time when the endpoint was tested
-    time_added = Column(DateTime, default=datetime.datetime.utcnow)
-
-    endpoint = relationship(Endpoint)
-    test = relationship(Test)
-
-
 # define the database
 engine = create_engine(config.database_name)
 
@@ -206,4 +152,4 @@ def row2dict(row):
 
 
 def get_tables():
-    return [Endpoint, Request, Outlier, StackLine, CodeLine, Test, TestResult, TestEndpoint]
+    return [Endpoint, Request, Outlier, StackLine, CodeLine]

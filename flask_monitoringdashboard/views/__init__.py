@@ -5,8 +5,9 @@
 from flask import render_template
 from flask.helpers import send_from_directory
 
-from flask_monitoringdashboard import loc
-from flask_monitoringdashboard.api import *
+from flask_monitoringdashboard import loc, blueprint
+from flask_monitoringdashboard.core.auth import secure
+from . import api
 from . import auth
 
 
@@ -21,7 +22,7 @@ def static(filename):
 
 
 @blueprint.route('/', defaults={'path': ''})
-@blueprint.route('/<path:path>')
+@blueprint.route('/<path:path>')  # Catch-All URL: http://flask.pocoo.org/snippets/57/
 @secure
 def index(path):
-    return render_template('angular.html')
+    return render_template('fmd_base.html')
