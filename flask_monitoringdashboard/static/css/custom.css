@@ -125,6 +125,7 @@ tr.even:hover, tr.odd:hover {
         flex-direction: column;
         margin-top: 56px;
         overflow-y: auto;
+        overflow-x: hidden;
     }
 
     #mainNav .navbar-collapse .navbar-sidenav > .nav-item {

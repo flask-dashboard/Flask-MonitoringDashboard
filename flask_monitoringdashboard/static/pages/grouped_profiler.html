@@ -1,0 +1,56 @@
+<div>
+    <div class="card mb-3">
+        <div class="card-header">
+            <div class="row align-items-end">
+                <div class="col-sm"><h4>{{ title }}</h4></div>
+                <div class="col-sm">
+                    <button class="btn btn-primary" style="float: right;"
+                            ng-click="toggleButton()">{{ buttonText() }}</button>
+                </div>
+            </div>
+        </div>
+        <table class="table table-bordered table-hover" width="100%" style="margin: 0;" cellspacing="0">
+            <thead>
+                        <tr>
+                <th rowspan="2">Code-line</th>
+                <th colspan="2" style="text-align: center; width: 16%;">Hits</th>
+                <th rowspan="2" style="width: 8%;">Average time</th>
+                <th rowspan="2" style="width: 8%;">Standard deviation</th>
+                <th colspan="2" style="text-align: center; width: 16%;">Total</th>
+            </tr>
+            <tr>
+                <th style="width: 8%;">Absolute</th>
+                <th style="width: 8%;">%</th>
+                <th style="width: 8%;">Absolute</th>
+                <th style="width: 8%;">%</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr ng-repeat="row in table" ng-show="row.showRow">
+                <td style="padding-left: {{ 10 + 15 * row.indent }}px;">
+                    {{ row.code }}
+                    <i class="fa" style="cursor: pointer;"
+                       ng-class="{'fa-minus-square': row.min, 'fa-plus-square': !row.min}"
+                       ng-click="toggleRows(row)" ng-show="row.body.length > 0"></i>
+                </td>
+                <td style="text-align: right;">{{ row.hits }}</td>
+                <td style="text-align: right; background-color: {{ computeColor(row.hits / table[0].hits) }}">
+                    {{ row.hits / table[0].hits * 100 | number: 1 }}%</td>
+                <td>{{ row.duration / row.hits | duration }}</td>
+                <td>{{ row.std | duration }}</td>
+                <td style="text-align: right;">{{ row.duration | duration }}</td>
+
+                <td style="text-align: right; background-color: {{ computeColor(row.duration / table[0].duration) }};">
+                    {{ (row.duration / table[0].duration * 100) | number: 1 }}%</td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div class="card mb-3">
+        <div class="card-header"><h4>Sunburst</h4></div>
+        <div class="card-body">
+            <div id="sunburst" style="margin-left: -200px;"></div>
+        </div>
+    </div>
+</div>

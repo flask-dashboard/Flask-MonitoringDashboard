@@ -54,28 +54,28 @@
                 <ul class="sidenav-second-level collapse" id="collapseEndpoint">
                     <li ng-class="{'active': menu.page=='endpoint_hourly'}">
                         <a href="{{ url_for('dashboard.index') }}endpoint/{% raw %}{{ menu.endpoint.info.id }}{% endraw %}/hourly_load">
-                        Hourly API Utilization</a></li>
+                            Hourly API Utilization</a></li>
                     <li ng-class="{'active': menu.page=='endpoint_user_version'}">
                         <a href="{{ url_for('dashboard.index') }}endpoint/{% raw %}{{ menu.endpoint.info.id }}{% endraw %}/version_user">
-                        User-Focused Multi-Version Performance</a></li>
+                            User-Focused Multi-Version Performance</a></li>
                     <li ng-class="{'active': menu.page=='endpoint_ip'}">
                         <a href="{{ url_for('dashboard.index') }}endpoint/{% raw %}{{ menu.endpoint.info.id }}{% endraw %}/version_ip">
-                        IP-Focused Multi-Version Performance</a></li>
+                            IP-Focused Multi-Version Performance</a></li>
                     <li ng-class="{'active': menu.page=='endpoint_version'}">
                         <a href="{{ url_for('dashboard.index') }}endpoint/{% raw %}{{ menu.endpoint.info.id }}{% endraw %}/versions">
-                        Per-Version Performance</a></li>
+                            Per-Version Performance</a></li>
                     <li ng-class="{'active': menu.page=='endpoint_user'}">
                         <a href="{{ url_for('dashboard.index') }}endpoint/{% raw %}{{ menu.endpoint.info.id }}{% endraw %}/users">
-                        Per-User Performance</a></li>
+                            Per-User Performance</a></li>
                     <li ng-class="{'active': menu.page=='endpoint_profiler'}">
                         <a href="{{ url_for('dashboard.index') }}endpoint/{% raw %}{{ menu.endpoint.info.id }}{% endraw %}/profiler">
-                        Profiler</a></li>
+                            Profiler</a></li>
                     <li ng-class="{'active': menu.page=='endpoint_grouped_profiler'}">
                         <a href="{{ url_for('dashboard.index') }}endpoint/{% raw %}{{ menu.endpoint.info.id }}{% endraw %}/grouped-profiler">
-                        Grouped Profiler</a></li>
+                            Grouped Profiler</a></li>
                     <li ng-class="{'active': menu.page=='endpoint_outlier'}">
                         <a href="{{ url_for('dashboard.index') }}endpoint/{% raw %}{{ menu.endpoint.info.id }}{% endraw %}/outliers">
-                        Outliers</a></li>
+                            Outliers</a></li>
                 </ul>
             </li>
 
@@ -135,7 +135,9 @@
                 <div class="modal-body">Are you sure you want to logout?</div>
                 <div class="modal-footer">
                     <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
-                    <button class="btn btn-primary" onclick="document.location.href='{{ url_for('dashboard.logout') }}';">Logout</button>
+                    <button class="btn btn-primary"
+                            onclick="document.location.href='{{ url_for('dashboard.logout') }}';">Logout
+                    </button>
                 </div>
             </div>
         </div>
@@ -150,10 +152,13 @@
 <script src="https://cdn.datatables.net/1.10.18/js/dataTables.bootstrap4.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.7.5/angular.js"></script>
 <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.7.5/angular-route.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/4.12.0/d3.min.js"></script>
+<script src="https://unpkg.com/sunburst-chart"></script>
 
 <script src="{{ url_for('dashboard.static', filename='js/angular-datatables.js') }}"></script>
 <script src="{{ url_for('dashboard.static', filename='js/custom.js') }}"></script>
 <script src="{{ url_for('dashboard.static', filename='js/app.js') }}"></script>
+<script src="{{ url_for('dashboard.static', filename='js/directives.js') }}"></script>
 <script src="{{ url_for('dashboard.static', filename='js/filters.js') }}"></script>
 <script src="{{ url_for('dashboard.static', filename='js/controllers.js') }}"></script>
 </body>

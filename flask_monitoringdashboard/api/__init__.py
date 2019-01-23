@@ -1,5 +1,7 @@
 import ast
 import datetime
+from collections import defaultdict
+
 import numpy
 
 from flask import jsonify, request, json
@@ -8,16 +10,19 @@ from flask_monitoringdashboard import blueprint, user_app, config
 from flask_monitoringdashboard.core.auth import secure, admin_secure
 from flask_monitoringdashboard.core.colors import get_color
 from flask_monitoringdashboard.core.measurement import add_decorator
+from flask_monitoringdashboard.core.profiler.util.pathHash import PathHash
+from flask_monitoringdashboard.core.profiler.util.groupedStackLine import GroupedStackLine
 from flask_monitoringdashboard.core.timezone import to_local_datetime, to_utc_datetime
 from flask_monitoringdashboard.core.utils import get_details, get_endpoint_details, simplify
 from flask_monitoringdashboard.database import Request, session_scope, row2dict
-from flask_monitoringdashboard.database.count import count_outliers
+from flask_monitoringdashboard.database.count import count_outliers, count_profiled_requests
 from flask_monitoringdashboard.database.count_group import count_requests_group, get_value, count_requests_per_day
 from flask_monitoringdashboard.database.data_grouped import get_endpoint_data_grouped, get_two_columns_grouped, \
     get_version_data_grouped, get_user_data_grouped
 from flask_monitoringdashboard.database.endpoint import get_last_requested, get_endpoints, update_endpoint, \
     get_endpoint_by_name, get_num_requests, get_users, get_ips
 from flask_monitoringdashboard.database.outlier import get_outliers_cpus, get_outliers_sorted
+from flask_monitoringdashboard.database.stack_line import get_profiled_requests, get_grouped_profiled_requests
 from flask_monitoringdashboard.database.versions import get_versions, get_first_requests
 
 
@@ -348,3 +353,55 @@ def outlier_table(endpoint_id, offset, per_page):
             table[idx] = row2dict(row)
             table[idx]['request'] = dict_request
         return jsonify(table)
+
+
+@blueprint.route('api/num_profiled/<endpoint_id>')
+@secure
+def num_profiled(endpoint_id):
+    with session_scope() as db_session:
+        return jsonify(count_profiled_requests(db_session, endpoint_id))
+
+
+@blueprint.route('api/profiler_table/<endpoint_id>/<offset>/<per_page>')
+@secure
+def profiler_table(endpoint_id, offset, per_page):
+    with session_scope() as db_session:
+        table = get_profiled_requests(db_session, endpoint_id, offset, per_page)
+
+        for idx, row in enumerate(table):
+            row.time_requested = to_local_datetime(row.time_requested)
+            table[idx] = row2dict(row)
+            stack_lines = []
+            for line in row.stack_lines:
+                obj = row2dict(line)
+                obj['code'] = row2dict(line.code)
+                stack_lines.append(obj)
+            table[idx]['stack_lines'] = stack_lines
+        return jsonify(table)
+
+
+@blueprint.route('/api/grouped_profiler/<endpoint_id>')
+@secure
+def grouped_profiler(endpoint_id):
+    with session_scope() as db_session:
+        requests = get_grouped_profiled_requests(db_session, endpoint_id)
+        db_session.expunge_all()
+    histogram = defaultdict(list)  # path -> [list of values]
+    path_hash = PathHash()
+
+    for r in requests:
+        for index, stack_line in enumerate(r.stack_lines):
+            key = path_hash.get_stacklines_path(r.stack_lines, index)
+            histogram[key].append(stack_line.duration)
+
+    table = []
+    for key, duration_list in sorted(histogram.items(), key=lambda row: row[0]):
+        table.append({
+            'indent': path_hash.get_indent(key) - 1,
+            'code': path_hash.get_code(key),
+            'hits': len(duration_list),
+            'duration': sum(duration_list),
+            'std': numpy.std(duration_list),
+            'total_hits': len(requests),
+        })
+    return jsonify(table)

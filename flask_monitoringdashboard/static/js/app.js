@@ -45,6 +45,14 @@ app.config(function ($locationProvider, $routeProvider) {
             templateUrl: 'static/pages/plotly_graph.html',
             controller: EndpointUsersController
         })
+        .when('/endpoint/:endpointId/profiler', {
+            templateUrl: 'static/pages/profiler.html',
+            controller: EndpointProfilerController
+        })
+        .when('/endpoint/:endpointId/grouped-profiler', {
+            templateUrl: 'static/pages/grouped_profiler.html',
+            controller: EndpointGroupedProfilerController
+        })
         .when('/endpoint/:endpointId/outliers', {
             templateUrl: 'static/pages/outliers.html',
             controller: OutlierController
@@ -248,9 +256,11 @@ app.service('endpointService', function ($http, $routeParams) {
 
 app.service('paginationService', function () {
 
-    this.page = 1;
-    this.perPage = 5;
-    this.total = 0;
+    this.init = function() {
+        this.page = 1;
+        this.perPage = 5;
+        this.total = 0;
+    };
 
     this.maxPages = function () {
         return Math.ceil(this.total / this.perPage);
@@ -259,8 +269,12 @@ app.service('paginationService', function () {
     this.onReload = function(){
     };
 
-    this.getOffset = function () {
+    this.getLeft = function () {
         return (this.page - 1) * this.perPage;
+    };
+
+    this.getRight = function(){
+        return Math.min(this.total, this.getLeft() + this.perPage);
     };
 
     this.getFirstPage = function () {

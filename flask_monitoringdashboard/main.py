@@ -2,6 +2,7 @@
     This file can be executed for developing purposes.
     It is not used when the flask_monitoring_dashboard is attached to an existing flask application.
 """
+import random
 
 from flask import Flask
 
@@ -34,6 +35,13 @@ def create_app():
         time.sleep(0.1)
         return 'Ok'
 
+    @app.route('/endpoint3')
+    def endpoint3():
+        if random.randint(0, 1) == 0:
+            time.sleep(0.1)
+        else:
+            time.sleep(0.2)
+        return 'Ok'
     return app
 
 

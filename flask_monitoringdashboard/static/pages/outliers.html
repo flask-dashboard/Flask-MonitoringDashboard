@@ -10,13 +10,16 @@
         <div class="card-header"><h4>Outliers data</h4></div>
         <div class="card-body">
 
+            <pagination />
+
             <div class="card" ng-repeat="row in table" style="margin-bottom: 10px;">
                 <div class="row">
                     <div class="col-sm-6">
                         <div class="well-sm"><strong>Request url: </strong>{{ row.request_url }}</div>
                     </div>
                     <div class="col-sm-6">
-                        <div class="well-sm"><strong>Request time: </strong>{{ row.request.time_requested | dateLayout }}</div>
+                        <div class="well-sm"><strong>Request
+                            time: </strong>{{ row.request.time_requested | dateLayout }}</div>
                     </div>
                 </div>
                 <div class="row">
@@ -62,22 +65,8 @@
                 </div>
             </div>
 
+            <pagination />
 
-            <ul class="pagination" style="float: right;">
-
-                <li class="paginate_button page-item previous"
-                    ng-class="{'disabled': pagination.page == pagination.getFirstPage()}">
-                    <a href="#" class="page-link" ng-click="pagination.goto(pagination.page-1)">Previous</a>
-                </li>
-                <li ng-repeat="p in pagination.getPages() track by $index" class="paginate_button page-item"
-                    ng-class="{'active': pagination.page==p, 'disabled': p=='...'}">
-                    <a href="#" class="page-link" ng-click="pagination.goto(p)">{{ p }}</a>
-                </li>
-                <li class="paginate_button page-item next"
-                    ng-class="{'disabled': pagination.page == pagination.getLastPage()}">
-                    <a href="#" class="page-link" ng-click="pagination.goto(pagination.page+1)">Next</a>
-                </li>
-            </ul>
         </div>
     </div>
 </div>

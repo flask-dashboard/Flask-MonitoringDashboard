@@ -1,0 +1,48 @@
+<div>
+    <div class="card mb-3">
+        <div class="card-header"><h4>{{ title }}</h4></div>
+        <div class="card-body">
+
+            <pagination/>
+            <div class="card" ng-repeat="request in table" style="margin-bottom: 10px;">
+                <div class="card-header">
+                    <div class="row align-items-end">
+                        <div class="col-sm"><h6>Request id: {{ request.id }}</h6></div>
+                        <div class="col-sm"><h6>Request date: {{ request.time_requested | dateLayout }}</h6></div>
+                        <div class="col-sm">
+                            <button class="btn btn-primary" style="float: right;"
+                                    ng-click="toggleButton(request)">{{ buttonText(request) }}</button>
+                        </div>
+                    </div>
+                </div>
+                <table class="table table-bordered table-hover" width="100%" style="margin: 0;" cellspacing="0">
+                    <thead>
+                    <tr>
+                        <th style="width: 80%">Code-line</th>
+                        <th style="width: 10%;">Duration</th>
+                        <th style="width: 10%;">Percentage</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr ng-repeat="row in request.stack_lines" ng-show="row.showRow">
+                        <td style="padding-left: {{ 10 + 15 * row.indent }}px;">
+                            {{ row.code.code }}
+                            <i class="fa" style="cursor: pointer;"
+                               ng-class="{'fa-minus-square': row.min, 'fa-plus-square': !row.min}"
+                               ng-click="toggleRows(request, row)" ng-show="row.body.length > 0"></i>
+                        </td>
+                        <td style="text-align: right;">
+                            <time>{{ row.duration | duration }}</time>
+                        </td>
+                        <td style="text-align: right; background-color: {{ computeColor(row.duration / request.stack_lines[0].duration) }};">
+                            {{ (row.duration / request.stack_lines[0].duration * 100) | number: 1 }}%
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <pagination/>
+        </div>
+    </div>
+</div>
