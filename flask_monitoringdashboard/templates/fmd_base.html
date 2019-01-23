@@ -24,69 +24,8 @@
         <a href="overview"><h4>Flask Monitoring Dashboard</h4></a>
     </div>
 
-    <div class="collapse navbar-collapse" id="navbarResponsive" ng-controller="MenuController">
-        <ul class="navbar-nav navbar-sidenav nav-pills">
-            <li class="nav-item" title="Dashboard">
-                <a class="nav-link nav-link-collapse collapsed"
-                   data-toggle="collapse" href="#collapseDashboard">
-                    <i class="fa fa-fw fa-dashboard"></i>
-                    <span class="nav-link-text">Dashboard</span>
-                </a>
-                <ul class="sidenav-second-level collapse" id="collapseDashboard">
-                    <li ng-class="{'active': menu.page=='overview'}">
-                        <a href="{{ url_for('dashboard.index') }}overview">Overview</a></li>
-                    <li ng-class="{'active': menu.page=='hourly_load'}">
-                        <a href="{{ url_for('dashboard.index') }}hourly_load">Hourly API Utilization</a></li>
-                    <li ng-class="{'active': menu.page=='multi_version'}">
-                        <a href="{{ url_for('dashboard.index') }}multi_version">Multi Version API Utilization</a></li>
-                    <li ng-class="{'active': menu.page=='daily_load'}">
-                        <a href="{{ url_for('dashboard.index') }}daily_utilization">Daily API Utilization</a></li>
-                    <li ng-class="{'active': menu.page=='api_performance'}">
-                        <a href="{{ url_for('dashboard.index') }}api_performance">API Performance</a></li>
-                </ul>
-            </li>
-
-            <li class="nav-item" data-toggle="tooltip" data-placement="right" ng-show="menu.endpoint.info.id > 0"
-                data-original-title="{% raw %}{{ menu.endpoint.info.endpoint }}{% endraw %}">
-                <a class="nav-link nav-link-collapse collapsed" data-toggle="collapse" href="#collapseEndpoint">
-                    <i class="fa fa-fw fa-asterisk"></i>
-                    <span class="nav-link-text">{% raw %}{{ menu.endpoint.info.endpoint }}{% endraw %}</span>
-                </a>
-                <ul class="sidenav-second-level collapse" id="collapseEndpoint">
-                    <li ng-class="{'active': menu.page=='endpoint_hourly'}">
-                        <a href="{{ url_for('dashboard.index') }}endpoint/{% raw %}{{ menu.endpoint.info.id }}{% endraw %}/hourly_load">
-                            Hourly API Utilization</a></li>
-                    <li ng-class="{'active': menu.page=='endpoint_user_version'}">
-                        <a href="{{ url_for('dashboard.index') }}endpoint/{% raw %}{{ menu.endpoint.info.id }}{% endraw %}/version_user">
-                            User-Focused Multi-Version Performance</a></li>
-                    <li ng-class="{'active': menu.page=='endpoint_ip'}">
-                        <a href="{{ url_for('dashboard.index') }}endpoint/{% raw %}{{ menu.endpoint.info.id }}{% endraw %}/version_ip">
-                            IP-Focused Multi-Version Performance</a></li>
-                    <li ng-class="{'active': menu.page=='endpoint_version'}">
-                        <a href="{{ url_for('dashboard.index') }}endpoint/{% raw %}{{ menu.endpoint.info.id }}{% endraw %}/versions">
-                            Per-Version Performance</a></li>
-                    <li ng-class="{'active': menu.page=='endpoint_user'}">
-                        <a href="{{ url_for('dashboard.index') }}endpoint/{% raw %}{{ menu.endpoint.info.id }}{% endraw %}/users">
-                            Per-User Performance</a></li>
-                    <li ng-class="{'active': menu.page=='endpoint_profiler'}">
-                        <a href="{{ url_for('dashboard.index') }}endpoint/{% raw %}{{ menu.endpoint.info.id }}{% endraw %}/profiler">
-                            Profiler</a></li>
-                    <li ng-class="{'active': menu.page=='endpoint_grouped_profiler'}">
-                        <a href="{{ url_for('dashboard.index') }}endpoint/{% raw %}{{ menu.endpoint.info.id }}{% endraw %}/grouped-profiler">
-                            Grouped Profiler</a></li>
-                    <li ng-class="{'active': menu.page=='endpoint_outlier'}">
-                        <a href="{{ url_for('dashboard.index') }}endpoint/{% raw %}{{ menu.endpoint.info.id }}{% endraw %}/outliers">
-                            Outliers</a></li>
-                </ul>
-            </li>
-
-            <li ng-class="{'active': menu.page=='configuration'}" class="nav-item" title="Configuration">
-                <a class="nav-link" href="{{ url_for('dashboard.index') }}configuration">
-                    <i class="fa fa-fw fa-gear"></i>
-                    <span class="nav-link-text">Configuration</span>
-                </a>
-            </li>
-        </ul>
+    <div class="collapse navbar-collapse" id="navbarResponsive">
+        <menu></menu>
         <ul class="navbar-nav sidenav-toggler">
             <li class="nav-item">
                 <a class="nav-link text-center" id="sidenavToggler">
@@ -160,8 +99,33 @@
 <script src="{{ url_for('dashboard.static', filename='js/angular-datatables.js') }}"></script>
 <script src="{{ url_for('dashboard.static', filename='js/custom.js') }}"></script>
 <script src="{{ url_for('dashboard.static', filename='js/app.js') }}"></script>
+
+<!-- Services -->
+<script src="{{ url_for('dashboard.static', filename='js/services/endpoint.js') }}"></script>
+<script src="{{ url_for('dashboard.static', filename='js/services/form.js') }}"></script>
+<script src="{{ url_for('dashboard.static', filename='js/services/info.js') }}"></script>
+<script src="{{ url_for('dashboard.static', filename='js/services/menu.js') }}"></script>
+<script src="{{ url_for('dashboard.static', filename='js/services/pagination.js') }}"></script>
+<script src="{{ url_for('dashboard.static', filename='js/services/plotly.js') }}"></script>
+
 <script src="{{ url_for('dashboard.static', filename='js/directives.js') }}"></script>
 <script src="{{ url_for('dashboard.static', filename='js/filters.js') }}"></script>
-<script src="{{ url_for('dashboard.static', filename='js/controllers.js') }}"></script>
+
+<!-- Controllers -->
+<script src="{{ url_for('dashboard.static', filename='js/controllers/apiPerformance.js') }}"></script>
+<script src="{{ url_for('dashboard.static', filename='js/controllers/configuration.js') }}"></script>
+<script src="{{ url_for('dashboard.static', filename='js/controllers/dailyUtilization.js') }}"></script>
+<script src="{{ url_for('dashboard.static', filename='js/controllers/endpointGroupedProfiler.js') }}"></script>
+<script src="{{ url_for('dashboard.static', filename='js/controllers/endpointHourlyLoad.js') }}"></script>
+<script src="{{ url_for('dashboard.static', filename='js/controllers/endpointOutlier.js') }}"></script>
+<script src="{{ url_for('dashboard.static', filename='js/controllers/endpointProfiler.js') }}"></script>
+<script src="{{ url_for('dashboard.static', filename='js/controllers/endpointUsers.js') }}"></script>
+<script src="{{ url_for('dashboard.static', filename='js/controllers/endpointVersion.js') }}"></script>
+<script src="{{ url_for('dashboard.static', filename='js/controllers/endpointVersionIP.js') }}"></script>
+<script src="{{ url_for('dashboard.static', filename='js/controllers/endpointVersionUser.js') }}"></script>
+<script src="{{ url_for('dashboard.static', filename='js/controllers/hourlyLoad.js') }}"></script>
+<script src="{{ url_for('dashboard.static', filename='js/controllers/multiVersion.js') }}"></script>
+<script src="{{ url_for('dashboard.static', filename='js/controllers/overview.js') }}"></script>
+<script src="{{ url_for('dashboard.static', filename='js/controllers/util.js') }}"></script>
 </body>
 </html>
