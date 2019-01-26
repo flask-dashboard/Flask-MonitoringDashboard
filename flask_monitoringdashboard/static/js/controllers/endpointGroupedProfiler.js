@@ -1,4 +1,5 @@
-function EndpointGroupedProfilerController($scope, $http, menuService, endpointService) {
+function EndpointGroupedProfilerController($scope, $http, menuService,
+                                           endpointService, formService) {
     endpointService.reset();
     $scope.table = [];
 
@@ -8,6 +9,7 @@ function EndpointGroupedProfilerController($scope, $http, menuService, endpointS
     menuService.reset('endpoint_grouped_profiler');
 
     $http.get('api/grouped_profiler/' + endpointService.info.id).then(function (response) {
+        formService.isLoading = false;
         $scope.table = response.data;
         for (let i = 0; i < $scope.table.length; i++) {
             let row = $scope.table[i];
@@ -33,7 +35,7 @@ function EndpointGroupedProfilerController($scope, $http, menuService, endpointS
     let makeSunburst = function (data, indent) {
         if (indent === 0) {
             let i = 0;
-            while (i+1 < data.length && parseInt(data[i+1].indent) === 0) {
+            while (i + 1 < data.length && parseInt(data[i + 1].indent) === 0) {
                 i++;
             }
             return {
@@ -42,12 +44,12 @@ function EndpointGroupedProfilerController($scope, $http, menuService, endpointS
             };
         } else {
             let children = [];
-            for(let row of data){
-                if (parseInt(row.indent) === indent){
-                    if (row.body.length > 0){
+            for (let row of data) {
+                if (parseInt(row.indent) === indent) {
+                    if (row.body.length > 0) {
                         children.push({
                             name: row.code,
-                            children: makeSunburst(row.body.map(i => $scope.table[i]), indent+1)
+                            children: makeSunburst(row.body.map(i => $scope.table[i]), indent + 1)
                         });
                     } else {
                         children.push({

@@ -40,7 +40,7 @@ function OverviewController($scope, $http, $location, DTOptionsBuilder, menuServ
     $http.get('https://pypi.org/pypi/Flask-MonitoringDashboard/json').then(function (response) {
         $scope.pypi_version = response.data['info']['version'];
 
-        $http.get('api/info').then(function (response) {
+        $http.get('api/deploy_details').then(function (response) {
             $scope.dashboard_version = response.data['dashboard-version'];
             $scope.alertShow = $scope.pypi_version !== $scope.dashboard_version;
         })

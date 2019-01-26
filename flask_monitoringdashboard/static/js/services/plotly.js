@@ -1,6 +1,7 @@
-app.service('plotlyService', function () {
+app.service('plotlyService', function (formService) {
     let layout = {
         height: 600,
+        margin: {l: 200}
     };
     let options = {
         displaylogo: false,
@@ -17,6 +18,7 @@ app.service('plotlyService', function () {
     };
 
     this.chart = function (data, layout_ext) {
+        formService.isLoading = false;
         Plotly.newPlot('chart', data, $.extend({}, layout, layout_ext), options);
     }
 });

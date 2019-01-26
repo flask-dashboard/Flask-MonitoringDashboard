@@ -34,8 +34,8 @@ function EndpointHourlyLoadController($scope, $http, menuService, endpointServic
                     yaxis: {
                         type: 'category',
                         autorange: 'reversed'
-                    }
-
+                    },
+                    margin: {l: 50}
                 });
             });
     });

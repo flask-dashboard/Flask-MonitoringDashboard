@@ -1,5 +1,8 @@
-function EndpointProfilerController($scope, $http, menuService, endpointService, paginationService) {
+function EndpointProfilerController($scope, $http, menuService, endpointService,
+                                    paginationService, formService) {
     endpointService.reset();
+
+    // TODO: refactor endpointProfiler and endpointGroupedProfiler
 
     endpointService.onNameChanged = function (name) {
         $scope.title = 'Profiler for ' + name;
@@ -11,10 +14,11 @@ function EndpointProfilerController($scope, $http, menuService, endpointService,
         paginationService.setTotal(response.data);
     });
     paginationService.onReload = function () {
+        formService.isLoading = true;
         $http.get('api/profiler_table/' + endpointService.info.id + '/' +
             paginationService.getLeft() + '/' + paginationService.perPage).then(function (response) {
             $scope.table = response.data;
-
+            formService.isLoading = false;
             // Add more properties
             for (let req of $scope.table) {
                 let rows = req.stack_lines;

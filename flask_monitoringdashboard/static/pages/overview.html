@@ -2,14 +2,21 @@
     <div id="alert" class="alert alert-warning alert-dismissible" ng-show="alertShow">
         <a class="close" data-dismiss="alert" aria-label="close" ng-click="alertShow = false">&times;</a>
         <strong>Warning:</strong>
-        Version {{ pypi_version }} is now available, while you are still using version {{ dashboard_version }}.<br />
-        To upgrade run the following command on your server: <code>pip install --upgrade flask_monitoringdashboard</code>
+        Version {{ pypi_version }} is now available, while you are still using version {{ dashboard_version }}.<br/>
+        To upgrade run the following command on your server: <code>pip install --upgrade
+        flask_monitoringdashboard</code>
     </div>
 
     <div class="card mb-3">
         <div class="card-header"><h4>Dashboard Overview</h4></div>
         <div class="card-body">
-
+            <div class="spinner" ng-controller="FormController" ng-show="table.length === 0">
+                <div class="rect1"></div>
+                <div class="rect2"></div>
+                <div class="rect3"></div>
+                <div class="rect4"></div>
+                <div class="rect5"></div>
+            </div>
 
             <table datatable="ng" class="table table-hover table-bordered" dt-options="options">
                 <thead>
@@ -37,7 +44,8 @@
                 </thead>
 
                 <tbody>
-                <tr ng-repeat="row in table" style="cursor: pointer" ng-click="go('/endpoint/' + row.id + '/hourly_load')">
+                <tr ng-repeat="row in table" style="cursor: pointer"
+                    ng-click="go('/endpoint/' + row.id + '/hourly_load')">
                     <td style="background-color: {{ row.color }}"></td>
                     <td style="max-width: 200px;">{{ row.name }}</td>
 

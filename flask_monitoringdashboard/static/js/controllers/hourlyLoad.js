@@ -25,7 +25,8 @@ function HourlyLoadController($scope, $http, menuService, plotlyService, infoSer
             plotlyService.heatmap(response.data.days, times, response.data.data, {
                 yaxis: {
                     autorange: 'reversed'
-                }
+                },
+                margin: {l: 50}
             });
         });
     });

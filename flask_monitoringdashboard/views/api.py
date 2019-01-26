@@ -24,16 +24,13 @@ from flask_monitoringdashboard.database.stack_line import get_profiled_requests,
 from flask_monitoringdashboard.database.versions import get_versions, get_first_requests
 
 
-@blueprint.route('/api/info')
-@secure
-def get_info():
-    with session_scope() as db_session:
-        return jsonify(get_details(db_session))
-
-
 @blueprint.route('/api/overview')
 @secure
 def get_overview():
+    """
+    Get information per endpoint about the number of hits and median execution time
+    :return: A JSON-list with a JSON-object per endpoint
+    """
     week_ago = datetime.datetime.utcnow() - datetime.timedelta(days=7)
     now_local = to_local_datetime(datetime.datetime.utcnow())
     today_local = now_local.replace(hour=0, minute=0, second=0, microsecond=0)
@@ -73,6 +70,10 @@ def get_overview():
 @blueprint.route('api/versions/<endpoint_id>')
 @secure
 def versions(endpoint_id=None):
+    """
+    :param endpoint_id: integer
+    :return: A JSON-list with all versions of a specific endpoint (version represented by a string)
+    """
     with session_scope() as db_session:
         return jsonify(get_versions(db_session, endpoint_id))
 
@@ -80,6 +81,10 @@ def versions(endpoint_id=None):
 @blueprint.route('/api/users/<endpoint_id>')
 @secure
 def users(endpoint_id):
+    """
+    :param endpoint_id: integer
+    :return: A JSON-list with all users of a specific endpoint (user represented by a string)
+    """
     with session_scope() as db_session:
         return jsonify(get_users(db_session, endpoint_id))
 
@@ -87,6 +92,10 @@ def users(endpoint_id):
 @blueprint.route('/api/ip/<endpoint_id>')
 @secure
 def ips(endpoint_id):
+    """
+    :param endpoint_id: integer
+    :return: A JSON-list with all IP-addresses of a specific endpoint (ip represented by a string)
+    """
     with session_scope() as db_session:
         return jsonify(get_ips(db_session, endpoint_id))
 
@@ -94,6 +103,10 @@ def ips(endpoint_id):
 @blueprint.route('/api/endpoints')
 @secure
 def endpoints():
+    """
+    :return: A JSON-list with information about every endpoint (encoded in a JSON-object)
+        For more information per endpoint, see :func: get_overview
+    """
     with session_scope() as db_session:
         return jsonify([row2dict(row) for row in get_endpoints(db_session)])
 
@@ -101,6 +114,20 @@ def endpoints():
 @blueprint.route('api/multi_version', methods=['POST'])
 @secure
 def multi_version():
+    """
+        input must be a JSON-object, with a list of endpoints and versions, such as:
+          {
+            endpoints: ['endpoint0', endpoint1],
+            versions: ['0.1', '0.2', '0.3']
+          }
+    :return: A JSON-list for all endpoints, with a JSON-list for every version.
+        output: {
+            [
+              [10, 11, 12],
+              [13, 14, 15]
+            ]
+          }
+    """
     data = json.loads(request.data)['data']
     endpoints = data['endpoints']
     versions = data['versions']
@@ -124,6 +151,25 @@ def multi_version():
 @blueprint.route('api/version_user/<endpoint_id>', methods=['POST'])
 @secure
 def version_user(endpoint_id):
+    """
+        input must be a JSON-object, with a list of versions and users, such as:
+          {
+            users: ['user0', user1],
+            versions: ['0.1', '0.2', '0.3']
+          }
+    :return: A JSON-list for all users, with a JSON-list for every version.
+        output: {
+            data: [
+              [10, 11, 12],
+              [13, 14, 15]
+            ],
+            versions: [
+              { date: '...', version: '0.1'},
+              { date: '...', version: '0.2'},
+              { date: '...', version: '0.3'}
+            ]
+          }
+    """
     data = json.loads(request.data)['data']
     versions = data['versions']
     users = data['users']
@@ -145,6 +191,25 @@ def version_user(endpoint_id):
 @blueprint.route('api/version_ip/<endpoint_id>', methods=['POST'])
 @secure
 def version_ip(endpoint_id):
+    """
+        input must be a JSON-object, with a list of versions and IP-addresses, such as:
+          {
+            ip: ['127.0.0.1', '127.0.0.2'],
+            versions: ['0.1', '0.2', '0.3']
+          }
+    :return: A JSON-list for all IP-addresses, with a JSON-list for every version.
+        output: {
+            data: [
+              [10, 11, 12],
+              [13, 14, 15]
+            ],
+            versions: [
+              { date: '...', version: '0.1'},
+              { date: '...', version: '0.2'},
+              { date: '...', version: '0.3'}
+            ]
+          }
+    """
     data = json.loads(request.data)['data']
     versions = data['versions']
     users = data['ip']
@@ -166,6 +231,14 @@ def version_ip(endpoint_id):
 @blueprint.route('/api/requests/<start_date>/<end_date>')
 @secure
 def num_requests(start_date, end_date):
+    """
+    :param start_date: must be in the following form: yyyy-mm-dd
+    :param end_date: must be in the following form: yyyy-mm-dd
+    :return: A JSON-list with the following object: {
+          'name': 'endpoint',
+          'values': [list with an integer per day],
+        }
+    """
     with session_scope() as db_session:
         start_date = datetime.datetime.strptime(start_date, '%Y-%m-%d')
         end_date = datetime.datetime.strptime(end_date, '%Y-%m-%d')
@@ -188,6 +261,17 @@ def num_requests(start_date, end_date):
 @blueprint.route('/api/api_performance', methods=['POST'])
 @secure
 def api_performance():
+    """
+    input must be a JSON-object, with the following value: {
+          'data': {
+            'endpoint': ['endpoint', 'endpoint2']
+          }
+        }
+    :return: A JSON-list for every endpoint with the following JSON-object: {
+          'name': 'endpoint',
+          'values': [100, 101, 102, ...]
+        }
+    """
     data = json.loads(request.data)['data']
     endpoints = data['endpoints']
 
@@ -204,7 +288,7 @@ def api_performance():
 @admin_secure
 def set_rule():
     """
-    the data from the form is validated and processed, such that the required rule is monitored
+        The data from the form is validated and processed, such that the required rule is monitored
     """
     endpoint_name = request.form['name']
     value = int(request.form['value'])
@@ -225,6 +309,9 @@ def set_rule():
 @blueprint.route('api/deploy_details')
 @secure
 def deploy_details():
+    """
+    :return: A JSON-object with deployment details
+    """
     with session_scope() as db_session:
         details = get_details(db_session)
     details['first-request'] = to_local_datetime(datetime.datetime.fromtimestamp(details['first-request']))
@@ -236,6 +323,9 @@ def deploy_details():
 @blueprint.route('api/deploy_config')
 @secure
 def deploy_config():
+    """
+    :return: A JSON-object with configuration details
+    """
     return jsonify({
         'database_name': config.database_name,
         'username': config.username,
@@ -249,6 +339,17 @@ def deploy_config():
 @blueprint.route('api/endpoint_info/<endpoint_id>')
 @secure
 def endpoint_info(endpoint_id):
+    """
+    :return: A JSON-object with endpoint details, such as:
+        - color: hashed color of the endpoint,
+        - endpoint: endpoint-name
+        - id: endpoint id
+        - methods: HTTP methods (encoded as a JSON-list)
+        - monitor-level: monitor level for this endpoint
+        - rules: all rules for this endpoint (encoded as a JSON-list)
+        - total_hits: number of hits
+        - url: link to this endpoint
+    """
     with session_scope() as db_session:
         return jsonify(get_endpoint_details(db_session, endpoint_id))
 
@@ -258,6 +359,15 @@ def endpoint_info(endpoint_id):
 @secure
 # both days must be in the form: yyyy-mm-dd
 def hourly_load(start_date, end_date, endpoint_id=None):
+    """
+    :param start_date: must be in the following form: yyyy-mm-dd
+    :param end_date: must be in the following form: yyyy-mm-dd
+    :param endpoint_id: if specified, filter on this endpoint
+    :return: A JSON-object: {
+          'data': [ [hits for 0:00-1:00 per day], [hits for 1:00-2:00 per day], ...]
+          'days': ['start_date', 'start_date+1', ..., 'end_date'],
+        }
+    """
     start_date = datetime.datetime.strptime(start_date, '%Y-%m-%d')
     end_date = datetime.datetime.strptime(end_date, '%Y-%m-%d')
     numdays = (end_date - start_date).days + 1
@@ -327,13 +437,13 @@ def num_outliers(endpoint_id):
 def outlier_graph(endpoint_id):
     with session_scope() as db_session:
         all_cpus = get_outliers_cpus(db_session, endpoint_id)
-        values = [ast.literal_eval(cpu) for cpu in all_cpus]
+        cpu_data = [ast.literal_eval(cpu) for cpu in all_cpus]
 
-    return jsonify([{
-        'name': 'CPU core %d' % idx,
-        'values': simplify(values, 50),
-        'color': get_color(idx)
-    } for idx, values in enumerate(zip(*values))])
+        return jsonify([{
+            'name': 'CPU core %d' % idx,
+            'values': simplify(data, 50),
+            'color': get_color(idx)
+        } for idx, data in enumerate(zip(cpu_data))])
 
 
 @blueprint.route('api/outlier_table/<endpoint_id>/<offset>/<per_page>')

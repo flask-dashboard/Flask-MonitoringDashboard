@@ -4,6 +4,7 @@ app.service('formService', function ($http, endpointService) {
 
     this.dateFields = [];
     this.multiFields = [];
+    this.isLoading = true;
 
     this.clear = function () {
         that.multiFields = [];
@@ -62,7 +63,7 @@ app.service('formService', function ($http, endpointService) {
         let obj = addMultiSelect('endpoints');
         $http.get('api/endpoints').then(function (response) {
             obj.values = response.data.map(d => d.name);
-            obj.selected = obj.values;
+            obj.selected = obj.values.slice(0, 10);
             that.initialize(obj);
         });
     };
@@ -71,7 +72,7 @@ app.service('formService', function ($http, endpointService) {
         let obj = addMultiSelect('users');
         $http.get('api/users/' + endpointService.info.id).then(function (response) {
             obj.values = response.data;
-            obj.selected = obj.values;
+            obj.selected = obj.values.slice(0, 20);
             that.initialize(obj);
         });
     };
@@ -79,7 +80,7 @@ app.service('formService', function ($http, endpointService) {
     this.addIP = function () {
         let obj = addMultiSelect('IP-addresses');
         $http.get('api/ip/' + endpointService.info.id).then(function (response) {
-            obj.values = response.data;
+            obj.values = response.data.slice(0, 20);
             obj.selected = obj.values;
             that.initialize(obj);
         });
@@ -93,6 +94,9 @@ app.service('formService', function ($http, endpointService) {
     this.reload = function () {
     };
     this.setReload = function (f) {
-        this.reload = f;
+        this.reload = function(){
+            that.isLoading = true;
+            f();
+        };
     }
 });
