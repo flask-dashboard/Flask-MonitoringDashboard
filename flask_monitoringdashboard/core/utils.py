@@ -1,5 +1,3 @@
-import ast
-
 import numpy as np
 from flask import url_for
 from werkzeug.routing import BuildError
@@ -78,4 +76,6 @@ def simplify(values, n=5):
     :param n: length of the returned list
     :return: list with n values: min, q1, median, q3, max
     """
+    if len(values) <= n:
+        return values
     return [np.percentile(values, i * 100 // (n - 1)) for i in range(n)]

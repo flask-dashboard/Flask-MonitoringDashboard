@@ -1,6 +1,7 @@
 """
 Contains all functions that access an StackLine object.
 """
+
 from sqlalchemy import desc, distinct
 from sqlalchemy.orm import joinedload
 

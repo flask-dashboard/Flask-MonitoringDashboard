@@ -1,7 +1,6 @@
 """
 Contains all functions that access a Request object.
 """
-
 import time
 
 from sqlalchemy import func
@@ -40,8 +39,8 @@ def get_date_of_first_request_version(db_session, version):
     :param version: version of the dashboard
     :return time of the first request in that version
     """
-    result = db_session.query(Request.time_requested).\
-        filter(Request.version_requested == version).\
+    result = db_session.query(Request.time_requested). \
+        filter(Request.version_requested == version). \
         order_by(Request.time_requested).first()
     if result:
         return int(time.mktime(result[0].timetuple()))

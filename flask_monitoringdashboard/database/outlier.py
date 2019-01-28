@@ -31,7 +31,7 @@ def get_outliers_sorted(db_session, endpoint_id, offset, per_page):
     :param per_page: number of items to return
     :return list of Outlier objects of a specific endpoint
     """
-    result = db_session.query(Outlier).\
+    result = db_session.query(Outlier). \
         join(Outlier.request). \
         options(joinedload(Outlier.request).joinedload(Request.endpoint)). \
         filter(Request.endpoint_id == endpoint_id). \
@@ -48,7 +48,7 @@ def get_outliers_cpus(db_session, endpoint_id):
     :param endpoint_id: id of the endpoint
     :return list of cpu percentages as strings
     """
-    outliers = db_session.query(Outlier.cpu_percent).\
-        join(Outlier.request).\
+    outliers = db_session.query(Outlier.cpu_percent). \
+        join(Outlier.request). \
         filter(Request.endpoint_id == endpoint_id).all()
     return [outlier[0] for outlier in outliers]

@@ -17,17 +17,25 @@
                 </tr>
                 <tr>
                     <td><b>Guest username</b></td>
-                    <td>{{ config.guest_username }}</td>
+                    <td>
+                        <ul>
+                            <li ng-repeat="name in config.guest_username">{{ name }}</li>
+                        </ul>
+                    </td>
                 </tr>
                 <tr>
                     <td><b>Collecting outlier data?</b></td>
-                    <td>Yes, with outlier_detection_constant = {{ config.outlier_detection_constant }}
+                    <td ng-show="config.outlier_detection_constant > 0">Yes, with outlier_detection_constant
+                        = {{ config.outlier_detection_constant }}
                     </td>
+                    <td ng-show="config.outlier_detection_constant == 0">No</td>
                 </tr>
                 <tr>
                     <td><b>Custom endpoint colors</b></td>
                     <td>
-                        <p ng-repeat="(key, value) in config.colors">{{ key }}: {{ value }}</p>
+                        <ul>
+                            <li ng-repeat="(key, value) in config.colors">{{ key + ': ' + value }}</li>
+                        </ul>
                     </td>
                 </tr>
                 <tr>

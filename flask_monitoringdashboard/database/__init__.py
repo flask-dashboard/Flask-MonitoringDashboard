@@ -102,6 +102,24 @@ class StackLine(Base):
     code = relationship(CodeLine)
 
 
+class CustomGraph(Base):
+    """ Table for storing custom graphs names. """
+    __tablename__ = '{}CustomGraph'.format(config.table_prefix)
+    graph_id = Column(Integer, primary_key=True)
+    title = Column(TEXT, nullable=False, unique=True)
+    time_added = Column(DateTime, default=datetime.datetime.utcnow)
+    version_added = Column(String(100), default=config.version)
+
+
+class CustomGraphData(Base):
+    """ Table for storing data collected by custom graphs. """
+    __tablename__ = '{}CustomGraphData'.format(config.table_prefix)
+    id = Column(Integer, primary_key=True)
+    graph_id = Column(Integer, ForeignKey(CustomGraph.graph_id))
+    time = Column(DateTime, default=datetime.datetime.utcnow)
+    value = Column(Integer)
+
+
 # define the database
 engine = create_engine(config.database_name)
 
@@ -152,4 +170,4 @@ def row2dict(row):
 
 
 def get_tables():
-    return [Endpoint, Request, Outlier, StackLine, CodeLine]
+    return [Endpoint, Request, Outlier, StackLine, CodeLine, CustomGraph, CustomGraphData]

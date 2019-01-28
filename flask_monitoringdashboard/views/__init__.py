@@ -7,8 +7,6 @@ from flask.helpers import send_from_directory
 
 from flask_monitoringdashboard import loc, blueprint
 from flask_monitoringdashboard.core.auth import secure
-from . import api
-from . import auth
 
 
 @blueprint.route('/static/<path:filename>')

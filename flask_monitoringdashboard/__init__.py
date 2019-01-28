@@ -17,9 +17,9 @@ import os
 from flask import Blueprint
 
 from flask_monitoringdashboard.core.config import Config
+from flask_monitoringdashboard.core.logger import log
 
 config = Config()
-user_app = None
 
 
 # get current location of the project
@@ -37,22 +37,35 @@ def bind(app):
         methods below. Thus, the importing statement is part of this function.
         :param app: the app for which the performance has to be tracked
     """
-    from flask_monitoringdashboard.core.logger import log
-    assert app is not None
-    global user_app, blueprint
-    user_app = app
-
+    config.app = app
     # Provide a secret-key for using WTF-forms
-    if not user_app.secret_key:
+    if not app.secret_key:
         log('WARNING: You should provide a security key.')
-        user_app.secret_key = 'my-secret-key'
+        app.secret_key = 'my-secret-key'
 
     # Add all route-functions to the blueprint
+    from flask_monitoringdashboard.views import api
+    from flask_monitoringdashboard.views import auth
     import flask_monitoringdashboard.views
 
     # Add wrappers to the endpoints that have to be monitored
     from flask_monitoringdashboard.core.measurement import init_measurement
+    from flask_monitoringdashboard.core import custom_graph
+
     blueprint.before_app_first_request(init_measurement)
+    blueprint.before_app_first_request(lambda: custom_graph.init(app))
 
     # register the blueprint to the app
     app.register_blueprint(blueprint, url_prefix='/' + config.link)
+
+
+def add_graph(title, time_interval, func):
+    """
+    Add a custom graph to the dashboard. You must specify the following arguments
+    :param title: title of the graph (must be unique)
+    :param time_interval: String, possible values: 'daily'
+    :param func: function reference without arguments
+    """
+    from flask_monitoringdashboard.core import custom_graph
+    graph_id = custom_graph.register_graph(title)
+    custom_graph.add_background_job(func, graph_id, time_interval)

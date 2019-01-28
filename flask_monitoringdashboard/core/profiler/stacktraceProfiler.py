@@ -5,7 +5,7 @@ import time
 import traceback
 from collections import defaultdict
 
-from flask_monitoringdashboard import user_app, config
+from flask_monitoringdashboard import config
 from flask_monitoringdashboard.core.logger import log
 from flask_monitoringdashboard.core.profiler.util import order_histogram
 from flask_monitoringdashboard.core.profiler.util.pathHash import PathHash
@@ -111,7 +111,7 @@ class StacktraceProfiler(threading.Thread):
     def get_funcheader(self):
         lines_returned = []
         try:
-            fun = user_app.view_functions[self._endpoint.name]
+            fun = config.app.view_functions[self._endpoint.name]
         except AttributeError:
             fun = None
         if hasattr(fun, 'original'):
