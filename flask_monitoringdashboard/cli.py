@@ -1,5 +1,7 @@
 """
 Contains custom commands for the Flask-MonitoringDashboard
+For a list of all commands, open a terminal and type:
+    flask fmd --help
 """
 
 import click
@@ -14,5 +16,6 @@ def fmd():
 @fmd.command()
 @with_appcontext
 def init_db():
-    print('Init db')
-    # TODO: implement method
+    # Importing the database package is enough
+    import flask_monitoringdashboard.database
+    print('Flask-MonitoringDashboard database has been created')
