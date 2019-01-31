@@ -30,6 +30,7 @@ def add_background_job(func, graph_id, interval):
         with session_scope() as db_session:
             add_value(db_session, graph_id, func())
 
+    add_data()  # already call once, so it can be verified that the function work
     scheduler.add_job(func=add_data, trigger="interval", hours=hours)
 
 

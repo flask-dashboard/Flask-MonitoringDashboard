@@ -3,13 +3,13 @@ import datetime
 from flask import jsonify, request, json
 
 from flask_monitoringdashboard import blueprint, config
-from flask_monitoringdashboard.controllers.endpoints import get_endpoint_overview, get_endpoint_users, \
-    get_endpoint_versions, get_api_performance, set_endpoint_rule
+from flask_monitoringdashboard.controllers.endpoints import get_endpoint_users, \
+    get_endpoint_versions, get_api_performance, set_endpoint_rule, get_endpoint_overview
 from flask_monitoringdashboard.controllers.outliers import get_outlier_graph, get_outlier_table
+from flask_monitoringdashboard.controllers.profiler import get_profiler_table, get_grouped_profiler
 from flask_monitoringdashboard.controllers.requests import get_num_requests_data, get_hourly_load
 from flask_monitoringdashboard.controllers.versions import get_version_user_data, get_version_ip_data, \
     get_multi_version_data
-from flask_monitoringdashboard.controllers.profiler import get_profiler_table, get_grouped_profiler
 from flask_monitoringdashboard.core.auth import secure, admin_secure
 from flask_monitoringdashboard.core.custom_graph import get_custom_graphs
 from flask_monitoringdashboard.core.timezone import to_local_datetime

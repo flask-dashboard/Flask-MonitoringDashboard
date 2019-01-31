@@ -13,6 +13,7 @@ app = Flask(__name__)
 
 dashboard.config.version = '3.0'
 dashboard.config.group_by = '2'
+dashboard.database_name = 'sqlite:///data.db'
 dashboard.bind(app)
 
 

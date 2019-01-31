@@ -6,6 +6,7 @@ from collections import defaultdict
 
 from sqlalchemy import func, desc
 from sqlalchemy.orm.exc import NoResultFound
+from sqlalchemy.sql import label
 
 from flask_monitoringdashboard.core.timezone import to_local_datetime
 from flask_monitoringdashboard.database import Request, Endpoint
@@ -149,6 +150,9 @@ def get_endpoints(db_session):
     """
     Returns all Endpoint objects from the database.
     :param db_session: session for the database
-    :return list of Endpoint objects
+    :return list of Endpoint objects, sorted on the number of requests (descending)
     """
-    return db_session.query(Endpoint).all()
+    return db_session.query(Endpoint).\
+        join(Request).\
+        group_by(Request.endpoint_id).\
+        order_by(desc(func.count(Request.endpoint_id))).all()
