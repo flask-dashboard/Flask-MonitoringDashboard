@@ -1,6 +1,8 @@
-import setuptools
-import os
 import json
+import os
+
+import setuptools
+
 loc = os.path.dirname(os.path.abspath(__file__))
 
 
@@ -31,6 +33,11 @@ setuptools.setup(
     description="Automatically monitor the evolving performance of Flask/Python web services.",
     long_description=get_description(),
     install_requires=required,
+    entry_points={
+        'flask.commands': [
+            'fmd_init_db=flask_monitoringdashboard.database:init_db'
+        ],
+    },
     classifiers=[
         'Environment :: Web Environment',
         'Intended Audience :: Developers',
