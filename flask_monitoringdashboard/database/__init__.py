@@ -7,7 +7,6 @@ import random
 import time
 from contextlib import contextmanager
 
-import click
 from sqlalchemy import Column, Integer, String, DateTime, create_engine, Float, TEXT, ForeignKey, exc
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker, relationship, scoped_session
@@ -123,14 +122,7 @@ class CustomGraphData(Base):
 
 # define the database
 engine = create_engine(config.database_name)
-
-
-@click.command()
-@click.pass_context
-def init_db():  # creates all tables in the database
-    Base.metadata.create_all(engine)
-
-
+Base.metadata.create_all(engine)
 Base.metadata.bind = engine
 DBSession = sessionmaker(bind=engine)
 

@@ -35,7 +35,7 @@ setuptools.setup(
     install_requires=required,
     entry_points={
         'flask.commands': [
-            'fmd_init_db=flask_monitoringdashboard.database:init_db'
+            'fmd=flask_monitoringdashboard.cli:fmd'
         ],
     },
     classifiers=[
