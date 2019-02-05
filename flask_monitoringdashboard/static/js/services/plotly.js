@@ -13,6 +13,8 @@ app.service('plotlyService', function (formService) {
             x: x,
             y: y,
             z: z.map(l => l.map(i => i == 0 ? NaN : i)),
+            colorscale: 'YIOrRd',
+            reversescale: true,
             type: 'heatmap'
         }], $.extend({}, layout, layout_ext));
     };

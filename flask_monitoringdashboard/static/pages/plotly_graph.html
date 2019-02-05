@@ -19,7 +19,7 @@
             <div class="card">
                 <div class="card-header"><h6>Graph options</h6></div>
                 <div class="card-body" ng-controller="FormController">
-                    <form ng-switch="handler.form">
+                    <form>
                         <div class="form-group row" ng-repeat="item in handler.dateFields">
                             <label for="{{ item.name }}" class="col-sm-2 col-form-label">{{ item.name }}</label>
                             <div class="col-sm-10">
@@ -30,7 +30,7 @@
                             <label for="{{ item.name }}" class="col-form-label">Select the {{ item.name }}
                                 (hold shift to select multiple)</label>
                             <select multiple class="form-control" id="{{ item.name }}" ng-model="item.selected"
-                                    ng-options="i for i in item.values" size="15"></select>
+                                    ng-options="i for i in item.values" size="{{item.values.length < 10 ? item.values.length : 10 }}"></select>
                         </div>
                         <button type="submit" class="btn btn-primary" ng-click="handler.reload()">Update</button>
                     </form>

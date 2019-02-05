@@ -7,8 +7,9 @@ function ApiPerformanceController($scope, $http, menuService, formService, infoS
     // Set the information box
     infoService.axesText = 'The X-axis presents the execution time in ms. The Y-axis presents every endpoint of ' +
         'the Flask application.';
-    infoService.contentText = 'In this graph, it is easy to compare the execution time of the different endpoints ' +
-        'across each other. This information can be used to validate which endpoints needs to be improved.';
+    infoService.contentText = 'In this graph, it is easy to compare the execution times of different endpoints. ' +
+        'This information can be used to discover which endpoints need to be improved in terms ' +
+        'of response times.';
 
     // Set the form handler
     formService.clear();

@@ -10,7 +10,8 @@ function EndpointVersionUserController($scope, $http, infoService, endpointServi
     infoService.axesText = 'In this graph, the X-axis presents the versions that are used. The Y-axis ' +
         'presents (a subset of) all unique users, as specified by "dashboard.config.group_by". You can ' +
         'use the slider to select a subset of the all unique users.';
-    infoService.contentText = '';
+    infoService.contentText = 'The cell color represents the average response time (expressed in ms) of this endpoint ' +
+        'per user per version.';
 
     formService.clear();
     formService.addUsers();

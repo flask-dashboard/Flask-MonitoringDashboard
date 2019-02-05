@@ -9,7 +9,7 @@ function DailyUtilizationController($scope, $http, menuService, formService, inf
     infoService.contentText = 'This graph presents a horizontal stacked barplot. Each endpoint is represented ' +
         'by a color. In the legend on the right, you can disable a certain endpoint by clicking on it. You can ' +
         'also show in the information of a single endpoint by double clicking that endpoint in the legend. The ' +
-        'information from this graph can be used to see on which days (a subset of) the endpoints are used to most.';
+        'information from this graph can be used to see on which days (a subset of) the endpoints are used the most.';
 
     // Set the form handler
     formService.clear();

@@ -9,7 +9,8 @@ function EndpointVersionIPController($scope, $http, infoService, endpointService
     // Set the information box
     infoService.axesText = 'In this graph, the X-axis presents the versions that are used. The Y-axis presents ' +
         '(a subset of) all IP-addresses. You can use the slider to select a subset of the all IP-addresses.';
-    infoService.contentText = '';
+    infoService.contentText = 'The cell color represents the average response time (expressed in ms) of this endpoint ' +
+        'per IP per version.';
 
     formService.clear();
     formService.addIP();
