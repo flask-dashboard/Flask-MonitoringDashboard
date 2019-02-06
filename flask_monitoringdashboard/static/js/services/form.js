@@ -1,5 +1,6 @@
+app.service('formService', function ($http, endpointService, $filter) {
+    const SLICE = 10;
 
-app.service('formService', function ($http, endpointService) {
     let that = this;
 
     this.dateFields = [];
@@ -14,7 +15,7 @@ app.service('formService', function ($http, endpointService) {
     function addMultiSelect(name) {
         let obj = {
             'name': name,
-            'values': [],
+            'values': [], // list of {id: , text: }
             'selected': [], // subset of 'items'
             'initialized': false
         };
@@ -30,7 +31,8 @@ app.service('formService', function ($http, endpointService) {
     };
 
     this.getMultiSelection = function (name) {
-        return that.multiFields.find(o => o.name == name).selected;
+
+        return that.multiFields.find(o => o.name == name).selected.map(d=>d.id);
     };
 
     this.addDate = function (name) {
@@ -53,17 +55,28 @@ app.service('formService', function ($http, endpointService) {
             url += '/' + endpoint_id;
         }
         $http.get(url).then(function (response) {
-            obj.values = response.data;
-            obj.selected = response.data.slice(-10);
+            obj.values = response.data.map(d => {
+                    return {
+                        id: d.version,
+                        text: d.version + ' : ' + $filter('dateLayout')(d.date)
+                    }
+                }
+            );
+            obj.selected = obj.values.slice(-SLICE);
             that.initialize(obj);
         });
     };
 
     this.addEndpoints = function () {
         let obj = addMultiSelect('endpoints');
-        $http.get('api/endpoints').then(function (response) {
-            obj.values = response.data.map(d => d.name);
-            obj.selected = obj.values.slice(0, 10);
+        $http.get('api/endpoints_hits').then(function (response) {
+            obj.values = response.data.map(d => {
+                return {
+                    id: d.name,
+                    text: d.name + ' : ' + d.hits
+                }
+            });
+            obj.selected = obj.values.slice(0, SLICE);
             that.initialize(obj);
         });
     };
@@ -71,8 +84,13 @@ app.service('formService', function ($http, endpointService) {
     this.addUsers = function () {
         let obj = addMultiSelect('users');
         $http.get('api/users/' + endpointService.info.id).then(function (response) {
-            obj.values = response.data;
-            obj.selected = obj.values.slice(0, 20);
+            obj.values = response.data.map(d=>{
+                return {
+                    id: d,
+                    text: d
+                }
+            });
+            obj.selected = obj.values.slice(0, SLICE);
             that.initialize(obj);
         });
     };
@@ -80,8 +98,13 @@ app.service('formService', function ($http, endpointService) {
     this.addIP = function () {
         let obj = addMultiSelect('IP-addresses');
         $http.get('api/ip/' + endpointService.info.id).then(function (response) {
-            obj.values = response.data.slice(0, 20);
-            obj.selected = obj.values;
+            obj.values = response.data.map(d=>{
+                return {
+                    id: d,
+                    text: d
+                }
+            });
+            obj.selected = obj.values.slice(0, SLICE);
             that.initialize(obj);
         });
     };
@@ -94,7 +117,7 @@ app.service('formService', function ($http, endpointService) {
     this.reload = function () {
     };
     this.setReload = function (f) {
-        this.reload = function(){
+        this.reload = function () {
             that.isLoading = true;
             f();
         };

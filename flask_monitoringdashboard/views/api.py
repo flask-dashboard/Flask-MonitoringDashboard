@@ -17,7 +17,7 @@ from flask_monitoringdashboard.core.utils import get_details, get_endpoint_detai
 from flask_monitoringdashboard.database import session_scope, row2dict
 from flask_monitoringdashboard.database.count import count_outliers, count_profiled_requests
 from flask_monitoringdashboard.database.custom_graph import get_graph_data
-from flask_monitoringdashboard.database.endpoint import get_endpoints, get_users, get_ips
+from flask_monitoringdashboard.database.endpoint import get_endpoints, get_users, get_ips, get_endpoints_hits
 from flask_monitoringdashboard.database.versions import get_versions
 
 
@@ -41,7 +41,11 @@ def versions(endpoint_id=None):
     :return: A JSON-list with all versions of a specific endpoint (version represented by a string)
     """
     with session_scope() as db_session:
-        return jsonify(get_versions(db_session, endpoint_id))
+        version_dates = get_versions(db_session, endpoint_id)
+        dicts = []
+        for vt in version_dates:
+            dicts.append({'version': vt[0], 'date': vt[1]})
+        return jsonify(dicts)
 
 
 @blueprint.route('/api/users/<endpoint_id>')
@@ -77,6 +81,21 @@ def endpoints():
         return jsonify([row2dict(row) for row in get_endpoints(db_session)])
 
 
+@blueprint.route('/api/endpoints_hits')
+@secure
+def endpoints_hits():
+    """
+    :return: A JSON-list with information about every endpoint and its total number of hits (encoded in a JSON-object)
+        For more information per endpoint, see :func: get_overview
+    """
+    with session_scope() as db_session:
+        end_hits = get_endpoints_hits(db_session)
+        dicts = []
+        for et in end_hits:
+            dicts.append({'name': et[0], 'hits': et[1]})
+        return jsonify(dicts)
+
+
 @blueprint.route('api/multi_version', methods=['POST'])
 @secure
 def multi_version():
@@ -97,7 +116,7 @@ def multi_version():
     data = json.loads(request.data)['data']
     endpoints = data['endpoints']
     versions = data['versions']
-
+    # print(data)
     with session_scope() as db_session:
         return jsonify(get_multi_version_data(db_session, endpoints, versions))
 

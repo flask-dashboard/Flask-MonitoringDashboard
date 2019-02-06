@@ -156,3 +156,15 @@ def get_endpoints(db_session):
         join(Request).\
         group_by(Request.endpoint_id).\
         order_by(desc(func.count(Request.endpoint_id))).all()
+
+
+def get_endpoints_hits(db_session):
+    """
+    Returns all endpoint names and total hits from the database.
+    :param db_session: session for the database
+    :return list of (endpoint name, total hits) tuples
+    """
+    return db_session.query(Endpoint.name, func.count(Request.endpoint_id)). \
+        join(Request). \
+        group_by(Request.endpoint_id).\
+        order_by(desc(func.count(Request.endpoint_id))).all()
