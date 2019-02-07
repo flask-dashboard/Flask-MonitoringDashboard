@@ -28,7 +28,7 @@
                         </div>
                         <div class="form-group" ng-repeat="item in handler.multiFields">
                             <label for="{{ item.name }}" class="col-form-label">Select the {{ item.name }}
-                                (hold shift to select multiple)</label>
+                                (hold Shift or Cmd/Ctrl to select multiple): </label>
                             <select multiple class="form-control" id="{{ item.name }}" ng-model="item.selected"
                                     ng-options="obj.text for obj in item.values track by obj.id" size="{{item.values.length < 10 ? item.values.length : 10 }}"></select>
                         </div>

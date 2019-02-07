@@ -56,7 +56,11 @@ def users(endpoint_id):
     :return: A JSON-list with all users of a specific endpoint (user represented by a string)
     """
     with session_scope() as db_session:
-        return jsonify(get_users(db_session, endpoint_id))
+        users_hits = get_users(db_session, endpoint_id)
+        dicts = []
+        for uh in users_hits:
+            dicts.append({'user': uh[0], 'hits': uh[1]})
+        return jsonify(dicts)
 
 
 @blueprint.route('/api/ip/<endpoint_id>')
@@ -67,7 +71,11 @@ def ips(endpoint_id):
     :return: A JSON-list with all IP-addresses of a specific endpoint (ip represented by a string)
     """
     with session_scope() as db_session:
-        return jsonify(get_ips(db_session, endpoint_id))
+        ips_hits = get_ips(db_session, endpoint_id)
+        dicts = []
+        for ih in ips_hits:
+            dicts.append({'ip': ih[0], 'hits': ih[1]})
+        return jsonify(dicts)
 
 
 @blueprint.route('/api/endpoints')

@@ -73,7 +73,7 @@ app.service('formService', function ($http, endpointService, $filter) {
             obj.values = response.data.map(d => {
                 return {
                     id: d.name,
-                    text: d.name + ' : ' + d.hits
+                    text: d.name + ' : ' + d.hits + ' requests'
                 }
             });
             obj.selected = obj.values.slice(0, SLICE);
@@ -86,8 +86,8 @@ app.service('formService', function ($http, endpointService, $filter) {
         $http.get('api/users/' + endpointService.info.id).then(function (response) {
             obj.values = response.data.map(d=>{
                 return {
-                    id: d,
-                    text: d
+                    id: d.user,
+                    text: d.user + ' : ' + d.hits + ' requests'
                 }
             });
             obj.selected = obj.values.slice(0, SLICE);
@@ -100,8 +100,8 @@ app.service('formService', function ($http, endpointService, $filter) {
         $http.get('api/ip/' + endpointService.info.id).then(function (response) {
             obj.values = response.data.map(d=>{
                 return {
-                    id: d,
-                    text: d
+                    id: d.ip,
+                    text: d.ip + ' : ' + d.hits + ' requests'
                 }
             });
             obj.selected = obj.values.slice(0, SLICE);

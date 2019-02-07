@@ -6,7 +6,6 @@ from collections import defaultdict
 
 from sqlalchemy import func, desc
 from sqlalchemy.orm.exc import NoResultFound
-from sqlalchemy.sql import label
 
 from flask_monitoringdashboard.core.timezone import to_local_datetime
 from flask_monitoringdashboard.database import Request, Endpoint
@@ -49,7 +48,7 @@ def get_users(db_session, endpoint_id, limit=None):
     :param db_session: session for the database
     :param endpoint_id: the id of the endpoint to filter on
     :param limit: the max number of results
-    :return a list with the group_by as strings.
+    :return a list of tuples (group_by, hits)
     """
     query = db_session.query(Request.group_by, func.count(Request.group_by)). \
         filter(Request.endpoint_id == endpoint_id).group_by(Request.group_by). \
@@ -58,7 +57,7 @@ def get_users(db_session, endpoint_id, limit=None):
         query = query.limit(limit)
     result = query.all()
     db_session.expunge_all()
-    return [r[0] for r in result]
+    return result
 
 
 def get_ips(db_session, endpoint_id, limit=None):
@@ -77,7 +76,7 @@ def get_ips(db_session, endpoint_id, limit=None):
         query = query.limit(limit)
     result = query.all()
     db_session.expunge_all()
-    return [r[0] for r in result]
+    return result
 
 
 def get_endpoint_by_name(db_session, endpoint_name):
