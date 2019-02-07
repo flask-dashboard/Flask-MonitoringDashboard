@@ -20,20 +20,26 @@ The Flask Monitoring Dashboard is an extension that offers four main functionali
   endpoint are also merged together, the Dashboard provides an overview of which functions are used in
   which endpoint.
 
-- **Monitor your test coverage:**
-  The Dashboard allows you to find out which endpoints are covered by unit tests, allowing also for integration with Travis for automation purposes. 
-  For more information, see [this file](http://flask-monitoringdashboard.readthedocs.io/en/latest/functionality.html#test-coverage-monitoring)
-
 - **Collect extra information about outliers:**
   Outliers are requests that take much longer to process than regular requests. 
   The Dashboard automatically detects that a request is an outlier and stores extra information about it (stack trace, request values, Request headers, Request environment).
 
+- **Collect additional information about your Flask-application:**
+  Suppose you have an User-table and you want to know how many users are registered on your Flask-application.
+  Then, you can run the following query: 'SELECT Count(*) FROM USERS;'. But this is just annoying to do regularly.
+  Therefore, you can configure this in the Flask-MonitoringDashboard, which will provide you this information per day (or other time interval).
+  
+  
 The dashboard is automatically added to your existing Flask application.
 You can view the results by default using the default endpoint (this can be configured to another route):
 
    [/dashboard](http://localhost:5000/dashboard)
 
 For more advanced documentation, take a look at the information on [this site](http://flask-monitoringdashboard.readthedocs.io/en/latest/functionality.html).
+
+## Live demo
+To view a live deployment of the Flask-MonitoringDashboard, check [this site](https://flask-monitoringdashboard.herokuapp.com/).
+
 
 ## Installation
 To install from source, download the source code, then run this:
