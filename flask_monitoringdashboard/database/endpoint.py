@@ -152,9 +152,9 @@ def get_endpoints(db_session):
     :return list of Endpoint objects, sorted on the number of requests (descending)
     """
     return db_session.query(Endpoint).\
-        join(Request).\
-        group_by(Request.endpoint_id).\
-        order_by(desc(func.count(Request.endpoint_id))).all()
+        outerjoin(Request).\
+        group_by(Endpoint.id).\
+        order_by(desc(func.count(Request.endpoint_id)))
 
 
 def get_endpoints_hits(db_session):

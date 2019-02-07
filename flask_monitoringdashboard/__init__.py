@@ -44,8 +44,7 @@ def bind(app):
         app.secret_key = 'my-secret-key'
 
     # Add all route-functions to the blueprint
-    from flask_monitoringdashboard.views import api
-    from flask_monitoringdashboard.views import auth
+    from flask_monitoringdashboard.views import deployment, custom, endpoint, outlier, request, profiler, version, auth
     import flask_monitoringdashboard.views
 
     # Add wrappers to the endpoints that have to be monitored
