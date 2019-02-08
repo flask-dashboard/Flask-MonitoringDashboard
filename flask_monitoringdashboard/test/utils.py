@@ -56,23 +56,6 @@ def add_fake_data():
             db_session.add(Outlier(request_id=i+1, cpu_percent='[%d, %d, %d, %d]' % (i, i + 1, i + 2, i + 3)))
 
 
-def add_fake_test_runs():
-    """ Adds test run data to the database for testing purposes. """
-    from flask_monitoringdashboard.database import session_scope, TestResult, Test
-    from flask_monitoringdashboard import config
-
-    with session_scope() as db_session:
-        for test_name in TEST_NAMES:
-            test = Test(name=test_name, passing=True, version_added=config.version)
-            db_session.add(test)
-            db_session.flush()
-            id = test.id
-            for i in range(len(REQUESTS)):
-                db_session.add(
-                    TestResult(test_id=id, duration=REQUESTS[i], time_added=datetime.datetime.utcnow(),
-                               app_version=config.version, travis_job_id="1", run_nr=i))
-
-
 def get_test_app():
     """
     :return: Flask Test Application with the right settings

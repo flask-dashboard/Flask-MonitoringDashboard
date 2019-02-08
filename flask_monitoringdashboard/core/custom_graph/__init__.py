@@ -1,6 +1,7 @@
 import atexit
 import os
 
+from apscheduler.schedulers import SchedulerAlreadyRunningError
 from apscheduler.schedulers.background import BackgroundScheduler
 
 from flask_monitoringdashboard.database import session_scope
@@ -11,9 +12,12 @@ scheduler = BackgroundScheduler()
 
 def init(app):
     if not app.debug or os.environ.get('WERKZEUG_RUN_MAIN') == 'true':
-        scheduler.start()
-        print('Scheduler started')
-        atexit.register(scheduler.shutdown)
+        try:
+            scheduler.start()
+            print('Scheduler started')
+            atexit.register(scheduler.shutdown)
+        except SchedulerAlreadyRunningError as err:
+            print(err)
 
 
 def register_graph(name):

@@ -7,13 +7,12 @@
 import time
 import unittest
 
-from flask_monitoringdashboard.database.request import get_avg_duration
-
 from flask_monitoringdashboard.database import session_scope
 from flask_monitoringdashboard.database.count import count_requests
 from flask_monitoringdashboard.database.endpoint import get_endpoint_by_name
-from flask_monitoringdashboard.test.utils import set_test_environment, clear_db, add_fake_data, REQUESTS, \
-    TIMES, NAME, GROUP_BY, IP, ENDPOINT_ID
+from flask_monitoringdashboard.database.request import get_avg_duration
+from flask_monitoringdashboard.test.utils import set_test_environment, clear_db, add_fake_data, TIMES, NAME, IP, \
+    ENDPOINT_ID
 
 
 class TestRequest(unittest.TestCase):
@@ -37,38 +36,6 @@ class TestRequest(unittest.TestCase):
             add_request(db_session, execution_time, endpoint.id, ip=IP)
             self.assertEqual(count_requests(db_session, endpoint.id), 1)
 
-    def test_get_data_from(self):
-        """
-            Test whether the function returns the right values.
-        """
-        from flask_monitoringdashboard.database.request import get_data_between
-        size = 2
-        first = len(TIMES) - size - 1
-        with session_scope() as db_session:
-            result = get_data_between(db_session, TIMES[-size - 2], TIMES[-1])
-            for i in range(size):
-                self.assertEqual(result[i].endpoint.name, NAME)
-                self.assertEqual(result[i].duration, REQUESTS[first + i])
-                self.assertEqual(result[i].time_requested, TIMES[first + i])
-                self.assertEqual(result[i].group_by, GROUP_BY)
-                self.assertEqual(result[i].ip, IP)
-
-    def test_get_data(self):
-        """
-            Test whether the function returns the right values.
-        """
-        from flask_monitoringdashboard.database.request import get_data
-        from flask_monitoringdashboard import config
-        with session_scope() as db_session:
-            result = get_data(db_session)
-            self.assertEqual(len(result), len(REQUESTS))
-            for i in range(len(REQUESTS)):
-                self.assertEqual(result[i].endpoint.name, NAME)
-                self.assertEqual(result[i].duration, REQUESTS[i])
-                self.assertEqual(result[i].time_requested, TIMES[i])
-                self.assertEqual(result[i].group_by, GROUP_BY)
-                self.assertEqual(result[i].version_requested, config.version)
-                self.assertEqual(result[i].ip, IP)
 
     def test_get_versions(self):
         """

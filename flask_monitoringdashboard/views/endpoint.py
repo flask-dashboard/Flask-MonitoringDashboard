@@ -1,13 +1,11 @@
-import datetime
-
 from flask import jsonify, request, json
 
-from flask_monitoringdashboard import blueprint, config
+from flask_monitoringdashboard import blueprint
 from flask_monitoringdashboard.controllers.endpoints import get_endpoint_overview, get_api_performance, \
     set_endpoint_rule, get_endpoint_versions, get_endpoint_users
+from flask_monitoringdashboard.core.auth import secure, admin_secure
 from flask_monitoringdashboard.core.utils import get_endpoint_details
 from flask_monitoringdashboard.database import session_scope, row2dict
-from flask_monitoringdashboard.core.auth import secure, admin_secure
 from flask_monitoringdashboard.database.endpoint import get_users, get_ips, get_endpoints, get_endpoints_hits
 
 
