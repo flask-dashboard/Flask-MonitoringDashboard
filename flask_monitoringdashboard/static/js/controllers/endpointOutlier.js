@@ -9,7 +9,7 @@ function OutlierController($scope, $http, endpointService, menuService,
     };
 
     // Pagination
-    paginationService.init();
+    paginationService.init('outliers');
     $http.get('api/num_outliers/' + endpointService.info.id).then(function (response) {
         paginationService.setTotal(response.data);
     });

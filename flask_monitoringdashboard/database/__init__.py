@@ -106,7 +106,7 @@ class CustomGraph(Base):
     """ Table for storing custom graphs names. """
     __tablename__ = '{}CustomGraph'.format(config.table_prefix)
     graph_id = Column(Integer, primary_key=True)
-    title = Column(TEXT, nullable=False, unique=True)
+    title = Column(String(250), nullable=False, unique=True)
     time_added = Column(DateTime, default=datetime.datetime.utcnow)
     version_added = Column(String(100), default=config.version)
 

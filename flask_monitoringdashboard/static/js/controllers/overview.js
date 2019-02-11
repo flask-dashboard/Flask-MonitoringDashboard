@@ -50,7 +50,7 @@ function OverviewController($scope, $http, $location, DTOptionsBuilder, menuServ
         if (monitor === level) {
             return;
         }
-        
+
         let red = [230, 74, 54];
         let green = [237, 255, 77];
 

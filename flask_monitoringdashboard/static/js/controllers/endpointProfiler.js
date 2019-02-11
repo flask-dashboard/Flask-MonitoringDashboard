@@ -9,7 +9,7 @@ function EndpointProfilerController($scope, $http, menuService, endpointService,
     };
     menuService.reset('endpoint_profiler');
 
-    paginationService.init();
+    paginationService.init('requests');
     $http.get('api/num_profiled/' + endpointService.info.id).then(function (response) {
         paginationService.setTotal(response.data);
     });

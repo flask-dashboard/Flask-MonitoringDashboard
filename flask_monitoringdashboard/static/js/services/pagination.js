@@ -1,9 +1,10 @@
 app.service('paginationService', function () {
 
-    this.init = function () {
+    this.init = function (name) {
         this.page = 1;
         this.perPage = 5;
         this.total = 0;
+        this.name = name;
     };
 
     this.maxPages = function () {
