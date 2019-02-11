@@ -61,7 +61,8 @@
                         <ul class="pagination">
                             <li ng-repeat="n in [0, 1, 2, 3]" class="page-item"
                                 ng-class="{'active': row.monitor == n}">
-                                <a class="page-link" ng-click="sendForm(row, n)">{{ n }}</a></li>
+                                <a class="page-link" ng-click="sendForm(row, n)"
+                                   style="background-color: {{ computeColor(n, row.monitor) }}">{{ n }}</a></li>
                         </ul>
                     </td>
                 </tr>
