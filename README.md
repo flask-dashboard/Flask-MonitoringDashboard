@@ -64,5 +64,8 @@ For more advanced documentation, see [this site](http://flask-monitoringdashboar
 If you run into trouble migrating from version 1.X.X to version 2.0.0, this site also helps you solve this.
 
 ## Screenshots
-![Screenshot 1](/docs/img/screenshot1.png)
-![Screenshot 2](/docs/img/screenshot2.png)
+![Screenshot 1](/docs/img/ss1.png)
+![Screenshot 2](/docs/img/ss2.png)
+![Screenshot 3](/docs/img/ss3.png)
+![Screenshot 4](/docs/img/ss4.png)
+![Screenshot 5](/docs/img/ss5.png)
