@@ -78,7 +78,7 @@ def get_test_app():
     user_app.config['WTF_CSRF_ENABLED'] = False
     user_app.config['WTF_CSRF_METHODS'] = []
     flask_monitoringdashboard.config.get_group_by = lambda: '12345'
-    flask_monitoringdashboard.bind(app=user_app)
+    flask_monitoringdashboard.bind(app=user_app, schedule=False)
     return user_app
 
 

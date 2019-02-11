@@ -31,11 +31,12 @@ def loc():
 blueprint = Blueprint('dashboard', __name__, template_folder=loc() + 'templates')
 
 
-def bind(app):
+def bind(app, schedule=True):
     """
         Binding the app to this object should happen before importing the routing-
         methods below. Thus, the importing statement is part of this function.
         :param app: the app for which the performance has to be tracked
+        :param schedule: flag telling if the background scheduler should be started
     """
     config.app = app
     # Provide a secret-key for using WTF-forms
@@ -52,7 +53,8 @@ def bind(app):
     from flask_monitoringdashboard.core import custom_graph
 
     blueprint.before_app_first_request(init_measurement)
-    blueprint.before_app_first_request(lambda: custom_graph.init(app))
+    if schedule:
+        blueprint.before_app_first_request(lambda: custom_graph.init(app))
 
     # register the blueprint to the app
     app.register_blueprint(blueprint, url_prefix='/' + config.link)
