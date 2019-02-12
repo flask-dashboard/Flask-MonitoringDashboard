@@ -20,7 +20,7 @@ def get_outlier_graph(db_session, endpoint_id):
         'name': 'CPU core %d' % idx,
         'values': simplify(data, 50),
         'color': get_color(idx)
-    } for idx, data in enumerate(zip(cpu_data))]
+    } for idx, data in enumerate(zip(*cpu_data))]
 
 
 def get_outlier_table(db_session, endpoint_id, offset, per_page):
