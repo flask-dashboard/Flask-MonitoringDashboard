@@ -47,8 +47,9 @@ function OverviewController($scope, $http, $location, DTOptionsBuilder, menuServ
     });
 
     $scope.computeColor = function (level, monitor) {
+        let a = 0.2;
         if (monitor === level) {
-            return;
+            a = 1;
         }
 
         let red = [230, 74, 54];
@@ -60,6 +61,6 @@ function OverviewController($scope, $http, $location, DTOptionsBuilder, menuServ
         let g = red[1] * percentage + green[1] * (1 - percentage);
         let b = red[2] * percentage + green[2] * (1 - percentage);
 
-        return 'rgb(' + r + ', ' + g + ', ' + b + ')';
+        return 'rgba(' + r + ', ' + g + ', ' + b + ', ' + a + ')';
     };
 }
