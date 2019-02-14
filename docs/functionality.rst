@@ -1,34 +1,49 @@
 Detailed Functionality
 ======================
-The functionality of the Dashboard is divided into 4 main components.
-You can find detailed information about every component below:
+The functionality of the Dashboard is divided into two main components: data collection
+and data visualization.
+You can find detailed information about every component below.
 
-Endpoint Monitoring
+Data Collection
 -------------------
-The core functionality of the Dashboard is monitoring which Endpoints are heavily used and which are not.
-If you have successfully configured the Dashboard from `this page <configuration.html>`_, then you are 
-ready to use it. In order to monitor a number of endpoints, you have to do the following:
+The amount of data collected by the Dashboard varies for each endpoint of the monitored
+Flask application, depending on the monitoring level selected. To select the monitoring level
+of your endpoints, you have to do the following (assuming you have successfully configured
+the Dashboard as described in `the configuration page <configuration.html>`_):
 
 1. Log into the Dashboard at: http://localhost:5000/dashboard/login
 
-2. Go to the Rules-tab in the left menu: http://localhost:5000/dashboard/rules
+2. Go to the Overview tab in the left menu: http://localhost:5000/dashboard/overview
 
-3. Select the rules that you want to monitor.
+3. Select the endpoints that you want to monitor.
 
-4. Wait until a request to this endpoint is being made.
+4. Select the desired monitoring level.
 
-5. Go to the Dashboard Overview in the left menu: http://localhost:5000/measurements/overview
+A summary of the monitoring levels is provided next. Note that every level keeps all the
+features of the level below, in addition to bringing its own new features, as
+represented in the diagram below.
 
-Collected data
-~~~~~~~~~~~~~~
-For each request that is being to a monitored endpoint, the following data is recorded:
+.. figure :: img/monitoring_levels.png
+   :width: 100%
+
+Monitoring Level 0 - Disabled
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+When the monitoring level is set to 0, the Dashboard does not monitor anything about
+the performance of the endpoint. The only data that is stored is when the endpoint is
+last requested.
+
+Monitoring Level 1 - Performance and Utilization Monitoring
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+When the monitoring level is set to 1, the Dashboard collects performance (as
+in response time) and utilization information for every request coming to
+that endpoint. The following data is recorded:
 
 - **Duration:** the duration of processing that request.
 
-- **Time_requested:** the current timestamp of when the request is being made.
+- **Time_requested:** the timestamp of when the request is being made.
 
 - **Version_requested:** the version of the Flask-application at the moment when the request arrived.
-  This can either be retrieved via the `CUSTOM_VERSION` value, or via the `GIT` value.
+  This can either be retrieved via the `VERSION` value, or via the `GIT` value.
   If both are configured, the `GIT` value is used.
 
 - **group_by:** An option to group the collected results.
@@ -96,55 +111,56 @@ For each request that is being to a monitored endpoint, the following data is re
      from flask import request
      print(request.environ['REMOTE_ADDR'])
 
-Monitoring Unit Test Performance
---------------------------------
-In addition to monitoring the performance of a live deployed version of some web service,
-the performance of such a web service can also be monitored by making use of its unit tests.
-This of course assumes that several unit tests were written for the web service project it concerns.
-Also, since this monitoring should be done in an automated way, a Travis setup for the project is a prerequisite.
 
-To enable Travis to run your unit tests and send the obtained results to the Dashboard, two steps have to be taken:
+Monitoring Level 2 - Profiler
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+When the monitoring level is set to 2, the Dashboard performs a
+`statistical profiling <https://docs.python.org/3/library/profile.html#what-is-deterministic-profiling>`_
+of all the requests coming to that endpoint. What this means is that another
+thread will be launched in parallel with the one processing the request, it
+will periodically sample the processing thread, and will analyze its current stack
+trace. Using this information, the Dashboard will infer how long every function
+call inside the endpoint code takes to execute.
 
-1. In the `setup.py` file of your web service, the Dashboard has to be added as a requirement:
+The profiler is one of the most powerful features of the Dashboard, pointing to
+where your optimization efforts should be directed, one level of abstraction
+lower than the performance monitoring of Level 1. To access this information,
+you have to:
 
-    .. code-block:: python
+1. Go to the Overview tab in the left menu: http://localhost:5000/dashboard/overview
 
-       install_requires=('flask_monitoringdashboard')
+2. Select an endpoint for which the monitoring level is or was at some point at least 2.
 
-2. In the `.travis.yml` file, a script command has to be added:
+3. Go to the Profiler tab: http://localhost:5000/dashboard/endpoint/:endpoint_id:/profiler
 
-    .. code-block:: bash
+4. Go to the Grouped Profiler tab: http://localhost:5000/dashboard/endpoint/:endpoint_id:/grouped-profiler
 
-       python -m flask_monitoringdashboard.collect_performance \
-       --test_folder=./tests \
-       --times=5 \
-       --url=https://yourdomain.org/dashboard
+The Profiler tab shows all individual profiled requests of an endpoint
+in the form of a execution tree. Each code line is displayed along with
+its execution time and its share of the total execution time of the request.
 
-The `test_folder` argument (optional, default: ./) specifies where the performance collection process can find
-the unit tests to use. When omitted, the current working directory is used.
-The `times` argument (optional, default: 5) specifies how many times to run each of the unit tests.
-The `url` argument (optional) specifies where the Dashboard is that needs to receive the performance results.
-When the last argument is omitted, the performance testing will run, but without publishing the results.
+The Grouped Profiler tab shows the merged execution of up to 100 most recent
+profiled requests of an endpoint. This is displayed both as a table and as
+a Sunburst graph. The table shows for each code line information about
+the Hits (i.e. how many times it has been executed), average execution time
+and standard deviation, and also total execution time.
 
-Now Travis will monitor the performance of the unit tests automatically after every commit that is made.
-These results will then show up in the Dashboard, under 'Testmonitor'.
-Here, all tests that have been run will show up, along with the endpoints of the web service that they test.
-Visualizations of the performance evolution of the unit tests are also available here.
-This will give the developer of the web service insight in the expected performance change when the new version of the
-web service should be deployed.
+Monitoring Level 3 - Outliers
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+When the monitoring level is set to 3, the Dashboard collects extra information
+about slow requests.
 
-Outliers
---------
 It is useful to investigate why certain requests take way longer to process than other requests.
 If this is the case, a request is seen as an outlier.
-Mathematically an outlier is determined if the execution of the request is longer than:
+Mathematically, a request is considered an outlier if its execution is a certain number of times longer than the
+average duration for requests coming to the same endpoint:
 
-:math:`> average * constant`
+:math:`duration_outlier > duration_average * constant`
 
-Where `average` is the average execution time per endpoint, and `constant` is given in the configuration by OUTLIER_DETECTION_CONSTANT
-(its default value is :math:`2.5`).
+Where :math:`duration_average` is the average execution time per endpoint, and :math:`constant` is given in the configuration
+by OUTLIER_DETECTION_CONSTANT (its default value is :math:`2.5`).
 
-When a request is an outlier, the Dashboard stores more information, such as:
+When a request is an outlier, the Dashboard stores more information about it, such as:
 
 - The stack-trace in which it got stuck.
 
@@ -162,26 +178,28 @@ The data that is collected from outliers, can be seen by the following procedure
 
 1. Go to the Dashboard Overview: http://localhost:5000/measurements/overview
 
-2. Click on the Details-button (on the right side) for which endpoint you want to see the Outlier information.
+2. Click the endpoint for which you want to see the Outlier information.
 
-3. Go to the Outliers-tab: http://localhost:5000/dashboard/<endpoint-name>/main/outliers
+3. Go to the Outliers tab: http://localhost:5000/dashboard/endpoint/:endpoint_id:/outliers
 
-Visualizations
---------------
-There are a number of visualizations generated to view the results that have been collected in (Endpoint-Monitoring)
-and (Test-Coverage Monitoring).
 
-The main difference is that visualizations from (Endpoint-Monitoring) can be found in the menu 'Dashboard' (in the
-left menu), while visualizations from (Test-Coverage Monitoring) can be found in the menu 'Test Monitor' (below the
-'Dashboard'-menu).
+Data Visualization
+-------------------
 
-The 'Dashboard'-menu contains the following content:
+The Dashboard shows the collected data by means of two levels of abstraction:
+application-wide and endpoint-specific.
+
+Application
+~~~~~~~~~~~~~~
+Visualizations showing aggregated data of all the endpoints (with monitoring level
+at least 1) in the application can be found under the **Dashboard** menu:
 
 1. **Overview:** A table with the all the endpoints that are being monitored (or have been monitored in the past).
-   This table provides information about when the endpoint is last being requested, how often it is requested and what 
-   the median execution time is. Furthermore, it has a 'Details' button on the right. This is explained further in (6).
+   This table provides information about when the endpoint was last requested, how often it is requested and what is
+   the current monitoring level. Each endpoint can be clicked to access the
+   Endpoint-specific visualizations.
 
-2. **Hourly API Utilization:** This graph provides information for each hour of the day of how often the endpoint is being requested. In 
+2. **Hourly API Utilization:** This graph provides information for each hour of the day of how often the endpoint is being requested. In
    this graph it is possible to detect popular hours during the day.
 
 3. **Multi Version API Utilization**: This graph provides information about the distribution of the utilization of the requests per version.
@@ -194,32 +212,31 @@ The 'Dashboard'-menu contains the following content:
    requests for that endpoint. This provides information whether certain endpoints perform better (in terms of
    execution time) than other endpoints.
 
-6. For each endpoint in the Overview page, you can click on the endpoint to get more details. 
-This provides the following information (thus, all information below is specific for a single endpoint):
+Endpoint
+~~~~~~~~~~~~~~
 
-   - **Hourly API Utilization:** The same hourly load as explained in (2), but this time it is focused on the data of that particular
-     endpoint only.
+For each endpoint in the Overview page, you can click on the endpoint to get more details.
+This provides the following information (all information below is specific for a single endpoint):
 
-   - **User-Focused Multi-Version Performance:** A circle plot with the average execution time per user per version. Thus, this
-     graph consists of 3 dimensions (execution time, users, versions). A larger circle represents a higher execution
-     time.
+1. **Hourly API Utilization:** The same hourly load as explained in (2) above, but this time it is focused on the data of that particular endpoint only.
 
-   - **IP-Focused Multi-Version Performance:** The same type of plot as 'User-Focused Multi-Version Performance', but now that users are replaced
-     by IP-addresses.
+2. **User-Focused Multi-Version Performance:** A circle plot with the average execution time per user per version. Thus, this graph consists of 3 dimensions (execution time, users, versions). A larger circle represents a higher execution time.
 
-   - **Per-Version Performance:** A horizontal box plot with the execution times for a specific version. This graph is
-     equivalent to (4.), but now it is focused on the data of that particular endpoint only.
+3. **IP-Focused Multi-Version Performance:** The same type of plot as 'User-Focused Multi-Version Performance', but now that users are replaced by IP-addresses.
 
-   - **Per-User Performance:** A horizontal box plot with the execution time per user. In this graph, it is possible
-     to detect if there is a difference in the execution time between users.
+4. **Per-Version Performance:** A horizontal box plot with the execution times for a specific version. This graph is equivalent to (4.), but now it is focused on the data of that particular endpoint only.
 
-   - **Profiler:** A tree with the execution path for all requests.
+5. **Per-User Performance:** A horizontal box plot with the execution time per user. In this graph, it is possible to detect if there is a difference in the execution time between users.
 
-   - **Grouped Profiler:** A tree with the combined execution paths for this endpoint.
+6. **Profiler:** A tree with the execution path for all requests.
 
-   - **Outliers:** See Section (Outliers) above.
+7. **Grouped Profiler:** A tree with the combined execution paths for all (<100) requests of this endpoint.
+
+8. **Outliers:** The extra information collected on outlier requests.
+
+
 
 Need more information?
 ----------------------
-See the `contact page <contact.html>`_ to see how you can contribute on the project.
-Furthermore you can request this page for questions, bugs, or other information. 
+Check out the `contact page <contact.html>`_ to see how you can get in touch with us.
+

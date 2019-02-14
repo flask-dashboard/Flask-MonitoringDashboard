@@ -1,6 +1,6 @@
 Developing
 ==========
-This page provides information about contributing to the Flask-MonitoringDashboard.
+This page provides information about contributing to the Flask Monitoring Dashboard.
 Furthermore, a number of useful tools for improving the quality of the code are discussed.
 
 

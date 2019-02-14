@@ -6,9 +6,9 @@
 [![Py-version](https://img.shields.io/pypi/pyversions/flask_monitoringdashboard.svg)](https://img.shields.io/pypi/pyversions/flask_monitoringdashboard.svg)
 [![Downloads](http://pepy.tech/badge/flask-monitoringdashboard)](http://pepy.tech/count/flask-monitoringdashboard)
 
-Dashboard for automatic monitoring of Flask web-services.
+A dashboard for automatic monitoring of Flask web-services.
 
-The Flask Monitoring Dashboard is an extension that offers four main functionalities with little effort from the Flask developer:
+The Flask Monitoring Dashboard is an extension for Flask applications that offers four main functionalities with little effort from the Flask developer:
 
 - **Monitor the performance and utilization:**
   The Dashboard allows you to see which endpoints process a lot of requests and how fast. 
@@ -39,6 +39,7 @@ For more advanced documentation, take a look at the information on [this site](h
 
 ## Live demo
 To view a live deployment of the Flask-MonitoringDashboard, check [this site](https://flask-monitoringdashboard.herokuapp.com/).
+Use the credentials u:`admin`, p:`admin` to log in.
 
 
 ## Installation
@@ -61,7 +62,7 @@ Adding the extension to your Flask app is simple:
  
 ## Documentation
 For more advanced documentation, see [this site](http://flask-monitoringdashboard.readthedocs.io).
-If you run into trouble migrating from version 1.X.X to version 2.0.0, this site also helps you solve this.
+If you run into trouble migrating from version 1.X.X to version 2.0.0, this site will help you solve this too.
 
 ## Screenshots
 ![Screenshot 1](/docs/img/ss1.png)

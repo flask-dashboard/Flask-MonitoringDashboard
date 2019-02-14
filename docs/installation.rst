@@ -46,7 +46,7 @@ It is (again) one simple command:
 
 .. code-block:: bash
 
-   source bin/activate
+   source ENV/bin/activate
 
 Installing the Flask-MonitoringDashboard Package
 -------------------------------------------------
@@ -116,4 +116,4 @@ Further configuration
 ---------------------
 You are now ready for using the Flask-MonitoringDashboard, and you can already view the Dashboard at: `dashboard <http://localhost:5000/dashboard>`_.
 
-However, the Dashboard offers many functionality which has to be configured. This is explained on `the configuration page <configuration.html>`_.
+However, the Dashboard offers many features which have to be configured. This is explained on `the configuration page <configuration.html>`_.
