@@ -30,7 +30,7 @@ def endpoint():
 
 @app.route('/endpoint2')
 def endpoint2():
-    time.sleep(0.1)
+    time.sleep(0.5)
     return 'Ok'
 
 
@@ -43,4 +43,15 @@ def endpoint3():
     return 'Ok'
 
 
-dashboard.add_graph('Graph1', 'daily', lambda: 42)
+def my_func():
+    # here should be something actually useful
+    return 35
+
+
+schedule = {'weeks': 0,
+            'days': 0,
+            'hours': 1,
+            'minutes': 30,
+            'seconds': 0}
+
+dashboard.add_graph('Graph1', lambda: my_func(), **schedule)

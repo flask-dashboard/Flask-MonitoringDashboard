@@ -54,19 +54,19 @@ def bind(app, schedule=True):
 
     blueprint.before_app_first_request(init_measurement)
     if schedule:
-        blueprint.before_app_first_request(lambda: custom_graph.init(app))
+        custom_graph.init(app)
 
     # register the blueprint to the app
     app.register_blueprint(blueprint, url_prefix='/' + config.link)
 
 
-def add_graph(title, time_interval, func):
+def add_graph(title, func, **schedule):
     """
     Add a custom graph to the dashboard. You must specify the following arguments
     :param title: title of the graph (must be unique)
-    :param time_interval: String, possible values: 'daily'
+    :param schedule: dict containing values for weeks, days, hours, minutes, seconds
     :param func: function reference without arguments
     """
     from flask_monitoringdashboard.core import custom_graph
     graph_id = custom_graph.register_graph(title)
-    custom_graph.add_background_job(func, graph_id, time_interval)
+    custom_graph.add_background_job(func, graph_id, **schedule)

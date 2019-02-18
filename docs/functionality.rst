@@ -2,7 +2,7 @@ Detailed Functionality
 ======================
 The functionality of the Dashboard is divided into two main components: data collection
 and data visualization.
-You can find detailed information about every component below.
+You can find detailed information about both components below.
 
 Data Collection
 -------------------
@@ -233,6 +233,12 @@ This provides the following information (all information below is specific for a
 7. **Grouped Profiler:** A tree with the combined execution paths for all (<100) requests of this endpoint.
 
 8. **Outliers:** The extra information collected on outlier requests.
+
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+While all the above visualizations are included by default in the FMD,
+you can also create your own. These will appear in the **Custom graphs** menu.
 
 
 

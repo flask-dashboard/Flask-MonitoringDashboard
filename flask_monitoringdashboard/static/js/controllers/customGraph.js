@@ -25,17 +25,13 @@ function CustomGraphController($scope, $http, infoService, endpointService,
                 let values = response.data.map(o => o.value);
                 let times = response.data.map(o => o.time);
                 plotlyService.chart([{
-                    x: values,
-                    y: times,
+                    x: times,
+                    y: values,
                     type: 'bar',
-                    orientation: 'h',
                     name: $scope.title
                 }], {
-                    xaxis: {
-                        title: 'Values',
-                    },
                     yaxis: {
-                        autorange: 'reversed'
+                        title: 'Values',
                     },
                     margin: {
                         l: 200

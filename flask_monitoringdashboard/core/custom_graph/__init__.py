@@ -15,7 +15,7 @@ def init(app):
         try:
             scheduler.start()
             print('Scheduler started')
-            atexit.register(scheduler.shutdown)
+            atexit.register(lambda: scheduler.shutdown())
         except SchedulerAlreadyRunningError as err:
             print(err)
 
@@ -25,17 +25,13 @@ def register_graph(name):
         return get_graph_id_from_name(db_session, name)
 
 
-def add_background_job(func, graph_id, interval):
-    hours = 1
-    if interval == 'daily':
-        hours = 24
-
+def add_background_job(func, graph_id, **schedule):
     def add_data():
         with session_scope() as db_session:
             add_value(db_session, graph_id, func())
 
-    add_data()  # already call once, so it can be verified that the function work
-    scheduler.add_job(func=add_data, trigger="interval", hours=hours)
+    add_data()  # already call once, so it can be verified that the function works
+    scheduler.add_job(func=add_data, trigger="interval", **schedule)
 
 
 def get_custom_graphs():

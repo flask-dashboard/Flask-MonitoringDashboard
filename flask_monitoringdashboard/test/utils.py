@@ -56,7 +56,7 @@ def add_fake_data():
             db_session.add(Outlier(request_id=i+1, cpu_percent='[%d, %d, %d, %d]' % (i, i + 1, i + 2, i + 3)))
 
 
-def get_test_app():
+def get_test_app(schedule=False):
     """
     :return: Flask Test Application with the right settings
     """
@@ -78,7 +78,7 @@ def get_test_app():
     user_app.config['WTF_CSRF_ENABLED'] = False
     user_app.config['WTF_CSRF_METHODS'] = []
     flask_monitoringdashboard.config.get_group_by = lambda: '12345'
-    flask_monitoringdashboard.bind(app=user_app, schedule=False)
+    flask_monitoringdashboard.bind(app=user_app, schedule=schedule)
     return user_app
 
 
