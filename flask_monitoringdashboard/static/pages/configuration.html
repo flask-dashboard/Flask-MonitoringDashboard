@@ -1,0 +1,78 @@
+<div class="card mb-3">
+    <div class="card-header"><h4>Configuration settings</h4></div>
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-striped table-bordered table-hover">
+                <tr>
+                    <td style="width: 50%"><b>Dashboard link</b></td>
+                    <td><a href="/{{ details.link }}/overview">/{{ details.link }}</a></td>
+                </tr>
+                <tr>
+                    <td><b>Measurements database</b></td>
+                    <td>{{ config.database_name }}</td>
+                </tr>
+                <tr>
+                    <td><b>Username</b></td>
+                    <td>{{ config.username }}</td>
+                </tr>
+                <tr>
+                    <td><b>Guest username</b></td>
+                    <td>
+                        <ul>
+                            <li ng-repeat="name in config.guest_username">{{ name }}</li>
+                        </ul>
+                    </td>
+                </tr>
+                <tr>
+                    <td><b>Collecting outlier data?</b></td>
+                    <td ng-show="config.outlier_detection_constant > 0">Yes, with outlier_detection_constant
+                        = {{ config.outlier_detection_constant }}
+                    </td>
+                    <td ng-show="config.outlier_detection_constant == 0">No</td>
+                </tr>
+                <tr>
+                    <td><b>Custom endpoint colors</b></td>
+                    <td>
+                        <ul>
+                            <li ng-repeat="(key, value) in config.colors">{{ key + ': ' + value }}</li>
+                        </ul>
+                    </td>
+                </tr>
+                <tr>
+                    <td><b>User specified timezone</b></td>
+                    <td>{{ config.timezone }}</td>
+                </tr>
+            </table>
+        </div>
+    </div>
+</div>
+
+<div class="card mb-3">
+    <div class="card-header"><h4>Deployment details</h4></div>
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-striped table-bordered table-hover">
+                <tr>
+                    <td style="width: 50%"><b>Currently deployed version</b></td>
+                    <td>{{ details['config-version'] }}</td>
+                </tr>
+                <tr>
+                    <td><b>First request in the currently deployed version</b></td>
+                    <td>{{ details['first-request-version'] | dateLayout }}</td>
+                </tr>
+                <tr>
+                    <td><b>Monitoring Dashboard version</b></td>
+                    <td>{{ details['dashboard-version'] }}</td>
+                </tr>
+                <tr>
+                    <td><b>First request since using the Monitoring Dashboard</b></td>
+                    <td>{{ details['first-request'] | dateLayout }}</td>
+                </tr>
+                <tr>
+                    <td><b>Total amount of monitored requests</b></td>
+                    <td>{{ details['total-requests'] | number }}</td>
+                </tr>
+            </table>
+        </div>
+    </div>
+</div>

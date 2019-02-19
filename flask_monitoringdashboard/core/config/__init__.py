@@ -1,11 +1,14 @@
-import configparser
+try:
+    import configparser
+except ImportError:
+    configparser = None
+
 import os
 
 import pytz
-
-from flask_monitoringdashboard.core.config.parser import parse_string, parse_version, parse_bool, parse_literal
 from tzlocal import get_localzone
 
+from flask_monitoringdashboard.core.config.parser import parse_string, parse_version, parse_bool, parse_literal
 from flask_monitoringdashboard.core.logger import log
 
 
@@ -34,7 +37,7 @@ class Config(object):
         # authentication
         self.username = 'admin'
         self.password = 'admin'
-        self.guest_username = 'guest'
+        self.guest_username = ['guest']
         self.guest_password = ['guest_password']
         self.security_token = 'cc83733cb0af8b884ff6577086b87909'
 
@@ -44,6 +47,9 @@ class Config(object):
 
         # define a custom function to retrieve the session_id or username
         self.group_by = None
+
+        # store the Flask app
+        self.app = None
 
     def init_from(self, file=None, envvar=None):
         """
@@ -98,10 +104,8 @@ class Config(object):
                 return
             log("No configuration file specified. Please do so.")
             return
-
-        parser = configparser.RawConfigParser()
         try:
-            parser.read(file)
+            parser = configparser.RawConfigParser()
 
             # parse 'dashboard'
             self.version = parse_version(parser, 'dashboard', self.version)
@@ -126,5 +130,6 @@ class Config(object):
             # visualization
             self.colors = parse_literal(parser, 'visualization', 'COLORS', self.colors)
             self.timezone = pytz.timezone(parse_string(parser, 'visualization', 'TIMEZONE', self.timezone.zone))
-        except configparser.Error:
+        except AttributeError:
+            log('Cannot use configparser in python2.7')
             raise

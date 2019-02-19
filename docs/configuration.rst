@@ -1,7 +1,7 @@
 Configuration
 =============
 Once you have successfully installed the Flask-MonitoringDashboard using the instructions from 
-`this page <installation.html>`_, you can use the advanced features by correctly configuring the Dashboard.
+`the installation page <installation.html>`_, you can use the advanced features by correctly configuring the Dashboard.
 
 Using a configuration file
 --------------------------
@@ -13,7 +13,7 @@ In order to configure the Dashboard with a configuration-file, you can use the f
 
    dashboard.config.init_from(file='/<path to file>/config.cfg')
 
-Thus, it becomes:
+Your app then becomes:
 
 .. code-block:: python
 
@@ -94,7 +94,7 @@ Dashboard
 - **CUSTOM_LINK:** The Dashboard can be visited at localhost:5000/{{CUSTOM_LINK}}.
 
 - **MONITOR_LEVEL**: The level for monitoring your endpoints. The default value is 3. For more information, see the
-  Rules page.
+  Overview page of the Dashboard.
 
 - **OUTLIER_DETECTION_CONSTANT:** When the execution time is greater than :math:`constant * average`,
   extra information is logged into the database. A default value for this variable is :math:`2.5`.
@@ -108,8 +108,7 @@ Dashboard
 Authentication
 ~~~~~~~~~~~~~~
 
-- **USERNAME** and **PASSWORD:** Must be used for logging into the Dashboard.
-  Thus both are required.
+- **USERNAME** and **PASSWORD:** Must be used for logging into the Dashboard. Both are required.
 
 - **GUEST_USERNAME** and **GUEST_PASSWORD:** A guest can only see the results, but cannot configure/download any data.
 
@@ -150,5 +149,6 @@ Visualization
 
 What have you configured?
 -------------------------
-A lot of configuration options, but you might wonder what functionality is now supported in your Flask application?
-Have a look at `this file <functionality.html>`_ to find the answer.
+We've shown a bunch of configuration settings, but what features are now supported in your Flask
+application and how are they related to the config options?
+Have a look at `the detailed functionality page <functionality.html>`_ to find the answer.

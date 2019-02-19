@@ -5,14 +5,7 @@
 
 What is Flask-MonitoringDashboard?
 ---------------------------------------
-The Flask Monitoring Dashboard is designed to easily monitor your existing Flask application.
-You can find a brief overview of the functionality `here <#functionality>`_.
-
-Or you can watch the video below:
-
-.. raw:: html
-
-   <iframe width="560" height="315" src="https://www.youtube.com/embed/1S3-G4pSoAk" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+The Flask Monitoring Dashboard is designed to easily monitor your Flask application.
 
 
 Functionality
@@ -29,15 +22,16 @@ The Flask Monitoring Dashboard is an extension that offers 4 main functionalitie
   endpoint are also merged together, the Dashboard provides an overview of which functions are used in
   which endpoint.
 
-- **Monitor your test coverage:**
-  The Dashboard allows you to find out which endpoints are covered by unit tests, allowing also for integration with Travis for automation purposes. 
-  For more information, see `this file <http://flask-monitoringdashboard.readthedocs.io/en/latest/functionality.html#test-coverage-monitoring>`_.
-
 - **Collect extra information about outliers:**
   Outliers are requests that take much longer to process than regular requests. 
   The Dashboard automatically detects that a request is an outlier and stores extra information about it (stack trace, request values, Request headers, Request environment).
 
-For more advanced documentation, take a look at the information on `this page <http://flask-monitoringdashboard.readthedocs.io/en/latest/functionality.html>`_.
+- **CCollect additional information about your Flask-application:**
+  Suppose you have an User-table and you want to know how many users are registered on your Flask-application.
+  Then, you can run the following query: 'SELECT Count(*) FROM USERS;'. But this is just annoying to do regularly.
+  Therefore, you can configure this in the Flask-MonitoringDashboard, which will provide you this information per day (or other time interval).
+
+For more advanced documentation, have a look at the `the detailed functionality page <http://flask-monitoringdashboard.readthedocs.io/en/latest/functionality.html>`_.
 
 User's Guide
 ------------

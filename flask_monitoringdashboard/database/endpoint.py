@@ -48,7 +48,7 @@ def get_users(db_session, endpoint_id, limit=None):
     :param db_session: session for the database
     :param endpoint_id: the id of the endpoint to filter on
     :param limit: the max number of results
-    :return a list with the group_by as strings.
+    :return a list of tuples (group_by, hits)
     """
     query = db_session.query(Request.group_by, func.count(Request.group_by)). \
         filter(Request.endpoint_id == endpoint_id).group_by(Request.group_by). \
@@ -57,7 +57,7 @@ def get_users(db_session, endpoint_id, limit=None):
         query = query.limit(limit)
     result = query.all()
     db_session.expunge_all()
-    return [r[0] for r in result]
+    return result
 
 
 def get_ips(db_session, endpoint_id, limit=None):
@@ -76,7 +76,7 @@ def get_ips(db_session, endpoint_id, limit=None):
         query = query.limit(limit)
     result = query.all()
     db_session.expunge_all()
-    return [r[0] for r in result]
+    return result
 
 
 def get_endpoint_by_name(db_session, endpoint_name):
@@ -149,6 +149,21 @@ def get_endpoints(db_session):
     """
     Returns all Endpoint objects from the database.
     :param db_session: session for the database
-    :return list of Endpoint objects
+    :return list of Endpoint objects, sorted on the number of requests (descending)
     """
-    return db_session.query(Endpoint).all()
+    return db_session.query(Endpoint).\
+        outerjoin(Request).\
+        group_by(Endpoint.id).\
+        order_by(desc(func.count(Request.endpoint_id)))
+
+
+def get_endpoints_hits(db_session):
+    """
+    Returns all endpoint names and total hits from the database.
+    :param db_session: session for the database
+    :return list of (endpoint name, total hits) tuples
+    """
+    return db_session.query(Endpoint.name, func.count(Request.endpoint_id)). \
+        join(Request). \
+        group_by(Request.endpoint_id).\
+        order_by(desc(func.count(Request.endpoint_id))).all()

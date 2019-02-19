@@ -1,14 +1,10 @@
+click
+apscheduler
 flask>=0.9            # for monitoring the web-service
 sqlalchemy>=1.1.9     # for database support
-wtforms>=2.1          # for generating forms
-flask_wtf>=0.13       # also for generating forms
-plotly<3.0.0          # for generating graphs
 configparser          # for parsing the config-file
 psutil                # for logging extra CPU-info
 colorhash             # for hashing a string into a color
-requests              # for submitting unit test results
-PyJWT                 # for json encryption/decryption
-flask_paginate        # for paginating the result
 numpy                 # for computing median and other stats
 pytz                  # for timezone info
 tzlocal               # for figuring out the local timezone

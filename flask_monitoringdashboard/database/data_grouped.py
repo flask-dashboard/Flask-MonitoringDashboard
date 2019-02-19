@@ -1,6 +1,6 @@
 from numpy import median
 
-from flask_monitoringdashboard.database import Request, TestEndpoint
+from flask_monitoringdashboard.database import Request
 
 
 def get_data_grouped(db_session, column, func, *where):
@@ -57,17 +57,6 @@ def get_endpoint_data_grouped(db_session, func, *where):
     :param where: additional where clause
     """
     return get_data_grouped(db_session, Request.endpoint_id, func, *where)
-
-
-def get_test_data_grouped(db_session, func, *where):
-    """
-    :param db_session: session for the database
-    :param func: the function to reduce the data
-    :param where: additional where clause
-    """
-    result = db_session.query(TestEndpoint, TestEndpoint.duration). \
-        filter(*where).all()
-    return group_result_endpoint(result, func)
 
 
 def get_version_data_grouped(db_session, func, *where):

@@ -1,6 +1,8 @@
 from functools import wraps
-from flask_monitoringdashboard import config
+
 from flask import session, redirect, url_for
+
+from flask_monitoringdashboard import config
 
 
 def admin_secure(func):

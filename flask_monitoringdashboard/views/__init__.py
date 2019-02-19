@@ -2,18 +2,11 @@
     Main class for adding all route-functions to user_app.
     Setup requires only to import this file. All other imports are done in this file
 """
-from flask import redirect, url_for
+from flask import render_template
 from flask.helpers import send_from_directory
 
-from flask_monitoringdashboard import blueprint, loc
-# Import more route-functions
-from . import auth
-from . import dashboard
-from . import details
-from . import export
-from . import rules
-from . import configuration
-from . import testmonitor
+from flask_monitoringdashboard import loc, blueprint
+from flask_monitoringdashboard.core.auth import secure
 
 
 @blueprint.route('/static/<path:filename>')
@@ -26,9 +19,8 @@ def static(filename):
     return send_from_directory(loc() + 'static', filename)
 
 
-@blueprint.route('/')
-def index():
-    """
-    Redirect to the default page
-    """
-    return redirect(url_for('dashboard.overview'))
+@blueprint.route('/', defaults={'path': ''})
+@blueprint.route('/<path:path>')  # Catch-All URL: http://flask.pocoo.org/snippets/57/
+@secure
+def index(path):
+    return render_template('fmd_base.html')

@@ -23,108 +23,9 @@ tr.even:hover, tr.odd:hover {
     background-color: #add8e6;
 }
 
-.spinner {
-    margin: 100px auto;
-    width: 50px;
-    height: 40px;
-    text-align: center;
-    font-size: 10px;
-}
-
-.spinner > div {
-    background-color: #333;
-    height: 100%;
-    width: 6px;
-    display: inline-block;
-
-    -webkit-animation: sk-stretchdelay 1.2s infinite ease-in-out;
-    animation: sk-stretchdelay 1.2s infinite ease-in-out;
-}
-
-.spinner .rect2 {
-    -webkit-animation-delay: -1.1s;
-    animation-delay: -1.1s;
-}
-
-.spinner .rect3 {
-    -webkit-animation-delay: -1.0s;
-    animation-delay: -1.0s;
-}
-
-.spinner .rect4 {
-    -webkit-animation-delay: -0.9s;
-    animation-delay: -0.9s;
-}
-
-.spinner .rect5 {
-    -webkit-animation-delay: -0.8s;
-    animation-delay: -0.8s;
-}
-
-@-webkit-keyframes sk-stretchdelay {
-    0%, 40%, 100% {
-        -webkit-transform: scaleY(0.4)
-    }
-    20% {
-        -webkit-transform: scaleY(1.0)
-    }
-}
-
-@keyframes sk-stretchdelay {
-    0%, 40%, 100% {
-        transform: scaleY(0.4);
-        -webkit-transform: scaleY(0.4);
-    }
-    20% {
-        transform: scaleY(1.0);
-        -webkit-transform: scaleY(1.0);
-    }
-}
-
 .content-wrapper {
     min-height: calc(100vh - 56px);
     padding-top: 1rem;
-}
-
-.scroll-to-top {
-    position: fixed;
-    right: 15px;
-    bottom: 3px;
-    display: none;
-    width: 50px;
-    height: 50px;
-    text-align: center;
-    color: white;
-    background: rgba(52, 58, 64, 0.5);
-    line-height: 45px;
-}
-
-.scroll-to-top:focus, .scroll-to-top:hover {
-    color: white;
-}
-
-.scroll-to-top:hover {
-    background: #343a40;
-}
-
-.scroll-to-top i {
-    font-weight: 800;
-}
-
-.smaller {
-    font-size: 0.7rem;
-}
-
-.o-hidden {
-    overflow: hidden !important;
-}
-
-.z-0 {
-    z-index: 0;
-}
-
-.z-1 {
-    z-index: 1;
 }
 
 #mainNav .navbar-collapse {
@@ -223,6 +124,8 @@ tr.even:hover, tr.odd:hover {
         -ms-flex-direction: column;
         flex-direction: column;
         margin-top: 56px;
+        overflow-y: auto;
+        overflow-x: hidden;
     }
 
     #mainNav .navbar-collapse .navbar-sidenav > .nav-item {
@@ -406,26 +309,29 @@ body.sidenav-toggled .navbar-sidenav-tooltip.show {
 }
 
 #mainNav.navbar-dark .navbar-collapse .navbar-sidenav .nav-link-collapse:after {
-    color: #868e96;
+    color: #adb5bd;
 }
 
 #mainNav.navbar-dark .navbar-collapse .navbar-sidenav > .nav-item > .nav-link {
-    color: #868e96;
+    color: #adb5bd;
 }
 
 #mainNav.navbar-dark .navbar-collapse .navbar-sidenav > .nav-item > .nav-link:hover {
     color: #adb5bd;
+    background-color: #868e96;
 }
 
 #mainNav.navbar-dark .navbar-collapse .navbar-sidenav > .nav-item .sidenav-second-level > li > a,
 #mainNav.navbar-dark .navbar-collapse .navbar-sidenav > .nav-item .sidenav-third-level > li > a {
-    color: #868e96;
+    color: #adb5bd;
 }
 
-#mainNav.navbar-dark .navbar-collapse .navbar-sidenav > .nav-item .sidenav-second-level > li > a:focus, #mainNav.navbar-dark .navbar-collapse .navbar-sidenav > .nav-item .sidenav-second-level > li > a:hover,
+#mainNav.navbar-dark .navbar-collapse .navbar-sidenav > .nav-item .sidenav-second-level > li > a:focus,
+#mainNav.navbar-dark .navbar-collapse .navbar-sidenav > .nav-item .sidenav-second-level > li > a:hover,
 #mainNav.navbar-dark .navbar-collapse .navbar-sidenav > .nav-item .sidenav-third-level > li > a:focus,
 #mainNav.navbar-dark .navbar-collapse .navbar-sidenav > .nav-item .sidenav-third-level > li > a:hover {
     color: #adb5bd;
+    background-color: #868e96;
 }
 
 #mainNav.navbar-dark .navbar-collapse .navbar-nav > .nav-item.dropdown > .nav-link:after {
@@ -438,12 +344,14 @@ body.sidenav-toggled .navbar-sidenav-tooltip.show {
     }
 
     #mainNav.navbar-dark .navbar-collapse .navbar-sidenav li.active a {
-        color: white !important;
-        background-color: #495057;
+        color: #adb5bd;
+        background-color: #868e96;
     }
 
-    #mainNav.navbar-dark .navbar-collapse .navbar-sidenav li.active a:focus, #mainNav.navbar-dark .navbar-collapse .navbar-sidenav li.active a:hover {
-        color: white;
+    #mainNav.navbar-dark .navbar-collapse .navbar-sidenav li.active a:focus,
+    #mainNav.navbar-dark .navbar-collapse .navbar-sidenav li.active a:hover {
+        color: #adb5bd;
+        background-color: #868e96;
     }
 
     #mainNav.navbar-dark .navbar-collapse .navbar-sidenav > .nav-item .sidenav-second-level,
@@ -469,7 +377,8 @@ body.sidenav-toggled .navbar-sidenav-tooltip.show {
     color: rgba(0, 0, 0, 0.5);
 }
 
-#mainNav.navbar-light .navbar-collapse .navbar-sidenav > .nav-item .sidenav-second-level > li > a:focus, #mainNav.navbar-light .navbar-collapse .navbar-sidenav > .nav-item .sidenav-second-level > li > a:hover,
+#mainNav.navbar-light .navbar-collapse .navbar-sidenav > .nav-item .sidenav-second-level > li > a:focus,
+#mainNav.navbar-light .navbar-collapse .navbar-sidenav > .nav-item .sidenav-second-level > li > a:hover,
 #mainNav.navbar-light .navbar-collapse .navbar-sidenav > .nav-item .sidenav-third-level > li > a:focus,
 #mainNav.navbar-light .navbar-collapse .navbar-sidenav > .nav-item .sidenav-third-level > li > a:hover {
     color: rgba(0, 0, 0, 0.7);
@@ -485,55 +394,19 @@ body.sidenav-toggled .navbar-sidenav-tooltip.show {
     }
 
     #mainNav.navbar-light .navbar-collapse .navbar-sidenav li.active a {
-        color: #000 !important;
-        background-color: #e9ecef;
+        color: #000;
+        background-color: white;
     }
 
-    #mainNav.navbar-light .navbar-collapse .navbar-sidenav li.active a:focus, #mainNav.navbar-light .navbar-collapse .navbar-sidenav li.active a:hover {
-        color: #000;
+    #mainNav.navbar-light .navbar-collapse .navbar-sidenav li.active a:focus,
+    #mainNav.navbar-light .navbar-collapse .navbar-sidenav li.active a:hover {
+        color: #adb5bd;
     }
 
     #mainNav.navbar-light .navbar-collapse .navbar-sidenav > .nav-item .sidenav-second-level,
     #mainNav.navbar-light .navbar-collapse .navbar-sidenav > .nav-item .sidenav-third-level {
-        background: #f8f9fa;
+        color: #adb5bd;
     }
-}
-
-.card-body-icon {
-    position: absolute;
-    z-index: 0;
-    top: -25px;
-    right: -25px;
-    font-size: 5rem;
-    -webkit-transform: rotate(15deg);
-    -ms-transform: rotate(15deg);
-    transform: rotate(15deg);
-}
-
-@media (min-width: 576px) {
-    .card-columns {
-        column-count: 1;
-    }
-}
-
-@media (min-width: 768px) {
-    .card-columns {
-        column-count: 2;
-    }
-}
-
-@media (min-width: 1200px) {
-    .card-columns {
-        column-count: 2;
-    }
-}
-
-.card-login {
-    max-width: 25rem;
-}
-
-.card-register {
-    max-width: 40rem;
 }
 
 footer.sticky-footer {
@@ -558,43 +431,70 @@ footer.sticky-footer {
     }
 }
 
-.clickable {
-    cursor: hand;
-}
-
-.right-align-custom {
-    text-align: right;
-    float: right;
-    margin-left: 5px;
+.brand-plain a {
+    color: inherit;
+    text-decoration: none;
 }
 
 .scrollable {
-    height: 250px;
+    max-height: 250px;
     overflow-y: auto;
 }
 
-.my-active {
-    background-color: #F7F7F7;
+.spinner {
+    margin: 100px auto;
+    width: 50px;
+    height: 40px;
+    text-align: center;
+    font-size: 10px;
 }
 
-.nav-link-text {
-    color: #989898;
+.spinner > div {
+  background-color: #333;
+  height: 100%;
+  width: 6px;
+  display: inline-block;
+
+  -webkit-animation: sk-stretchdelay 1.2s infinite ease-in-out;
+  animation: sk-stretchdelay 1.2s infinite ease-in-out;
 }
 
-.my-active > .nav-link-text {
-    color: rgba(0, 0, 0, 0.7);
+.spinner .rect2 {
+    -webkit-animation-delay: -1.1s;
+    animation-delay: -1.1s;
 }
 
-.pagination-page-info {
-    padding: .6em;
-    padding-left: 0;
-    width: 40em;
-    margin: .5em;
-    margin-left: 0;
-    font-size: 12px;
+.spinner .rect3 {
+    -webkit-animation-delay: -1.0s;
+    animation-delay: -1.0s;
 }
 
-.pagination-page-info b {
-    color: black;
-    padding: .1em .25em;
+.spinner .rect4 {
+    -webkit-animation-delay: -0.9s;
+    animation-delay: -0.9s;
+}
+
+.spinner .rect5 {
+    -webkit-animation-delay: -0.8s;
+    animation-delay: -0.8s;
+}
+
+@-webkit-keyframes sk-stretchdelay {
+    0%, 40%, 100% {
+        -webkit-transform: scaleY(0.4)
+    }
+    20% {
+        -webkit-transform: scaleY(1.0)
+    }
+}
+
+@keyframes sk-stretchdelay {
+    0%, 40%, 100% {
+        transform: scaleY(0.4);
+        -webkit-transform: scaleY(0.4);
+    }
+    20% {
+        transform: scaleY(1.0);
+        -webkit-transform: scaleY(1.0);
+    }
 }
