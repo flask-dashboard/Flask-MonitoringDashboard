@@ -4,7 +4,7 @@ The functionality of the Dashboard is divided into two main components: data col
 and data visualization.
 You can find detailed information about both components below.
 
-Data Collection
+1. Data Collection
 -------------------
 The amount of data collected by the Dashboard varies for each endpoint of the monitored
 Flask application, depending on the monitoring level selected. To select the monitoring level
@@ -183,8 +183,8 @@ The data that is collected from outliers, can be seen by the following procedure
 3. Go to the Outliers tab: http://localhost:5000/dashboard/endpoint/:endpoint_id:/outliers
 
 
-Data Visualization
--------------------
+2. Data Visualization
+----------------------
 
 The Dashboard shows the collected data by means of two levels of abstraction:
 application-wide and endpoint-specific.
@@ -235,12 +235,40 @@ This provides the following information (all information below is specific for a
 8. **Outliers:** The extra information collected on outlier requests.
 
 
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-While all the above visualizations are included by default in the FMD,
-you can also create your own. These will appear in the **Custom graphs** menu.
+Make it your own!
+-----------------
+
+Just as no two applications are the same, we understand that monitoring requirements
+differ for every use case. While all the above visualizations are included by
+default in the FMD and answer a wide range of questions posed by the typical web
+application developer, you can also create your own custom visualizations tailored
+to your needs.
+
+You might wish to know how the number of unique users, the size of your
+database, or the total number of endpoints have evolved over time. This is now
+easy to visualize using FMD.
+
+An example of a custom graph is shown below. FMD will execute :code:`my_func()`
+every hour and a half and the graph will appear in the **Custom graphs** menu.
+
+  .. code-block:: python
+
+     def my_func():
+         # here should be something actually useful
+         return 35
+
+     schedule = {'weeks': 0,
+                  'days': 0,
+                  'hours': 1,
+                  'minutes': 30,
+                  'seconds': 0}
+
+     dashboard.add_graph('Graph1', lambda: my_func(), **schedule)
 
 
+Note that not all fields in the :code:`schedule` dictionary
+are required, only the non-zero ones.
 
 Need more information?
 ----------------------

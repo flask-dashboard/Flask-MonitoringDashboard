@@ -34,7 +34,7 @@ function CustomGraphController($scope, $http, infoService, endpointService,
                         title: 'Values',
                     },
                     margin: {
-                        l: 200
+                        l: 100
                     }
                 });
             });

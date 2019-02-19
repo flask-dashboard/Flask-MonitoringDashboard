@@ -45,7 +45,7 @@ def endpoint3():
 
 def my_func():
     # here should be something actually useful
-    return 35
+    return 33.3
 
 
 schedule = {'weeks': 0,

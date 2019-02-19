@@ -117,7 +117,7 @@ class CustomGraphData(Base):
     id = Column(Integer, primary_key=True)
     graph_id = Column(Integer, ForeignKey(CustomGraph.graph_id))
     time = Column(DateTime, default=datetime.datetime.utcnow)
-    value = Column(Integer)
+    value = Column(Float)
 
 
 # define the database
