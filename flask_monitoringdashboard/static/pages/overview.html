@@ -58,11 +58,7 @@
                     <td ng-show="isHits==false" style="text-align: right;">{{ row['median-overall'] | duration }}</td>
                     <td style="text-align: center;">{{ row['last-accessed'] | dateDifference }}</td>
                     <td ng-click="$event.stopPropagation()">
-                        <ul class="pagination">
-                            <li ng-repeat="n in [0, 1, 2, 3]" class="page-item">
-                                <a class="page-link" ng-click="sendForm(row, n)"
-                                   style="background-color: {{ computeColor(n, row.monitor) }}">{{ n }}</a></li>
-                        </ul>
+                        <monitorlevel name="row.name" value="row.monitor" />
                     </td>
                 </tr>
                 </tbody>

@@ -30,7 +30,8 @@
                             <label for="{{ item.name }}" class="col-form-label">Select the {{ item.name }}
                                 (hold Shift or Cmd/Ctrl to select multiple): </label>
                             <select multiple class="form-control" id="{{ item.name }}" ng-model="item.selected"
-                                    ng-options="obj.text for obj in item.values track by obj.id" size="{{item.values.length < 10 ? item.values.length : 10 }}"></select>
+                                    ng-options="obj.text for obj in item.values track by obj.id"
+                                    size="{{ item.values.length < 10 ? item.values.length : 10 }}"></select>
                         </div>
                         <button type="submit" class="btn btn-primary" ng-click="handler.reload()">Update</button>
                     </form>
@@ -77,22 +78,10 @@
                         <td><b>HTTP Methods</b></td>
                         <td>{{ endpoint.info.methods.join(', ') }}</td>
                     </tr>
-                    <!--<tr>
-                        <td><b>Added since app version</b></td>
-                        <td>{{ details.rule.version_added }}</td>
-                    </tr>
-                    <tr>
-                        <td><b>Date added to app</b></td>
-                        <td>{{ details.rule.time_added }}</td>
-                    </tr>-->
                     <tr>
                         <td><b>Monitoring-level</b></td>
-                        <td>
-                            <ul class="pagination">
-                                <li ng-repeat="n in [0, 1, 2, 3]" class="page-item"
-                                    ng-class="{'active': endpoint.info['monitor-level'] == n}">
-                                    <a class="page-link" ng-click="sendForm(endpoint.info, n)">{{ n }}</a></li>
-                            </ul>
+                        <td ng-click="$event.stopPropagation()">
+                            <monitorlevel name="endpoint.info.endpoint" value="endpoint.info['monitor-level']" />
                         </td>
                     </tr>
                     <tr>
