@@ -13,12 +13,11 @@ from contextlib import contextmanager
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
-from flask_monitoringdashboard.database import Base, Endpoint, Request, Outlier, CodeLine, StackLine, Test, \
-    TestResult, TestEndpoint
+from flask_monitoringdashboard.database import Base, Endpoint, Request, Outlier, CodeLine, StackLine
 
 SQLITE_URL = 'sqlite:////Users/user/Flask-MonitoringDashboard/fmd.db'
 MYSQL_URL = 'mysql+pymysql://user:password@localhost:3306/database'
-ENTITIES = [Endpoint, Request, Outlier, CodeLine, StackLine, Test, TestResult, TestEndpoint]
+ENTITIES = [Endpoint, Request, Outlier, CodeLine, StackLine]
 CHUNK_SIZE = 10000
 
 

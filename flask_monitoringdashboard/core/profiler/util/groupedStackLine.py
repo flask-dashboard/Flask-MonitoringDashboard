@@ -1,8 +1,6 @@
 from __future__ import division
 from numpy import std
 
-from flask_monitoringdashboard.views.details.profiler import get_body
-
 
 class GroupedStackLine(object):
 
@@ -12,12 +10,7 @@ class GroupedStackLine(object):
         self.values = values
         self.total_sum = total_sum
         self.total_hits = total_hits
-        self.body = []
         self.index = 0
-
-    def compute_body(self, index, table):
-        self.index = index
-        self.body = get_body(index, table)
 
     @property
     def hits(self):

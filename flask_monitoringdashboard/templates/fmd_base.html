@@ -1,129 +1,57 @@
-<!DOCTYPE html>
-<html lang="en">
-
+<!doctype html>
+<html lang="en" ng-app="fmdApp">
 <head>
+    <title>Flask-MonitoringDashboard</title>
+    <base href="{{ url_for('dashboard.index') }}">
     <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <title>Flask Monitoring Dashboard</title>
-
-    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet"
-          type="text/css">
-    <link href="https://cdn.datatables.net/1.10.16/css/dataTables.bootstrap4.min.css" rel="stylesheet">
-
-    <link href="{{ url_for('dashboard.static', filename='css/custom.css') }}" rel="stylesheet">
-    <link rel="shortcut icon" href="{{ url_for('dashboard.static', filename='img/favicon.ico') }}" />
-
-    <script src="{{ url_for('dashboard.static', filename='js/util.js') }}"></script>
-    {% block head %}
-    {% endblock %}
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.1.1/css/bootstrap.css"
+          rel="stylesheet" type="text/css">
+    <link href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css"
+          rel="stylesheet" type="text/css">
+    <link href="https://cdn.datatables.net/1.10.19/css/dataTables.bootstrap4.min.css"
+          rel="stylesheet" type="text/css">
+    <link href="{{ url_for('dashboard.static', filename='css/custom.css') }}"
+          rel="stylesheet" type="text/css">
+    <link rel="shortcut icon" href="{{ url_for('dashboard.static', filename='img/favicon.ico') }}"/>
 </head>
 
-{% macro active_if_is(name) -%}
-    {{ "my-active" if request.endpoint == name }}
-{%- endmacro %}
-
-{% macro active_if_in(list) -%}
-    {{ "my-active" if request.endpoint in list }}
-{%- endmacro %}
-
-{% set rules_endpoint='dashboard.rules' %}
-{% set testmonitor_list=['dashboard.testmonitor', 'dashboard.test_build_performance', 'dashboard.endpoint_build_performance'] %}
-{% set config_endpoint='dashboard.configuration' %}
-{% set dashboard_list=['dashboard.overview', 'dashboard.hourly_load', 'dashboard.version_usage',
-       'dashboard.requests', 'dashboard.endpoints'] %}
-
-{% macro submenu(endpoint, name) -%}
-    <li><a class="{{ active_if_is(endpoint) }}" href="{{ url_for(endpoint) }}">{{ name }}</a></li>
-{%- endmacro %}
-
 {% block body %}
-    <body class="fixed-nav sticky-footer bg-dark" id="page-top">
-    <!-- Navigation-->
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top" id="mainNav">
-        <div class="navbar-brand">
-            <h4>Flask Monitoring Dashboard</h4>
-        </div>
-        <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse"
-                data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false"
-                aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse" id="navbarResponsive">
-            <ul class="navbar-nav navbar-sidenav nav-pills" id="exampleAccordion" style="overflow: hidden">
-                <li class="nav-item" data-toggle="tooltip" data-placement="right" title="Rules">
-                    <a class="nav-link {{ active_if_is(rules_endpoint) }}" href="{{ url_for(rules_endpoint) }}">
-                        <i class="fa fa-fw fa-wrench"></i>
-                        <span class="nav-link-text">Rules</span>
-                    </a>
-                </li>
-                <li class="nav-item" data-toggle="tooltip" data-placement="right" title="Dashboard">
-                    <a class="nav-link nav-link-collapse {{ "my-active" if request.endpoint in dashboard_list else "collapsed" }}"
-                       data-toggle="collapse" href="#collapseDashboard">
-                        <i class="fa fa-fw fa-dashboard"></i>
-                        <span class="nav-link-text">Dashboard</span>
-                    </a>
-                    <ul class="sidenav-second-level {{ "show" if request.endpoint in dashboard_list else "collapse" }}"
-                        id="collapseDashboard">
-                        {{ submenu('dashboard.overview', 'Overview') }}
-                        {{ submenu('dashboard.hourly_load', 'Hourly API Utilization') }}
-                        {{ submenu('dashboard.version_usage', 'Multi Version API Utilization') }}
-                        {{ submenu('dashboard.requests', 'Daily API Utilization') }}
-                        {{ submenu('dashboard.endpoints', 'API Performance') }}
-                    </ul>
-                </li>
-                {% block endpoint_menu %}
-                {% endblock %}
-                <li class="nav-item" data-toggle="tooltip" data-placement="right" title="Testmonitor">
-                    <a class="nav-link nav-link-collapse {{ "my-active" if request.endpoint in testmonitor_list else "collapsed" }}"
-                       data-toggle="collapse" href="#collapseTestmonitor">
-                        <i class="fa fa-fw fa-desktop"></i>
-                        <span class="nav-link-text">Testmonitor</span>
-                    </a>
-                    <ul class="sidenav-second-level {{ "show" if request.endpoint in testmonitor_list else "collapse" }}"
-                        id="collapseTestmonitor">
-                        {{ submenu('dashboard.testmonitor', 'Overview') }}
-                        {{ submenu('dashboard.endpoint_build_performance', 'Per-Build Endpoint Performance') }}
-                        {{ submenu('dashboard.test_build_performance', 'Per-Build Test Performance') }}
-                    </ul>
-                </li>
-                {% block test_endpoint_menu %}
-                {% endblock %}
-                <li class="nav-item" data-toggle="tooltip" data-placement="right" title="Configuration">
-                    <a class="nav-link {{ active_if_is(config_endpoint) }}" href="{{ url_for(config_endpoint) }}">
-                        <i class="fa fa-fw fa-gear"></i>
-                        <span class="nav-link-text">Configuration</span>
-                    </a>
-                </li>
-            </ul>
-            <ul class="navbar-nav sidenav-toggler">
-                <li class="nav-item">
-                    <a class="nav-link text-center" id="sidenavToggler">
-                        <i class="fa fa-fw fa-angle-left"></i>
-                    </a>
-                </li>
-            </ul>
-            <ul class="navbar-nav ml-auto">
-                <li class="nav-item">
-          <span style="color: white">
-          Automatically monitor the evolving performance of Flask/Python web services
-          </span>
-                </li>
-            </ul>
-            <ul class="navbar-nav ml-auto">
-                <li class="nav-item">
-                    <a class="nav-link" data-toggle="modal" data-target="#exampleModal">
-                        <i class="fa fa-fw fa-sign-out"></i>Logout</a>
-                </li>
-            </ul>
-        </div>
-    </nav>
-    <div class="content-wrapper">
-    <div class="container-fluid">
-        {% block content %}
+<body class="fixed-nav sticky-footer bg-dark" id="page-top">
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top" id="mainNav">
+    <div class="navbar-brand brand-plain">
+        <a href="overview"><h4>Flask Monitoring Dashboard</h4></a>
+    </div>
 
-        {% endblock %}
+    <div class="collapse navbar-collapse" id="navbarResponsive">
+        <menu></menu>
+        <ul class="navbar-nav sidenav-toggler">
+            <li class="nav-item">
+                <a class="nav-link text-center" id="sidenavToggler">
+                    <i class="fa fa-fw fa-angle-left"></i>
+                </a>
+            </li>
+        </ul>
+        <ul class="navbar-nav ml-auto">
+            <li class="nav-item">
+                 <span style="color: #adb5bd;">
+                     Automatically monitor the evolving performance of Flask/Python web services
+                 </span>
+            </li>
+        </ul>
+        <ul class="navbar-nav ml-auto">
+            <li class="nav-item">
+                <a class="nav-link" data-toggle="modal" data-target="#exampleModal">
+                    <i class="fa fa-fw fa-sign-out"></i>Logout</a>
+            </li>
+        </ul>
+    </div>
+</nav>
+
+<div class="content-wrapper">
+    <div class="container page">
+        <div id="content" class="main" ng-view></div>
     </div>
     <footer class="sticky-footer">
         <div class="container">
@@ -133,11 +61,7 @@
             </div>
         </div>
     </footer>
-    <!-- Scroll to Top Button-->
-    <a class="scroll-to-top rounded" href="#page-top">
-        <i class="fa fa-angle-up"></i>
-    </a>
-    <!-- Logout Modal-->
+
     <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
          aria-hidden="true">
         <div class="modal-dialog" role="document">
@@ -145,32 +69,66 @@
                 <div class="modal-header">
                     <h5 class="modal-title" id="exampleModalLabel">Logout?</h5>
                     <button class="close" type="button" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">×</span>
+                        <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
                 <div class="modal-body">Are you sure you want to logout?</div>
                 <div class="modal-footer">
                     <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
-                    <a class="btn btn-primary" href="{{ url_for('dashboard.logout') }}">Logout</a>
+                    <button class="btn btn-primary"
+                            onclick="document.location.href='{{ url_for('dashboard.logout') }}';">Logout
+                    </button>
                 </div>
             </div>
         </div>
     </div>
-{% endblock %}
-
-<script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.11.0/umd/popper.min.js"></script>
-<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
-
-<script src="http://cdnjs.cloudflare.com/ajax/libs/jquery-easing/1.3/jquery.easing.min.js"></script>
-<script src="https://cdn.datatables.net/1.10.16/js/jquery.dataTables.min.js"></script>
-<script src="https://cdn.datatables.net/1.10.16/js/dataTables.bootstrap4.min.js"></script>
-
-{% block script %}
-{% endblock %}
-<script src="{{ url_for('dashboard.static', filename='js/custom.js') }}"></script>
-<script src="{{ url_for('dashboard.static', filename='js/custom-datatables.js') }}"></script>
-
 </div>
+{% endblock %}
+
+<script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/1.10.18/js/dataTables.bootstrap4.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.7.5/angular.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.7.5/angular-route.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/4.12.0/d3.min.js"></script>
+<script src="https://unpkg.com/sunburst-chart"></script>
+
+<script src="{{ url_for('dashboard.static', filename='js/angular-datatables.js') }}"></script>
+<script src="{{ url_for('dashboard.static', filename='js/custom.js') }}"></script>
+<script src="{{ url_for('dashboard.static', filename='js/app.js') }}"></script>
+
+<!-- Services -->
+<script src="{{ url_for('dashboard.static', filename='js/services/endpoint.js') }}"></script>
+<script src="{{ url_for('dashboard.static', filename='js/services/form.js') }}"></script>
+<script src="{{ url_for('dashboard.static', filename='js/services/info.js') }}"></script>
+<script src="{{ url_for('dashboard.static', filename='js/services/menu.js') }}"></script>
+<script src="{{ url_for('dashboard.static', filename='js/services/pagination.js') }}"></script>
+<script src="{{ url_for('dashboard.static', filename='js/services/plotly.js') }}"></script>
+
+<!-- Controllers -->
+<script src="{{ url_for('dashboard.static', filename='js/controllers/apiPerformance.js') }}"></script>
+<script src="{{ url_for('dashboard.static', filename='js/controllers/configuration.js') }}"></script>
+<script src="{{ url_for('dashboard.static', filename='js/controllers/customGraph.js') }}"></script>
+<script src="{{ url_for('dashboard.static', filename='js/controllers/dailyUtilization.js') }}"></script>
+<script src="{{ url_for('dashboard.static', filename='js/controllers/endpointGroupedProfiler.js') }}"></script>
+<script src="{{ url_for('dashboard.static', filename='js/controllers/endpointHourlyLoad.js') }}"></script>
+<script src="{{ url_for('dashboard.static', filename='js/controllers/endpointOutlier.js') }}"></script>
+<script src="{{ url_for('dashboard.static', filename='js/controllers/endpointProfiler.js') }}"></script>
+<script src="{{ url_for('dashboard.static', filename='js/controllers/endpointUsers.js') }}"></script>
+<script src="{{ url_for('dashboard.static', filename='js/controllers/endpointVersion.js') }}"></script>
+<script src="{{ url_for('dashboard.static', filename='js/controllers/endpointVersionIP.js') }}"></script>
+<script src="{{ url_for('dashboard.static', filename='js/controllers/endpointVersionUser.js') }}"></script>
+<script src="{{ url_for('dashboard.static', filename='js/controllers/hourlyLoad.js') }}"></script>
+<script src="{{ url_for('dashboard.static', filename='js/controllers/monitorLevel.js') }}"></script>
+<script src="{{ url_for('dashboard.static', filename='js/controllers/multiVersion.js') }}"></script>
+<script src="{{ url_for('dashboard.static', filename='js/controllers/overview.js') }}"></script>
+<script src="{{ url_for('dashboard.static', filename='js/controllers/util.js') }}"></script>
+
+<script src="{{ url_for('dashboard.static', filename='js/directives.js') }}"></script>
+<script src="{{ url_for('dashboard.static', filename='js/filters.js') }}"></script>
+
 </body>
 </html>

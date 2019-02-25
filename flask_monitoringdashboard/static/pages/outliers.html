@@ -1,0 +1,80 @@
+<div>
+    <div class="card mb-3">
+        <div class="card-header"><h4>{{ title }}</h4></div>
+        <div class="card-body">
+            <div id="chart">
+                <div class="spinner" ng-controller="FormController" ng-show="handler.isLoading">
+                    <div class="rect1"></div>
+                    <div class="rect2"></div>
+                    <div class="rect3"></div>
+                    <div class="rect4"></div>
+                    <div class="rect5"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="card mb-3" style="margin-top: 10px;">
+        <div class="card-header"><h4>Outliers data</h4></div>
+        <div class="card-body">
+
+            <pagination/>
+
+            <div class="card" ng-repeat="row in table" style="margin-bottom: 10px;">
+                <div class="row">
+                    <div class="col-sm-6">
+                        <div class="well-sm"><strong>Request url: </strong>{{ row.request_url }}</div>
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="well-sm"><strong>Request
+                            time: </strong>{{ row.request.time_requested | dateLayout }}</div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-6">
+                        <div class="well-sm"><strong>Request Headers</strong></div>
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="well-sm"><strong>Request Environment</strong></div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-6">
+                        <div class="well-sm scrollable">{{ row.request_header }}</div>
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="well-sm scrollable">{{ row.request_environment }}</div>
+                    </div>
+                </div>
+
+                <div class="row" style="margin-top: 10px">
+                    <div class="col-sm-12">
+                        <div class="well-sm">
+                            <strong>CPU Percent: </strong>{{ row.cpu_percent }}
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-12">
+                        <div class="well-sm">
+                            <strong>Memory: </strong>{{ row.memory }}
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-12">
+                        <div class="well-sm"><strong>Stack Trace</strong></div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-12">
+                        <div class="well-sm scrollable">{{ row.stacktrace }}</div>
+                    </div>
+                </div>
+            </div>
+
+            <pagination/>
+
+        </div>
+    </div>
+</div>

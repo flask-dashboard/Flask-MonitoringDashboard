@@ -5,7 +5,7 @@
 import time
 from functools import wraps
 
-from flask_monitoringdashboard import user_app
+from flask_monitoringdashboard import config
 from flask_monitoringdashboard.core.profiler import start_thread_last_requested, start_performance_thread, \
     start_profiler_thread, start_profiler_and_outlier_thread
 from flask_monitoringdashboard.core.rules import get_rules
@@ -30,7 +30,7 @@ def add_decorator(endpoint):
     Adds a wrapper to an endpoint in the app, depending on the monitor level.
     :param endpoint: Endpoint object to be monitored
     """
-    fun = user_app.view_functions[endpoint.name]
+    fun = config.app.view_functions[endpoint.name]
     if endpoint.monitor_level == 0:
         add_wrapper0(endpoint, fun)
     elif endpoint.monitor_level == 1:
@@ -51,7 +51,7 @@ def add_wrapper0(endpoint, fun):
         return result
 
     wrapper.original = fun
-    user_app.view_functions[endpoint.name] = wrapper
+    config.app.view_functions[endpoint.name] = wrapper
 
 
 def add_wrapper1(endpoint, fun):
@@ -64,7 +64,7 @@ def add_wrapper1(endpoint, fun):
         return result
 
     wrapper.original = fun
-    user_app.view_functions[endpoint.name] = wrapper
+    config.app.view_functions[endpoint.name] = wrapper
 
 
 def add_wrapper2(endpoint, fun):
@@ -78,7 +78,7 @@ def add_wrapper2(endpoint, fun):
         return result
 
     wrapper.original = fun
-    user_app.view_functions[endpoint.name] = wrapper
+    config.app.view_functions[endpoint.name] = wrapper
 
 
 def add_wrapper3(endpoint, fun):
@@ -92,4 +92,4 @@ def add_wrapper3(endpoint, fun):
         return result
 
     wrapper.original = fun
-    user_app.view_functions[endpoint.name] = wrapper
+    config.app.view_functions[endpoint.name] = wrapper

@@ -1,8 +1,6 @@
 from flask_monitoringdashboard import blueprint, config
-from flask import redirect, request, session, render_template, url_for
-from flask_monitoringdashboard.core.forms import Login
-from flask_monitoringdashboard.core.auth import check_login, on_logout
-
+from flask import redirect, session, render_template, url_for, request
+from flask_monitoringdashboard.core.auth import on_logout, on_login
 
 MAIN_PAGE = 'dashboard.index'
 
@@ -17,13 +15,17 @@ def login():
     if session.get(config.link + '_logged_in'):
         return redirect(url_for(MAIN_PAGE))
 
-    form = Login()
-    if request.method == 'POST' and form.validate():
-        if not check_login(name=form.name.data, password=form.password.data):
-            form.name.errors.append('Incorrect username or password')
-        else:
+    if request.method == 'POST':
+        name = request.form['name']
+        password = request.form['password']
+        if name == config.username and password == config.password:
+            on_login(admin=True)
             return redirect(url_for(MAIN_PAGE))
-    return render_template('fmd_login.html', form=form)
+        elif name == config.guest_username and password in config.guest_password:
+            on_login(admin=False)
+            return redirect(url_for(MAIN_PAGE))
+
+    return render_template('fmd_login.html')
 
 
 @blueprint.route('/logout')

@@ -1,0 +1,92 @@
+<div>
+    <div id="alert" class="alert alert-warning alert-dismissible" ng-show="alertShow">
+        <a class="close" data-dismiss="alert" aria-label="close" ng-click="alertShow = false">&times;</a>
+        <strong>Warning:</strong>
+        Version {{ pypi_version }} is now available, while you are still using version {{ dashboard_version }}.<br/>
+        To upgrade run the following command on your server: <code>pip install --upgrade
+        flask_monitoringdashboard</code>
+    </div>
+
+    <div class="card mb-3">
+        <div class="card-header"><h4>Dashboard Overview</h4></div>
+        <div class="card-body">
+            <div class="spinner" ng-controller="FormController" ng-show="table.length === 0">
+                <div class="rect1"></div>
+                <div class="rect2"></div>
+                <div class="rect3"></div>
+                <div class="rect4"></div>
+                <div class="rect5"></div>
+            </div>
+
+            <table datatable="ng" class="table table-hover table-bordered" dt-options="options">
+                <thead>
+                <tr>
+                    <th colspan="2"></th>
+                    <th ng-show="isHits" colspan="3" style="text-align: center; font-size: large;">Number of hits</th>
+                    <th ng-show="isHits==false" colspan="3" style="text-align: center; font-size: large;">Median request
+                        duration
+                    </th>
+                    <th></th>
+                    <th></th>
+                </tr>
+                <tr>
+                    <th></th>
+                    <th>Endpoint</th>
+                    <th ng-show="isHits">Today</th>
+                    <th ng-show="isHits">Last 7 days</th>
+                    <th ng-show="isHits">Overall</th>
+                    <th ng-show="isHits==false">Today</th>
+                    <th ng-show="isHits==false">Last 7 days</th>
+                    <th ng-show="isHits==false">Overall</th>
+                    <th>Last requested</th>
+                    <th>Monitoring-level<sup>*</sup></th>
+                </tr>
+                </thead>
+
+                <tbody>
+                <tr ng-repeat="row in table" style="cursor: pointer"
+                    ng-click="go('/endpoint/' + row.id + '/hourly_load')">
+                    <td style="background-color: {{ row.color }}"></td>
+                    <td style="max-width: 200px;">{{ row.name }}</td>
+
+                    <td ng-show="isHits" style="text-align: right;">{{ row['hits-today'] | number }}</td>
+                    <td ng-show="isHits" style="text-align: right;">{{ row['hits-week'] | number }}</td>
+                    <td ng-show="isHits" style="text-align: right;">{{ row['hits-overall'] | number }}</td>
+
+                    <td ng-show="isHits==false" style="text-align: right;">{{ row['median-today'] | duration }}</td>
+                    <td ng-show="isHits==false" style="text-align: right;">{{ row['median-week'] | duration }}</td>
+                    <td ng-show="isHits==false" style="text-align: right;">{{ row['median-overall'] | duration }}</td>
+                    <td style="text-align: center;">{{ row['last-accessed'] | dateDifference }}</td>
+                    <td ng-click="$event.stopPropagation()">
+                        <monitorlevel name="row.name" value="row.monitor" />
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+
+            <ul class="pagination">
+                <li class="page-item" ng-class="{'active': isHits}"><a class="page-link" ng-click="toggleHits()">Number
+                    of hits</a></li>
+                <li class="page-item" ng-class="{'active': !isHits}"><a class="page-link" ng-click="toggleHits()">Median
+                    request duration</a></li>
+            </ul>
+        </div>
+
+    </div>
+
+    <div class="card mb-3">
+        <div class="card-header"><h5><sup>*</sup>Monitoring-level</h5></div>
+        <div class="card-body">
+            <b>0 - Disabled</b>
+            <p>When the monitoring-level is set to 0, you don't monitor anything about the performance of this endpoint.
+                The only data that is stored is when the <b>endpoint is last requested.</b></p><b>1 - Performance</b>
+            <p>When the monitoring-level is set to 1, you collect data when the endpoint is last requested, plus data
+                about the <b>performance and utilization</b> of this endpoint (as a black-box).</p><b>2 - Profiler</b>
+            <p>When the monitoring-level is set to 2, you get all the functionality from 1, plus data about the <b>performance
+                per line of code</b> from all requests.</p><b>3 - Profiler + Outliers</b>
+            <p>When the monitoring-level is set to 3, you get all the functionality from 2, including <b>more data if a
+                request is an outlier.</b>
+        </div>
+    </div>
+</div>
+</div>

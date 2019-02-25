@@ -5,7 +5,19 @@ All notable changes to this project will be documented in this file.
 This project adheres to `Semantic Versioning <http://semver.org/>`_.
 Please note that the changes before version 1.10.0 have not been documented.
 
-Unreleased
+v2.1.0
+----------
+Changed
+
+- Frontend is now using AngularJS
+- Removed TestMonitor
+- Added Custom graphs
+- Fixed Issue #206
+- Added support for Python 3.7
+- Updated documentation
+- Updated unit tests
+
+v2.0.7
 ----------
 Changed
 
