@@ -106,6 +106,7 @@ class Config(object):
             return
         try:
             parser = configparser.RawConfigParser()
+            parser.read(file)
 
             # parse 'dashboard'
             self.version = parse_version(parser, 'dashboard', self.version)
