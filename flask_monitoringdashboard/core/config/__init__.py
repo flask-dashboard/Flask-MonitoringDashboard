@@ -99,7 +99,7 @@ class Config(object):
         if envvar:
             file = os.getenv(envvar)
             if log_verbose:
-                log("Running with config from: " + (str(file}))
+                log("Running with config from: " + (str(file)))
                 
         if not file:
             # Travis does not need a config file.
