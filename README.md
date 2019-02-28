@@ -1,4 +1,8 @@
+![logo](/docs/img/header.png)
 # Flask Monitoring Dashboard [![Tweet](https://img.shields.io/twitter/url/http/shields.io.svg?style=social)](https://twitter.com/intent/tweet?text=Monitor%20your%20Flask%20application%20with%20the%20Flask%20Monitoring%20Dashboard&url=https://github.com/flask-dashboard/Flask-MonitoringDashboard&hashtags=fmd,flask,python)
+
+A dashboard for automatic monitoring of [Flask](http://flask.pocoo.org/) web-services.
+
 [![Build Status](https://travis-ci.org/flask-dashboard/Flask-MonitoringDashboard.svg?branch=master)](https://travis-ci.org/flask-dashboard/Flask-MonitoringDashboard)
 [![Documentation Status](https://readthedocs.org/projects/flask-monitoringdashboard/badge/?version=latest)](http://flask-monitoringdashboard.readthedocs.io/en/latest/?badge=latest)
 [![codecov](https://codecov.io/gh/flask-dashboard/Flask-MonitoringDashboard/branch/master/graph/badge.svg)](https://codecov.io/gh/flask-dashboard/Flask-MonitoringDashboard)
@@ -6,8 +10,9 @@
 [![Py-version](https://img.shields.io/pypi/pyversions/flask_monitoringdashboard.svg)](https://img.shields.io/pypi/pyversions/flask_monitoringdashboard.svg)
 [![Downloads](http://pepy.tech/badge/flask-monitoringdashboard)](http://pepy.tech/count/flask-monitoringdashboard)
 
-A dashboard for automatic monitoring of Flask web-services.
 
+
+## Key Features
 The Flask Monitoring Dashboard is an extension for Flask applications that offers four main functionalities with little effort from the Flask developer:
 
 - **Monitor the performance and utilization:**
