@@ -51,7 +51,7 @@ class Config(object):
         # store the Flask app
         self.app = None
 
-    def init_from(self, file=None, envvar=None):
+    def init_from(self, file=None, envvar=None, log_verbose=False):
         """
             The config_file must at least contains the following variables in section 'dashboard':
             - APP_VERSION: the version of the app that you use. Updating the version helps in
@@ -98,6 +98,9 @@ class Config(object):
 
         if envvar:
             file = os.getenv(envvar)
+            if log_verbose:
+                log("Running with config from: " + (str(file)))
+                
         if not file:
             # Travis does not need a config file.
             if '/home/travis/build/' in os.getcwd():
@@ -130,6 +133,10 @@ class Config(object):
             # visualization
             self.colors = parse_literal(parser, 'visualization', 'COLORS', self.colors)
             self.timezone = pytz.timezone(parse_string(parser, 'visualization', 'TIMEZONE', self.timezone.zone))
+            
+            if log_verbose:
+                log("version: " + self.version)
+                log("username: " + self.username)
         except AttributeError:
             log('Cannot use configparser in python2.7')
             raise
