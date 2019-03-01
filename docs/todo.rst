@@ -14,5 +14,4 @@ Features to be implemented
 
 Work in progress
 ----------------
-- splitting backend and frontend into Python and Angular
-- improve quality of the github folder: better readme, add a gif, etc.
+

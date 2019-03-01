@@ -1,13 +1,40 @@
-# Flask Monitoring Dashboard
+<h1 align="center">
+    <img src="/docs/img/header.png" width="600">
+    <br>
+    Flask Monitoring Dashboard
+    <br>
+</h1>
+
+<p align="center">
+A dashboard for automatic monitoring of <a href="http://flask.pocoo.org/" target="_blank">Flask</a> web-services.
+</p>
+
+<span align="center">
+
 [![Build Status](https://travis-ci.org/flask-dashboard/Flask-MonitoringDashboard.svg?branch=master)](https://travis-ci.org/flask-dashboard/Flask-MonitoringDashboard)
 [![Documentation Status](https://readthedocs.org/projects/flask-monitoringdashboard/badge/?version=latest)](http://flask-monitoringdashboard.readthedocs.io/en/latest/?badge=latest)
 [![codecov](https://codecov.io/gh/flask-dashboard/Flask-MonitoringDashboard/branch/master/graph/badge.svg)](https://codecov.io/gh/flask-dashboard/Flask-MonitoringDashboard)
 [![PyPI version](https://badge.fury.io/py/Flask-MonitoringDashboard.svg)](https://badge.fury.io/py/Flask-MonitoringDashboard)
 [![Py-version](https://img.shields.io/pypi/pyversions/flask_monitoringdashboard.svg)](https://img.shields.io/pypi/pyversions/flask_monitoringdashboard.svg)
 [![Downloads](http://pepy.tech/badge/flask-monitoringdashboard)](http://pepy.tech/count/flask-monitoringdashboard)
+[![Tweet](https://img.shields.io/twitter/url/http/shields.io.svg?style=social)](https://twitter.com/intent/tweet?text=Monitor%20your%20Flask%20application%20with%20the%20Flask%20Monitoring%20Dashboard&url=https://github.com/flask-dashboard/Flask-MonitoringDashboard&hashtags=fmd,flask,python)
 
-A dashboard for automatic monitoring of Flask web-services.
+</span>
 
+<p align="center">
+  <a href="#key-features">Key Features</a> •
+  <a href="#how-to-use">How to use</a> •
+  <a href="#live-demo">Live Demo</a> •
+  <a href="#feedback">Feedback</a> •
+  <a href="#documentation">Documentation</a> •
+  <a href="#screenshots">Screenshots</a> •
+  <a href="#license">License</a>
+</p>
+
+![gif](/docs/img/fmd_video.gif)
+
+
+## Key Features
 The Flask Monitoring Dashboard is an extension for Flask applications that offers four main functionalities with little effort from the Flask developer:
 
 - **Monitor the performance and utilization:**
@@ -37,12 +64,10 @@ You can view the results by default using the default endpoint (this can be conf
 
 For more advanced documentation, take a look at the information on [this site](http://flask-monitoringdashboard.readthedocs.io/en/latest/functionality.html).
 
-## Live demo
-To view a live deployment of the Flask-MonitoringDashboard, check [this site](https://flask-monitoringdashboard.herokuapp.com/).
-Use the credentials u:`admin`, p:`admin` to log in.
 
+## How to use
 
-## Installation
+#### Installation
 To install from source, download the source code, then run this:
 
     python setup.py install
@@ -51,7 +76,7 @@ Or install with pip:
     
     pip install flask_monitoringdashboard
     
-### Setup
+#### Setup
 Adding the extension to your Flask app is simple:
 
     from flask import Flask
@@ -59,6 +84,10 @@ Adding the extension to your Flask app is simple:
 
     app = Flask(__name__)
     dashboard.bind(app)
+    
+## Live Demo
+To view a live deployment of the Flask-MonitoringDashboard, check [this site](https://flask-monitoringdashboard.herokuapp.com/).
+Use the credentials u:`admin`, p:`admin` to log in.
 
 ## Feedback
 In order to improve our Flask-MonitoringDashboard, we would like to hear from you! Therefore, we made a questionnaire
@@ -76,3 +105,6 @@ If you run into trouble migrating from version 1.X.X to version 2.0.0, this site
 ![Screenshot 3](/docs/img/ss3.png)
 ![Screenshot 4](/docs/img/ss4.png)
 ![Screenshot 5](/docs/img/ss5.png)
+
+## License
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.

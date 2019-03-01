@@ -25,7 +25,7 @@ class Config(object):
         # dashboard
         self.version = '1.0'
         self.link = 'dashboard'
-        self.monitor_level = 3
+        self.monitor_level = 1
         self.outlier_detection_constant = 2.5
         self.sampling_period = 0
         self.enable_logging = False
