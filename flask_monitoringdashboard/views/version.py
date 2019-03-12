@@ -46,7 +46,6 @@ def multi_version():
     data = json.loads(request.data)['data']
     endpoints = data['endpoints']
     versions = data['versions']
-    # print(data)
     with session_scope() as db_session:
         return jsonify(get_multi_version_data(db_session, endpoints, versions))
 
@@ -109,4 +108,3 @@ def version_ip(endpoint_id):
 
     with session_scope() as db_session:
         return jsonify(get_version_ip_data(db_session, endpoint_id, versions, ips))
-

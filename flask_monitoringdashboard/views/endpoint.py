@@ -144,4 +144,3 @@ def endpoint_users(endpoint_id):
         data = json.loads(request.data)['data']
         users = data['users']
         return jsonify(get_endpoint_users(db_session, endpoint_id, users))
-
