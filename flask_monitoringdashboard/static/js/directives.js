@@ -24,3 +24,14 @@ app.directive('monitorlevel', function () {
         }
     }
 });
+
+app.directive('endpointdetails', function () {
+    return {
+        templateUrl: 'static/elements/endpointDetails.html',
+        controller: 'EndpointController',
+        scope: {
+            name: '=',
+            value: '='
+        }
+    }
+});
