@@ -55,10 +55,10 @@ def my_func():
     return 33.3
 
 
-schedule = {'weeks': 0,
-            'days': 0,
-            'hours': 1,
-            'minutes': 30,
-            'seconds': 0}
-
-dashboard.add_graph('Graph1', lambda: my_func(), **schedule)
+# schedule = {'weeks': 0,
+#             'days': 0,
+#             'hours': 1,
+#             'minutes': 30,
+#             'seconds': 0}
+#
+# dashboard.add_graph('Graph1', lambda: my_func(), **schedule)
