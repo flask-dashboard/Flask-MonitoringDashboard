@@ -48,4 +48,4 @@ class TestConfig(unittest.TestCase):
         from flask_monitoringdashboard.core.config.parser import get_environment_var
         import os
         os.environ[name] = value
-        self.assertEqual(get_environment_var(name, default_value=None), value)
+        self.assertEqual(get_environment_var(name), value)

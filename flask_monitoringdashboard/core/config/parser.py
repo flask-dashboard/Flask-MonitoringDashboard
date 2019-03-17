@@ -40,7 +40,8 @@ def parse_string(parser, header, arg_name, arg_value):
     :param arg_name: name in the configuration file
     :param arg_value: default value, the the value is not found
     """
-    arg_value = get_environment_var(arg_name, arg_value)
+    env = get_environment_var(arg_name)
+    arg_value = env if env else arg_value
     if parser.has_option(header, arg_name):
         return parser.get(header, arg_name)
     return arg_value
@@ -54,7 +55,8 @@ def parse_bool(parser, header, arg_name, arg_value):
     :param arg_name: name in the configuration file
     :param arg_value: default value, the the value is not found
     """
-    arg_value = get_environment_var(arg_name, arg_value) == 'True'
+    env = get_environment_var(arg_name)
+    arg_value = env if env else arg_value
     if parser.has_option(header, arg_name):
         return parser.get(header, arg_name) == 'True'
     return arg_value
@@ -68,17 +70,17 @@ def parse_literal(parser, header, arg_name, arg_value):
     :param arg_name: name in the configuration file
     :param arg_value: default value, the the value is not found
     """
-    arg_value = ast.literal_eval(get_environment_var(arg_name, arg_value))
+    env = get_environment_var(arg_name)
+    arg_value = ast.literal_eval(env) if env else arg_value
     if parser.has_option(header, arg_name):
         return ast.literal_eval(parser.get(header, arg_name))
     return arg_value
 
 
-def get_environment_var(environment_var, default_value):
+def get_environment_var(environment_var):
     """
-    Retrieve the arg_value from the environment variable, or return a
+    Retrieve the arg_value from the environment variable
     :param environment_var: name of the environment variable
-    :param default_value: default value if the variable doesn't exist
-    :return: either the value of the environment_var or the default value
+    :return: either the value of the environment_var or None
     """
-    return os.environ.get(environment_var, default_value)
+    return os.environ.get(environment_var, None)
