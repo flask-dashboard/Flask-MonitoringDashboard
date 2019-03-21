@@ -37,3 +37,15 @@ class TestConfig(unittest.TestCase):
         self.assertEqual(parse_bool(parser, section, 'bool', 'True'), False)
         self.assertEqual(parse_literal(parser, section, 'literal', 'default'), ['a', 'b', 'c'])
         self.assertEqual(parse_literal(parser, section, 'literal2', 'default'), 1.23)
+
+    def test_environment_vars(self):
+        """
+        Test whether environment variables can be read
+        """
+        name = 'ENVIRONMENT_VAR'
+        value = 'abc'
+
+        from flask_monitoringdashboard.core.config.parser import get_environment_var
+        import os
+        os.environ[name] = value
+        self.assertEqual(get_environment_var(name), value)

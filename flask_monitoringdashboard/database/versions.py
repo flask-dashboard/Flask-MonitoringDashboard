@@ -11,14 +11,13 @@ def get_versions(db_session, endpoint_id=None, limit=None):
     :param limit: only return the most recent versions
     :return: a list of tuples with the versions (as a string) and dates, from oldest to newest
     """
-    query = db_session.query(Request.version_requested, Request.time_requested)
+    query = db_session.query(Request.version_requested, func.min(Request.time_requested))
     if endpoint_id:
         query = query.filter(Request.endpoint_id == endpoint_id)
     query = query.group_by(Request.version_requested)
-    query = query.order_by(func.min(Request.time_requested))
     if limit:
         query = query.limit(limit)
-    return [r for r in query.all()]
+    return query.all()
 
 
 def get_first_requests(db_session, endpoint_id, limit=None):
