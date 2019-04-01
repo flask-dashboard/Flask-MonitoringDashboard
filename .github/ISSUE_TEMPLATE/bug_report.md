@@ -24,9 +24,9 @@ A clear and concise description of what you expected to happen.
 If applicable, add screenshots to help explain your problem.
 
 **Desktop (please complete the following information):**
- - OS: [e.g. iOS]
+ - OS: [e.g. MacOS 10.14.3]
  - Browser [e.g. chrome, safari]
- - Version [e.g. 2.1.0]
+ - FMD Version [e.g. 2.1.4]
 
 **Additional context**
 Add any other context about the problem here.

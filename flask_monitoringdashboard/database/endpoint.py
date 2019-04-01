@@ -165,5 +165,5 @@ def get_endpoints_hits(db_session):
     """
     return db_session.query(Endpoint.name, func.count(Request.endpoint_id)). \
         join(Request). \
-        group_by(Request.endpoint_id).\
+        group_by(Endpoint.name).\
         order_by(desc(func.count(Request.endpoint_id))).all()
