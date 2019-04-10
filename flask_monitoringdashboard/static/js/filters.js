@@ -50,6 +50,23 @@ app.filter('dateLayout', function () {
     }
 });
 
+
+app.filter('dateShort',function () {
+    return date => {
+        let monthNames = [
+            "Jan", "Feb", "Mar", "Apr", "May", "Jun",
+            "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
+        ];
+        let d = new Date(date);
+        let day = d.getDate();
+        let monthIndex = d.getMonth();
+        let year = d.getFullYear();
+
+        return monthNames[monthIndex] + ' ' + day + ', ' + year;
+    }
+});
+
+
 app.filter('dateDifference', function () {
 
     return function (date) {
