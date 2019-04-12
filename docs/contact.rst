@@ -24,6 +24,10 @@ Currently, the team consists of three active developers:
    |            | |                                                                    |
    |            | | Test Monitor Specialist                                            |
    +------------+----------------------------------------------------------------------+
+   | |Picture4| | | **Thijs van der Knaap**                                            |
+   |            | |                                                                    |
+   |            | | Critical Consultant                                                |
+   +------------+----------------------------------------------------------------------+
 
 .. |Picture1| image:: https://avatars2.githubusercontent.com/u/17162650?s=460&v=4
               ..:width: 100px
@@ -32,6 +36,9 @@ Currently, the team consists of three active developers:
               ..:width: 100px
 
 .. |Picture3| image:: https://avatars3.githubusercontent.com/u/17165311?s=400&v=4
+              ..:width: 100px
+	      
+.. |Picture4| image:: https://avatars0.githubusercontent.com/u/12644077?s=400&v=4
               ..:width: 100px
 
 
