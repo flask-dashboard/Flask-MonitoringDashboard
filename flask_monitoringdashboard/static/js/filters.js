@@ -1,5 +1,11 @@
 'use strict';
 
+app.filter('duration_ms', function () {
+    return function (time) {
+        return Math.round(parseFloat(time) * 10) / 10;
+    }
+});
+
 app.filter('duration', function () {
     return function (time) {
         // ms is a float or int
