@@ -9,14 +9,14 @@ from flask_monitoringdashboard import blueprint
 from flask_monitoringdashboard.database.count import count_profiled_requests
 
 
-@blueprint.route('api/num_profiled/<endpoint_id>')
+@blueprint.route('/api/num_profiled/<endpoint_id>')
 @secure
 def num_profiled(endpoint_id):
     with session_scope() as db_session:
         return jsonify(count_profiled_requests(db_session, endpoint_id))
 
 
-@blueprint.route('api/profiler_table/<endpoint_id>/<offset>/<per_page>')
+@blueprint.route('/api/profiler_table/<endpoint_id>/<offset>/<per_page>')
 @secure
 def profiler_table(endpoint_id, offset, per_page):
     with session_scope() as db_session:
