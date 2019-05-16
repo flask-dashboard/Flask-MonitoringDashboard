@@ -55,6 +55,8 @@ class StacktraceProfiler(threading.Thread):
                 frame = sys._current_frames()[self._thread_to_monitor]
             except KeyError:
                 log('Can\'t get the stacktrace of the main thread. Stopping StacktraceProfiler')
+                log('Thread to monitor: %s' % self._thread_to_monitor)
+                log('Running threads: %s' % sys._current_frames().keys())
                 break
             in_endpoint_code = False
             self._path_hash.set_path('')
