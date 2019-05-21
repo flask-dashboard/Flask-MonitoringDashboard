@@ -9,8 +9,9 @@ from flask import request
 from flask_monitoringdashboard import config
 from flask_monitoringdashboard.core.logger import log
 from flask_monitoringdashboard.database import session_scope
+from flask_monitoringdashboard.database.endpoint import update_last_accessed
 from flask_monitoringdashboard.database.outlier import add_outlier
-from flask_monitoringdashboard.database.request import get_avg_duration
+from flask_monitoringdashboard.database.request import get_avg_duration, add_request
 
 
 class OutlierProfiler(threading.Thread):
@@ -18,13 +19,14 @@ class OutlierProfiler(threading.Thread):
     Used for collecting additional information if the request is an outlier
     """
 
-    def __init__(self, current_thread, endpoint):
+    def __init__(self, current_thread, endpoint, ip):
         threading.Thread.__init__(self)
         self._current_thread = current_thread
         self._endpoint = endpoint
         self._stopped = False
-        self._cpu_percent = ''
-        self._memory = ''
+        self._ip = ip
+        self._cpu_percent = None
+        self._memory = None
         self._stacktrace = ''
 
         self._request = str(request.headers), str(request.environ), request.url.encode('utf-8')
@@ -54,7 +56,15 @@ class OutlierProfiler(threading.Thread):
             self._cpu_percent = str(psutil.cpu_percent(interval=None, percpu=True))
             self._memory = str(psutil.virtual_memory())
 
-    def stop(self):
+    def stop(self, duration):
+        self._stopped = True
+        with session_scope() as db_session:
+            update_last_accessed(db_session, endpoint_name=self._endpoint.name)
+            request_id = add_request(db_session, duration=duration, endpoint_id=self._endpoint.id, ip=self._ip)
+            if self._memory:
+                add_outlier(db_session, request_id, self._cpu_percent, self._memory, self._stacktrace, self._request)
+
+    def stop_by_profiler(self):
         self._stopped = True
 
     def add_outlier(self, request_id):

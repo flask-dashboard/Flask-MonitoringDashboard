@@ -7,7 +7,7 @@ from functools import wraps
 
 from flask_monitoringdashboard import config
 from flask_monitoringdashboard.core.profiler import start_thread_last_requested, start_performance_thread, \
-    start_profiler_thread, start_profiler_and_outlier_thread
+    start_profiler_thread, start_outlier_thread, start_profiler_and_outlier_thread
 from flask_monitoringdashboard.core.rules import get_rules
 from flask_monitoringdashboard.database import session_scope
 from flask_monitoringdashboard.database.endpoint import get_endpoint_by_name
@@ -67,14 +67,27 @@ def add_wrapper1(endpoint, fun):
     config.app.view_functions[endpoint.name] = wrapper
 
 
+# def add_wrapper2(endpoint, fun):
+#     @wraps(fun)
+#     def wrapper(*args, **kwargs):
+#         thread = start_profiler_thread(endpoint)
+#         start_time = time.time()
+#         result = fun(*args, **kwargs)
+#         duration = time.time() - start_time
+#         thread.stop(duration)
+#         return result
+#
+#     wrapper.original = fun
+#     config.app.view_functions[endpoint.name] = wrapper
+
 def add_wrapper2(endpoint, fun):
     @wraps(fun)
     def wrapper(*args, **kwargs):
-        thread = start_profiler_thread(endpoint)
+        outlier = start_outlier_thread(endpoint)
         start_time = time.time()
         result = fun(*args, **kwargs)
         duration = time.time() - start_time
-        thread.stop(duration)
+        outlier.stop(duration)
         return result
 
     wrapper.original = fun

@@ -79,7 +79,7 @@ class StacktraceProfiler(threading.Thread):
     def stop(self, duration):
         self._duration = duration * 1000
         if self._outlier_profiler:
-            self._outlier_profiler.stop()
+            self._outlier_profiler.stop_by_profiler()
         self._keeprunning = False
 
     def _on_thread_stopped(self):
