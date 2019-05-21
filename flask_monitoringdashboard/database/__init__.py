@@ -23,7 +23,7 @@ class Endpoint(Base):
     id = Column(Integer, primary_key=True)
     # name of the endpoint
     name = Column(String(250), unique=True, nullable=False)
-    # 0 - disabled, 1 - performance, 2 - profiler, 3 - profiler + outliers
+    # 0 - disabled, 1 - performance, 2 - outliers, 3 - profiler + outliers
     monitor_level = Column(Integer, default=config.monitor_level)
     # the time when the endpoint was added
     time_added = Column(DateTime, default=datetime.datetime.utcnow)

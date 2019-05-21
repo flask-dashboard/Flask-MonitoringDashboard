@@ -112,42 +112,9 @@ that endpoint. The following data is recorded:
      print(request.environ['REMOTE_ADDR'])
 
 
-Monitoring Level 2 - Profiler
+Monitoring Level 2 - Outliers
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-When the monitoring level is set to 2, the Dashboard performs a
-`statistical profiling <https://docs.python.org/3/library/profile.html#what-is-deterministic-profiling>`_
-of all the requests coming to that endpoint. What this means is that another
-thread will be launched in parallel with the one processing the request, it
-will periodically sample the processing thread, and will analyze its current stack
-trace. Using this information, the Dashboard will infer how long every function
-call inside the endpoint code takes to execute.
-
-The profiler is one of the most powerful features of the Dashboard, pointing to
-where your optimization efforts should be directed, one level of abstraction
-lower than the performance monitoring of Level 1. To access this information,
-you have to:
-
-1. Go to the Overview tab in the left menu: http://localhost:5000/dashboard/overview
-
-2. Select an endpoint for which the monitoring level is or was at some point at least 2.
-
-3. Go to the Profiler tab: http://localhost:5000/dashboard/endpoint/:endpoint_id:/profiler
-
-4. Go to the Grouped Profiler tab: http://localhost:5000/dashboard/endpoint/:endpoint_id:/grouped-profiler
-
-The Profiler tab shows all individual profiled requests of an endpoint
-in the form of a execution tree. Each code line is displayed along with
-its execution time and its share of the total execution time of the request.
-
-The Grouped Profiler tab shows the merged execution of up to 100 most recent
-profiled requests of an endpoint. This is displayed both as a table and as
-a Sunburst graph. The table shows for each code line information about
-the Hits (i.e. how many times it has been executed), average execution time
-and standard deviation, and also total execution time.
-
-Monitoring Level 3 - Outliers
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-When the monitoring level is set to 3, the Dashboard collects extra information
+When the monitoring level is set to 2, the Dashboard collects extra information
 about slow requests.
 
 It is useful to investigate why certain requests take way longer to process than other requests.
@@ -181,6 +148,41 @@ The data that is collected from outliers, can be seen by the following procedure
 2. Click the endpoint for which you want to see the Outlier information.
 
 3. Go to the Outliers tab: http://localhost:5000/dashboard/endpoint/:endpoint_id:/outliers
+
+
+Monitoring Level 3 - Profiler
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+When the monitoring level is set to 3, the Dashboard performs a
+`statistical profiling <https://docs.python.org/3/library/profile.html#what-is-deterministic-profiling>`_
+of all the requests coming to that endpoint. What this means is that another
+thread will be launched in parallel with the one processing the request, it
+will periodically sample the processing thread, and will analyze its current stack
+trace. Using this information, the Dashboard will infer how long every function
+call inside the endpoint code takes to execute.
+
+The profiler is one of the most powerful features of the Dashboard, pointing to
+where your optimization efforts should be directed, one level of abstraction
+lower than the performance monitoring of Level 1. To access this information,
+you have to:
+
+1. Go to the Overview tab in the left menu: http://localhost:5000/dashboard/overview
+
+2. Select an endpoint for which the monitoring level is or was at some point at least 2.
+
+3. Go to the Profiler tab: http://localhost:5000/dashboard/endpoint/:endpoint_id:/profiler
+
+4. Go to the Grouped Profiler tab: http://localhost:5000/dashboard/endpoint/:endpoint_id:/grouped-profiler
+
+The Profiler tab shows all individual profiled requests of an endpoint
+in the form of a execution tree. Each code line is displayed along with
+its execution time and its share of the total execution time of the request.
+
+The Grouped Profiler tab shows the merged execution of up to 100 most recent
+profiled requests of an endpoint. This is displayed both as a table and as
+a Sunburst graph. The table shows for each code line information about
+the Hits (i.e. how many times it has been executed), average execution time
+and standard deviation, and also total execution time.
+
 
 
 2. Data Visualization
