@@ -35,7 +35,7 @@ class OutlierProfiler(threading.Thread):
         # sleep for average * ODC ms
         with session_scope() as db_session:
             average = get_avg_duration(db_session, self._endpoint.id) * config.outlier_detection_constant
-        time.sleep(average / 1000)
+        time.sleep(average)
         if not self._stopped:
             stack_list = []
             try:
