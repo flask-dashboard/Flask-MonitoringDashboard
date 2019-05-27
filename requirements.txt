@@ -8,3 +8,5 @@ colorhash             # for hashing a string into a color
 numpy                 # for computing median and other stats
 pytz                  # for timezone info
 tzlocal               # for figuring out the local timezone
+pymysql               # for mysql database connections
+psycopg2              # for postgres database connections

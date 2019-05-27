@@ -1,0 +1,49 @@
+version: '3'
+services:
+  fmd-1:
+    build: .
+    ports:
+      - "8080:5000"
+    environment:
+      FLASK_APP: main.py
+      FLASK_ENV: development
+      CONTAINER_NAME: 'fmd-1'
+    links:
+      - database-mysql-1:database-mysql-1
+#      - database-postgres-1:database-postgres-1
+  fmd-2:
+    build: .
+    ports:
+      - "8081:5000"
+    environment:
+      FLASK_APP: main.py
+      FLASK_ENV: development
+      CONTAINER_NAME: 'fmd-2'
+  database-mysql-1:
+    image: mysql:5.7
+    restart: always
+    environment:
+      MYSQL_DATABASE: 'db1'
+      MYSQL_USER: 'user'
+      MYSQL_PASSWORD: 'password'
+      MYSQL_ROOT_PASSWORD: 'password'
+    ports:
+      - 3306:3306
+    expose:
+      - 3306
+    volumes:
+      - my-db:/mysql
+#  database-postgres-1:
+#    image: postgres
+#    restart: always
+#    environment:
+#      POSTGRES_USER: 'user'
+#      POSTGRES_PASSWORD: 'password'
+#    ports:
+#      - 5432:5432
+#    expose:
+#      - 5432
+#    volumes:
+#      - my-db:/postgres
+volumes:
+  my-db:
