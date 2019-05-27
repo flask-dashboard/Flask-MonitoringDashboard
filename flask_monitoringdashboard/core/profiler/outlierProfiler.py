@@ -35,7 +35,7 @@ class OutlierProfiler(threading.Thread):
         # sleep for average * ODC ms
         with session_scope() as db_session:
             average = get_avg_duration(db_session, self._endpoint.id) * config.outlier_detection_constant
-        time.sleep(average)
+        time.sleep(average/1000)
         if not self._stopped:
             stack_list = []
             try:
@@ -60,7 +60,7 @@ class OutlierProfiler(threading.Thread):
         self._stopped = True
         with session_scope() as db_session:
             update_last_accessed(db_session, endpoint_name=self._endpoint.name)
-            request_id = add_request(db_session, duration=duration, endpoint_id=self._endpoint.id, ip=self._ip)
+            request_id = add_request(db_session, duration=duration*1000, endpoint_id=self._endpoint.id, ip=self._ip)
             if self._memory:
                 add_outlier(db_session, request_id, self._cpu_percent, self._memory, self._stacktrace, self._request)
 
