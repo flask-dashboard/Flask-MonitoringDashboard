@@ -1,6 +1,6 @@
 from sqlalchemy import func, distinct
 
-from flask_monitoringdashboard.database import Request, StackLine
+from flask_monitoringdashboard.database import Request, StackLine, Host
 
 
 def count_rows(db_session, column, *criterion):
@@ -25,6 +25,16 @@ def count_requests(db_session, endpoint_id, *where):
     :param where: additional arguments
     """
     return count_rows(db_session, Request.id, Request.endpoint_id == endpoint_id, *where)
+
+
+def count_hosts(db_session):
+    """
+    Return the number of hits for a specific endpoint (possible with more filter arguments).
+    :param db_session: session for the database
+    :param endpoint_id: id of the endpoint
+    :param where: additional arguments
+    """
+    return count_rows(db_session, Host.id)
 
 
 def count_total_requests(db_session, *where):

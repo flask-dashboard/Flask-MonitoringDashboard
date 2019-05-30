@@ -42,7 +42,7 @@ def add_fake_data():
     # Add requests
     with session_scope() as db_session:
         for i in range(len(REQUESTS)):
-            call = Request(id=REQUEST_IDS[i], endpoint_id=ENDPOINT_ID, duration=REQUESTS[i],
+            call = Request(id=REQUEST_IDS[i], endpoint_id=ENDPOINT_ID, host_id=config.host_id, duration=REQUESTS[i],
                            version_requested=config.version,
                            time_requested=TIMES[i], group_by=GROUP_BY, ip=IP)
             db_session.add(call)

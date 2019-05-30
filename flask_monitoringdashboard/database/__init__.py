@@ -38,6 +38,7 @@ class Request(Base):
     __tablename__ = '{}Request'.format(config.table_prefix)
     id = Column(Integer, primary_key=True)
     endpoint_id = Column(Integer, ForeignKey(Endpoint.id))
+    host_id = Column(Integer, nullable=False)
     # the processing time of the request
     duration = Column(Float, nullable=False)
     # the time when the request was handled
@@ -52,6 +53,13 @@ class Request(Base):
     endpoint = relationship(Endpoint)
     stack_lines = relationship('StackLine', back_populates='request')
     outlier = relationship('Outlier', uselist=False, back_populates='request')
+
+
+class Host(Base):
+    __tablename__ = '{}Host'.format(config.table_prefix)
+    id = Column(Integer, primary_key=True)
+    host_name = Column(String(100), nullable=False)
+    host_ip = Column(String(16))
 
 
 class Outlier(Base):
@@ -168,4 +176,4 @@ def row2dict(row):
 
 
 def get_tables():
-    return [Endpoint, Request, Outlier, StackLine, CodeLine, CustomGraph, CustomGraphData]
+    return [Endpoint, Request, Host, Outlier, StackLine, CodeLine, CustomGraph, CustomGraphData]

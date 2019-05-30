@@ -1,6 +1,6 @@
 """
-    This file contains all unit tests for the endpoint-table in the database. (Corresponding to the file:
-    'flask_monitoringdashboard/database/function_calls.py')
+    This file contains all unit tests for the requests-table in the database. (Corresponding to the file:
+    'flask_monitoringdashboard/database/request.py')
     See info_box.py for how to run the test-cases.
 """
 
@@ -26,6 +26,7 @@ class TestRequest(unittest.TestCase):
         """
             Test whether the function returns the right values.
         """
+        from flask_monitoringdashboard import config
         from flask_monitoringdashboard.database.request import add_request
         name2 = 'main2'
         execution_time = 1234
@@ -33,9 +34,8 @@ class TestRequest(unittest.TestCase):
         with session_scope() as db_session:
             endpoint = get_endpoint_by_name(db_session, name2)
             self.assertEqual(count_requests(db_session, endpoint.id), 0)
-            add_request(db_session, execution_time, endpoint.id, ip=IP)
+            add_request(db_session, execution_time, endpoint.id, config.host_id, ip=IP)
             self.assertEqual(count_requests(db_session, endpoint.id), 1)
-
 
     def test_get_versions(self):
         """

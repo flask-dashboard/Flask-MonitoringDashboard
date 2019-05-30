@@ -8,15 +8,16 @@ from sqlalchemy import func
 from flask_monitoringdashboard.database import Request
 
 
-def add_request(db_session, duration, endpoint_id, ip):
+def add_request(db_session, duration, endpoint_id, host_id: int, ip):
     """ Adds a request to the database. Returns the id.
     :param db_session: session for the database
     :param duration: duration of the request
     :param endpoint_id: id of the endpoint
+    :param host_id: id of the hosting machine or container
     :param ip: IP address of the requester
     :return the id of the request after it was stored in the database
     """
-    request = Request(endpoint_id=endpoint_id, duration=duration, ip=ip)
+    request = Request(endpoint_id=endpoint_id, host_id=host_id, duration=duration, ip=ip)
     db_session.add(request)
     db_session.flush()
     return request.id

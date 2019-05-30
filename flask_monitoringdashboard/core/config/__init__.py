@@ -11,6 +11,8 @@ from tzlocal import get_localzone
 from flask_monitoringdashboard.core.config.parser import parse_string, parse_version, parse_bool, parse_literal
 from flask_monitoringdashboard.core.logger import log
 
+# from flask_monitoringdashboard.database import session_scope
+# from flask_monitoringdashboard.database.host import add_host
 
 class Config(object):
     """
@@ -28,7 +30,7 @@ class Config(object):
         self.monitor_level = 1
         self.outlier_detection_constant = 2.5
         self.sampling_period = 0
-        self.enable_logging = False
+        self.enable_logging = True
 
         # database
         self.database_name = 'sqlite:///flask_monitoringdashboard.db'
@@ -41,6 +43,13 @@ class Config(object):
         self.guest_password = ['guest_password']
         self.security_token = 'cc83733cb0af8b884ff6577086b87909'
 
+        try:
+            self.host_name = os.environ['CONTAINER_NAME']
+        except KeyError:
+            self.host_name = 'unknown'
+        # with session_scope() as db_session:
+        #     self.host_id = add_host(db_session, self.host_name)
+        self.host_id = 1
         # visualization
         self.colors = {}
         self.timezone = pytz.timezone(str(get_localzone()))
@@ -100,7 +109,7 @@ class Config(object):
             file = os.getenv(envvar)
             if log_verbose:
                 log("Running with config from: " + (str(file)))
-                
+
         if not file:
             # Travis does not need a config file.
             if '/home/travis/build/' in os.getcwd():
@@ -134,7 +143,7 @@ class Config(object):
             # visualization
             self.colors = parse_literal(parser, 'visualization', 'COLORS', self.colors)
             self.timezone = pytz.timezone(parse_string(parser, 'visualization', 'TIMEZONE', self.timezone.zone))
-            
+
             if log_verbose:
                 log("version: " + self.version)
                 log("username: " + self.username)
