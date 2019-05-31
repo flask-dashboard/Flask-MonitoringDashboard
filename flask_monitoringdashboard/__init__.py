@@ -50,14 +50,22 @@ def bind(app, schedule=True):
 
     # Add wrappers to the endpoints that have to be monitored
     from flask_monitoringdashboard.core.measurement import init_measurement
+    from flask_monitoringdashboard.core.cache import init_cache
     from flask_monitoringdashboard.core import custom_graph
 
     blueprint.before_app_first_request(init_measurement)
+    blueprint.before_app_first_request(init_cache)
     if schedule:
         custom_graph.init(app)
 
     # register the blueprint to the app
     app.register_blueprint(blueprint, url_prefix='/' + config.link)
+
+    def mao():
+        print('FMD shut down')
+
+    import atexit
+    atexit.register(mao)
 
 
 def add_graph(title, func, **schedule):
