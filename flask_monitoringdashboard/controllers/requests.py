@@ -6,6 +6,9 @@ from flask_monitoringdashboard.core.timezone import to_utc_datetime, to_local_da
 from flask_monitoringdashboard.database.count_group import count_requests_per_day, get_value
 from flask_monitoringdashboard.database.endpoint import get_endpoints, get_num_requests
 
+from flask_monitoringdashboard.database import Request
+from sqlalchemy import func, distinct
+
 
 def get_num_requests_data(db_session, start_date, end_date):
     """
@@ -28,6 +31,21 @@ def get_num_requests_data(db_session, start_date, end_date):
         'days': [d.strftime('%Y-%m-%d') for d in days],
         'data': data
     }
+
+
+def get_status_code_distribution(db_session, endpoint_id):
+    results = db_session.query(Request.status_code, func.count(Request.status_code)).filter(
+        Request.endpoint_id == endpoint_id, Request.status_code.isnot(None)).group_by(Request.status_code).all()
+
+    total_count = 0
+    for (_, frequency) in results:
+        total_count += frequency
+
+    distribution = {}
+    for (status_code, frequency) in results:
+        distribution[status_code] = frequency / total_count
+
+    return distribution
 
 
 def get_hourly_load(db_session, endpoint_id, start_date, end_date):

@@ -59,8 +59,14 @@ def add_wrapper1(endpoint, fun):
     def wrapper(*args, **kwargs):
         start_time = time.time()
         result = fun(*args, **kwargs)
+
+        if isinstance(result, tuple):
+            status_code = result[1]
+        else:
+            status_code = 200
+
         duration = time.time() - start_time
-        start_performance_thread(endpoint, duration)
+        start_performance_thread(endpoint, duration, status_code)
         return result
 
     wrapper.original = fun

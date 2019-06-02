@@ -57,6 +57,10 @@ app.config(function ($locationProvider, $routeProvider) {
             templateUrl: 'static/pages/outliers.html',
             controller: OutlierController
         })
+        .when('/endpoint/:endpointId/status_code_distribution', {
+            templateUrl: 'static/pages/status_code_distribution.html',
+            controller: StatusCodeDistributionController,
+        })
         .when('/custom_graph/:graphId', {
             templateUrl: 'static/pages/plotly_graph.html',
             controller: CustomGraphController
