@@ -4,7 +4,7 @@
 """
 import random
 import time
-import random
+
 from flask import Flask
 
 import flask_monitoringdashboard as dashboard
@@ -19,8 +19,6 @@ dashboard.config.database_name = 'sqlite:///data.db'
 dashboard.bind(app)
 
 
-
-
 def f():
     time.sleep(2)
     time.sleep(1)
@@ -28,23 +26,23 @@ def f():
 
 @app.route('/endpoint')
 def endpoint():
-    return 'Ok', 404
+    f()
+    return 'Ok'
 
 
 @app.route('/endpoint2')
 def endpoint2():
-    return 'Ok', 404
+    time.sleep(0.5)
+    return 'Ok'
 
 
 @app.route('/endpoint3')
 def endpoint3():
-    return 'Nice', 203
-    #
-    # if random.randint(0, 1) == 0:
-    #     time.sleep(0.1)
-    # else:
-    #     time.sleep(0.2)
-    # return 'Ok'
+    if random.randint(0, 1) == 0:
+        time.sleep(0.1)
+    else:
+        time.sleep(0.2)
+    return 'Ok'
 
 
 @app.route('/endpoint4')
