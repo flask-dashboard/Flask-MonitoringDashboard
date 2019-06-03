@@ -37,13 +37,9 @@ def get_status_code_distribution(db_session, endpoint_id):
     results = db_session.query(Request.status_code, func.count(Request.status_code)).filter(
         Request.endpoint_id == endpoint_id, Request.status_code.isnot(None)).group_by(Request.status_code).all()
 
-    total_count = 0
-    for (_, frequency) in results:
-        total_count += frequency
+    total_count = sum(frequency for (_, frequency) in results)
 
-    distribution = {}
-    for (status_code, frequency) in results:
-        distribution[status_code] = frequency / total_count
+    distribution = {status_code: frequency / total_count for (status_code, frequency) in results}
 
     return distribution
 
