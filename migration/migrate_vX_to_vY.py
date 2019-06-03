@@ -26,7 +26,6 @@ DBSession = sessionmaker(bind=engine)
 connection = engine.connect()
 
 
-
 @contextmanager
 def session_scope():
     """
