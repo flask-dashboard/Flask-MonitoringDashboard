@@ -9,9 +9,9 @@ from flask import request
 from flask_monitoringdashboard import config
 from flask_monitoringdashboard.core.logger import log
 from flask_monitoringdashboard.database import session_scope
-from flask_monitoringdashboard.database.endpoint import update_last_accessed
+from flask_monitoringdashboard.database.endpoint import update_last_accessed, get_avg_duration
 from flask_monitoringdashboard.database.outlier import add_outlier
-from flask_monitoringdashboard.database.request import get_avg_duration, add_request
+from flask_monitoringdashboard.database.request import add_request
 
 
 class OutlierProfiler(threading.Thread):

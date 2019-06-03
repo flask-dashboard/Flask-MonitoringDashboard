@@ -45,17 +45,3 @@ def get_date_of_first_request_version(db_session, version):
     if result:
         return int(time.mktime(result[0].timetuple()))
     return -1
-
-
-def get_avg_duration(db_session, endpoint_id):
-    """ Returns the average duration of all the requests of an endpoint. If there are no requests for that endpoint,
-        it returns 0.
-    :param db_session: session for the database
-    :param endpoint_id: id of the endpoint
-    :return average duration
-    """
-    result = db_session.query(func.avg(Request.duration).label('average')). \
-        filter(Request.endpoint_id == endpoint_id).one()
-    if result[0]:
-        return result[0]
-    return 0

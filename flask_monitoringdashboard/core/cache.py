@@ -1,13 +1,15 @@
 """
     Contains the in memory cache used to increase the FMD performance.
 """
+from multiprocessing import Lock
 
 from flask_monitoringdashboard.core.rules import get_rules
 from flask_monitoringdashboard.database import session_scope
-from flask_monitoringdashboard.database.endpoint import get_last_requested, get_endpoints_hits
+from flask_monitoringdashboard.database.endpoint import get_last_requested, get_endpoints_hits, get_endpoint_averages
 
 
 memory_cache = {}
+mutex = Lock()
 
 
 class EndpointInfo(object):
@@ -20,11 +22,13 @@ class EndpointInfo(object):
         self.hits = hits if hits else 0
 
     def update_last_requested(self, last_requested):
-        self.last_requested = last_requested
+        with mutex:
+            self.last_requested = last_requested
 
     def update_duration(self, duration):
-        self.average_duration = (self.average_duration * self.hits + duration)/float(self.hits + 1)
-        self.hits += 1
+        with mutex:
+            self.average_duration = (self.average_duration * self.hits + duration)/float(self.hits + 1)
+            self.hits += 1
 
 
 def display_cache():
@@ -43,9 +47,9 @@ def init_cache():
     with session_scope() as db_session:
         last_req_dict = dict(get_last_requested(db_session))
         hits_dict = dict(get_endpoints_hits(db_session))
-        print(last_req_dict)
+        averages_dict = dict(get_endpoint_averages(db_session))
         for rule in get_rules():
             memory_cache[rule.endpoint] = EndpointInfo(last_requested=last_req_dict.get(rule.endpoint),
-                                                       average_duration=None,
+                                                       average_duration=averages_dict.get(rule.endpoint),
                                                        hits=hits_dict.get(rule.endpoint))
         display_cache()
