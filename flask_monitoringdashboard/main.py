@@ -46,7 +46,7 @@ def endpoint3():
 
 @app.route('/endpoint10')
 def endpoint10():
-    time.sleep(0.2)
+    time.sleep(1.2)
     return 'Ok'
 
 

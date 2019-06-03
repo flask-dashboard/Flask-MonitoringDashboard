@@ -7,10 +7,9 @@ import psutil
 from flask import request
 
 from flask_monitoringdashboard import config
-from flask_monitoringdashboard.core.cache import update_last_requested_cache
+from flask_monitoringdashboard.core.cache import update_duration_cache, get_avg_endpoint
 from flask_monitoringdashboard.core.logger import log
 from flask_monitoringdashboard.database import session_scope
-from flask_monitoringdashboard.database.endpoint import update_last_requested, get_avg_duration
 from flask_monitoringdashboard.database.outlier import add_outlier
 from flask_monitoringdashboard.database.request import add_request
 
@@ -34,8 +33,7 @@ class OutlierProfiler(threading.Thread):
 
     def run(self):
         # sleep for average * ODC ms
-        with session_scope() as db_session:
-            average = get_avg_duration(db_session, self._endpoint.id) * config.outlier_detection_constant
+        average = get_avg_endpoint(self._endpoint.name) * config.outlier_detection_constant
         time.sleep(average/1000)
         if not self._stopped:
             stack_list = []
@@ -59,9 +57,8 @@ class OutlierProfiler(threading.Thread):
 
     def stop(self, duration):
         self._stopped = True
-        update_last_requested_cache(endpoint_name=self._endpoint.name)
+        update_duration_cache(endpoint_name=self._endpoint.name, duration=duration)
         with session_scope() as db_session:
-            # update_last_requested(db_session, endpoint_name=self._endpoint.name)
             request_id = add_request(db_session, duration=duration*1000, endpoint_id=self._endpoint.id, ip=self._ip)
             if self._memory:
                 add_outlier(db_session, request_id, self._cpu_percent, self._memory, self._stacktrace, self._request)

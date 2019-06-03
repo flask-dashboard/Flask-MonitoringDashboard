@@ -61,7 +61,7 @@ def bind(app, schedule=True):
     # register the blueprint to the app
     app.register_blueprint(blueprint, url_prefix='/' + config.link)
 
-    # before shutdown flush cache to db
+    # flush cache to db before shutdown
     import atexit
     from flask_monitoringdashboard.core.cache import flush_cache
     atexit.register(flush_cache)

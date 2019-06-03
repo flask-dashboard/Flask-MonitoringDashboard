@@ -31,8 +31,15 @@ class EndpointInfo(object):
             self.average_duration = (self.average_duration * self.hits + duration)/float(self.hits + 1)
             self.hits += 1
 
+    def get_duration(self):
+        with mutex:
+            return self.average_duration
+
 
 def display_cache():
+    """
+    Debug purposes.
+    """
     global memory_cache
     for k in memory_cache.keys():
         print('%s : last=%s, avg=%f, hits=%d' % (k, memory_cache[k].last_requested,
@@ -58,16 +65,32 @@ def init_cache():
 
 def update_last_requested_cache(endpoint_name):
     """
-    Use this instead of updating the last requested to the database
+    Use this instead of updating the last requested to the database.
     """
     global memory_cache
-    memory_cache[endpoint_name].set_last_requested(datetime.datetime.utcnow())
-    display_cache()
+    memory_cache.get(endpoint_name).set_last_requested(datetime.datetime.utcnow())
+
+
+def update_duration_cache(endpoint_name, duration):
+    """
+    Use this together with adding a request to the database.
+    """
+    global memory_cache
+    memory_cache.get(endpoint_name).set_last_requested(datetime.datetime.utcnow())
+    memory_cache.get(endpoint_name).set_duration(duration)
+
+
+def get_avg_endpoint(endpoint_name):
+    """
+    Return the average of the request duration for an endpoint.
+    """
+    global memory_cache
+    return memory_cache.get(endpoint_name).get_duration()
 
 
 def get_last_requested_overview():
     """
-    Get the last requested values from the cache for the overview page
+    Get the last requested values from the cache for the overview page.
     """
     global memory_cache
     access_times = []
@@ -81,8 +104,6 @@ def flush_cache():
     Flushes cache changes to the db. To be called at shut down.
     """
     global memory_cache
-    print('Cache at shutdown')
-    display_cache()
     with session_scope() as db_session:
         for endpoint_name, endpoint_info in memory_cache.items():
             update_last_requested(db_session, endpoint_name, endpoint_info.last_requested)
