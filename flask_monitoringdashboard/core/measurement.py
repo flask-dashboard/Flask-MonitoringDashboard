@@ -60,7 +60,7 @@ def add_wrapper1(endpoint, fun):
         start_time = time.time()
         result = fun(*args, **kwargs)
 
-        if isinstance(result, tuple):
+        status_code = result[1] if isinstance(result, tuple) else 200
             status_code = result[1]
         else:
             status_code = 200
