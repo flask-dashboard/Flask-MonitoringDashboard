@@ -65,6 +65,17 @@ def update_last_requested_cache(endpoint_name):
     display_cache()
 
 
+def get_last_requested_overview():
+    """
+    Get the last requested values from the cache for the overview page
+    """
+    global memory_cache
+    access_times = []
+    for endpoint_name, endpoint_info in memory_cache.items():
+        access_times.append((endpoint_name, endpoint_info.last_requested))
+    return access_times
+
+
 def flush_cache():
     """
     Flushes cache changes to the db. To be called at shut down.

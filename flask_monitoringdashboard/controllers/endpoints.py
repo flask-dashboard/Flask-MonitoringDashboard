@@ -3,6 +3,7 @@ import datetime
 from numpy import median
 
 from flask_monitoringdashboard import config
+from flask_monitoringdashboard.core.cache import get_last_requested_overview
 from flask_monitoringdashboard.core.colors import get_color
 from flask_monitoringdashboard.core.measurement import add_decorator
 from flask_monitoringdashboard.core.timezone import to_local_datetime, to_utc_datetime
@@ -14,6 +15,16 @@ from flask_monitoringdashboard.database.data_grouped import get_endpoint_data_gr
 from flask_monitoringdashboard.database.endpoint import get_last_requested, get_endpoints, get_endpoint_by_name, \
     update_endpoint
 from flask_monitoringdashboard.database.versions import get_first_requests
+
+
+def get_fresh_access_times(db_session):
+    """
+    Combines last requested info from the cache with last requested info for historic endpoints no longer in the cache
+    """
+    access_times_db = dict(get_last_requested(db_session))
+    access_times_cache = dict(get_last_requested_overview())
+    access_times = {**access_times_db, **access_times_cache}
+    return access_times
 
 
 def get_endpoint_overview(db_session):
@@ -33,7 +44,7 @@ def get_endpoint_overview(db_session):
     median_today = get_endpoint_data_grouped(db_session, median, Request.time_requested > today_utc)
     median_week = get_endpoint_data_grouped(db_session, median, Request.time_requested > week_ago)
     median_overall = get_endpoint_data_grouped(db_session, median)
-    access_times = get_last_requested(db_session)
+    access_times = get_fresh_access_times(db_session)
 
     return [{
         'id': endpoint.id,
@@ -46,7 +57,7 @@ def get_endpoint_overview(db_session):
         'median-today': get_value(median_today, endpoint.id),
         'median-week': get_value(median_week, endpoint.id),
         'median-overall': get_value(median_overall, endpoint.id),
-        'last-accessed': get_value(access_times, endpoint.name, default=None)
+        'last-accessed': access_times.get(endpoint.name, None)
     } for endpoint in get_endpoints(db_session)]
 
 
