@@ -12,16 +12,20 @@ app.service('menuService', function ($http, endpointService) {
             $('#collapseCustomGraphs').collapse('hide');
         }
 
-        if (page === 'overview' || page === 'hourly_load' || page === 'multi_version' ||
-            page === 'daily_load' || page === 'api_performance') {
+        var dashboardPages = ['overview', 'hourly_load', 'multi_version', 'daily_load', 'api_performance'];
+
+        if (dashboardPages.includes(page)) {
             $('#collapseDashboard').collapse('show');
         } else {
             $('#collapseDashboard').collapse('hide');
         }
 
-        if (page === 'endpoint_hourly' || page === 'endpoint_user_version' || page === 'endpoint_ip' ||
-            page === 'endpoint_version' || page === 'endpoint_user' || page === 'endpoint_profiler' ||
-            page === 'endpoint_grouped_profiler' || page === 'endpoint_outlier') {
+        var endpointPages = [
+            'endpoint_hourly', 'endpoint_user_version', 'endpoint_ip', 'endpoint_version', 'endpoint_user',
+            'endpoint_profiler', 'endpoint_grouped_profiler', 'endpoint_outlier', 'status_code_distribution'
+        ];
+
+        if (endpointPages.includes(page)) {
             $('#collapseEndpoint').collapse('show');
         } else {
             $('#collapseEndpoint').collapse('hide');
