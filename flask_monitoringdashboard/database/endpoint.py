@@ -135,14 +135,16 @@ def get_last_requested(db_session):
     return result
 
 
-def update_last_accessed(db_session, endpoint_name):
+def update_last_requested(db_session, endpoint_name, timestamp=None):
     """
     Updates the timestamp of last access of the endpoint.
     :param db_session: session for the database
     :param endpoint_name: name of the endpoint
+    :param timestamp: optional timestamp. If not given, timestamp is current time
     """
+    ts = timestamp if timestamp else datetime.datetime.utcnow()
     db_session.query(Endpoint).filter(Endpoint.name == endpoint_name). \
-        update({Endpoint.last_requested: datetime.datetime.utcnow()})
+        update({Endpoint.last_requested: ts})
 
 
 def get_endpoints(db_session):

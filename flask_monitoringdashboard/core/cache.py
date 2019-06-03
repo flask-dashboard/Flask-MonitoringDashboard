@@ -1,12 +1,13 @@
 """
     Contains the in memory cache used to increase the FMD performance.
 """
+import datetime
 from multiprocessing import Lock
 
 from flask_monitoringdashboard.core.rules import get_rules
 from flask_monitoringdashboard.database import session_scope
-from flask_monitoringdashboard.database.endpoint import get_last_requested, get_endpoints_hits, get_endpoint_averages
-
+from flask_monitoringdashboard.database.endpoint import get_last_requested, get_endpoints_hits, get_endpoint_averages, \
+    update_last_requested
 
 memory_cache = {}
 mutex = Lock()
@@ -21,11 +22,11 @@ class EndpointInfo(object):
         self.average_duration = average_duration if average_duration else 0
         self.hits = hits if hits else 0
 
-    def update_last_requested(self, last_requested):
+    def set_last_requested(self, last_requested):
         with mutex:
             self.last_requested = last_requested
 
-    def update_duration(self, duration):
+    def set_duration(self, duration):
         with mutex:
             self.average_duration = (self.average_duration * self.hits + duration)/float(self.hits + 1)
             self.hits += 1
@@ -53,3 +54,24 @@ def init_cache():
                                                        average_duration=averages_dict.get(rule.endpoint),
                                                        hits=hits_dict.get(rule.endpoint))
         display_cache()
+
+
+def update_last_requested_cache(endpoint_name):
+    """
+    Use this instead of updating the last requested to the database
+    """
+    global memory_cache
+    memory_cache[endpoint_name].set_last_requested(datetime.datetime.utcnow())
+    display_cache()
+
+
+def flush_cache():
+    """
+    Flushes cache changes to the db. To be called at shut down.
+    """
+    global memory_cache
+    print('Cache at shutdown')
+    display_cache()
+    with session_scope() as db_session:
+        for endpoint_name, endpoint_info in memory_cache.items():
+            update_last_requested(db_session, endpoint_name, endpoint_info.last_requested)

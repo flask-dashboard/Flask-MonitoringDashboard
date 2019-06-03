@@ -61,11 +61,10 @@ def bind(app, schedule=True):
     # register the blueprint to the app
     app.register_blueprint(blueprint, url_prefix='/' + config.link)
 
-    def mao():
-        print('FMD shut down')
-
+    # before shutdown flush cache to db
     import atexit
-    atexit.register(mao)
+    from flask_monitoringdashboard.core.cache import flush_cache
+    atexit.register(flush_cache)
 
 
 def add_graph(title, func, **schedule):
