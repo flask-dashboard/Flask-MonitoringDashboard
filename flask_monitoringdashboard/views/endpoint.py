@@ -2,7 +2,7 @@ from flask import jsonify, request, json
 
 from flask_monitoringdashboard import blueprint
 from flask_monitoringdashboard.controllers.endpoints import get_endpoint_overview, get_api_performance, \
-    set_endpoint_rule, get_endpoint_versions, get_endpoint_users
+    set_endpoint_rule, get_endpoint_versions, get_endpoint_users, get_host_performance
 from flask_monitoringdashboard.core.auth import secure, admin_secure
 from flask_monitoringdashboard.core.utils import get_endpoint_details
 from flask_monitoringdashboard.database import session_scope, row2dict
@@ -95,6 +95,28 @@ def api_performance():
 
     with session_scope() as db_session:
         return jsonify(get_api_performance(db_session, endpoints))
+
+
+@blueprint.route('/api/host_performance', methods=['POST'])
+@secure
+def host_performance():
+    """
+    input must be a JSON-object, with the following value: {
+          'data': {
+            'id': [id1, id2]
+          }
+        }
+    :return: A JSON-list for every endpoint with the following JSON-object: {
+          'name': 'hostname',
+          'id': hostid,
+          'values': [100, 101, 102, ...]
+        }
+    """
+    data = json.loads(request.data)['data']
+    host_ids = data['id']
+
+    with session_scope() as db_session:
+        return jsonify(get_host_performance(db_session, host_ids))
 
 
 @blueprint.route('/api/set_rule', methods=['POST'])

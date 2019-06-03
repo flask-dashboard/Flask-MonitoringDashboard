@@ -58,8 +58,8 @@ class Request(Base):
 class Host(Base):
     __tablename__ = '{}Host'.format(config.table_prefix)
     id = Column(Integer, primary_key=True)
-    host_name = Column(String(100), nullable=False)
-    host_ip = Column(String(16))
+    name = Column(String(100), nullable=False)
+    ip = Column(String(16))
 
 
 class Outlier(Base):

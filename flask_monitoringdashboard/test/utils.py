@@ -18,6 +18,8 @@ for index, _ in enumerate(TIMES):
     TIMES[index] -= datetime.timedelta(seconds=len(REQUESTS) - index)
 TEST_NAMES = ['test_name1', 'test_name2']
 
+HOSTS = [(1, 'host1', '0.0.0.0'), (2, 'host2', '0.0.0.1')]
+
 
 def set_test_environment():
     """ Override the config-object for a new testing environment. Module flask_monitoringdashboard
@@ -36,13 +38,17 @@ def clear_db():
 
 def add_fake_data():
     """ Adds data to the database for testing purposes. Module flask_monitoringdashboard must be imported locally. """
-    from flask_monitoringdashboard.database import session_scope, Request, Endpoint, Outlier
+    from flask_monitoringdashboard.database import session_scope, Request, Endpoint, Outlier, Host
     from flask_monitoringdashboard import config
 
     # Add requests
     with session_scope() as db_session:
+        for (id, name, ip) in HOSTS:
+            host = Host(id=id, name=name, ip=ip)
+            db_session.add(host)
+
         for i in range(len(REQUESTS)):
-            call = Request(id=REQUEST_IDS[i], endpoint_id=ENDPOINT_ID, host_id=config.host_id, duration=REQUESTS[i],
+            call = Request(id=REQUEST_IDS[i], endpoint_id=ENDPOINT_ID, host_id=HOSTS[i % 2][0], duration=REQUESTS[i],
                            version_requested=config.version,
                            time_requested=TIMES[i], group_by=GROUP_BY, ip=IP)
             db_session.add(call)
@@ -53,7 +59,7 @@ def add_fake_data():
 
         # Add Outliers
         for i in range(OUTLIER_COUNT):
-            db_session.add(Outlier(request_id=i+1, cpu_percent='[%d, %d, %d, %d]' % (i, i + 1, i + 2, i + 3)))
+            db_session.add(Outlier(request_id=i + 1, cpu_percent='[%d, %d, %d, %d]' % (i, i + 1, i + 2, i + 3)))
 
 
 def get_test_app(schedule=False):

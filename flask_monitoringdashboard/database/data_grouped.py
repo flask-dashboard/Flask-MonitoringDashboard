@@ -59,6 +59,15 @@ def get_endpoint_data_grouped(db_session, func, *where):
     return get_data_grouped(db_session, Request.endpoint_id, func, *where)
 
 
+def get_host_data_grouped(db_session, func, *where):
+    """
+    :param db_session: session for the database
+    :param func: the function to reduce the data
+    :param where: additional where clause
+    """
+    return get_data_grouped(db_session, Request.host_id, func, *where)
+
+
 def get_version_data_grouped(db_session, func, *where):
     """
     :param db_session: session for the database

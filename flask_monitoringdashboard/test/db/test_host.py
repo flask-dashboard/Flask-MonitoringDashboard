@@ -30,3 +30,23 @@ class TestHost(unittest.TestCase):
             number_of_hosts = count_hosts(db_session)
             add_host(db_session, config.host_name, IP)
             self.assertEqual(count_hosts(db_session), number_of_hosts + 1)
+
+    def test_hosts(self):
+        """
+            Test retrieval of all hosts
+        """
+
+        from flask_monitoringdashboard.database.host import get_hosts
+        with session_scope() as db_session:
+            number_of_hosts = count_hosts(db_session)
+            self.assertEqual(len(list(get_hosts(db_session))), number_of_hosts)
+
+    def test_get_host_id_by_name(self):
+        """
+        Tests retrieval of host by name
+        """
+
+        from flask_monitoringdashboard.database.host import get_host_id_by_name
+        with session_scope() as db_session:
+            host = get_host_id_by_name(db_session, 'host1')
+            self.assertEqual(host.name, 'host1')
