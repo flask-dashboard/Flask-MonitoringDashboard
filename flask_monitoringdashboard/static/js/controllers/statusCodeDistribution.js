@@ -1,7 +1,7 @@
 function StatusCodeDistributionController($scope, $http, infoService, endpointService, menuService, formService, plotlyService, $filter) {
     menuService.reset('status_code_distribution');
 
-    const matches = /endpoint\/(\d+)\/status_code_distribution/g.exec(window.location.toString());
+    var matches = /endpoint\/(\d+)\/status_code_distribution/g.exec(window.location.toString());
 
     var endpointId = parseInt(matches[1]);
 
