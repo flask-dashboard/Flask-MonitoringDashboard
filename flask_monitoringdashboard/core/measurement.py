@@ -61,9 +61,6 @@ def add_wrapper1(endpoint, fun):
         result = fun(*args, **kwargs)
 
         status_code = result[1] if isinstance(result, tuple) else 200
-            status_code = result[1]
-        else:
-            status_code = 200
 
         duration = time.time() - start_time
         start_performance_thread(endpoint, duration, status_code)
