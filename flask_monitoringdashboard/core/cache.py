@@ -60,6 +60,7 @@ def init_cache():
             memory_cache[rule.endpoint] = EndpointInfo(last_requested=last_req_dict.get(rule.endpoint),
                                                        average_duration=averages_dict.get(rule.endpoint),
                                                        hits=hits_dict.get(rule.endpoint))
+        display_cache()
 
 
 def update_last_requested_cache(endpoint_name):
@@ -103,8 +104,12 @@ def flush_cache():
     Flushes cache changes to the db. To be called at shut down.
     """
     global memory_cache
+    print('I am flushing the cache')
     if not memory_cache:
+        print('memory cache empty')
         return
     with session_scope() as db_session:
         for endpoint_name, endpoint_info in memory_cache.items():
-            update_last_requested(db_session, endpoint_name, endpoint_info.last_requested)
+            if endpoint_info.last_requested:
+                update_last_requested(db_session, endpoint_name, endpoint_info.last_requested)
+        display_cache()
