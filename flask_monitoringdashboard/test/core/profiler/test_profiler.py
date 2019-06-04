@@ -47,8 +47,6 @@ class TestProfiler(unittest.TestCase):
             self.assertEqual(threading.active_count(), num_threads + 1)
             outlier.stop(1)
             self.wait_until_threads_finished(num_threads)
-            from flask_monitoringdashboard.core.cache import memory_cache
-            self.assertEqual(memory_cache.get(NAME).hits, 1)
 
     def test_start_profiler_and_outlier_thread(self):
         with self.app.test_request_context():

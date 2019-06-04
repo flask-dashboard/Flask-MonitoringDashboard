@@ -23,7 +23,9 @@ def get_fresh_access_times(db_session):
     """
     access_times_db = dict(get_last_requested(db_session))
     access_times_cache = dict(get_last_requested_overview())
-    access_times = {**access_times_db, **access_times_cache}
+    # Ugly dict merging because python 2.7. Should have been: access_times = {**access_times_db, **access_times_cache}
+    access_times = access_times_db.copy()
+    access_times.update(access_times_cache)
     return access_times
 
 

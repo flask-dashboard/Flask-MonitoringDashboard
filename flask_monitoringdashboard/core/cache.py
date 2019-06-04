@@ -41,11 +41,9 @@ def display_cache():
     Debug purposes.
     """
     global memory_cache
-    print('++++++++++++++++++++++display cache')
     for k in memory_cache.keys():
         print('%s : last=%s, avg=%f, hits=%d' % (k, memory_cache[k].last_requested,
                                                  memory_cache[k].average_duration, memory_cache[k].hits))
-    print('++++++++++++++++++++++display cache ended')
 
 
 def init_cache():
@@ -105,6 +103,8 @@ def flush_cache():
     Flushes cache changes to the db. To be called at shut down.
     """
     global memory_cache
+    if not memory_cache:
+        return
     with session_scope() as db_session:
         for endpoint_name, endpoint_info in memory_cache.items():
             update_last_requested(db_session, endpoint_name, endpoint_info.last_requested)
