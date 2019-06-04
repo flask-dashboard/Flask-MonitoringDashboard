@@ -6,6 +6,7 @@ from flask_monitoringdashboard.controllers.endpoints import get_endpoint_overvie
 from flask_monitoringdashboard.core.auth import secure, admin_secure
 from flask_monitoringdashboard.core.utils import get_endpoint_details
 from flask_monitoringdashboard.database import session_scope, row2dict
+from flask_monitoringdashboard.database.host import get_hosts
 from flask_monitoringdashboard.database.endpoint import get_users, get_ips, get_endpoints, get_endpoints_hits
 
 
@@ -82,7 +83,7 @@ def api_performance():
     """
     input must be a JSON-object, with the following value: {
           'data': {
-            'endpoint': ['endpoint', 'endpoint2']
+            'endpoints': ['endpoint', 'endpoint2']
           }
         }
     :return: A JSON-list for every endpoint with the following JSON-object: {
@@ -103,7 +104,7 @@ def host_performance():
     """
     input must be a JSON-object, with the following value: {
           'data': {
-            'id': [id1, id2]
+            'ids': [id1, id2]
           }
         }
     :return: A JSON-list for every endpoint with the following JSON-object: {
@@ -112,8 +113,9 @@ def host_performance():
           'values': [100, 101, 102, ...]
         }
     """
+
     data = json.loads(request.data)['data']
-    host_ids = data['id']
+    host_ids = data['ids']
 
     with session_scope() as db_session:
         return jsonify(get_host_performance(db_session, host_ids))

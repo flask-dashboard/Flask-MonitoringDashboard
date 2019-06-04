@@ -2,7 +2,6 @@
 Contains all functions that access a Host object
 """
 
-from flask_monitoringdashboard.core.timezone import to_local_datetime
 from flask_monitoringdashboard.database import Host
 
 from sqlalchemy import asc
@@ -22,20 +21,20 @@ def add_host(db_session, host_name: str, host_ip: str = "unknown"):
     return host.id
 
 
-def get_host_id_by_name(db_session, host_name: str):
+def get_host_name_by_id(db_session, host_id: int):
     """
     Returns the Host id from a given hostname
     If the result doesn't exist in the database, None is returned.
     :param db_session: session for the database
-    :param host_name: string with the host name
-    :return Host id: int
+    :param Host id: int
+    :return host_name: string with the host name
     """
     try:
-        result = db_session.query(Host).filter(Host.name == host_name).one()
+        result = db_session.query(Host).filter(Host.id == host_id).one()
     except NoResultFound:
         return None
     db_session.expunge(result)
-    return result
+    return result.name
 
 
 def get_hosts(db_session):
@@ -44,4 +43,4 @@ def get_hosts(db_session):
     :param db_session: session for the database
     :return list of Host objects
     """
-    return db_session.query(Host).group_by(Host.id).order_by(asc(Host.name))
+    return db_session.query(Host).order_by(asc(Host.id))

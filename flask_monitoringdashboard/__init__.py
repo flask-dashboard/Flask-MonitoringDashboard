@@ -31,6 +31,17 @@ def loc():
 blueprint = Blueprint('dashboard', __name__, template_folder=loc() + 'templates')
 
 
+def get_host_id():
+    if config.host_id:
+        return
+    from flask_monitoringdashboard.database import session_scope
+    from flask_monitoringdashboard.database.host import add_host, get_hosts
+
+    with session_scope() as db_session:
+        config.host_id = add_host(db_session, config.host_name)
+    print('Adding host id', config.host_id)
+
+
 def bind(app, schedule=True):
     """
         Binding the app to this object should happen before importing the routing-
@@ -39,6 +50,8 @@ def bind(app, schedule=True):
         :param schedule: flag telling if the background scheduler should be started
     """
     config.app = app
+
+    get_host_id()
     # Provide a secret-key for using WTF-forms
     if not app.secret_key:
         log('WARNING: You should provide a security key.')

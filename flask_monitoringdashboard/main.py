@@ -13,8 +13,8 @@ app = Flask(__name__)
 
 dashboard.config.version = '3.2'
 dashboard.config.group_by = '2'
-dashboard.config.database_name = 'sqlite:///data.db'
-# dashboard.config.database_name = 'mysql+pymysql://user:password@database-mysql-1:3306/db1'
+# dashboard.config.database_name = 'sqlite:///data.db'
+dashboard.config.database_name = 'mysql+pymysql://user:password@database-mysql-1:3306/db1'
 # dashboard.config.database_name = 'postgresql://user:password@database-postgres-1:5432/mydb'
 dashboard.bind(app)
 
@@ -55,6 +55,12 @@ def endpoint4():
 def name():
     from os import environ
     return environ['CONTAINER_NAME']
+
+
+@app.route('/host')
+def host():
+    return 'The responding container named "' + str(dashboard.config.host_name) + '" has id ' + str(
+        dashboard.config.host_id)
 
 
 def my_func():

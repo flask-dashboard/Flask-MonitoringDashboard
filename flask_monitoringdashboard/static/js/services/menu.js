@@ -13,7 +13,7 @@ app.service('menuService', function ($http, endpointService) {
         }
 
         if (page === 'overview' || page === 'hourly_load' || page === 'multi_version' ||
-            page === 'daily_load' || page === 'api_performance') {
+            page === 'daily_load' || page === 'api_performance' || page === 'host_performance') {
             $('#collapseDashboard').collapse('show');
         } else {
             $('#collapseDashboard').collapse('hide');

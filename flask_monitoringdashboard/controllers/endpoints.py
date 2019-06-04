@@ -13,7 +13,7 @@ from flask_monitoringdashboard.database.data_grouped import get_endpoint_data_gr
     get_version_data_grouped, get_host_data_grouped
 from flask_monitoringdashboard.database.endpoint import get_last_requested, get_endpoints, get_endpoint_by_name, \
     update_endpoint
-from flask_monitoringdashboard.database.host import get_host_id_by_name
+from flask_monitoringdashboard.database.host import get_host_name_by_id
 from flask_monitoringdashboard.database.versions import get_first_requests
 
 
@@ -105,13 +105,13 @@ def get_host_performance(db_session, host_ids: [str]):
     :param host_ids: a list of hosts, encoded by their id
     :return: for every endpoint in endpoints, a list with the performance
     """
-    db_host_ids = [(host, get_host_id_by_name(db_session, host)) for host in host_ids]
-    data = get_host_data_grouped(db_session, lambda x: simplify(x, 10))
+    db_host_ids = [(host, get_host_name_by_id(db_session, host)) for host in host_ids]
+    data = get_host_data_grouped(db_session, lambda x: x)
     return [{
         'name': name,
         'id': id,
         'values': get_value(data, id, default=[])
-    } for (name, id) in db_host_ids]
+    } for (id, name) in db_host_ids]
 
 
 def set_endpoint_rule(db_session, endpoint_name, monitor_level):

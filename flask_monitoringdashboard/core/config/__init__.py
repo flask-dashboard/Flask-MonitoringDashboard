@@ -11,8 +11,6 @@ from tzlocal import get_localzone
 from flask_monitoringdashboard.core.config.parser import parse_string, parse_version, parse_bool, parse_literal
 from flask_monitoringdashboard.core.logger import log
 
-# from flask_monitoringdashboard.database import session_scope
-# from flask_monitoringdashboard.database.host import add_host
 
 class Config(object):
     """
@@ -46,10 +44,8 @@ class Config(object):
         try:
             self.host_name = os.environ['CONTAINER_NAME']
         except KeyError:
-            self.host_name = 'unknown'
-        # with session_scope() as db_session:
-        #     self.host_id = add_host(db_session, self.host_name)
-        self.host_id = 1
+            self.host_name = 'Unknown'
+        self.host_id = None
         # visualization
         self.colors = {}
         self.timezone = pytz.timezone(str(get_localzone()))
