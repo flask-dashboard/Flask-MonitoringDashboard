@@ -56,7 +56,7 @@ class OutlierProfiler(threading.Thread):
 
     def stop(self, duration):
         self._exit.set()
-        update_duration_cache(endpoint_name=self._endpoint.name, duration=duration)
+        update_duration_cache(endpoint_name=self._endpoint.name, duration=duration*1000)
         with session_scope() as db_session:
             request_id = add_request(db_session, duration=duration*1000, endpoint_id=self._endpoint.id, ip=self._ip)
             if self._memory:
