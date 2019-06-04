@@ -3,8 +3,6 @@ Contains all functions that access a Request object.
 """
 import time
 
-from sqlalchemy import func
-
 from flask_monitoringdashboard.database import Request
 
 

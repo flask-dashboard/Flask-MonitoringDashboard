@@ -2,8 +2,8 @@ import datetime
 
 from numpy import median
 
+import flask_monitoringdashboard.core.cache as cache
 from flask_monitoringdashboard import config
-from flask_monitoringdashboard.core.cache import get_last_requested_overview
 from flask_monitoringdashboard.core.colors import get_color
 from flask_monitoringdashboard.core.measurement import add_decorator
 from flask_monitoringdashboard.core.timezone import to_local_datetime, to_utc_datetime
@@ -17,18 +17,6 @@ from flask_monitoringdashboard.database.endpoint import get_last_requested, get_
 from flask_monitoringdashboard.database.versions import get_first_requests
 
 
-def get_fresh_access_times(db_session):
-    """
-    Combines last requested info from the cache with last requested info for historic endpoints no longer in the cache
-    """
-    access_times_db = dict(get_last_requested(db_session))
-    access_times_cache = dict(get_last_requested_overview())
-    # Ugly dict merging because python 2.7. Should have been: access_times = {**access_times_db, **access_times_cache}
-    access_times = access_times_db.copy()
-    access_times.update(access_times_cache)
-    return access_times
-
-
 def get_endpoint_overview(db_session):
     """
     :param db_session: session for the database
@@ -39,6 +27,9 @@ def get_endpoint_overview(db_session):
     today_local = now_local.replace(hour=0, minute=0, second=0, microsecond=0)
     today_utc = to_utc_datetime(today_local)
 
+    # First flush last requested info to db
+    cache.flush_cache()
+
     hits_today = count_requests_group(db_session, Request.time_requested > today_utc)
     hits_week = count_requests_group(db_session, Request.time_requested > week_ago)
     hits = count_requests_group(db_session)
@@ -46,7 +37,7 @@ def get_endpoint_overview(db_session):
     median_today = get_endpoint_data_grouped(db_session, median, Request.time_requested > today_utc)
     median_week = get_endpoint_data_grouped(db_session, median, Request.time_requested > week_ago)
     median_overall = get_endpoint_data_grouped(db_session, median)
-    access_times = get_fresh_access_times(db_session)
+    access_times = get_last_requested(db_session)
 
     return [{
         'id': endpoint.id,
@@ -59,7 +50,7 @@ def get_endpoint_overview(db_session):
         'median-today': get_value(median_today, endpoint.id),
         'median-week': get_value(median_week, endpoint.id),
         'median-overall': get_value(median_overall, endpoint.id),
-        'last-accessed': access_times.get(endpoint.name, None)
+        'last-accessed': get_value(access_times, endpoint.name, default=None)
     } for endpoint in get_endpoints(db_session)]
 
 
