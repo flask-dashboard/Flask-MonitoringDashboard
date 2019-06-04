@@ -41,9 +41,11 @@ def display_cache():
     Debug purposes.
     """
     global memory_cache
+    print('++++++++++++++++++++++display cache')
     for k in memory_cache.keys():
         print('%s : last=%s, avg=%f, hits=%d' % (k, memory_cache[k].last_requested,
                                                  memory_cache[k].average_duration, memory_cache[k].hits))
+    print('++++++++++++++++++++++display cache ended')
 
 
 def init_cache():
@@ -60,7 +62,6 @@ def init_cache():
             memory_cache[rule.endpoint] = EndpointInfo(last_requested=last_req_dict.get(rule.endpoint),
                                                        average_duration=averages_dict.get(rule.endpoint),
                                                        hits=hits_dict.get(rule.endpoint))
-        display_cache()
 
 
 def update_last_requested_cache(endpoint_name):

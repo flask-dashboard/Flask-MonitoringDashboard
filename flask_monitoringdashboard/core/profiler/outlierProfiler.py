@@ -1,6 +1,5 @@
 import sys
 import threading
-import time
 import traceback
 
 import psutil
@@ -23,19 +22,19 @@ class OutlierProfiler(threading.Thread):
         threading.Thread.__init__(self)
         self._current_thread = current_thread
         self._endpoint = endpoint
-        self._stopped = False
         self._ip = ip
         self._cpu_percent = None
         self._memory = None
         self._stacktrace = ''
+        self._exit = threading.Event()
 
         self._request = str(request.headers), str(request.environ), request.url.encode('utf-8')
 
     def run(self):
         # sleep for average * ODC ms
         average = get_avg_endpoint(self._endpoint.name) * config.outlier_detection_constant
-        time.sleep(average/1000)
-        if not self._stopped:
+        self._exit.wait(average/1000)
+        if not self._exit.is_set():
             stack_list = []
             try:
                 frame = sys._current_frames()[self._current_thread]
@@ -56,7 +55,7 @@ class OutlierProfiler(threading.Thread):
             self._memory = str(psutil.virtual_memory())
 
     def stop(self, duration):
-        self._stopped = True
+        self._exit.set()
         update_duration_cache(endpoint_name=self._endpoint.name, duration=duration)
         with session_scope() as db_session:
             request_id = add_request(db_session, duration=duration*1000, endpoint_id=self._endpoint.id, ip=self._ip)
@@ -64,7 +63,7 @@ class OutlierProfiler(threading.Thread):
                 add_outlier(db_session, request_id, self._cpu_percent, self._memory, self._stacktrace, self._request)
 
     def stop_by_profiler(self):
-        self._stopped = True
+        self._exit.set()
 
     def add_outlier(self, request_id):
         if self._memory:

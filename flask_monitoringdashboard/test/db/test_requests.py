@@ -9,8 +9,8 @@ import unittest
 
 from flask_monitoringdashboard.database import session_scope
 from flask_monitoringdashboard.database.count import count_requests
+from flask_monitoringdashboard.database.endpoint import get_avg_duration
 from flask_monitoringdashboard.database.endpoint import get_endpoint_by_name
-from flask_monitoringdashboard.database.request import get_avg_duration
 from flask_monitoringdashboard.test.utils import set_test_environment, clear_db, add_fake_data, TIMES, NAME, IP, \
     ENDPOINT_ID
 
@@ -35,7 +35,6 @@ class TestRequest(unittest.TestCase):
             self.assertEqual(count_requests(db_session, endpoint.id), 0)
             add_request(db_session, execution_time, endpoint.id, ip=IP)
             self.assertEqual(count_requests(db_session, endpoint.id), 1)
-
 
     def test_get_versions(self):
         """

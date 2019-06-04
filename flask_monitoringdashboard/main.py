@@ -14,7 +14,7 @@ app = Flask(__name__)
 dashboard.config.version = '3.1'
 dashboard.config.group_by = '2'
 dashboard.config.database_name = 'sqlite:///data.db'
-# dashboard.config.outlier_detection_constant = 0.5
+dashboard.config.outlier_detection_constant = 0.5
 dashboard.bind(app)
 
 

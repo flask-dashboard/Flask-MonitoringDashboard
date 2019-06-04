@@ -84,7 +84,6 @@ class StacktraceProfiler(threading.Thread):
     def _on_thread_stopped(self):
         update_duration_cache(endpoint_name=self._endpoint.name, duration=self._duration)
         with session_scope() as db_session:
-            # update_last_requested(db_session, endpoint_name=self._endpoint.name)
             request_id = add_request(db_session, duration=self._duration, endpoint_id=self._endpoint.id, ip=self._ip)
             self._lines_body = order_histogram(self._histogram.items())
             self.insert_lines_db(db_session, request_id)
