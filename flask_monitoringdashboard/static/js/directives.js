@@ -14,6 +14,9 @@ app.directive('menu', function () {
     }
 });
 
+
+
+
 app.directive('monitorlevel', function () {
     return {
         templateUrl: 'static/elements/monitorLevel.html',

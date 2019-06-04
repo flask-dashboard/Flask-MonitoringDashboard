@@ -3,9 +3,10 @@ Contains all functions that access a Request object.
 """
 import time
 
-from sqlalchemy import func
+from sqlalchemy import func, and_
 
 from flask_monitoringdashboard.database import Request
+import datetime
 
 
 def add_request(db_session, duration, endpoint_id, ip, status_code):
@@ -48,7 +49,33 @@ def get_date_of_first_request_version(db_session, version):
     return -1
 
 
-def get_avg_duration(db_session, endpoint_id):
+def create_time_based_sample_criterion(start_date: datetime, end_date: datetime):
+    return and_(Request.time_requested > start_date, Request.time_requested <= end_date)
+
+
+def get_avg_duration_in_time_frame(db_session, endpoint_id, start_date, end_date):
+    """
+
+    :param db_session:
+    :param endpoint_id:
+    :param start_date:
+    :param end_date:
+    :return:
+    """
+    return get_avg_duration(db_session, endpoint_id, create_time_based_sample_criterion(start_date, end_date))
+
+
+def get_avg_duration_for_endpoint_version(db_session, endpoint_id, version):
+    """
+    :param db_session:
+    :param endpoint_id:
+    :param version:
+    :return:
+    """
+    return get_avg_duration(db_session, endpoint_id, Request.version_requested == version)
+
+
+def get_avg_duration(db_session, endpoint_id, *criterion):
     """ Returns the average duration of all the requests of an endpoint. If there are no requests for that endpoint,
         it returns 0.
     :param db_session: session for the database
@@ -56,7 +83,7 @@ def get_avg_duration(db_session, endpoint_id):
     :return average duration
     """
     result = db_session.query(func.avg(Request.duration).label('average')). \
-        filter(Request.endpoint_id == endpoint_id).one()
+        filter(and_(Request.endpoint_id == endpoint_id, *criterion)).one()
     if result[0]:
         return result[0]
     return 0
