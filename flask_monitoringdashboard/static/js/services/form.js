@@ -81,6 +81,20 @@ app.service('formService', function ($http, endpointService, $filter) {
         });
     };
 
+    this.addHosts = function () {
+        let obj = addMultiSelect('hosts');
+        $http.get('api/host_hits').then(function (response) {
+            obj.values = response.data.map(d => {
+                return {
+                    id: d.name,
+                    text: d.name + ' : ' + d.hits + ' total requests'
+                }
+            });
+            obj.selected = obj.values.slice(0, SLICE);
+            that.initialize(obj);
+        });
+    };
+
     this.addUsers = function () {
         let obj = addMultiSelect('users');
         $http.get('api/users/' + endpointService.info.id).then(function (response) {

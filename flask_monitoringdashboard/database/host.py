@@ -2,9 +2,9 @@
 Contains all functions that access a Host object
 """
 
-from flask_monitoringdashboard.database import Host
+from flask_monitoringdashboard.database import Host, Request
 
-from sqlalchemy import asc
+from sqlalchemy import asc, func, desc
 from sqlalchemy.orm.exc import NoResultFound
 
 
@@ -44,3 +44,12 @@ def get_hosts(db_session):
     :return list of Host objects
     """
     return db_session.query(Host).order_by(asc(Host.id))
+
+
+def get_host_hits(db_session):
+    """
+    Returns all endpoint names and total hits from the database.
+    :param db_session: session for the database
+    :return list of (endpoint name, total hits) tuples
+    """
+    return db_session.query(Request.host_id, func.count(Request.id)).group_by(Request.host_id).all()

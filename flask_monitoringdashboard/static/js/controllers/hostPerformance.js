@@ -13,12 +13,14 @@ function HostPerformanceController($scope, $http, menuService, formService, info
 
     // Set the form handler
     formService.clear();
+    formService.addHosts();
     formService.addEndpoints();
 
     formService.setReload(function () {
         $http.post('api/host_performance', {
             data: {
-                ids: [1, 2, 3, 4, 5, 6, 7, 8, 9]
+                ids: formService.getMultiSelection('hosts'),
+                endpoints: formService.getMultiSelection('endpoints')
             }
         }).then(function (response) {
             console.log(response.data);
@@ -26,7 +28,7 @@ function HostPerformanceController($scope, $http, menuService, formService, info
                 return {
                     x: obj.values,
                     type: 'box',
-                    name: obj.name,
+                    name: obj.name + ' (id=' + obj.id + ')',
                     id: obj.id
                 };
             });

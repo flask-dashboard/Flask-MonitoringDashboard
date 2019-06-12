@@ -50,3 +50,19 @@ class TestHost(unittest.TestCase):
         with session_scope() as db_session:
             host = get_host_name_by_id(db_session, 1)
             self.assertEqual(host.id, 1)
+
+    def test_get_host_hits(self):
+        """
+        Tests retrieval of hits
+        """
+
+        from flask_monitoringdashboard.database.host import get_host_hits
+        from flask_monitoringdashboard.database.request import add_request
+        with session_scope() as db_session:
+            current_hits = get_host_hits(db_session)
+            add_request(db_session, 1, 0, 0, '')
+            new_hit = [hit for hit in get_host_hits(db_session) if hit not in current_hits]
+            self.assertEqual(len(new_hit), 1)
+            host_id, hits = new_hit[0]
+            self.assertEqual(hits, 1)
+            self.assertEqual(host_id, 0)

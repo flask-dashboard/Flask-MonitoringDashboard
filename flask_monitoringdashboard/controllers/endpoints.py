@@ -99,14 +99,15 @@ def get_api_performance(db_session, endpoints):
     } for end in db_endpoints]
 
 
-def get_host_performance(db_session, host_ids: [str]):
+def get_host_performance(db_session, host_ids: [str], endpoint_ids: [str]):
     """
     :param db_session: session for the database
     :param host_ids: a list of hosts, encoded by their id
+    :param endpoints: a list of endpoints, encoded by their id
     :return: for every endpoint in endpoints, a list with the performance
     """
     db_host_ids = [(host, get_host_name_by_id(db_session, host)) for host in host_ids]
-    data = get_host_data_grouped(db_session, lambda x: x)
+    data = get_host_data_grouped(db_session, lambda x: x, Request.endpoint_id.in_(endpoint_ids))
     return [{
         'name': name,
         'id': id,

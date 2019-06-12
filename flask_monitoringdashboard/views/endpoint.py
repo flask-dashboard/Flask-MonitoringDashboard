@@ -6,8 +6,9 @@ from flask_monitoringdashboard.controllers.endpoints import get_endpoint_overvie
 from flask_monitoringdashboard.core.auth import secure, admin_secure
 from flask_monitoringdashboard.core.utils import get_endpoint_details
 from flask_monitoringdashboard.database import session_scope, row2dict
-from flask_monitoringdashboard.database.host import get_hosts
-from flask_monitoringdashboard.database.endpoint import get_users, get_ips, get_endpoints, get_endpoints_hits
+from flask_monitoringdashboard.database.host import get_host_hits
+from flask_monitoringdashboard.database.endpoint import get_users, get_ips, get_endpoints, get_endpoints_hits, \
+    get_endpoint_by_name
 
 
 @blueprint.route('/api/overview')
@@ -98,13 +99,29 @@ def api_performance():
         return jsonify(get_api_performance(db_session, endpoints))
 
 
+@blueprint.route('/api/host_hits')
+@secure
+def host_hits():
+    """
+    :return: A JSON-list with information about every host and its total number of hits (encoded in a JSON-object)
+        For more information per endpoint, see :func: get_overview
+    """
+    with session_scope() as db_session:
+        host_hits = get_host_hits(db_session)
+        dicts = []
+        for et in host_hits:
+            dicts.append({'name': et[0], 'hits': et[1]})
+        return jsonify(dicts)
+
+
 @blueprint.route('/api/host_performance', methods=['POST'])
 @secure
 def host_performance():
     """
     input must be a JSON-object, with the following value: {
           'data': {
-            'ids': [id1, id2]
+            'ids': [id1, id2],
+            'endpoints': [endpoint1, endpoint2]
           }
         }
     :return: A JSON-list for every endpoint with the following JSON-object: {
@@ -118,7 +135,8 @@ def host_performance():
     host_ids = data['ids']
 
     with session_scope() as db_session:
-        return jsonify(get_host_performance(db_session, host_ids))
+        endpoints = [get_endpoint_by_name(db_session, name).id for name in data['endpoints']]
+        return jsonify(get_host_performance(db_session, host_ids, endpoints))
 
 
 @blueprint.route('/api/set_rule', methods=['POST'])
