@@ -152,7 +152,7 @@ def set_rule():
     return 'OK'
 
 
-@blueprint.route('api/endpoint_info/<endpoint_id>')
+@blueprint.route('/api/endpoint_info/<endpoint_id>')
 @secure
 def endpoint_info(endpoint_id):
     """
@@ -170,7 +170,7 @@ def endpoint_info(endpoint_id):
         return jsonify(get_endpoint_details(db_session, endpoint_id))
 
 
-@blueprint.route('api/endpoint_versions/<endpoint_id>', methods=['POST'])
+@blueprint.route('/api/endpoint_versions/<endpoint_id>', methods=['POST'])
 @secure
 def endpoint_versions(endpoint_id):
     with session_scope() as db_session:
@@ -179,7 +179,7 @@ def endpoint_versions(endpoint_id):
         return jsonify(get_endpoint_versions(db_session, endpoint_id, versions))
 
 
-@blueprint.route('api/endpoint_users/<endpoint_id>', methods=['POST'])
+@blueprint.route('/api/endpoint_users/<endpoint_id>', methods=['POST'])
 @secure
 def endpoint_users(endpoint_id):
     with session_scope() as db_session:
