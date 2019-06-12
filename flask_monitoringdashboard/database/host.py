@@ -8,14 +8,18 @@ from sqlalchemy import asc, func, desc
 from sqlalchemy.orm.exc import NoResultFound
 
 
-def add_host(db_session, host_name: str, host_ip: str = "unknown"):
+def add_host(db_session, host_name: str, host_ip: str = "unknown", host_id: int=None):
     """ Adds a host to the database. Returns the id.
     :param db_session: session for the database
     :param host_name: name of the machine or container
     :param host_ip: ip address of the machine or container
+    :param host_id: id specified by the user
     :return the id of the host after it was stored in the database
     """
-    host = Host(name=host_name, ip=host_ip)
+    if host_id:
+        host = Host(name=host_name, ip=host_ip, id=host_id)
+    else:
+        host = Host(name=host_name, ip=host_ip)
     db_session.add(host)
     db_session.flush()
     return host.id

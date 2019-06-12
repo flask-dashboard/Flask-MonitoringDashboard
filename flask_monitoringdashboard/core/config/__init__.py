@@ -44,8 +44,14 @@ class Config(object):
         try:
             self.host_name = os.environ['CONTAINER_NAME']
         except KeyError:
-            self.host_name = 'Unknown'
-        self.host_id = None
+            try:
+                self.host_name = os.environ['COMPUTERNAME']
+            except KeyError:
+                self.host_name = 'Unknown'
+        try:
+            self.host_id = os.environ['CONTAINER_ID']
+        except KeyError:
+            self.host_id = None
         # visualization
         self.colors = {}
         self.timezone = pytz.timezone(str(get_localzone()))

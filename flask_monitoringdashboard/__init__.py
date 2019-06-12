@@ -32,14 +32,18 @@ blueprint = Blueprint('dashboard', __name__, template_folder=loc() + 'templates'
 
 
 def get_host_id():
-    if config.host_id:
-        return
-    from flask_monitoringdashboard.database import session_scope
     from flask_monitoringdashboard.database.host import add_host, get_hosts
+    from flask_monitoringdashboard.database import session_scope
 
     with session_scope() as db_session:
+        print([host.id for host in get_hosts(db_session)])
+        try:
+            if config.host_id and int(config.host_id) in [host.id for host in get_hosts(db_session)]:
+                return
+        except ValueError:
+            pass
+
         config.host_id = add_host(db_session, config.host_name)
-    print('Adding host id', config.host_id)
 
 
 def bind(app, schedule=True):
