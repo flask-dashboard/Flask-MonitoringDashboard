@@ -34,8 +34,14 @@ def make_report(a: DateInterval, b: DateInterval):
         for endpoint in endpoints:
             questions.append(DurationBetweenIntervals(endpoint.id, a, b))
 
-
+    md = ''
 
     for question in questions:
         answer = question.answer()
+
+        if answer.is_interesting():
+            md += answer.to_markdown() + '\n'
+
+
+
 

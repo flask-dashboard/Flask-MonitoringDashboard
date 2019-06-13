@@ -40,7 +40,7 @@ def weighted_choice(weights):
 STATUS_CODES = [200, 404, 500]
 
 WEIGHTS_WEEK_1 = [4, 4, 2]
-WEIGHTS_WEEK_2 = [9, 1, 1]
+WEIGHTS_WEEK_2 = [8, 1, 1]
 
 
 class TestLatency(unittest.TestCase):
