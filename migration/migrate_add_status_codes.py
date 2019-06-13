@@ -1,6 +1,6 @@
 """
-    Use this file for migrating the Database from v1.X.X to v2.X.X
-    Before running the script, make sure to change the OLD_DB_URL and NEW_DB_URL on lines 9 and 10.
+    Use this file for migrating the Database such that status codes can be tracked.
+    Before running the script, make sure to specify DB_URL on line 14
     Refer to http://docs.sqlalchemy.org/en/latest/core/engines.html on how to configure this.
 """
 from contextlib import contextmanager
