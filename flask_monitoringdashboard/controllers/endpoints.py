@@ -27,7 +27,7 @@ def get_endpoint_overview(db_session):
     today_local = now_local.replace(hour=0, minute=0, second=0, microsecond=0)
     today_utc = to_utc_datetime(today_local)
 
-    error_hits_criterion = and_(Request.time_requested > today_utc, Request.status_code >= 400,
+    error_hits_criterion = and_(Request.status_code >= 400,
                                 Request.status_code < 600)
 
     hits_today = count_requests_group(db_session, Request.time_requested > today_utc)

@@ -68,7 +68,7 @@ def get_error_requests(db_session, endpoint_id, *criterion):
     return db_session \
         .query(Request) \
         .filter(and_(Request.endpoint_id == endpoint_id, Request.status_code.isnot(None), Request.status_code >= 400,
-                     Request.status_code <= 599)) \
+                     Request.status_code <= 599, *criterion)) \
         .all()
 
 

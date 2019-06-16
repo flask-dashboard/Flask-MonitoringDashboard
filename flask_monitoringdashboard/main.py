@@ -4,15 +4,11 @@
 """
 import random
 import time
-import datetime
+
 from flask import Flask
-from sqlalchemy import and_
+
 
 import flask_monitoringdashboard as dashboard
-from flask_monitoringdashboard.core.reporting.make_report import make_report, DateInterval, markdown_serialize_report
-from flask_monitoringdashboard.database import session_scope, Request
-from flask_monitoringdashboard.database.request import get_avg_duration, get_avg_duration_in_time_frame
-
 app = Flask(__name__)
 
 dashboard.config.version = '3.2'
@@ -32,7 +28,7 @@ def endpoint():
 @app.route('/endpoint2')
 def endpoint2():
     time.sleep(0.5)
-    return 'Ok'
+    return 'Ok', 400
 
 
 @app.route('/endpoint3')
