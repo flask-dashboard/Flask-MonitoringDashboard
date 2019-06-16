@@ -3,7 +3,7 @@ from flask import jsonify, request, json
 from flask_monitoringdashboard import blueprint
 from flask_monitoringdashboard.controllers.endpoints import get_endpoint_overview, get_api_performance, \
     set_endpoint_rule, get_endpoint_versions, get_endpoint_users
-from flask_monitoringdashboard.controllers.requests import get_status_code_distribution
+from flask_monitoringdashboard.controllers.requests import get_status_code_distribution, get_error_requests
 from flask_monitoringdashboard.core.auth import secure, admin_secure
 from flask_monitoringdashboard.core.utils import get_endpoint_details
 from flask_monitoringdashboard.database import session_scope, row2dict
@@ -134,6 +134,18 @@ def endpoint_info(endpoint_id):
 def endpoint_status_code_distribution(endpoint_id):
     with session_scope() as db_session:
         return jsonify(get_status_code_distribution(db_session, endpoint_id))
+
+
+@blueprint.route('api/endpoint_status_code_summary/<endpoint_id>')
+@secure
+def endpoint_status_code_summary(endpoint_id):
+    with session_scope() as db_session:
+        result = {
+            'distribution': get_status_code_distribution(db_session, endpoint_id),
+            'error_requests': [row2dict(row) for row in get_error_requests(db_session, endpoint_id)]
+        }
+
+        return jsonify(result)
 
 
 @blueprint.route('api/endpoint_versions/<endpoint_id>', methods=['POST'])

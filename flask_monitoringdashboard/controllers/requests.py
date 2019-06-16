@@ -56,6 +56,22 @@ def get_status_code_distribution(db_session, endpoint_id, *criterion):
     return distribution
 
 
+def get_error_requests(db_session, endpoint_id, *criterion):
+    """
+    Gets all requests that did not return a 200 status code.
+
+    :param db_session:
+    :param endpoint_id:
+    :param criterion:
+    :return:
+    """
+    return db_session \
+        .query(Request) \
+        .filter(and_(Request.endpoint_id == endpoint_id, Request.status_code.isnot(None), Request.status_code >= 400,
+                     Request.status_code <= 599)) \
+        .all()
+
+
 def get_status_code_frequencies(db_session, endpoint_id, *criterion):
     """
     Gets the distribution of status codes returned by the given endpoint.
