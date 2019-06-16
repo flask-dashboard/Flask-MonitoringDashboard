@@ -5,19 +5,25 @@ function StatusCodeDistributionController($scope, $http, infoService, endpointSe
     formService.setReload(function () {
         var endpointId = endpointService.info.id;
 
-        $http.get('api/endpoint_status_code_distribution/' + endpointId).then(function (response) {
+        $http.get('api/endpoint_status_code_summary/' + endpointId).then(function (response) {
+
             var layout = {
                 height: 400,
-                width: 500
+                width: 500,
             };
 
-            const statusCodes = Object.keys(response.data);
+            var distribution = response.data.distribution;
+
+            var statusCodes = Object.keys(distribution);
 
             var data = [{
-                values: statusCodes.map(statusCode => response.data[statusCode]),
+                values: statusCodes.map(statusCode => distribution[statusCode]),
                 labels: statusCodes,
                 type: 'pie'
             }];
+
+            $scope.hello = 'hello, world';
+            $scope.error_requests = response.data.error_requests;
 
 
             plotlyService.chart(data, layout);

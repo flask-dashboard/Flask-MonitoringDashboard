@@ -4,10 +4,14 @@
 """
 import random
 import time
-
+import datetime
 from flask import Flask
+from sqlalchemy import and_
 
 import flask_monitoringdashboard as dashboard
+from flask_monitoringdashboard.core.reporting.make_report import make_report, DateInterval, markdown_serialize_report
+from flask_monitoringdashboard.database import session_scope, Request
+from flask_monitoringdashboard.database.request import get_avg_duration, get_avg_duration_in_time_frame
 
 app = Flask(__name__)
 
@@ -19,15 +23,10 @@ dashboard.config.database_name = 'sqlite:///data.db'
 dashboard.bind(app)
 
 
-def f():
-    time.sleep(2)
-    time.sleep(1)
-
-
-@app.route('/endpoint')
+@app.route('/endpointd')
 def endpoint():
-    f()
-    return 'Ok'
+    print("Hello, world")
+    return 'Ok2d'
 
 
 @app.route('/endpoint2')
@@ -54,7 +53,6 @@ def endpoint4():
 def my_func():
     # here should be something actually useful
     return 33.3
-
 
 # schedule = {'weeks': 0,
 #             'days': 0,
