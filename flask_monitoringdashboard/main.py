@@ -46,6 +46,12 @@ def endpoint4():
     return 'Ok'
 
 
+@app.route('/endpoint5')
+def endpoint5():
+    time.sleep(0.2)
+    return 'Ok'
+
+
 def my_func():
     # here should be something actually useful
     return 33.3

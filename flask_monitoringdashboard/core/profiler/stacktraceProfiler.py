@@ -55,6 +55,8 @@ class StacktraceProfiler(threading.Thread):
                 frame = sys._current_frames()[self._thread_to_monitor]
             except KeyError:
                 log('Can\'t get the stacktrace of the main thread. Stopping StacktraceProfiler')
+                log('Thread to monitor: %s' % self._thread_to_monitor)
+                log('Running threads: %s' % sys._current_frames().keys())
                 break
             in_endpoint_code = False
             self._path_hash.set_path('')
@@ -89,8 +91,8 @@ class StacktraceProfiler(threading.Thread):
             self._lines_body = order_histogram(self._histogram.items())
             self.insert_lines_db(db_session, request_id)
 
-        if self._outlier_profiler:
-            self._outlier_profiler.add_outlier(request_id)
+            if self._outlier_profiler:
+                self._outlier_profiler.add_outlier(request_id)
 
     def insert_lines_db(self, db_session, request_id):
         position = 0
