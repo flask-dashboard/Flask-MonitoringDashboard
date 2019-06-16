@@ -37,7 +37,6 @@ def get_endpoint_overview(db_session):
     hits_week_errors = count_requests_group(db_session, and_(Request.time_requested > week_ago, error_hits_criterion))
 
     hits = count_requests_group(db_session)
-    hits_errors = count_requests_group(db_session, error_hits_criterion)
 
     median_today = get_endpoint_data_grouped(db_session, median, Request.time_requested > today_utc)
     median_week = get_endpoint_data_grouped(db_session, median, Request.time_requested > week_ago)
@@ -54,7 +53,6 @@ def get_endpoint_overview(db_session):
         'hits-week': get_value(hits_week, endpoint.id),
         'hits-week-errors': get_value(hits_week_errors, endpoint.id),
         'hits-overall': get_value(hits, endpoint.id),
-        'hits-overall-errors': get_value(hits_errors, endpoint.id),
         'median-today': get_value(median_today, endpoint.id),
         'median-week': get_value(median_week, endpoint.id),
         'median-overall': get_value(median_overall, endpoint.id),

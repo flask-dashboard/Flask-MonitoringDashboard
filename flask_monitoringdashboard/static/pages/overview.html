@@ -62,8 +62,6 @@
                     </td>
                     <td ng-show="isHits" style="text-align: right;">
                         {{ row['hits-overall'] | number }}
-                        <span ng-show="row['hits-overall-errors'] > 0"
-                              style="color: red">({{ row['hits-overall-errors'] }})</span>
                     </td>
 
                     <td ng-show="isHits==false" style="text-align: right;">{{ row['median-today'] | duration }}</td>
