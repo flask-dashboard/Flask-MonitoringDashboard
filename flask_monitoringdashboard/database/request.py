@@ -35,7 +35,7 @@ def get_date_of_first_request(db_session):
     return -1
 
 
-def create_time_based_sample_criterion(start_date: datetime, end_date: datetime):
+def create_time_based_sample_criterion(start_date, end_date):
     return and_(Request.time_requested > start_date, Request.time_requested <= end_date)
 
 
