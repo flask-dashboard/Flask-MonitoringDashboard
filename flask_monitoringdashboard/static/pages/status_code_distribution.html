@@ -1,0 +1,26 @@
+<div class="card mb-3">
+    <div class="card-header"><h4>Status code distribution</h4></div>
+    <div class="card-body">
+        <div id="chart"></div>
+    </div>
+</div>
+
+<div class="card mb-3">
+    <div class="card-header"><h4>Error requests</h4></div>
+    <div class="card-body">
+        <table class="table">
+            <thead>
+            <tr>
+                <th>Time</th>
+                <th>Status Code</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr ng-repeat="row in error_requests">
+                <td>{{ row.time_requested | dateLayout }}</td>
+                <td>{{ row.status_code }}</td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</div>

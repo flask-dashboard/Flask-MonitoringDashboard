@@ -48,6 +48,8 @@ class Request(Base):
     group_by = Column(String(100), default=get_group_by)
     # the ip address of the requester
     ip = Column(String(100), nullable=False)
+    # the HTTP status code of the request
+    status_code = Column(Integer, nullable=True)
 
     endpoint = relationship(Endpoint)
     stack_lines = relationship('StackLine', back_populates='request')

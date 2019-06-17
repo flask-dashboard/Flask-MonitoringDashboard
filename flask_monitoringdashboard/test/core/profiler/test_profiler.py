@@ -32,7 +32,7 @@ class TestProfiler(unittest.TestCase):
             from flask import request
             request.environ['REMOTE_ADDR'] = '127.0.0.1'
             num_threads = threading.active_count()
-            start_performance_thread(Endpoint(id=1, name=NAME), 1234)
+            start_performance_thread(Endpoint(id=1, name=NAME), 1234, 200)
             self.assertEqual(threading.active_count(), num_threads + 1)
             self.wait_until_threads_finished(num_threads)
 

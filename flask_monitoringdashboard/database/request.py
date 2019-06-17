@@ -1,22 +1,24 @@
 """
 Contains all functions that access a Request object.
 """
+import datetime
 import time
 
-from sqlalchemy import func
+from sqlalchemy import func, and_
 
 from flask_monitoringdashboard.database import Request
 
 
-def add_request(db_session, duration, endpoint_id, ip):
+def add_request(db_session, duration, endpoint_id, ip, status_code):
     """ Adds a request to the database. Returns the id.
+    :param status_code:  status code of the request
     :param db_session: session for the database
     :param duration: duration of the request
     :param endpoint_id: id of the endpoint
     :param ip: IP address of the requester
     :return the id of the request after it was stored in the database
     """
-    request = Request(endpoint_id=endpoint_id, duration=duration, ip=ip)
+    request = Request(endpoint_id=endpoint_id, duration=duration, ip=ip, status_code=status_code)
     db_session.add(request)
     db_session.flush()
     return request.id
@@ -31,6 +33,10 @@ def get_date_of_first_request(db_session):
     if result:
         return int(time.mktime(result[0].timetuple()))
     return -1
+
+
+def create_time_based_sample_criterion(start_date, end_date):
+    return and_(Request.time_requested > start_date, Request.time_requested <= end_date)
 
 
 def get_date_of_first_request_version(db_session, version):

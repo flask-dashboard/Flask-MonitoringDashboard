@@ -14,6 +14,7 @@ from flask_monitoringdashboard.database.data_grouped import get_endpoint_data_gr
 from flask_monitoringdashboard.database.endpoint import get_last_requested, get_endpoints, get_endpoint_by_name, \
     update_endpoint
 from flask_monitoringdashboard.database.versions import get_first_requests
+from sqlalchemy import and_
 
 
 def get_endpoint_overview(db_session):
@@ -26,8 +27,15 @@ def get_endpoint_overview(db_session):
     today_local = now_local.replace(hour=0, minute=0, second=0, microsecond=0)
     today_utc = to_utc_datetime(today_local)
 
+    error_hits_criterion = and_(Request.status_code >= 400,
+                                Request.status_code < 600)
+
     hits_today = count_requests_group(db_session, Request.time_requested > today_utc)
+    hits_today_errors = count_requests_group(db_session, and_(Request.time_requested > today_utc, error_hits_criterion))
+
     hits_week = count_requests_group(db_session, Request.time_requested > week_ago)
+    hits_week_errors = count_requests_group(db_session, and_(Request.time_requested > week_ago, error_hits_criterion))
+
     hits = count_requests_group(db_session)
 
     median_today = get_endpoint_data_grouped(db_session, median, Request.time_requested > today_utc)
@@ -41,7 +49,9 @@ def get_endpoint_overview(db_session):
         'monitor': endpoint.monitor_level,
         'color': get_color(endpoint.name),
         'hits-today': get_value(hits_today, endpoint.id),
+        'hits-today-errors': get_value(hits_today_errors, endpoint.id),
         'hits-week': get_value(hits_week, endpoint.id),
+        'hits-week-errors': get_value(hits_week_errors, endpoint.id),
         'hits-overall': get_value(hits, endpoint.id),
         'median-today': get_value(median_today, endpoint.id),
         'median-week': get_value(median_week, endpoint.id),

@@ -16,14 +16,15 @@ def start_thread_last_requested(endpoint):
     BaseProfiler(endpoint).start()
 
 
-def start_performance_thread(endpoint, duration):
+def start_performance_thread(endpoint, duration, status_code):
     """
     Starts a thread that updates performance, utilization and last_requested in the database.
     :param endpoint: Endpoint object
     :param duration: duration of the request
+    :param status_code: HTTP status code of the request
     """
     ip = request.environ['REMOTE_ADDR']
-    PerformanceProfiler(endpoint, ip, duration).start()
+    PerformanceProfiler(endpoint, ip, duration, status_code).start()
 
 
 def start_profiler_thread(endpoint):
