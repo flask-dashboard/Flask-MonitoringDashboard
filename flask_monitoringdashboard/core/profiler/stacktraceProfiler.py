@@ -45,6 +45,7 @@ class StacktraceProfiler(threading.Thread):
         :return:
         """
         current_time = time.time()
+        sample_count = 0
         while self._keeprunning:
             newcurrent_time = time.time()
             duration = newcurrent_time - current_time
@@ -52,6 +53,7 @@ class StacktraceProfiler(threading.Thread):
 
             try:
                 frame = sys._current_frames()[self._thread_to_monitor]
+                sample_count += 1
             except KeyError:
                 log('Can\'t get the stacktrace of the main thread. Stopping StacktraceProfiler')
                 break
@@ -73,6 +75,7 @@ class StacktraceProfiler(threading.Thread):
             if config.sampling_period > elapsed:
                 time.sleep(config.sampling_period - elapsed)
 
+        print('Took %d samples' % sample_count)
         self._on_thread_stopped()
 
     def stop(self, duration):
