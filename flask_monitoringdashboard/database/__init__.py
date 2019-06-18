@@ -12,7 +12,6 @@ from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker, relationship, scoped_session
 
 from flask_monitoringdashboard import config
-from flask_monitoringdashboard.core.group_by import get_group_by
 
 Base = declarative_base()
 
@@ -45,7 +44,7 @@ class Request(Base):
     # the version when the request was handled
     version_requested = Column(String(100), default=config.version)
     # a criteria by which the requests can be grouped
-    group_by = Column(String(100), default=get_group_by)
+    group_by = Column(String(100), default=None)
     # the ip address of the requester
     ip = Column(String(100), nullable=False)
     # the HTTP status code of the request
