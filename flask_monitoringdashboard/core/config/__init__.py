@@ -27,7 +27,7 @@ class Config(object):
         self.link = 'dashboard'
         self.monitor_level = 1
         self.outlier_detection_constant = 2.5
-        self.sampling_period = 0
+        self.sampling_period = 5/1000.0
         self.enable_logging = False
 
         # database
@@ -117,7 +117,7 @@ class Config(object):
             self.monitor_level = parse_literal(parser, 'dashboard', 'MONITOR_LEVEL', self.monitor_level)
             self.outlier_detection_constant = parse_literal(parser, 'dashboard', 'OUTlIER_DETECTION_CONSTANT',
                                                             self.outlier_detection_constant)
-            self.sampling_period = parse_literal(parser, 'dashboard', 'SAMPLING_RATE', self.sampling_period) / 1000
+            self.sampling_period = parse_literal(parser, 'dashboard', 'SAMPLING_RATE', self.sampling_period) / 1000.0
             self.enable_logging = parse_bool(parser, 'dashboard', 'ENABLE_LOGGING', self.enable_logging)
 
             # parse 'authentication'
