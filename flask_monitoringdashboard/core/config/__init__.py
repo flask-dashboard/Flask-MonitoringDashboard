@@ -94,6 +94,7 @@ class Config(object):
 
             :param file: a string pointing to the location of the config-file.
             :param envvar: a string specifying which environment variable holds the config file location
+            :param log_verbose: flag to print the location of the config file.
         """
 
         if envvar:
