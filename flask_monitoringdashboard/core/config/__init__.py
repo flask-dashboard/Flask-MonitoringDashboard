@@ -44,10 +44,10 @@ class Config(object):
         # visualization
         self.colors = {}
         try:
-            default_timezone = pytz.timezone(str(get_localzone()))
+            self.timezone = pytz.timezone(str(get_localzone()))
         except pytz.UnknownTimeZoneError:
-            default_timezone = pytz.timezone('UTC')
-        self.timezone = default_timezone
+            log('Using default timezone, which is UTC')
+            self.timezone = pytz.timezone('UTC')
 
         # define a custom function to retrieve the session_id or username
         self.group_by = None
