@@ -14,7 +14,6 @@ from flask_monitoringdashboard.database.endpoint import update_last_accessed
 from flask_monitoringdashboard.database.request import add_request
 from flask_monitoringdashboard.database.stack_line import add_stack_line
 
-
 FILENAME = 'flask_monitoringdashboard/core/measurement.py'
 FILENAME_LEN = len(FILENAME)
 
@@ -78,8 +77,9 @@ class StacktraceProfiler(threading.Thread):
 
         self._on_thread_stopped()
 
-    def stop(self, duration):
+    def stop(self, duration, status_code):
         self._duration = duration * 1000
+        self._status_code = status_code
         if self._outlier_profiler:
             self._outlier_profiler.stop()
         self._keeprunning = False
@@ -87,7 +87,8 @@ class StacktraceProfiler(threading.Thread):
     def _on_thread_stopped(self):
         with session_scope() as db_session:
             update_last_accessed(db_session, endpoint_name=self._endpoint.name)
-            request_id = add_request(db_session, duration=self._duration, endpoint_id=self._endpoint.id, ip=self._ip)
+            request_id = add_request(db_session, duration=self._duration, endpoint_id=self._endpoint.id, ip=self._ip,
+                                     status_code=self._status_code)
             self._lines_body = order_histogram(self._histogram.items())
             self.insert_lines_db(db_session, request_id)
 

@@ -76,8 +76,9 @@ def add_wrapper2(endpoint, fun):
         thread = start_profiler_thread(endpoint)
         start_time = time.time()
         result = fun(*args, **kwargs)
+        status_code = result[1] if isinstance(result, tuple) else 200
         duration = time.time() - start_time
-        thread.stop(duration)
+        thread.stop(duration, status_code)
         return result
 
     wrapper.original = fun
@@ -90,8 +91,9 @@ def add_wrapper3(endpoint, fun):
         thread = start_profiler_and_outlier_thread(endpoint)
         start_time = time.time()
         result = fun(*args, **kwargs)
+        status_code = result[1] if isinstance(result, tuple) else 200
         duration = time.time() - start_time
-        thread.stop(duration)
+        thread.stop(duration, status_code)
         return result
 
     wrapper.original = fun
