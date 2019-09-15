@@ -20,6 +20,6 @@ class TestStacktraceProfiler(unittest.TestCase):
             request.environ['REMOTE_ADDR'] = '127.0.0.1'
             current_thread = threading.current_thread().ident
             ip = request.environ['REMOTE_ADDR']
-            thread = StacktraceProfiler(current_thread, Endpoint(id=0, name=NAME), ip)
+            thread = StacktraceProfiler(current_thread, Endpoint(id=0, name=NAME), ip, group_by=None)
             thread._keeprunning = False
             thread.run()
