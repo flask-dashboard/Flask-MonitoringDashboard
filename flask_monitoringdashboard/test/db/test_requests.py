@@ -33,7 +33,7 @@ class TestRequest(unittest.TestCase):
         with session_scope() as db_session:
             endpoint = get_endpoint_by_name(db_session, name2)
             self.assertEqual(count_requests(db_session, endpoint.id), 0)
-            add_request(db_session, execution_time, endpoint.id, ip=IP, group_by=None)
+            add_request(db_session, execution_time, endpoint.id, ip=IP, group_by=None, status_code=200)
             self.assertEqual(count_requests(db_session, endpoint.id), 1)
 
     def test_get_versions(self):
