@@ -50,9 +50,8 @@ def main():
 
     with session_scope() as db_session:
         try:
-            results = connection.execute("ALTER TABLE Request ADD COLUMN status_code INT")
+            connection.execute("ALTER TABLE Request ADD COLUMN status_code INT")
         except Exception as e:
-            print(e)
             print("Column already exists")
 
     print("Finished.")
