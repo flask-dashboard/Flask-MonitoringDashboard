@@ -11,9 +11,8 @@ from sqlalchemy.orm import sessionmaker, joinedload
 from sqlalchemy.ext.declarative import declarative_base
 
 # DB_URL = 'dialect+driver://username:password@host:port/db'
-DB_URL = 'sqlite:////Users/johan/Projects/Flask-MonitoringDashboard/flask_monitoringdashboard/data.db'
 # DB_URL = 'mysql+pymysql://root:admin@localhost/migration1'
-
+DB_URL = 'mysql+pymysql://user:password@localhost:3306/database'
 
 engine = create_engine(DB_URL)
 
@@ -51,8 +50,9 @@ def main():
 
     with session_scope() as db_session:
         try:
-            results = connection.execute("ALTER TABLE request ADD COLUMN status_code INT NULLABLE")
-        except:
+            results = connection.execute("ALTER TABLE Request ADD COLUMN status_code INT")
+        except Exception as e:
+            print(e)
             print("Column already exists")
 
     print("Finished.")
