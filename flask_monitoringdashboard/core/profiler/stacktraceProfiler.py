@@ -14,7 +14,6 @@ from flask_monitoringdashboard.database.endpoint import update_last_accessed
 from flask_monitoringdashboard.database.request import add_request
 from flask_monitoringdashboard.database.stack_line import add_stack_line
 
-
 FILENAME = 'flask_monitoringdashboard/core/measurement.py'
 FILENAME_LEN = len(FILENAME)
 
@@ -25,12 +24,13 @@ class StacktraceProfiler(threading.Thread):
     This is used when monitoring-level == 2 and monitoring-level == 3
     """
 
-    def __init__(self, thread_to_monitor, endpoint, ip, outlier_profiler=None):
+    def __init__(self, thread_to_monitor, endpoint, ip, group_by, outlier_profiler=None):
         threading.Thread.__init__(self)
         self._keeprunning = True
         self._thread_to_monitor = thread_to_monitor
         self._endpoint = endpoint
         self._ip = ip
+        self._group_by = group_by
         self._duration = 0
         self._histogram = defaultdict(float)
         self._path_hash = PathHash()
@@ -55,6 +55,8 @@ class StacktraceProfiler(threading.Thread):
                 frame = sys._current_frames()[self._thread_to_monitor]
             except KeyError:
                 log('Can\'t get the stacktrace of the main thread. Stopping StacktraceProfiler')
+                log('Thread to monitor: %s' % self._thread_to_monitor)
+                log('Running threads: %s' % sys._current_frames().keys())
                 break
             in_endpoint_code = False
             self._path_hash.set_path('')
@@ -76,8 +78,9 @@ class StacktraceProfiler(threading.Thread):
 
         self._on_thread_stopped()
 
-    def stop(self, duration):
+    def stop(self, duration, status_code):
         self._duration = duration * 1000
+        self._status_code = status_code
         if self._outlier_profiler:
             self._outlier_profiler.stop()
         self._keeprunning = False
@@ -85,12 +88,14 @@ class StacktraceProfiler(threading.Thread):
     def _on_thread_stopped(self):
         with session_scope() as db_session:
             update_last_accessed(db_session, endpoint_name=self._endpoint.name)
-            request_id = add_request(db_session, duration=self._duration, endpoint_id=self._endpoint.id, ip=self._ip)
+            request_id = add_request(db_session, duration=self._duration, endpoint_id=self._endpoint.id, ip=self._ip,
+                                     status_code=self._status_code, group_by=self._group_by)
+              
             self._lines_body = order_histogram(self._histogram.items())
             self.insert_lines_db(db_session, request_id)
 
-        if self._outlier_profiler:
-            self._outlier_profiler.add_outlier(request_id)
+            if self._outlier_profiler:
+                self._outlier_profiler.add_outlier(request_id)
 
     def insert_lines_db(self, db_session, request_id):
         position = 0

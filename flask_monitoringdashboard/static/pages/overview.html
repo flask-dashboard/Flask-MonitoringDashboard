@@ -24,7 +24,7 @@
                     <th colspan="2"></th>
                     <th ng-show="isHits" colspan="3" style="text-align: center; font-size: large;">Number of hits</th>
                     <th ng-show="isHits==false" colspan="3" style="text-align: center; font-size: large;">Median request
-                        duration
+                        duration (ms)
                     </th>
                     <th></th>
                     <th></th>
@@ -49,13 +49,24 @@
                     <td style="background-color: {{ row.color }}"></td>
                     <td style="max-width: 200px;">{{ row.name }}</td>
 
-                    <td ng-show="isHits" style="text-align: right;">{{ row['hits-today'] | number }}</td>
-                    <td ng-show="isHits" style="text-align: right;">{{ row['hits-week'] | number }}</td>
-                    <td ng-show="isHits" style="text-align: right;">{{ row['hits-overall'] | number }}</td>
+                    <td ng-show="isHits" style="text-align: right;">
+                        {{ row['hits-today'] | number }}
+                        <span ng-show="row['hits-today-errors'] > 0"
+                              style="color: red">({{ row['hits-today-errors'] }})</span>
+                    </td>
+                    <td ng-show="isHits" style="text-align: right;">
+                        {{ row['hits-week'] | number }}
+                        <span ng-show="row['hits-week-errors'] > 0"
+                              style="color: red">({{ row['hits-week-errors'] }})</span>
 
-                    <td ng-show="isHits==false" style="text-align: right;">{{ row['median-today'] | duration }}</td>
-                    <td ng-show="isHits==false" style="text-align: right;">{{ row['median-week'] | duration }}</td>
-                    <td ng-show="isHits==false" style="text-align: right;">{{ row['median-overall'] | duration }}</td>
+                    </td>
+                    <td ng-show="isHits" style="text-align: right;">
+                        {{ row['hits-overall'] | number }}
+                    </td>
+
+                    <td ng-show="isHits==false" style="text-align: right;">{{ row['median-today'] | duration_ms }}</td>
+                    <td ng-show="isHits==false" style="text-align: right;">{{ row['median-week'] | duration_ms }}</td>
+                    <td ng-show="isHits==false" style="text-align: right;">{{ row['median-overall'] | duration_ms }}</td>
                     <td style="text-align: center;">{{ row['last-accessed'] | dateDifference }}</td>
                     <td ng-click="$event.stopPropagation()">
                         <monitorlevel name="row.name" value="row.monitor" />

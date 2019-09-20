@@ -1,5 +1,11 @@
 'use strict';
 
+app.filter('duration_ms', function () {
+    return function (time) {
+        return Math.round(parseFloat(time) * 10) / 10;
+    }
+});
+
 app.filter('duration', function () {
     return function (time) {
         // ms is a float or int
@@ -49,6 +55,23 @@ app.filter('dateLayout', function () {
             d.getFullYear() + " " + ("0" + d.getHours()).slice(-2) + ":" + ("0" + d.getMinutes()).slice(-2);
     }
 });
+
+
+app.filter('dateShort',function () {
+    return date => {
+        let monthNames = [
+            "Jan", "Feb", "Mar", "Apr", "May", "Jun",
+            "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
+        ];
+        let d = new Date(date);
+        let day = d.getDate();
+        let monthIndex = d.getMonth();
+        let year = d.getFullYear();
+
+        return monthNames[monthIndex] + ' ' + day + ', ' + year;
+    }
+});
+
 
 app.filter('dateDifference', function () {
 

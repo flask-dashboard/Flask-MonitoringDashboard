@@ -9,7 +9,7 @@ from flask_monitoringdashboard.core.utils import get_details
 from flask_monitoringdashboard.database import session_scope
 
 
-@blueprint.route('api/deploy_details')
+@blueprint.route('/api/deploy_details')
 @secure
 def deploy_details():
     """
@@ -23,7 +23,7 @@ def deploy_details():
     return jsonify(details)
 
 
-@blueprint.route('api/deploy_config')
+@blueprint.route('/api/deploy_config')
 @secure
 def deploy_config():
     """

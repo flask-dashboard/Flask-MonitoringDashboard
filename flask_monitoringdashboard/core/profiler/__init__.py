@@ -2,6 +2,7 @@ import threading
 
 from flask import request
 
+from flask_monitoringdashboard.core.group_by import get_group_by
 from flask_monitoringdashboard.core.profiler.baseProfiler import BaseProfiler
 from flask_monitoringdashboard.core.profiler.outlierProfiler import OutlierProfiler
 from flask_monitoringdashboard.core.profiler.performanceProfiler import PerformanceProfiler
@@ -16,21 +17,24 @@ def start_thread_last_requested(endpoint):
     BaseProfiler(endpoint).start()
 
 
-def start_performance_thread(endpoint, duration):
+def start_performance_thread(endpoint, duration, status_code):
     """
     Starts a thread that updates performance, utilization and last_requested in the database.
     :param endpoint: Endpoint object
     :param duration: duration of the request
+    :param status_code: HTTP status code of the request
     """
     ip = request.environ['REMOTE_ADDR']
-    PerformanceProfiler(endpoint, ip, duration).start()
+    group_by = get_group_by()
+    PerformanceProfiler(endpoint, ip, duration, group_by, status_code).start()
 
 
 def start_profiler_thread(endpoint):
     """ Starts a thread that monitors the main thread. """
     current_thread = threading.current_thread().ident
     ip = request.environ['REMOTE_ADDR']
-    thread = StacktraceProfiler(current_thread, endpoint, ip)
+    group_by = get_group_by()
+    thread = StacktraceProfiler(current_thread, endpoint, ip, group_by)
     thread.start()
     return thread
 
@@ -39,8 +43,9 @@ def start_profiler_and_outlier_thread(endpoint):
     """ Starts two threads: PerformanceProfiler and StacktraceProfiler.  """
     current_thread = threading.current_thread().ident
     ip = request.environ['REMOTE_ADDR']
+    group_by = get_group_by()
     outlier = OutlierProfiler(current_thread, endpoint)
-    thread = StacktraceProfiler(current_thread, endpoint, ip, outlier)
+    thread = StacktraceProfiler(current_thread, endpoint, ip, group_by, outlier)
     thread.start()
     outlier.start()
     return thread
