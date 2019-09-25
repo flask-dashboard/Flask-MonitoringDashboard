@@ -32,7 +32,10 @@ You can view the results by default using the default endpoint (this can be conf
 
    http://localhost:5000/dashboard
 
-For more advanced documentation, take a look at the information on [this site](http://flask-monitoringdashboard.readthedocs.io/en/latest/functionality.html).
+For more advanced documentation, take a look at the information
+on `this site`_
+
+.. _this site: _http://flask-monitoringdashboard.readthedocs.io/en/latest/functionality.html
 
 
 How to use
@@ -61,22 +64,29 @@ Adding the extension to your Flask app is simple:
 
 Live Demo
 ------------
-To view a live deployment of the Flask-MonitoringDashboard, check [this site](https://flask-monitoringdashboard.herokuapp.com/).
+To view a live deployment of the Flask-MonitoringDashboard, `check this site`_
+
+.. _`check this site`: https://flask-monitoringdashboard.herokuapp.com/
+
 Use the credentials u:`admin`, p:`admin` to log in.
 
 Feedback
 ------------
 In order to improve our Flask-MonitoringDashboard, we would like to hear from you! Therefore, we made a questionnaire
-with a few questions. Filling in this form takes less than 3 minutes. You can find the form [here](https://goo.gl/forms/IqRrjGDDXe44q5ZV2).
+with a few questions. Filling in this form takes less than 3 minutes. You can find the form `here
+<https://goo.gl/forms/IqRrjGDDXe44q5ZV2>`_.
 
-Alternatively, feel free to write to [our email-address](mailto:flask.monitoringdashboard@gmail.com).
+Alternatively, feel free to write to `our email-address
+<mailto:flask.monitoringdashboard@gmail.com>`_.
 
 Documentation
 -------------
-For more advanced documentation, see [this site](http://flask-monitoringdashboard.readthedocs.io).
+For more advanced documentation, `see this site
+<http://flask-monitoringdashboard.readthedocs.io>`_
 If you run into trouble migrating from version 1.X.X to version 2.0.0, this site will help you solve this too.
+The migration from 2.X.X to 3.0.0 should be easier.
 
 
 License
 ------------
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+This project is licensed under the MIT License - see the LICENSE file for details.
