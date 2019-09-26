@@ -10,7 +10,9 @@ v3.0.0
 Changed
 
 - Tracking also status codes
-
+- Display times as numbers to make them sortable
+- Add leading slash to blueprint paths
+- Added status codes with corresponding views
 
 v2.1.1
 ----------
