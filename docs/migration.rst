@@ -41,3 +41,14 @@ There are two migrations that you have to do, before you can use version 2.0.0.
 
    .. _`this configuration file`: https://github.com/flask-dashboard/Flask-MonitoringDashboard/tree/master/config.cfg
 
+
+Migrating from 2.X.X to 3.0.0
+-----------------------------
+Version 3.0.0 adds functionality for tracking return status codes for each endpoint.
+
+This requires a minimal change to the database: adding the 'status_code' (INT) field to the Request table.
+
+You can add the field by hand, or you can run `the corresponding migration script`_:
+
+   .. _`the corresponding migration script`: https://github.com/flask-dashboard/Flask-MonitoringDashboard/tree/master/flask_monitoringdashboard/migrate_v2_to_v3.py
+
