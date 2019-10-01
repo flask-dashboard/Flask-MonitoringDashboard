@@ -15,7 +15,7 @@ There are two migrations that you have to do, before you can use version 2.0.0.
 
    You can find `the migration script here`_.
 
-   .. _`the migration script here`: https://github.com/flask-dashboard/Flask-MonitoringDashboard/tree/master/flask_monitoringdashboard/migrate_v1_to_v2.py
+   .. _`the migration script here`: https://github.com/flask-dashboard/Flask-MonitoringDashboard/tree/master/migration/migrate_v1_to_v2.py
 
    If you want to run this script, you need to be aware of the following:
 
@@ -50,5 +50,5 @@ This requires a minimal change to the database: adding the 'status_code' (INT) f
 
 You can add the field by hand, or you can run `the corresponding migration script`_:
 
-   .. _`the corresponding migration script`: https://github.com/flask-dashboard/Flask-MonitoringDashboard/tree/master/flask_monitoringdashboard/migrate_v2_to_v3.py
+   .. _`the corresponding migration script`: https://github.com/flask-dashboard/Flask-MonitoringDashboard/tree/master/migration/migrate_v2_to_v3.py
 
