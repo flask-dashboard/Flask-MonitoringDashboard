@@ -18,11 +18,12 @@ class OutlierProfiler(threading.Thread):
     Used for collecting additional information if the request is an outlier
     """
 
-    def __init__(self, current_thread, endpoint, ip):
+    def __init__(self, current_thread, endpoint, ip, group_by):
         threading.Thread.__init__(self)
         self._current_thread = current_thread
         self._endpoint = endpoint
         self._ip = ip
+        self._group_by = group_by
         self._cpu_percent = None
         self._memory = None
         self._stacktrace = ''
@@ -54,11 +55,12 @@ class OutlierProfiler(threading.Thread):
             self._cpu_percent = str(psutil.cpu_percent(interval=None, percpu=True))
             self._memory = str(psutil.virtual_memory())
 
-    def stop(self, duration):
+    def stop(self, duration, status_code):
         self._exit.set()
         update_duration_cache(endpoint_name=self._endpoint.name, duration=duration*1000)
         with session_scope() as db_session:
-            request_id = add_request(db_session, duration=duration*1000, endpoint_id=self._endpoint.id, ip=self._ip)
+            request_id = add_request(db_session, duration=duration*1000, endpoint_id=self._endpoint.id, ip=self._ip,
+                                     group_by=self._group_by, status_code=status_code)
             if self._memory:
                 add_outlier(db_session, request_id, self._cpu_percent, self._memory, self._stacktrace, self._request)
 

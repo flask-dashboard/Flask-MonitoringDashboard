@@ -1,4 +1,4 @@
-app.service('plotlyService', function (formService) {
+app.service('plotlyService', function (formService, $filter) {
     let layout = {
         height: 600,
         margin: {l: 200}
@@ -8,14 +8,16 @@ app.service('plotlyService', function (formService) {
         responsive: true
     };
 
-    this.heatmap = function (x, y, z, layout_ext) {
+    this.heatmap = function (x, y, z, layout_ext, hover_text) {
         this.chart([{
             x: x,
             y: y,
-            z: z.map(l => l.map(i => i == 0 ? NaN : i)),
+            z: z.map(l => l.map(i => i === 0 ? NaN : i)),
             colorscale: 'YIOrRd',
             reversescale: true,
-            type: 'heatmap'
+            type: 'heatmap',
+            text: hover_text,
+            hoverinfo: (hover_text === undefined ? undefined : 'text')
         }], $.extend({}, layout, layout_ext));
     };
 

@@ -6,6 +6,11 @@ from flask_monitoringdashboard.core.timezone import to_utc_datetime, to_local_da
 from flask_monitoringdashboard.database.count_group import count_requests_per_day, get_value
 from flask_monitoringdashboard.database.endpoint import get_endpoints, get_num_requests
 
+from flask_monitoringdashboard.database import Request
+from sqlalchemy import func, distinct, and_
+
+from flask_monitoringdashboard.database.request import create_time_based_sample_criterion
+
 
 def get_num_requests_data(db_session, start_date, end_date):
     """
@@ -28,6 +33,74 @@ def get_num_requests_data(db_session, start_date, end_date):
         'days': [d.strftime('%Y-%m-%d') for d in days],
         'data': data
     }
+
+
+def get_all_request_status_code_counts(db_session, endpoint_id):
+    """
+    Gets all the request status code counts.
+
+    :param db_session: session for the database
+    :param endpoint_id: id for the endpoint
+    :return: A list of tuples in the form of `(status_code, count)`
+    """
+    return db_session.query(Request.status_code, func.count(Request.status_code)) \
+        .filter(and_(Request.endpoint_id == endpoint_id, Request.status_code.isnot(None))) \
+        .group_by(Request.status_code).all()
+
+
+def get_status_code_distribution(db_session, endpoint_id):
+    """
+    Gets the distribution of status codes returned by the given endpoint.
+
+    :param db_session: session for the database
+    :param endpoint_id: id for the endpoint
+    :return: A dict where the key is the status code and the value is the fraction of requests that returned the status
+    code. Example: a return value of `{ 200: 0.92, 404: 0.08 }` means that status code 200 was returned on 92% of the
+    requests. 8% of the requests returned a 404 status code.
+    """
+    status_code_counts = get_all_request_status_code_counts(db_session, endpoint_id)
+
+    total_count = sum(frequency for (_, frequency) in status_code_counts)
+
+    return {status_code: frequency / total_count for (status_code, frequency) in status_code_counts}
+
+
+def get_status_code_frequencies(db_session, endpoint_id):
+    """
+    Gets the frequencies of each status code.
+
+    :param db_session: session for the database
+    :param endpoint_id: id for the endpoint
+    :return: A dict where the key is the status code and the value is the fraction of requests that returned the status
+    code. Example: a return value of `{ 200: 105, 404: 3 }` means that status code 200 was returned 105 times and
+    404 was returned 3 times.
+    """
+    status_code_counts = db_session.query(Request.status_code, func.count(Request.status_code)) \
+        .filter(and_(Request.endpoint_id == endpoint_id, Request.status_code.isnot(None))) \
+        .group_by(Request.status_code).all()
+
+    return dict(status_code_counts)
+
+
+def get_error_requests(db_session, endpoint_id, *criterion):
+    """
+    Gets all requests that did not return a 200 status code.
+
+    :param db_session:
+    :param endpoint_id:
+    :param criterion:
+    :return:
+    """
+    return db_session \
+        .query(Request) \
+        .filter(and_(Request.endpoint_id == endpoint_id, Request.status_code.isnot(None), Request.status_code >= 400,
+                     Request.status_code <= 599, *criterion)) \
+        .all()
+
+
+def get_status_code_frequencies_in_interval(db_session, endpoint_id, start_date, end_date):
+    criterion = create_time_based_sample_criterion(start_date, end_date)
+    return get_status_code_frequencies(db_session, endpoint_id, criterion)
 
 
 def get_hourly_load(db_session, endpoint_id, start_date, end_date):

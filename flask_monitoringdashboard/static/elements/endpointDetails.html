@@ -1,0 +1,43 @@
+<div class="card mb-3" style="margin-top: 10px;" ng-controller="EndpointController" ng-show="endpoint.info.id > 0">
+    <div class="card-header"><h4>Endpoint details</h4></div>
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-striped table-bordered table-hover">
+                <tr>
+                    <td><b>Endpoint</b></td>
+                    <td>{{ endpoint.info.endpoint }}</td>
+                </tr>
+                <tr>
+                    <td><b>Color</b></td>
+                    <td style="background-color: {{ endpoint.info.color }};"></td>
+                </tr>
+                <tr>
+                    <td><b>ID</b></td>
+                    <td>{{ endpoint.info.id }}</td>
+                </tr>
+                <tr>
+                    <td><b>Rule(s)</b></td>
+                    <td>{{ endpoint.info.rules.join(', ') }}</td>
+                </tr>
+                <tr>
+                    <td><b>HTTP Methods</b></td>
+                    <td>{{ endpoint.info.methods.join(', ') }}</td>
+                </tr>
+                <tr>
+                    <td><b>Monitoring-level</b></td>
+                    <td ng-click="$event.stopPropagation()">
+                        <monitorlevel name="endpoint.info.endpoint" value="endpoint.info['monitor-level']" />
+                    </td>
+                </tr>
+                <tr>
+                    <td><b>URL to endpoint</b></td>
+                    <td><a href="{{ endpoint.info.url }}">{{ endpoint.info.url }}</a></td>
+                </tr>
+                <tr>
+                    <td><b>Total number of hits</b></td>
+                    <td>{{ endpoint.info.total_hits | number }}</td>
+                </tr>
+            </table>
+        </div>
+    </div>
+</div>

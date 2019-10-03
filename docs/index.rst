@@ -26,7 +26,7 @@ The Flask Monitoring Dashboard is an extension that offers 4 main functionalitie
   Outliers are requests that take much longer to process than regular requests. 
   The Dashboard automatically detects that a request is an outlier and stores extra information about it (stack trace, request values, Request headers, Request environment).
 
-- **CCollect additional information about your Flask-application:**
+- **Collect additional information about your Flask-application:**
   Suppose you have an User-table and you want to know how many users are registered on your Flask-application.
   Then, you can run the following query: 'SELECT Count(*) FROM USERS;'. But this is just annoying to do regularly.
   Therefore, you can configure this in the Flask-MonitoringDashboard, which will provide you this information per day (or other time interval).

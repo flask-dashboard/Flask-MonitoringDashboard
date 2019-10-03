@@ -5,6 +5,15 @@ All notable changes to this project will be documented in this file.
 This project adheres to `Semantic Versioning <http://semver.org/>`_.
 Please note that the changes before version 1.10.0 have not been documented.
 
+v3.0.0
+----------
+Changed
+
+- Tracking also status codes
+- Display times as numbers to make them sortable
+- Add leading slash to blueprint paths
+- Added status codes with corresponding views
+
 v2.1.1
 ----------
 Changed

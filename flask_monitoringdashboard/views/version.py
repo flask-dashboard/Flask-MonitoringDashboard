@@ -11,7 +11,7 @@ from flask_monitoringdashboard.database.versions import get_versions
 
 
 @blueprint.route('/api/versions')
-@blueprint.route('api/versions/<endpoint_id>')
+@blueprint.route('/api/versions/<endpoint_id>')
 @secure
 def versions(endpoint_id=None):
     """
@@ -26,7 +26,7 @@ def versions(endpoint_id=None):
         return jsonify(dicts)
 
 
-@blueprint.route('api/multi_version', methods=['POST'])
+@blueprint.route('/api/multi_version', methods=['POST'])
 @secure
 def multi_version():
     """
@@ -46,12 +46,11 @@ def multi_version():
     data = json.loads(request.data)['data']
     endpoints = data['endpoints']
     versions = data['versions']
-    # print(data)
     with session_scope() as db_session:
         return jsonify(get_multi_version_data(db_session, endpoints, versions))
 
 
-@blueprint.route('api/version_user/<endpoint_id>', methods=['POST'])
+@blueprint.route('/api/version_user/<endpoint_id>', methods=['POST'])
 @secure
 def version_user(endpoint_id):
     """
@@ -81,7 +80,7 @@ def version_user(endpoint_id):
         return jsonify(get_version_user_data(db_session, endpoint_id, versions, users))
 
 
-@blueprint.route('api/version_ip/<endpoint_id>', methods=['POST'])
+@blueprint.route('/api/version_ip/<endpoint_id>', methods=['POST'])
 @secure
 def version_ip(endpoint_id):
     """
@@ -109,4 +108,3 @@ def version_ip(endpoint_id):
 
     with session_scope() as db_session:
         return jsonify(get_version_ip_data(db_session, endpoint_id, versions, ips))
-

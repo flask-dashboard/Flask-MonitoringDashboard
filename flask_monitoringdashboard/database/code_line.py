@@ -1,5 +1,3 @@
-from sqlalchemy.orm.exc import NoResultFound
-
 from flask_monitoringdashboard.database import CodeLine
 
 
@@ -14,12 +12,12 @@ def get_code_line(db_session, fn, ln, name, code):
     :param code: line of code (string)
     :return: a CodeLine object
     """
-    try:
-        result = db_session.query(CodeLine). \
-            filter(CodeLine.filename == fn, CodeLine.line_number == ln, CodeLine.function_name == name,
-                   CodeLine.code == code).one()
-    except NoResultFound:
+    result = db_session.query(CodeLine). \
+        filter(CodeLine.filename == fn, CodeLine.line_number == ln, CodeLine.function_name == name,
+               CodeLine.code == code).first()
+    if not result:
         result = CodeLine(filename=fn, line_number=ln, function_name=name, code=code)
         db_session.add(result)
         db_session.flush()
+
     return result

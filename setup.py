@@ -7,7 +7,7 @@ loc = os.path.dirname(os.path.abspath(__file__))
 
 
 def get_description():
-    with open(loc + '/README.md') as readme:
+    with open(loc + '/docs/README.rst') as readme:
         info = readme.read()
     with open(loc + '/docs/changelog.rst') as changelog:
         return info + '\n\n' + changelog.read()

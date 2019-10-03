@@ -33,7 +33,8 @@ class TestProfiler(unittest.TestCase):
             from flask import request
             request.environ['REMOTE_ADDR'] = '127.0.0.1'
             num_threads = threading.active_count()
-            start_performance_thread(Endpoint(id=1, name=NAME), 1234)
+            start_performance_thread(Endpoint(id=1, name=NAME), 1234, 200)
+            self.assertEqual(threading.active_count(), num_threads + 1)
             self.wait_until_threads_finished(num_threads)
             from flask_monitoringdashboard.core.cache import memory_cache
             self.assertGreater(memory_cache.get(NAME).average_duration, 0)
@@ -45,7 +46,7 @@ class TestProfiler(unittest.TestCase):
             num_threads = threading.active_count()
             outlier = start_outlier_thread(Endpoint(id=1, name=NAME))
             self.assertEqual(threading.active_count(), num_threads + 1)
-            outlier.stop(1)
+            outlier.stop(duration=1, status_code=200)
             self.wait_until_threads_finished(num_threads)
 
     def test_start_profiler_and_outlier_thread(self):
@@ -55,6 +56,6 @@ class TestProfiler(unittest.TestCase):
             num_threads = threading.active_count()
             thread = start_profiler_and_outlier_thread(Endpoint(id=1, name=NAME))
             self.assertEqual(threading.active_count(), num_threads + 2)
-            thread.stop(1234)
+            thread.stop(duration=1, status_code=200)
             self.wait_until_threads_finished(num_threads)
 

@@ -43,7 +43,11 @@ class Config(object):
 
         # visualization
         self.colors = {}
-        self.timezone = pytz.timezone(str(get_localzone()))
+        try:
+            self.timezone = pytz.timezone(str(get_localzone()))
+        except pytz.UnknownTimeZoneError:
+            log('Using default timezone, which is UTC')
+            self.timezone = pytz.timezone('UTC')
 
         # define a custom function to retrieve the session_id or username
         self.group_by = None
@@ -101,7 +105,7 @@ class Config(object):
             file = os.getenv(envvar)
             if log_verbose:
                 log("Running with config from: " + (str(file)))
-                
+
         if not file:
             # Travis does not need a config file.
             if '/home/travis/build/' in os.getcwd():
@@ -135,7 +139,7 @@ class Config(object):
             # visualization
             self.colors = parse_literal(parser, 'visualization', 'COLORS', self.colors)
             self.timezone = pytz.timezone(parse_string(parser, 'visualization', 'TIMEZONE', self.timezone.zone))
-            
+
             if log_verbose:
                 log("version: " + self.version)
                 log("username: " + self.username)
