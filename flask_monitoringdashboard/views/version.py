@@ -1,7 +1,10 @@
 from flask import jsonify, request, json
 
-from flask_monitoringdashboard.controllers.versions import get_multi_version_data, get_version_user_data, \
-    get_version_ip_data
+from flask_monitoringdashboard.controllers.versions import (
+    get_multi_version_data,
+    get_version_user_data,
+    get_version_ip_data,
+)
 from flask_monitoringdashboard.database import session_scope
 
 from flask_monitoringdashboard.core.auth import secure

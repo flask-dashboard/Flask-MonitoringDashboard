@@ -1,6 +1,6 @@
 """
-    This file contains all unit tests that count a number of results in the database. (Corresponding to the file:
-    'flask_monitoringdashboard/database/count.py')
+    This file contains all unit tests that count a number of results in the database.
+    (Corresponding to the file: 'flask_monitoringdashboard/database/count.py')
     See info_box.py for how to run the test-cases.
 """
 
@@ -16,7 +16,6 @@ CODE = 'code'
 
 
 class TestCodeLine(unittest.TestCase):
-
     def test_get_code_line(self):
         with session_scope() as db_session:
             code_line1 = get_code_line(db_session, FN, LN, FUN, CODE)

@@ -36,6 +36,8 @@ def main(argv=None):
     version = pypi_json['info']['version'].split('.')
 
     version[index] = int(version[index]) + 1
+    for i in range(index + 1, len(version)):  # set version after updated version to 0
+        version[i] = 0
     constants['version'] = '.'.join(str(v) for v in version)
     print('Increased {} version to {}'.format(args.type, constants['version']))
 

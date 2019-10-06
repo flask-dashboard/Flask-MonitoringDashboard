@@ -1,10 +1,11 @@
 """
-    Use this file for migrating your data from SQLite to MySQL. It only works for version >=2.0.0 of the Flask
-    Monitoring Dashboard. For migrating your data from version 1.x.x to 2.y.y, use the script "migrate_v1_to_v2.py".
+    Use this file for migrating your data from SQLite to MySQL. It only works for version >=2.0.0
+    of the Flask Monitoring Dashboard. For migrating your data from version 1.x.x to 2.y.y, use
+    the script "migrate_v1_to_v2.py".
 
     Before running the script, make sure to change the SQLITE_URL and MYSQL_URL variables. Refer to
-    http://docs.sqlalchemy.org/en/latest/core/engines.html on how to configure them. Also, make sure MySQL Server
-    is running on your machine.
+    http://docs.sqlalchemy.org/en/latest/core/engines.html on how to configure them. Also, make sure
+    MySQL Server is running on your machine.
 """
 import timeit
 
@@ -69,9 +70,11 @@ def migrate_batch(old_instances, db_session_new, entity_class):
 
 def migrate_all(db_session_old, db_session_new, entity_class, count):
     chunks = count // CHUNK_SIZE
-    for i in range(chunks+1):
-        print("Moving batch %d of %d for entity %s..." % (i+1, chunks+1, entity_class.__name__))
-        old_instances = get_old_instances(db_session_old, entity_class, i * CHUNK_SIZE, (i + 1) * CHUNK_SIZE)
+    for i in range(chunks + 1):
+        print("Moving batch %d of %d for entity %s..." % (i + 1, chunks + 1, entity_class.__name__))
+        old_instances = get_old_instances(
+            db_session_old, entity_class, i * CHUNK_SIZE, (i + 1) * CHUNK_SIZE
+        )
         migrate_batch(old_instances, db_session_new, entity_class)
 
 

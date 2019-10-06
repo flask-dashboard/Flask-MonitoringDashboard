@@ -3,12 +3,12 @@ import unittest
 
 
 class TestConfig(unittest.TestCase):
-
     def test_init_from(self):
         """
             Test whether the group_by returns the right result
         """
         import flask_monitoringdashboard as dashboard
+
         dashboard.config.init_from()
         dashboard.config.init_from(file='../../config.cfg')
 
@@ -16,7 +16,13 @@ class TestConfig(unittest.TestCase):
         """
             Test whether the parser reads the right values
         """
-        from flask_monitoringdashboard.core.config.parser import parse_literal, parse_bool, parse_string, parse_version
+        from flask_monitoringdashboard.core.config.parser import (
+            parse_literal,
+            parse_bool,
+            parse_string,
+            parse_version,
+        )
+
         parser = configparser.RawConfigParser()
         version = '1.2.3'
         string = 'string-value'
@@ -47,5 +53,6 @@ class TestConfig(unittest.TestCase):
 
         from flask_monitoringdashboard.core.config.parser import get_environment_var
         import os
+
         os.environ[name] = value
         self.assertEqual(get_environment_var(name), value)

@@ -18,4 +18,5 @@ def fmd():
 def init_db():
     # Importing the database package is enough
     import flask_monitoringdashboard.database
+
     print('Flask-MonitoringDashboard database has been created')

@@ -11,8 +11,7 @@ def get_graph_id_from_name(db_session, name):
              a new graph is added to the database.
     """
     try:
-        result = db_session.query(CustomGraph). \
-            filter(CustomGraph.title == name).one()
+        result = db_session.query(CustomGraph).filter(CustomGraph.title == name).one()
     except NoResultFound:
         result = CustomGraph(title=name)
         db_session.add(result)
@@ -38,8 +37,13 @@ def get_graph_data(db_session, graph_id, start_date, end_date):
     :param end_date: Datetime object that denotes the end of the interval
     :return: A list with values retrieved from the database
     """
-    return [row2dict(row) for row in
-            db_session.query(CustomGraphData).
-                filter(CustomGraphData.graph_id == graph_id,
-                       CustomGraphData.time >= start_date,
-                       CustomGraphData.time <= end_date).all()]
+    return [
+        row2dict(row)
+        for row in db_session.query(CustomGraphData)
+        .filter(
+            CustomGraphData.graph_id == graph_id,
+            CustomGraphData.time >= start_date,
+            CustomGraphData.time <= end_date,
+        )
+        .all()
+    ]

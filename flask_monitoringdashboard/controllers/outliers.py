@@ -1,5 +1,6 @@
 import ast
 
+from flask_monitoringdashboard.core.logger import log
 from flask_monitoringdashboard.core.colors import get_color
 from flask_monitoringdashboard.core.timezone import to_local_datetime
 from flask_monitoringdashboard.core.utils import simplify
@@ -16,11 +17,10 @@ def get_outlier_graph(db_session, endpoint_id):
     all_cpus = get_outliers_cpus(db_session, endpoint_id)
     cpu_data = [ast.literal_eval(cpu) for cpu in all_cpus]
 
-    return [{
-        'name': 'CPU core %d' % idx,
-        'values': simplify(data, 50),
-        'color': get_color(idx)
-    } for idx, data in enumerate(zip(*cpu_data))]
+    return [
+        {'name': 'CPU core %d' % idx, 'values': simplify(data, 50), 'color': get_color(idx)}
+        for idx, data in enumerate(zip(*cpu_data))
+    ]
 
 
 def get_outlier_table(db_session, endpoint_id, offset, per_page):
@@ -36,8 +36,8 @@ def get_outlier_table(db_session, endpoint_id, offset, per_page):
         row.request.time_requested = to_local_datetime(row.request.time_requested)
         try:
             row.request_url = row.request_url.decode('utf-8')
-        except:
-            pass
+        except Exception as e:
+            log(e)
         dict_request = row2dict(row.request)
         table[idx] = row2dict(row)
         table[idx]['request'] = dict_request

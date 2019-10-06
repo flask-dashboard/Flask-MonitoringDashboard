@@ -2,7 +2,6 @@ import unittest
 
 
 class TestColors(unittest.TestCase):
-
     def test_get_color(self):
         from flask_monitoringdashboard import config
         from flask_monitoringdashboard.core.colors import get_color

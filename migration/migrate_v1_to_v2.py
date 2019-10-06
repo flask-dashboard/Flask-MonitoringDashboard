@@ -30,6 +30,7 @@ tests_dict = {}
 
 def create_new_db(db_url):
     from flask_monitoringdashboard.database import Base
+
     engine = create_engine(db_url)
     Base.metadata.drop_all(engine)
     Base.metadata.create_all(engine)
@@ -67,9 +68,11 @@ def session_scope():
 def get_session(db_url):
     """This creates the new database and returns the session scope."""
     from flask_monitoringdashboard import config
+
     config.database_name = db_url
 
     import flask_monitoringdashboard.database
+
     return flask_monitoringdashboard.database.session_scope()
 
 
@@ -86,9 +89,13 @@ def move_rules(old_connection):
     endpoints = []
     with session_scope() as db_session:
         for rule in rules:
-            end = Endpoint(name=rule['endpoint'], monitor_level=rule['monitor'],
-                           time_added=parse(rule['time_added']), version_added=rule['version_added'],
-                           last_requested=parse(rule['last_accessed']))
+            end = Endpoint(
+                name=rule['endpoint'],
+                monitor_level=rule['monitor'],
+                time_added=parse(rule['time_added']),
+                version_added=rule['version_added'],
+                last_requested=parse(rule['last_accessed']),
+            )
             endpoints.append(end)
         db_session.bulk_save_objects(endpoints)
 
@@ -106,9 +113,14 @@ def move_function_calls(old_connection):
     with session_scope() as db_session:
         populate_endpoint_dict(db_session)
         for fc in function_calls:
-            request = Request(endpoint_id=endpoint_dict[fc['endpoint']], duration=fc['execution_time'],
-                              time_requested=parse(fc['time']), version_requested=fc['version'],
-                              group_by=fc['group_by'], ip=fc['ip'])
+            request = Request(
+                endpoint_id=endpoint_dict[fc['endpoint']],
+                duration=fc['execution_time'],
+                time_requested=parse(fc['time']),
+                version_requested=fc['version'],
+                group_by=fc['group_by'],
+                ip=fc['ip'],
+            )
             requests.append(request)
         db_session.bulk_save_objects(requests)
 
@@ -116,7 +128,10 @@ def move_function_calls(old_connection):
 def get_request_id(requests, time, execution_time, start_index):
     for index, r in enumerate(requests):
         if index >= start_index:
-            if abs(r.time_requested - parse(time)) < SEARCH_REQUEST_TIME and r.duration == execution_time:
+            if (
+                abs(r.time_requested - parse(time)) < SEARCH_REQUEST_TIME
+                and r.duration == execution_time
+            ):
                 return r.id, index
     return None, start_index
 
@@ -127,7 +142,9 @@ def populate_outlier_dict(connection, db_session):
     requests = db_session.query(Request).options(joinedload(Request.endpoint)).all()
     index = 0
     for outlier in outliers:
-        req_id, index = get_request_id(requests, outlier['time'], outlier['execution_time'], start_index=index)
+        req_id, index = get_request_id(
+            requests, outlier['time'], outlier['execution_time'], start_index=index
+        )
         outlier_dict[outlier['id']] = req_id
 
 
@@ -138,9 +155,15 @@ def move_outliers(old_connection):
     with session_scope() as db_session:
         populate_outlier_dict(old_connection, db_session)
         for o in old_outliers:
-            outlier = Outlier(request_id=outlier_dict[o['id']], request_header=o['request_headers'],
-                              request_environment=o['request_environment'], request_url=o['request_url'],
-                              cpu_percent=o['cpu_percent'], memory=o['memory'], stacktrace=o['stacktrace'])
+            outlier = Outlier(
+                request_id=outlier_dict[o['id']],
+                request_header=o['request_headers'],
+                request_environment=o['request_environment'],
+                request_url=o['request_url'],
+                cpu_percent=o['cpu_percent'],
+                memory=o['memory'],
+                stacktrace=o['stacktrace'],
+            )
             outliers.append(outlier)
         db_session.bulk_save_objects(outliers)
 
@@ -149,6 +172,7 @@ def main():
     create_new_db(NEW_DB_URL)
     old_connection = get_connection(OLD_DB_URL)
     import timeit
+
     start = timeit.default_timer()
     move_rules(old_connection)
     t1 = timeit.default_timer()

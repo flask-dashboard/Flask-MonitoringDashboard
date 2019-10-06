@@ -6,8 +6,12 @@ import time
 from functools import wraps
 
 from flask_monitoringdashboard import config
-from flask_monitoringdashboard.core.profiler import start_thread_last_requested, start_performance_thread, \
-    start_outlier_thread, start_profiler_and_outlier_thread
+from flask_monitoringdashboard.core.profiler import (
+    start_thread_last_requested,
+    start_performance_thread,
+    start_outlier_thread,
+    start_profiler_and_outlier_thread,
+)
 from flask_monitoringdashboard.core.rules import get_rules
 from flask_monitoringdashboard.database import session_scope
 from flask_monitoringdashboard.database.endpoint import get_endpoint_by_name

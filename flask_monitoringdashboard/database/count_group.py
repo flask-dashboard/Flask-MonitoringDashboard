@@ -14,8 +14,12 @@ def count_rows_group(db_session, column, *criterion):
     :param criterion: where-clause of the query
     :return list with the number of rows per endpoint
     """
-    return db_session.query(Request.endpoint_id, func.count(column)). \
-        filter(*criterion).group_by(Request.endpoint_id).all()
+    return (
+        db_session.query(Request.endpoint_id, func.count(column))
+        .filter(*criterion)
+        .group_by(Request.endpoint_id)
+        .all()
+    )
 
 
 def get_value(list, name, default=0):
@@ -49,6 +53,12 @@ def count_requests_per_day(db_session, list_of_days):
         dt_begin = to_utc_datetime(datetime.datetime.combine(day, datetime.time(0, 0, 0)))
         dt_end = dt_begin + datetime.timedelta(days=1)
 
-        result.append(count_rows_group(db_session, Request.id, Request.time_requested >= dt_begin,
-                                       Request.time_requested < dt_end))
+        result.append(
+            count_rows_group(
+                db_session,
+                Request.id,
+                Request.time_requested >= dt_begin,
+                Request.time_requested < dt_end,
+            )
+        )
     return result
