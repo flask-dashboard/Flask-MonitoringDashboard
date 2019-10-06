@@ -106,5 +106,12 @@ If you run into trouble migrating from version 1.X.X to version 2.0.0, this site
 ![Screenshot 4](/docs/img/ss4.png)
 ![Screenshot 5](/docs/img/ss5.png)
 
+## Development
+If you like our project, and willing to contribute, you can get started by running the following command:
+
+    . ./config/install.sh
+
+For more information, check [this page](https://flask-monitoringdashboard.readthedocs.io/en/latest/developing.html).
+
 ## License
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
