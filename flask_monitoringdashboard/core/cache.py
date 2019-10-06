@@ -18,8 +18,11 @@ class EndpointInfo(object):
     Info about an endpoint that is stored in the memory cache.
     """
     def __init__(self, last_requested=None, average_duration=None, hits=None):
+        # timestamp of the most recent request
         self.last_requested = last_requested
+        # all-time average duration
         self.average_duration = average_duration if average_duration else 0
+        # all-time number of requests
         self.hits = hits if hits else 0
 
     def set_last_requested(self, last_requested):
@@ -36,20 +39,10 @@ class EndpointInfo(object):
             return self.average_duration
 
 
-def display_cache():
-    """
-    Debug purposes.
-    """
-    global memory_cache
-    for k in memory_cache.keys():
-        print('%s : last=%s, avg=%f, hits=%d' % (k, memory_cache[k].last_requested,
-                                                 memory_cache[k].average_duration, memory_cache[k].hits))
-
-
 def init_cache():
     """
     This should be added to the list of functions that are executed before the first request.
-    It initializes the in memory cache from the db
+    It initializes the in-memory cache from the db
     """
     global memory_cache
     with session_scope() as db_session:
@@ -92,10 +85,7 @@ def get_last_requested_overview():
     Get the last requested values from the cache for the overview page.
     """
     global memory_cache
-    access_times = []
-    for endpoint_name, endpoint_info in memory_cache.items():
-        access_times.append((endpoint_name, endpoint_info.last_requested))
-    return access_times
+    return [(endpoint_name, endpoint_info.last_requested) for endpoint_name, endpoint_info in memory_cache.items]
 
 
 def flush_cache():
