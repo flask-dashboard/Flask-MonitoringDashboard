@@ -5,6 +5,8 @@ import datetime
 
 from flask import Flask, json
 
+from flask_monitoringdashboard.core.cache import EndpointInfo
+
 NAME = 'main'
 ENDPOINT_ID = 1
 REQUEST_IDS = [1, 2, 3, 4, 5]
@@ -17,6 +19,7 @@ OUTLIER_COUNT = 3
 for index, _ in enumerate(TIMES):
     TIMES[index] -= datetime.timedelta(seconds=len(REQUESTS) - index)
 TEST_NAMES = ['test_name1', 'test_name2']
+TEST_CACHE = {NAME: EndpointInfo()}
 
 
 def set_test_environment():
@@ -79,6 +82,7 @@ def get_test_app(schedule=False):
     user_app.config['WTF_CSRF_METHODS'] = []
     flask_monitoringdashboard.config.get_group_by = lambda: '12345'
     flask_monitoringdashboard.bind(app=user_app, schedule=schedule)
+    flask_monitoringdashboard.core.cache.memory_cache = TEST_CACHE
     return user_app
 
 

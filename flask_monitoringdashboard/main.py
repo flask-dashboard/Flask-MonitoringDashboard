@@ -16,6 +16,7 @@ dashboard.config.group_by = '2'
 dashboard.config.database_name = 'sqlite:///data.db'
 # dashboard.config.database_name = 'mysql+pymysql://user:password@localhost:3306/db1'
 # dashboard.config.database_name = 'postgresql://user:password@localhost:5432/mydb'
+
 dashboard.bind(app)
 
 
@@ -56,10 +57,3 @@ def my_func():
     # here should be something actually useful
     return 33.3
 
-# schedule = {'weeks': 0,
-#             'days': 0,
-#             'hours': 1,
-#             'minutes': 30,
-#             'seconds': 0}
-#
-# dashboard.add_graph('Graph1', lambda: my_func(), **schedule)

@@ -47,10 +47,10 @@ class TestEndpoint(unittest.TestCase):
         """
         import datetime
         time = datetime.datetime.utcnow()
-        from flask_monitoringdashboard.database.endpoint import update_last_accessed, get_last_requested
+        from flask_monitoringdashboard.database.endpoint import update_last_requested, get_last_requested
         from flask_monitoringdashboard.database.count_group import get_value
         with session_scope() as db_session:
-            update_last_accessed(db_session, NAME)
+            update_last_requested(db_session, NAME)
             result = get_value(get_last_requested(db_session), NAME)
             result_utc = to_utc_datetime(result)
             self.assertTrue((result_utc - time).seconds < 1)

@@ -135,14 +135,16 @@ def get_last_requested(db_session):
     return result
 
 
-def update_last_accessed(db_session, endpoint_name):
+def update_last_requested(db_session, endpoint_name, timestamp=None):
     """
     Updates the timestamp of last access of the endpoint.
     :param db_session: session for the database
     :param endpoint_name: name of the endpoint
+    :param timestamp: optional timestamp. If not given, timestamp is current time
     """
+    ts = timestamp if timestamp else datetime.datetime.utcnow()
     db_session.query(Endpoint).filter(Endpoint.name == endpoint_name). \
-        update({Endpoint.last_requested: datetime.datetime.utcnow()})
+        update({Endpoint.last_requested: ts})
 
 
 def get_endpoints(db_session):
@@ -167,3 +169,28 @@ def get_endpoints_hits(db_session):
         join(Request). \
         group_by(Endpoint.name).\
         order_by(desc(func.count(Request.endpoint_id))).all()
+
+
+def get_avg_duration(db_session, endpoint_id):
+    """ Returns the average duration of all the requests of an endpoint. If there are no requests for that endpoint,
+        it returns 0.
+    :param db_session: session for the database
+    :param endpoint_id: id of the endpoint
+    :return average duration
+    """
+    result = db_session.query(func.avg(Request.duration).label('average')). \
+        filter(Request.endpoint_id == endpoint_id).one()
+    if result[0]:
+        return result[0]
+    return 0
+
+
+def get_endpoint_averages(db_session):
+    """ Returns the average duration of all endpoints. If there are no requests for an endpoint,
+        the average will be none.
+    :param db_session: session for the database
+    :return tuple of (endpoint_name, avg_duration)
+    """
+    result = db_session.query(Endpoint.name, func.avg(Request.duration).label('average')).\
+        outerjoin(Request).group_by(Endpoint.name).all()
+    return result

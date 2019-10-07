@@ -30,11 +30,21 @@ def start_performance_thread(endpoint, duration, status_code):
 
 
 def start_profiler_thread(endpoint):
-    """ Starts a thread that monitors the main thread. """
+    """ Starts a thread that profiles the main thread. """
     current_thread = threading.current_thread().ident
     ip = request.environ['REMOTE_ADDR']
     group_by = get_group_by()
     thread = StacktraceProfiler(current_thread, endpoint, ip, group_by)
+    thread.start()
+    return thread
+
+
+def start_outlier_thread(endpoint):
+    """ Starts a thread that collects outliers."""
+    current_thread = threading.current_thread().ident
+    ip = request.environ['REMOTE_ADDR']
+    group_by = get_group_by()
+    thread = OutlierProfiler(current_thread, endpoint, ip, group_by)
     thread.start()
     return thread
 
@@ -44,7 +54,7 @@ def start_profiler_and_outlier_thread(endpoint):
     current_thread = threading.current_thread().ident
     ip = request.environ['REMOTE_ADDR']
     group_by = get_group_by()
-    outlier = OutlierProfiler(current_thread, endpoint)
+    outlier = OutlierProfiler(current_thread, endpoint, ip, group_by)
     thread = StacktraceProfiler(current_thread, endpoint, ip, group_by, outlier)
     thread.start()
     outlier.start()

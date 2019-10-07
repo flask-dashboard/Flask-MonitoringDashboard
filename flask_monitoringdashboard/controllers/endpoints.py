@@ -2,6 +2,7 @@ import datetime
 
 from numpy import median
 
+import flask_monitoringdashboard.core.cache as cache
 from flask_monitoringdashboard import config
 from flask_monitoringdashboard.core.colors import get_color
 from flask_monitoringdashboard.core.measurement import add_decorator
@@ -27,6 +28,8 @@ def get_endpoint_overview(db_session):
     today_local = now_local.replace(hour=0, minute=0, second=0, microsecond=0)
     today_utc = to_utc_datetime(today_local)
 
+    # First flush last requested info to db
+    cache.flush_cache()
     error_hits_criterion = and_(Request.status_code >= 400,
                                 Request.status_code < 600)
 
