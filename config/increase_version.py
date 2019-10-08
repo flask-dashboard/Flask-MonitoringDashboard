@@ -9,6 +9,7 @@ import json
 import sys
 import requests
 import os
+import subprocess
 
 HERE = os.path.dirname(os.path.realpath(__file__))
 FILE = os.path.abspath(os.path.join(HERE, '..', 'flask_monitoringdashboard', 'constants.json'))
@@ -23,6 +24,17 @@ def main(argv=None):
     if args.type not in options:
         print('Incorrect argument type: {}. Options are: {}'.format(args.type, ', '.join(options)))
         return 1
+
+    branch = (
+        subprocess.Popen("git rev-parse --abbrev-ref HEAD", shell=True, stdout=subprocess.PIPE)
+        .stdout.read()
+        .decode('utf-8')
+        .replace('\n', '')
+    )
+
+    if branch != 'development':
+        print('Only increasing version on development, not on branch "{}"'.format(branch))
+        return 0
 
     index = options.index(args.type)
 
