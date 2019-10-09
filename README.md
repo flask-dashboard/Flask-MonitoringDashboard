@@ -107,7 +107,7 @@ If you run into trouble migrating from version 1.X.X to version 2.0.0, this site
 ![Screenshot 5](/docs/img/ss5.png)
 
 ## Development
-If you like our project, and willing to contribute, you can get started by running the following command:
+If you like our project, and willing to contribute, you can get started by cloning it and then running the following command:
 
     . ./config/install.sh
 
