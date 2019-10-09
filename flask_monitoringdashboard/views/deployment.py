@@ -17,9 +17,12 @@ def deploy_details():
     """
     with session_scope() as db_session:
         details = get_details(db_session)
-    details['first-request'] = to_local_datetime(datetime.datetime.fromtimestamp(details['first-request']))
-    details['first-request-version'] = to_local_datetime(datetime.datetime.
-                                                         fromtimestamp(details['first-request-version']))
+    details['first-request'] = to_local_datetime(
+        datetime.datetime.fromtimestamp(details['first-request'])
+    )
+    details['first-request-version'] = to_local_datetime(
+        datetime.datetime.fromtimestamp(details['first-request-version'])
+    )
     return jsonify(details)
 
 
@@ -29,28 +32,13 @@ def deploy_config():
     """
     :return: A JSON-object with configuration details
     """
-    return jsonify({
-        'database_name': config.database_name,
-        'username': config.username,
-        'guest_username': config.guest_username,
-        'outlier_detection_constant': config.outlier_detection_constant,
-        'timezone': str(config.timezone),
-        'colors': config.colors
-    })
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+    return jsonify(
+        {
+            'database_name': config.database_name,
+            'username': config.username,
+            'guest_username': config.guest_username,
+            'outlier_detection_constant': config.outlier_detection_constant,
+            'timezone': str(config.timezone),
+            'colors': config.colors,
+        }
+    )

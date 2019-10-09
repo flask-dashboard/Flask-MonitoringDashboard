@@ -10,6 +10,22 @@ this page shows FMD from the point of view of the developer. We explain the
 architecture of the project, take a look at the main components, and then
 present some useful tools that we use during development.
 
+Getting started
+----------------
+In order to get started with the environment of the FMD, run the following script
+
+.. code-block:: bash
+
+     . ./config/install.sh
+
+Note the '. ' before the script. This will activate your virtual environment. This script is
+responsible for setting up the project, and installing the following pre-commit hooks:
+
+- `Black`_: for automatic formatting the code. Note that we use a width-length of 100 characters.
+- `Flake8`_: for checking style error.
+- Auto increase the Python version. This can either be a major, minor, or patch version increase. For more info, see
+the Versions-section below.
+
 Architecture
 --------------
 
@@ -162,3 +178,5 @@ The following tools are used for helping the development of the Dashboard:
 .. _`SQLAlchemy`: https://www.sqlalchemy.org/
 .. _Sphinx: www.sphinx-doc.org
 .. _ReadTheDocs: http://flask-monitoringdashboard.readthedocs.io
+.. _Black: https://github.com/psf/black
+.. _Flake8: https://pypi.org/project/flake8

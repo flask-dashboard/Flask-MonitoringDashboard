@@ -6,8 +6,12 @@ from multiprocessing import Lock
 
 from flask_monitoringdashboard.core.rules import get_rules
 from flask_monitoringdashboard.database import session_scope
-from flask_monitoringdashboard.database.endpoint import get_last_requested, get_endpoints_hits, get_endpoint_averages, \
-    update_last_requested
+from flask_monitoringdashboard.database.endpoint import (
+    get_last_requested,
+    get_endpoints_hits,
+    get_endpoint_averages,
+    update_last_requested,
+)
 
 memory_cache = {}
 mutex = Lock()
@@ -17,6 +21,7 @@ class EndpointInfo(object):
     """
     Info about an endpoint that is stored in the memory cache.
     """
+
     def __init__(self, last_requested=None, average_duration=None, hits=None):
         # timestamp of the most recent request
         self.last_requested = last_requested
@@ -31,7 +36,9 @@ class EndpointInfo(object):
 
     def set_duration(self, duration):
         with mutex:
-            self.average_duration = (self.average_duration * self.hits + duration)/float(self.hits + 1)
+            self.average_duration = (self.average_duration * self.hits + duration) / float(
+                self.hits + 1
+            )
             self.hits += 1
 
     def get_duration(self):
@@ -50,9 +57,11 @@ def init_cache():
         hits_dict = dict(get_endpoints_hits(db_session))
         averages_dict = dict(get_endpoint_averages(db_session))
         for rule in get_rules():
-            memory_cache[rule.endpoint] = EndpointInfo(last_requested=last_req_dict.get(rule.endpoint),
-                                                       average_duration=averages_dict.get(rule.endpoint),
-                                                       hits=hits_dict.get(rule.endpoint))
+            memory_cache[rule.endpoint] = EndpointInfo(
+                last_requested=last_req_dict.get(rule.endpoint),
+                average_duration=averages_dict.get(rule.endpoint),
+                hits=hits_dict.get(rule.endpoint),
+            )
 
 
 def update_last_requested_cache(endpoint_name):

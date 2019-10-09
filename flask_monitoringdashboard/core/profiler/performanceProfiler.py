@@ -21,5 +21,11 @@ class PerformanceProfiler(BaseProfiler):
     def run(self):
         update_duration_cache(endpoint_name=self._endpoint.name, duration=self._duration)
         with session_scope() as db_session:
-            add_request(db_session, duration=self._duration, endpoint_id=self._endpoint.id, ip=self._ip,
-                        group_by=self._group_by, status_code=self._status_code)
+            add_request(
+                db_session,
+                duration=self._duration,
+                endpoint_id=self._endpoint.id,
+                ip=self._ip,
+                group_by=self._group_by,
+                status_code=self._status_code,
+            )

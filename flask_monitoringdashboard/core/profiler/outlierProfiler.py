@@ -34,7 +34,7 @@ class OutlierProfiler(threading.Thread):
     def run(self):
         # sleep for average * ODC ms
         average = get_avg_endpoint(self._endpoint.name) * config.outlier_detection_constant
-        self._exit.wait(average/1000)
+        self._exit.wait(average / 1000)
         if not self._exit.is_set():
             stack_list = []
             try:
@@ -48,7 +48,9 @@ class OutlierProfiler(threading.Thread):
                 if self._endpoint.name == fun:
                     in_endpoint_code = True
                 if in_endpoint_code:
-                    stack_list.append('File: "{}", line {}, in "{}": "{}"'.format(fn, ln, fun, line))
+                    stack_list.append(
+                        'File: "{}", line {}, in "{}": "{}"'.format(fn, ln, fun, line)
+                    )
 
             # Set the values in the object
             self._stacktrace = '<br />'.join(stack_list)
@@ -57,12 +59,25 @@ class OutlierProfiler(threading.Thread):
 
     def stop(self, duration, status_code):
         self._exit.set()
-        update_duration_cache(endpoint_name=self._endpoint.name, duration=duration*1000)
+        update_duration_cache(endpoint_name=self._endpoint.name, duration=duration * 1000)
         with session_scope() as db_session:
-            request_id = add_request(db_session, duration=duration*1000, endpoint_id=self._endpoint.id, ip=self._ip,
-                                     group_by=self._group_by, status_code=status_code)
+            request_id = add_request(
+                db_session,
+                duration=duration * 1000,
+                endpoint_id=self._endpoint.id,
+                ip=self._ip,
+                group_by=self._group_by,
+                status_code=status_code,
+            )
             if self._memory:
-                add_outlier(db_session, request_id, self._cpu_percent, self._memory, self._stacktrace, self._request)
+                add_outlier(
+                    db_session,
+                    request_id,
+                    self._cpu_percent,
+                    self._memory,
+                    self._stacktrace,
+                    self._request,
+                )
 
     def stop_by_profiler(self):
         self._exit.set()
@@ -70,4 +85,11 @@ class OutlierProfiler(threading.Thread):
     def add_outlier(self, request_id):
         if self._memory:
             with session_scope() as db_session:
-                add_outlier(db_session, request_id, self._cpu_percent, self._memory, self._stacktrace, self._request)
+                add_outlier(
+                    db_session,
+                    request_id,
+                    self._cpu_percent,
+                    self._memory,
+                    self._stacktrace,
+                    self._request,
+                )

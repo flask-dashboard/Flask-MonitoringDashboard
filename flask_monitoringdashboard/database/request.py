@@ -18,7 +18,13 @@ def add_request(db_session, duration, endpoint_id, ip, group_by, status_code):
     :param group_by: a criteria by which the requests can be grouped
     :return the id of the request after it was stored in the database
     """
-    request = Request(endpoint_id=endpoint_id, duration=duration, ip=ip, group_by=group_by, status_code=status_code)
+    request = Request(
+        endpoint_id=endpoint_id,
+        duration=duration,
+        ip=ip,
+        group_by=group_by,
+        status_code=status_code,
+    )
     db_session.add(request)
     db_session.flush()
     return request.id
@@ -45,9 +51,12 @@ def get_date_of_first_request_version(db_session, version):
     :param version: version of the dashboard
     :return time of the first request in that version
     """
-    result = db_session.query(Request.time_requested). \
-        filter(Request.version_requested == version). \
-        order_by(Request.time_requested).first()
+    result = (
+        db_session.query(Request.time_requested)
+        .filter(Request.version_requested == version)
+        .order_by(Request.time_requested)
+        .first()
+    )
     if result:
         return int(time.mktime(result[0].timetuple()))
     return -1

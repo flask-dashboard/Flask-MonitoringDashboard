@@ -8,7 +8,10 @@ from flask_monitoringdashboard.core.rules import get_rules
 from flask_monitoringdashboard.core.timezone import to_local_datetime
 from flask_monitoringdashboard.database.count import count_requests, count_total_requests
 from flask_monitoringdashboard.database.endpoint import get_endpoint_by_id
-from flask_monitoringdashboard.database.request import get_date_of_first_request, get_date_of_first_request_version
+from flask_monitoringdashboard.database.request import (
+    get_date_of_first_request,
+    get_date_of_first_request_version,
+)
 
 
 def get_endpoint_details(db_session, endpoint_id):
@@ -31,7 +34,7 @@ def get_endpoint_details(db_session, endpoint_id):
         'rules': [r.rule for r in get_rules(endpoint.name)],
         'monitor-level': endpoint.monitor_level,
         'url': get_url(endpoint.name),
-        'total_hits': count_requests(db_session, endpoint.id)
+        'total_hits': count_requests(db_session, endpoint.id),
     }
 
 
@@ -43,6 +46,7 @@ def get_details(db_session):
     """
     import json
     from flask_monitoringdashboard import loc
+
     with open(loc() + 'constants.json', 'r') as f:
         constants = json.load(f)
 
@@ -52,7 +56,7 @@ def get_details(db_session):
         'config-version': config.version,
         'first-request': get_date_of_first_request(db_session),
         'first-request-version': get_date_of_first_request_version(db_session, config.version),
-        'total-requests': count_total_requests(db_session)
+        'total-requests': count_total_requests(db_session),
     }
 
 

@@ -5,7 +5,10 @@ import numpy
 from flask_monitoringdashboard.core.profiler.util import PathHash
 from flask_monitoringdashboard.core.timezone import to_local_datetime
 from flask_monitoringdashboard.database import row2dict
-from flask_monitoringdashboard.database.stack_line import get_profiled_requests, get_grouped_profiled_requests
+from flask_monitoringdashboard.database.stack_line import (
+    get_profiled_requests,
+    get_grouped_profiled_requests,
+)
 
 
 def get_profiler_table(db_session, endpoint_id, offset, per_page):
@@ -48,12 +51,14 @@ def get_grouped_profiler(db_session, endpoint_id):
 
     table = []
     for key, duration_list in sorted(histogram.items(), key=lambda row: row[0]):
-        table.append({
-            'indent': path_hash.get_indent(key) - 1,
-            'code': path_hash.get_code(key),
-            'hits': len(duration_list),
-            'duration': sum(duration_list),
-            'std': numpy.std(duration_list),
-            'total_hits': len(requests),
-        })
+        table.append(
+            {
+                'indent': path_hash.get_indent(key) - 1,
+                'code': path_hash.get_code(key),
+                'hits': len(duration_list),
+                'duration': sum(duration_list),
+                'std': numpy.std(duration_list),
+                'total_hits': len(requests),
+            }
+        )
     return table

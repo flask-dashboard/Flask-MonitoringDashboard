@@ -3,7 +3,6 @@ from numpy import std
 
 
 class GroupedStackLine(object):
-
     def __init__(self, indent, code, values, total_sum, total_hits):
         self.indent = indent
         self.code = code

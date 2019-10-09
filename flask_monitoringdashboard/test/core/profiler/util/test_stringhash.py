@@ -4,7 +4,6 @@ from flask_monitoringdashboard.core.profiler.util.stringHash import StringHash
 
 
 class TestStringHash(unittest.TestCase):
-
     def test_stringhash(self):
         string_hash = StringHash()
 

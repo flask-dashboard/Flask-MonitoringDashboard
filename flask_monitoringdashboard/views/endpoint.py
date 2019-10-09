@@ -1,13 +1,26 @@
 from flask import jsonify, request, json
 
 from flask_monitoringdashboard import blueprint
-from flask_monitoringdashboard.controllers.endpoints import get_endpoint_overview, get_api_performance, \
-    set_endpoint_rule, get_endpoint_versions, get_endpoint_users
-from flask_monitoringdashboard.controllers.requests import get_status_code_distribution, get_error_requests
+from flask_monitoringdashboard.controllers.endpoints import (
+    get_endpoint_overview,
+    get_api_performance,
+    set_endpoint_rule,
+    get_endpoint_versions,
+    get_endpoint_users,
+)
+from flask_monitoringdashboard.controllers.requests import (
+    get_status_code_distribution,
+    get_error_requests,
+)
 from flask_monitoringdashboard.core.auth import secure, admin_secure
 from flask_monitoringdashboard.core.utils import get_endpoint_details
 from flask_monitoringdashboard.database import session_scope, row2dict
-from flask_monitoringdashboard.database.endpoint import get_users, get_ips, get_endpoints, get_endpoints_hits
+from flask_monitoringdashboard.database.endpoint import (
+    get_users,
+    get_ips,
+    get_endpoints,
+    get_endpoints_hits,
+)
 
 
 @blueprint.route('/api/overview')
@@ -66,7 +79,8 @@ def endpoints():
 @secure
 def endpoints_hits():
     """
-    :return: A JSON-list with information about every endpoint and its total number of hits (encoded in a JSON-object)
+    :return: A JSON-list with information about every endpoint and its total number of hits
+    (encoded in a JSON-object)
         For more information per endpoint, see :func: get_overview
     """
     with session_scope() as db_session:
@@ -142,7 +156,9 @@ def endpoint_status_code_summary(endpoint_id):
     with session_scope() as db_session:
         result = {
             'distribution': get_status_code_distribution(db_session, endpoint_id),
-            'error_requests': [row2dict(row) for row in get_error_requests(db_session, endpoint_id)]
+            'error_requests': [
+                row2dict(row) for row in get_error_requests(db_session, endpoint_id)
+            ],
         }
 
         return jsonify(result)

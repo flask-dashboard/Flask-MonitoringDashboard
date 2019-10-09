@@ -6,6 +6,7 @@
 # full list see the documentation:
 # http://www.sphinx-doc.org/en/stable/config
 import datetime
+
 # -- Path setup --------------------------------------------------------------
 
 # If extensions (or modules to document with autodoc) are in another directory,
@@ -15,6 +16,7 @@ import datetime
 import os
 import sys
 import json
+
 sys.path.insert(0, os.path.abspath('..'))
 sys.path.insert(0, os.path.abspath('../flask-monitoringdashboard'))
 
@@ -88,9 +90,7 @@ html_theme = 'flask'
 # further.  For a list of options available for each theme, see the
 # documentation.
 #
-html_theme_options = {
-    'github_fork': 'flask-dashboard/Flask-MonitoringDashboard'
-}
+html_theme_options = {'github_fork': 'flask-dashboard/Flask-MonitoringDashboard'}
 
 html_sidebars = {'**': ['globaltoc.html', 'searchbox.html', 'sourcelink.html']}
 
@@ -122,15 +122,12 @@ latex_elements = {
     # The paper size ('letterpaper' or 'a4paper').
     #
     'papersize': 'letterpaper',
-
     # The font size ('10pt', '11pt' or '12pt').
     #
     'pointsize': '11pt',
-
     # Additional stuff for the LaTeX preamble.
     #
     'preamble': '',
-
     # Latex figure (float) alignment
     #
     'figure_align': 'htbp',
@@ -140,8 +137,13 @@ latex_elements = {
 # (source start file, target name, title,
 #  author, documentclass [howto, manual, or own class]).
 latex_documents = [
-    (master_doc, 'Flask-MonitoringDashboard.tex', 'Flask-MonitoringDashboard Documentation',
-     author, 'manual'),
+    (
+        master_doc,
+        'Flask-MonitoringDashboard.tex',
+        'Flask-MonitoringDashboard Documentation',
+        author,
+        'manual',
+    )
 ]
 
 
@@ -150,8 +152,13 @@ latex_documents = [
 # One entry per manual page. List of tuples
 # (source start file, name, description, authors, manual section).
 man_pages = [
-    (master_doc, 'flask-monitoringdashboard', 'Flask-MonitoringDashboard Documentation',
-     [author], 1)
+    (
+        master_doc,
+        'flask-monitoringdashboard',
+        'Flask-MonitoringDashboard Documentation',
+        [author],
+        1,
+    )
 ]
 
 
@@ -161,9 +168,15 @@ man_pages = [
 # (source start file, target name, title, author,
 #  dir menu entry, description, category)
 texinfo_documents = [
-    (master_doc, 'Flask-MonitoringDashboard', 'Flask-MonitoringDashboard Documentation',
-     author, 'Flask-MonitoringDashboard', 'One line description of project.',
-     'Miscellaneous'),
+    (
+        master_doc,
+        'Flask-MonitoringDashboard',
+        'Flask-MonitoringDashboard Documentation',
+        author,
+        'Flask-MonitoringDashboard',
+        'One line description of project.',
+        'Miscellaneous',
+    )
 ]
 
 

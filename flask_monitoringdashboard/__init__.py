@@ -45,7 +45,16 @@ def bind(app, schedule=True):
         app.secret_key = 'my-secret-key'
 
     # Add all route-functions to the blueprint
-    from flask_monitoringdashboard.views import deployment, custom, endpoint, outlier, request, profiler, version, auth
+    from flask_monitoringdashboard.views import (
+        deployment,
+        custom,
+        endpoint,
+        outlier,
+        request,
+        profiler,
+        version,
+        auth,
+    )
     import flask_monitoringdashboard.views
 
     # Add wrappers to the endpoints that have to be monitored
@@ -64,6 +73,7 @@ def bind(app, schedule=True):
     # flush cache to db before shutdown
     import atexit
     from flask_monitoringdashboard.core.cache import flush_cache
+
     atexit.register(flush_cache)
 
 
@@ -75,5 +85,6 @@ def add_graph(title, func, **schedule):
     :param func: function reference without arguments
     """
     from flask_monitoringdashboard.core import custom_graph
+
     graph_id = custom_graph.register_graph(title)
     custom_graph.add_background_job(func, graph_id, **schedule)

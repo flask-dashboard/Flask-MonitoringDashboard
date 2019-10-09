@@ -26,37 +26,57 @@ def set_test_environment():
     """ Override the config-object for a new testing environment. Module flask_monitoringdashboard
     must be imported locally. """
     import flask_monitoringdashboard
+
     flask_monitoringdashboard.config.database_name = 'sqlite:///test-database.db'
 
 
 def clear_db():
-    """ Drops and creates the tables in the database. Module flask_monitoringdashboard must be imported locally. """
+    """ Drops and creates the tables in the database. Module flask_monitoringdashboard must be
+    imported locally. """
     from flask_monitoringdashboard.database import get_tables, engine
+
     for table in get_tables():
         table.__table__.drop(engine)
         table.__table__.create(engine)
 
 
 def add_fake_data():
-    """ Adds data to the database for testing purposes. Module flask_monitoringdashboard must be imported locally. """
+    """ Adds data to the database for testing purposes. Module flask_monitoringdashboard must be
+    imported locally. """
     from flask_monitoringdashboard.database import session_scope, Request, Endpoint, Outlier
     from flask_monitoringdashboard import config
 
     # Add requests
     with session_scope() as db_session:
         for i in range(len(REQUESTS)):
-            call = Request(id=REQUEST_IDS[i], endpoint_id=ENDPOINT_ID, duration=REQUESTS[i],
-                           version_requested=config.version,
-                           time_requested=TIMES[i], group_by=GROUP_BY, ip=IP)
+            call = Request(
+                id=REQUEST_IDS[i],
+                endpoint_id=ENDPOINT_ID,
+                duration=REQUESTS[i],
+                version_requested=config.version,
+                time_requested=TIMES[i],
+                group_by=GROUP_BY,
+                ip=IP,
+            )
             db_session.add(call)
 
         # Add endpoint
-        db_session.add(Endpoint(id=ENDPOINT_ID, name=NAME, monitor_level=1, time_added=datetime.datetime.utcnow(),
-                                version_added=config.version, last_requested=TIMES[0]))
+        db_session.add(
+            Endpoint(
+                id=ENDPOINT_ID,
+                name=NAME,
+                monitor_level=1,
+                time_added=datetime.datetime.utcnow(),
+                version_added=config.version,
+                last_requested=TIMES[0],
+            )
+        )
 
         # Add Outliers
         for i in range(OUTLIER_COUNT):
-            db_session.add(Outlier(request_id=i+1, cpu_percent='[%d, %d, %d, %d]' % (i, i + 1, i + 2, i + 3)))
+            db_session.add(
+                Outlier(request_id=i + 1, cpu_percent='[%d, %d, %d, %d]' % (i, i + 1, i + 2, i + 3))
+            )
 
 
 def get_test_app(schedule=False):
@@ -65,6 +85,7 @@ def get_test_app(schedule=False):
     """
     import flask_monitoringdashboard
     from flask import redirect, url_for
+
     user_app = Flask(__name__)
 
     @user_app.route('/')
@@ -92,6 +113,7 @@ def login(test_app):
     :param test_app:
     """
     from flask_monitoringdashboard import config
+
     with test_app.session_transaction() as sess:
         sess[config.link + '_logged_in'] = True
         sess[config.link + '_admin'] = True
@@ -139,5 +161,7 @@ def test_post_data(test_case, page, data):
     with test_case.app.test_client() as c:
         headers = {'content-type': 'application/json'}
 
-        test_case.assertEqual(204, c.post('dashboard/{}'.format(page), data=json.dumps(data),
-                                          headers=headers).status_code)
+        test_case.assertEqual(
+            204,
+            c.post('dashboard/{}'.format(page), data=json.dumps(data), headers=headers).status_code,
+        )

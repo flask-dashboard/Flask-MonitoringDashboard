@@ -5,7 +5,11 @@ from apscheduler.schedulers import SchedulerAlreadyRunningError
 from apscheduler.schedulers.background import BackgroundScheduler
 
 from flask_monitoringdashboard.database import session_scope
-from flask_monitoringdashboard.database.custom_graph import add_value, get_graph_id_from_name, get_graphs
+from flask_monitoringdashboard.database.custom_graph import (
+    add_value,
+    get_graph_id_from_name,
+    get_graphs,
+)
 
 scheduler = BackgroundScheduler()
 

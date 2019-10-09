@@ -21,10 +21,7 @@ def get_2d_version_data(db_session, endpoint_id, versions, column_data, column):
     data = [[get_value(values, (data, v)) for v in versions] for data in column_data]
 
     return {
-        'versions': [{
-            'version': v,
-            'date': get_value(first_request, v)
-        } for v in versions],
+        'versions': [{'version': v, 'date': get_value(first_request, v)} for v in versions],
         'data': data,
     }
 

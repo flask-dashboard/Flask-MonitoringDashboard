@@ -9,6 +9,7 @@ from flask import Flask
 
 
 import flask_monitoringdashboard as dashboard
+
 app = Flask(__name__)
 
 dashboard.config.version = '3.2'
@@ -56,4 +57,3 @@ def endpoint5():
 def my_func():
     # here should be something actually useful
     return 33.3
-

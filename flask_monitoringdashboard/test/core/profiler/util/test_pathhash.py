@@ -7,16 +7,31 @@ FN = 'filename0'
 LN = 42
 
 STACK_LINES = [
-            StackLine(request_id=0, position=0, indent=0, duration=1010,
-                      code=CodeLine(filename=FN, line_number=0, function_name='None', code='f()')),
-            StackLine(request_id=0, position=1, indent=1, duration=500,
-                      code=CodeLine(filename=FN, line_number=1, function_name='f', code='sleep(1)')),
-            StackLine(request_id=0, position=1, indent=1, duration=510,
-                      code=CodeLine(filename=FN, line_number=2, function_name='f', code='sleep(1.01)'))]
+    StackLine(
+        request_id=0,
+        position=0,
+        indent=0,
+        duration=1010,
+        code=CodeLine(filename=FN, line_number=0, function_name='None', code='f()'),
+    ),
+    StackLine(
+        request_id=0,
+        position=1,
+        indent=1,
+        duration=500,
+        code=CodeLine(filename=FN, line_number=1, function_name='f', code='sleep(1)'),
+    ),
+    StackLine(
+        request_id=0,
+        position=1,
+        indent=1,
+        duration=510,
+        code=CodeLine(filename=FN, line_number=2, function_name='f', code='sleep(1.01)'),
+    ),
+]
 
 
 class TestPathHash(unittest.TestCase):
-
     def setUp(self):
         self.path = PathHash()
 

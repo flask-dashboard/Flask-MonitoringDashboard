@@ -52,9 +52,12 @@ def count_profiled_requests(db_session, endpoint_id):
     :param endpoint_id: id of the endpoint
     :return: An integer
     """
-    count = db_session.query(func.count(distinct(StackLine.request_id))). \
-        filter(Request.endpoint_id == endpoint_id). \
-        join(Request.stack_lines).first()
+    count = (
+        db_session.query(func.count(distinct(StackLine.request_id)))
+        .filter(Request.endpoint_id == endpoint_id)
+        .join(Request.stack_lines)
+        .first()
+    )
     if count:
         return count[0]
     return 0

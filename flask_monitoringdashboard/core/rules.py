@@ -4,11 +4,15 @@ def get_rules(endpoint_name=None):
     :return: A list of the current rules in the attached Flask app
     """
     from flask_monitoringdashboard import config
+
     try:
         rules = config.app.url_map.iter_rules(endpoint=endpoint_name)
     except KeyError:
         return []
-    return [r for r in rules
-            if not r.rule.startswith('/' + config.link)
-            and not r.rule.startswith('/static-' + config.link)
-            and not r.endpoint == 'static']
+    return [
+        r
+        for r in rules
+        if not r.rule.startswith('/' + config.link)
+        and not r.rule.startswith('/static-' + config.link)
+        and not r.endpoint == 'static'
+    ]

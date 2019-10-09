@@ -1,11 +1,16 @@
 import unittest
 
-from flask_monitoringdashboard.test.utils import set_test_environment, clear_db, add_fake_data, get_test_app, NAME, \
-    test_admin_secure, ENDPOINT_ID
+from flask_monitoringdashboard.test.utils import (
+    set_test_environment,
+    clear_db,
+    add_fake_data,
+    get_test_app,
+    test_admin_secure,
+    ENDPOINT_ID,
+)
 
 
 class TestResult(unittest.TestCase):
-
     def setUp(self):
         set_test_environment()
         clear_db()

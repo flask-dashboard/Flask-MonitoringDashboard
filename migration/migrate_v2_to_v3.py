@@ -48,11 +48,11 @@ def session_scope():
 def main():
     print("Starting migration")
 
-    with session_scope() as db_session:
+    with session_scope():
         try:
             connection.execute("ALTER TABLE Request ADD COLUMN status_code INT")
         except Exception as e:
-            print("Column already exists")
+            print("Column already exists: {}".format(e))
 
     print("Finished.")
 
