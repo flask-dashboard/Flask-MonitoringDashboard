@@ -26,10 +26,10 @@ dashboard.config.database_name = 'sqlite:///data.db'
 dashboard.bind(app)
 
 
-@app.route('/endpointd')
+@app.route('/endpoint')
 def endpoint():
     print("Hello, world")
-    return 'Ok2d'
+    return 'Ok'
 
 
 @app.route('/endpoint2')
