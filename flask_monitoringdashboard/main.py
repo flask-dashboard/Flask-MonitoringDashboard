@@ -1,6 +1,11 @@
 """
     This file can be executed for developing purposes.
-    It is not used when the flask_monitoring_dashboard is attached to an existing flask application.
+    To run use
+
+        python main.py
+
+    Note: This is not used when the flask_monitoring_dashboard
+    is attached to your flask application.
 """
 import random
 import time
@@ -21,10 +26,10 @@ dashboard.config.database_name = 'sqlite:///data.db'
 dashboard.bind(app)
 
 
-@app.route('/endpointd')
+@app.route('/endpoint')
 def endpoint():
     print("Hello, world")
-    return 'Ok2d'
+    return 'Ok'
 
 
 @app.route('/endpoint2')
@@ -57,3 +62,6 @@ def endpoint5():
 def my_func():
     # here should be something actually useful
     return 33.3
+
+
+app.run()
