@@ -77,7 +77,7 @@ def bind(app, schedule=True):
     atexit.register(flush_cache)
 
 
-def add_graph(title, func, trigger, **schedule):
+def add_graph(title, func, trigger="interval", **schedule):
     """
     Add a custom graph to the dashboard. You must specify the following arguments
     :param title: title of the graph (must be unique)
