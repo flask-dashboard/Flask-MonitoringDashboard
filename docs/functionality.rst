@@ -251,26 +251,59 @@ You might wish to know how the number of unique users, the size of your
 database, or the total number of endpoints have evolved over time. This is now
 easy to visualize using FMD.
 
-An example of a custom graph is shown below. FMD will execute :code:`my_func()`
-every hour and a half and the graph will appear in the **Custom graphs** menu.
+An example of a custom graph is shown below. FMD will execute :code:`on_the_minute()`
+every minute at the second 01 and the graph will appear in the **Custom graphs** menu.
 
   .. code-block:: python
 
-     def my_func():
-         # here should be something actually useful
-         return 35
+   def on_the_minute():
+       print(f"On the minute: {datetime.datetime.now()}")
+       return int(random() * 100 // 10)
 
-     schedule = {'weeks': 0,
-                  'days': 0,
-                  'hours': 1,
-                  'minutes': 30,
-                  'seconds': 0}
 
-     dashboard.add_graph('Graph1', lambda: my_func(), **schedule)
+   minute_schedule = {'second': 00}
+
+   dashboard.add_graph("On Half Minute", on_the_minute, "cron", **minute_schedule)
+
+
+Note the "cron" argument to the add graph.
+Just like in the case of the unix cron utility you can use
+more complex schedules. For example, if you want to collect
+the data every day at midnight you would use:
+
+  .. code-block:: python
+
+   midnight_schedule = {'month':"*",
+                        'day': "*",
+                        'hour': 23,
+                        'minute': 59,
+                        'second': 00}
+
+Besides cron, there's also the "interval" schedule type, which
+is exemplified in the following snippet:
+
+  .. code-block:: python
+
+   def every_ten_seconds():
+       print(f"every_ten_seconds!!! {datetime.datetime.now()}")
+       return int(random() * 100 // 10)
+
+
+   every_ten_seconds_schedule = {'seconds': 10}
+
+   dashboard.add_graph("Every 10 Seconds", every_ten_seconds, "interval", **every_ten_seconds_schedule)
+
 
 
 Note that not all fields in the :code:`schedule` dictionary
-are required, only the non-zero ones.
+are required, only the non-zero / non-star ones.
+
+Also, note that in the "cron" graph types you use singular names (e.g. second)
+while in the "interval" you use plurals (e.g. seconds).
+
+Finally, the implementation of the scheduler in the FMD
+is based on the appscheduler.schedulers.Background schedulers
+about which you can read more `in the corresponding documentation page <apscheduler.schedulers>`_.
 
 Need more information?
 ----------------------

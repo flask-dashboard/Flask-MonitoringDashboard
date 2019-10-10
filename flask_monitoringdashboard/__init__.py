@@ -77,14 +77,16 @@ def bind(app, schedule=True):
     atexit.register(flush_cache)
 
 
-def add_graph(title, func, **schedule):
+def add_graph(title, func, trigger="interval", **schedule):
     """
     Add a custom graph to the dashboard. You must specify the following arguments
     :param title: title of the graph (must be unique)
     :param schedule: dict containing values for weeks, days, hours, minutes, seconds
     :param func: function reference without arguments
+    :param trigger: str|apscheduler.triggers.base.BaseTrigger trigger: trigger that determines when
+            ``func`` is called
     """
     from flask_monitoringdashboard.core import custom_graph
 
     graph_id = custom_graph.register_graph(title)
-    custom_graph.add_background_job(func, graph_id, **schedule)
+    custom_graph.add_background_job(func, graph_id, trigger, **schedule)
