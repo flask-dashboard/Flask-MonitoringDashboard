@@ -138,11 +138,8 @@ class CustomGraphData(Base):
     value = Column(Float)
 
 
-print(config.database_name)
-
-
 # define the database
-engine = create_engine('mysql://root:my-secret-pw@127.0.0.1/fmd')
+engine = create_engine(config.database_name)
 Base.metadata.create_all(engine)
 Base.metadata.bind = engine
 DBSession = sessionmaker(bind=engine)
