@@ -2,10 +2,27 @@
 Contains all functions that access a Request object.
 """
 import time
+from random import sample
 
 from sqlalchemy import and_
 
 from flask_monitoringdashboard.database import Request
+
+
+def get_latencies_in_timeframe(db_session, endpoint_id, start_date, end_date):
+    criterion = create_time_based_sample_criterion(start_date, end_date)
+
+    items = db_session.query(Request.duration).filter(and_(Request.endpoint_id == endpoint_id, *criterion)).all()
+
+    return [item.duration for item in items]
+
+
+def get_latencies_sample(db_session, endpoint_id, interval, sample_size=500):
+    latencies = get_latencies_in_timeframe(db_session, endpoint_id, interval.start_date(), interval.end_date())
+
+    # todo: sample in the database, not in the application
+
+    return sample(latencies, min(sample_size, len(latencies)))
 
 
 def add_request(db_session, duration, endpoint_id, ip, group_by, status_code):
@@ -53,9 +70,9 @@ def get_date_of_first_request_version(db_session, version):
     """
     result = (
         db_session.query(Request.time_requested)
-        .filter(Request.version_requested == version)
-        .order_by(Request.time_requested)
-        .first()
+            .filter(Request.version_requested == version)
+            .order_by(Request.time_requested)
+            .first()
     )
     if result:
         return int(time.mktime(result[0].timetuple()))

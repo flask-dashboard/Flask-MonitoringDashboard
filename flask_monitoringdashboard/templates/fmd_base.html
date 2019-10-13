@@ -18,71 +18,71 @@
 </head>
 
 {% block body %}
-<body class="fixed-nav sticky-footer bg-dark" id="page-top">
-<nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top" id="mainNav">
-    <div class="navbar-brand brand-plain">
-        <a href="overview"><h4>Flask Monitoring Dashboard</h4></a>
-    </div>
+    <body class="fixed-nav sticky-footer bg-dark" id="page-top">
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top" id="mainNav">
+        <div class="navbar-brand brand-plain">
+            <a href="overview"><h4>Flask Monitoring Dashboard</h4></a>
+        </div>
 
-    <div class="collapse navbar-collapse" id="navbarResponsive">
-        <menu></menu>
-        <ul class="navbar-nav sidenav-toggler">
-            <li class="nav-item">
-                <a class="nav-link text-center" id="sidenavToggler">
-                    <i class="fa fa-fw fa-angle-left"></i>
-                </a>
-            </li>
-        </ul>
-        <ul class="navbar-nav ml-auto">
-            <li class="nav-item">
+        <div class="collapse navbar-collapse" id="navbarResponsive">
+            <menu></menu>
+            <ul class="navbar-nav sidenav-toggler">
+                <li class="nav-item">
+                    <a class="nav-link text-center" id="sidenavToggler">
+                        <i class="fa fa-fw fa-angle-left"></i>
+                    </a>
+                </li>
+            </ul>
+            <ul class="navbar-nav ml-auto">
+                <li class="nav-item">
                  <span style="color: #adb5bd;">
                      Automatically monitor the evolving performance of Flask/Python web services
                  </span>
-            </li>
-        </ul>
-        <ul class="navbar-nav ml-auto">
-            <li class="nav-item">
-                <a class="nav-link" data-toggle="modal" data-target="#exampleModal">
-                    <i class="fa fa-fw fa-sign-out"></i>Logout</a>
-            </li>
-        </ul>
-    </div>
-</nav>
-
-<div class="content-wrapper">
-    <div class="container page">
-        <div id="content" class="main" ng-view></div>
-    </div>
-    <footer class="sticky-footer">
-        <div class="container">
-            <div class="text-center">
-                Click <a target="_blank" href="http://flask-monitoringdashboard.readthedocs.io">here</a> to read
-                advanced documentation.
-            </div>
+                </li>
+            </ul>
+            <ul class="navbar-nav ml-auto">
+                <li class="nav-item">
+                    <a class="nav-link" data-toggle="modal" data-target="#exampleModal">
+                        <i class="fa fa-fw fa-sign-out"></i>Logout</a>
+                </li>
+            </ul>
         </div>
-    </footer>
+    </nav>
 
-    <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
-         aria-hidden="true">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalLabel">Logout?</h5>
-                    <button class="close" type="button" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <div class="modal-body">Are you sure you want to logout?</div>
-                <div class="modal-footer">
-                    <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
-                    <button class="btn btn-primary"
-                            onclick="document.location.href='{{ url_for('dashboard.logout') }}';">Logout
-                    </button>
+    <div class="content-wrapper">
+        <div class="container page">
+            <div id="content" class="main" ng-view></div>
+        </div>
+        <footer class="sticky-footer">
+            <div class="container">
+                <div class="text-center">
+                    Click <a target="_blank" href="http://flask-monitoringdashboard.readthedocs.io">here</a> to read
+                    advanced documentation.
                 </div>
             </div>
+        </footer>
+
+        <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+             aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLabel">Logout?</h5>
+                        <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">Are you sure you want to logout?</div>
+                    <div class="modal-footer">
+                        <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
+                        <button class="btn btn-primary"
+                                onclick="document.location.href='{{ url_for('dashboard.logout') }}';">Logout
+                        </button>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
-</div>
 {% endblock %}
 
 <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
@@ -94,6 +94,8 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.7.5/angular.js"></script>
 <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.7.5/angular-route.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/4.12.0/d3.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.24.0/moment.min.js"
+         `integrity="sha256-4iQZ6BVL4qNKlQ27TExEhBN1HFPvAvAMbFavKKosSWQ=" crossorigin="anonymous"></script>
 <script src="https://unpkg.com/sunburst-chart"></script>
 
 <script src="{{ url_for('dashboard.static', filename='js/angular-datatables.js') }}"></script>
@@ -113,6 +115,8 @@
 <script src="{{ url_for('dashboard.static', filename='js/controllers/configuration.js') }}"></script>
 <script src="{{ url_for('dashboard.static', filename='js/controllers/customGraph.js') }}"></script>
 <script src="{{ url_for('dashboard.static', filename='js/controllers/dailyUtilization.js') }}"></script>
+<script src="{{ url_for('dashboard.static', filename='js/controllers/reporting.js') }}"></script>
+
 <script src="{{ url_for('dashboard.static', filename='js/controllers/endpointGroupedProfiler.js') }}"></script>
 <script src="{{ url_for('dashboard.static', filename='js/controllers/endpointHourlyLoad.js') }}"></script>
 <script src="{{ url_for('dashboard.static', filename='js/controllers/endpointOutlier.js') }}"></script>

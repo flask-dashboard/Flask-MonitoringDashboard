@@ -25,6 +25,10 @@ app.config(function ($locationProvider, $routeProvider) {
             templateUrl: 'static/pages/plotly_graph.html',
             controller: ApiPerformanceController
         })
+        .when('/reporting', {
+            templateUrl: 'static/pages/reporting.html',
+            controller: ReportingController
+        })
         .when('/endpoint/:endpointId/hourly_load', {
             templateUrl: 'static/pages/plotly_graph.html',
             controller: EndpointHourlyLoadController
