@@ -3,7 +3,7 @@ from flask_monitoringdashboard.core.auth import secure
 from datetime import datetime
 from flask import request
 
-from scipy.stats import chisquare
+
 from flask_monitoringdashboard import blueprint
 from flask_monitoringdashboard.core.date_interval import DateInterval
 from flask_monitoringdashboard.core.reporting.questions.average_latency import AverageLatency
@@ -42,7 +42,7 @@ def status_code_report(endpoint, comparison_interval, compared_to_interval):
         frequencies_compared_to_interval = [compared_to_interval_distribution[status_code] for status_code in
                                             sorted(compared_to_interval_distribution.keys())]
 
-        chisq, p = chisquare(frequencies_comparison_interval, frequencies_compared_to_interval)
+        chisq, p = 0, 0#chisquare(frequencies_comparison_interval, frequencies_compared_to_interval)
 
         return dict(
             significant=float(p) < .05,
