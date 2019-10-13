@@ -70,19 +70,8 @@ function ReportingController($scope, $http, $location, DTOptionsBuilder, menuSer
     };
 
     $scope.selectEntry = function (summary, answer) {
-        // $scope.selectedEntry = entry;
-
         $scope.selectedSummary = summary;
-        $scope.selectedAnswer  = answer;
-
-        console.log(summary);
-
-        // const endpoint = $scope
-        //     .reports[$scope.activeSection]
-        //     .summaries
-        //     .find(summary=> summary.endpoint_id === en);
-
-
+        $scope.selectedAnswer = answer;
 
         const {comparison_interval, compared_to_interval} = answer.latencies_sample;
 
@@ -99,11 +88,6 @@ function ReportingController($scope, $http, $location, DTOptionsBuilder, menuSer
     };
 
     $scope.generateReport = function () {
-        // $scope.generating = true;
-
-        console.log($scope.intervals);
-
-
         $scope.generating = true;
 
         $http.post(`/dashboard/api/reporting/make_report`, {
@@ -121,12 +105,5 @@ function ReportingController($scope, $http, $location, DTOptionsBuilder, menuSer
 
                 $scope.generating = false;
             });
-
-
-        // $http.get(`/dashboard/api/reporting/make_report?start1=${start1}&end1=${end1}&start2=${start2}&end2=${end2}`).then(function (response) {
-        //     $scope.reports[$scope.activeSection] = response.data;
-        //
-        //     $scope.generating = false;
-        // });
     };
 }
