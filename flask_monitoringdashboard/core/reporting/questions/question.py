@@ -26,5 +26,5 @@ class Answer(ABC):
 class Question(ABC):
 
     @abstractmethod
-    def get_answer(self, endpoint, comparison_interval, compared_to_interval) -> Answer:
+    def get_answer(self, endpoint, comparison_interval, compared_to_interval):
         pass

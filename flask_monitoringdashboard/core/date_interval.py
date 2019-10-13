@@ -1,8 +1,5 @@
-import datetime
-
-
 class DateInterval(object):
-    def __init__(self, start_date: datetime, end_date: datetime):
+    def __init__(self, start_date, end_date):
         if start_date > end_date:
             raise ValueError('start_date must be before or equals to end_date')
 
