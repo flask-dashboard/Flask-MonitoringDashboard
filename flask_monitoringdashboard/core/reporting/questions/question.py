@@ -1,7 +1,10 @@
-from abc import ABC, abstractmethod
+
+from abc import ABCMeta, abstractmethod
 
 
-class Answer(ABC):
+class Answer:
+    __metaclass__ = ABCMeta
+
     def __init__(self, type):
         self.type = type
 
