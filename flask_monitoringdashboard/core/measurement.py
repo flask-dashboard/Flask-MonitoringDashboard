@@ -58,12 +58,27 @@ def add_wrapper0(endpoint, fun):
     config.app.view_functions[endpoint.name] = wrapper
 
 
+def status_code_from_response(result):
+    if type(result) == str:
+        return 200
+
+    if isinstance(result, tuple):
+        return result[1]
+
+    try:
+        return getattr(result, 'status_code')
+    except:
+        pass
+
+    return 200
+
+
 def add_wrapper1(endpoint, fun):
     @wraps(fun)
     def wrapper(*args, **kwargs):
         start_time = time.time()
         result = fun(*args, **kwargs)
-        status_code = result[1] if isinstance(result, tuple) else 200
+        status_code = status_code_from_response(result)
         duration = time.time() - start_time
         start_performance_thread(endpoint, duration, status_code)
         return result
@@ -78,7 +93,7 @@ def add_wrapper2(endpoint, fun):
         outlier = start_outlier_thread(endpoint)
         start_time = time.time()
         result = fun(*args, **kwargs)
-        status_code = result[1] if isinstance(result, tuple) else 200
+        status_code = status_code_from_response(result)
         duration = time.time() - start_time
         outlier.stop(duration, status_code)
         return result
@@ -93,7 +108,7 @@ def add_wrapper3(endpoint, fun):
         thread = start_profiler_and_outlier_thread(endpoint)
         start_time = time.time()
         result = fun(*args, **kwargs)
-        status_code = result[1] if isinstance(result, tuple) else 200
+        status_code = status_code_from_response(result)
         duration = time.time() - start_time
         thread.stop(duration, status_code)
         return result
