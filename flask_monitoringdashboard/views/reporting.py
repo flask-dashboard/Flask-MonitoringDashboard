@@ -3,7 +3,6 @@ from flask_monitoringdashboard.core.auth import secure
 from datetime import datetime
 from flask import request
 
-
 from flask_monitoringdashboard import blueprint
 from flask_monitoringdashboard.core.date_interval import DateInterval
 from flask_monitoringdashboard.core.reporting.questions.average_latency import AverageLatency
@@ -42,7 +41,7 @@ def status_code_report(endpoint, comparison_interval, compared_to_interval):
         frequencies_compared_to_interval = [compared_to_interval_distribution[status_code] for status_code in
                                             sorted(compared_to_interval_distribution.keys())]
 
-        chisq, p = 0, 0#chisquare(frequencies_comparison_interval, frequencies_compared_to_interval)
+        chisq, p = 0, 0  # chisquare(frequencies_comparison_interval, frequencies_compared_to_interval)
 
         return dict(
             significant=float(p) < .05,
@@ -92,54 +91,12 @@ def make_report():
     except Exception as err:
         return 'Invalid payload', 422
 
-    questions = [
-        AverageLatency()
-    ]
-
     endpoint_summaries = []
     with session_scope() as db_session:
         for endpoint in get_endpoints(db_session):
-
             endpoint_summary = make_endpoint_summary(endpoint, comparison_interval, compared_to_interval)
             endpoint_summaries.append(endpoint_summary)
 
     return dict(
         summaries=endpoint_summaries
     )
-
-
-
-    # endpoint_entries = []
-    # anything_significant = False
-    #
-    # with session_scope() as db_session:
-    #     for endpoint in get_endpoints(db_session):
-    #         comparison_interval_latencies_sample = get_latencies_sample(db_session, endpoint.id, comparison_interval)
-    #         compared_to_interval_latencies_sample = get_latencies_sample(db_session, endpoint.id, compared_to_interval)
-    #
-    #         endpoint_report_entries = [
-    #             average_report(endpoint, comparison_interval_latencies_sample, compared_to_interval_latencies_sample),
-    #             # status_code_report(endpoint, comparison_interval, compared_to_interval)
-    #         ]
-    #
-    #         has_anything_significant = len(list(filter(lambda k: k['significant'], endpoint_report_entries))) > 0
-    #
-    #         endpoint_entry = dict(
-    #             id=endpoint.id,
-    #             name=endpoint.name,
-    #             latencies_sample=dict(
-    #                 comparison_interval=comparison_interval_latencies_sample,
-    #                 compared_to_interval=compared_to_interval_latencies_sample,
-    #             ),
-    #             entries=endpoint_report_entries,
-    #             has_anything_significant=has_anything_significant
-    #         )
-    #
-    #         anything_significant = anything_significant or len(
-    #             [entry for entry in endpoint_entry['entries'] if entry['significant']])
-    #
-    #         endpoint_entries.append(endpoint_entry)
-    #
-    #     return jsonify(dict(
-    #         endpoints=endpoint_entries
-    #     ))
