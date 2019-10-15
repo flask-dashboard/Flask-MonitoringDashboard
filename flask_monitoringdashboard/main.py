@@ -37,6 +37,10 @@ def endpoint():
     return response
 
 
+@app.route('/ridiculous')
+def testttt():
+    return 'hello', 'ridiculous'
+
 @app.route('/endpoint2')
 def endpoint2():
     time.sleep(0.5)

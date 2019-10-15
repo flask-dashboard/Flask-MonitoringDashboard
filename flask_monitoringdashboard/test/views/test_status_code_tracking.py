@@ -21,6 +21,14 @@ def get_test_app_for_status_code_testing(schedule=False):
     def return_a_simple_string():
         return 'Hello, world'
 
+    @app.route('/return-a-tuple')
+    def return_a_tuple():
+        return 'Hello, world', 404
+
+    @app.route('/ridiculous-return-value')
+    def return_ridiculous_return_value():
+        return 'hello', 'ridiculous'
+
     @app.route('/return-jsonify-default-status-code')
     def return_jsonify_default_status_code():
         return jsonify({
@@ -33,7 +41,6 @@ def get_test_app_for_status_code_testing(schedule=False):
             'cheese': 'pears'
         })
         response.status_code = 401
-
         return response
 
     @app.route('/unhandled-exception')
@@ -74,6 +81,19 @@ class TestLogin(unittest.TestCase):
                 self.assertEqual(len(requests), 1)
                 self.assertEqual(requests[0][0], 200)
 
+    def test_return_a_tuple(self):
+        """
+        An endpoint that returns a tuple should log the second parameter as status_code≠
+        """
+        with self.app.test_client() as c:
+            c.get('/return-a-tuple')
+
+            with session_scope() as db_session:
+                requests = db_session.query(Request.status_code, Request.endpoint_id).all()
+
+                self.assertEqual(len(requests), 1)
+                self.assertEqual(requests[0][0], 404)
+
     def test_jsonify_default_status_code(self):
         """
         An endpoint that returns a Response as a return value of jsonify without setting the status_cod yields a HTTP
@@ -102,12 +122,15 @@ class TestLogin(unittest.TestCase):
                 self.assertEqual(len(requests), 1)
                 self.assertEqual(requests[0][0], 401)
 
-    # def test_unhandled_exception(self):
-    #     with self.app.test_client() as c:
-    #         c.get('/unhandled-exception')
-    #
-    #         with session_scope() as db_session:
-    #             requests = db_session.query(Request.status_code, Request.endpoint_id).all()
-    #
-    #             self.assertEqual(len(requests), 1)
-    #             self.assertEqual(requests[0][0], 500)
+    def test_ridiculous_return_value(self):
+        """
+        An endpoint that returns a silly status code like a string should yield a 500 status code
+        """
+        with self.app.test_client() as c:
+            c.get('/ridiculous-return-value')
+
+            with session_scope() as db_session:
+                requests = db_session.query(Request.status_code, Request.endpoint_id).all()
+
+                self.assertEqual(len(requests), 1)
+                self.assertEqual(requests[0][0], 500)

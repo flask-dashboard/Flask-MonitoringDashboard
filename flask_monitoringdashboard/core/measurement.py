@@ -58,19 +58,35 @@ def add_wrapper0(endpoint, fun):
     config.app.view_functions[endpoint.name] = wrapper
 
 
+def is_valid_status_code(input):
+    return type(input) == int and 100 <= input < 600
+
+
+# todo: make this less messy :)
 def status_code_from_response(result):
+    """
+    :param result:
+    :return:
+    """
     if type(result) == str:
         return 200
 
+    status_code = 200
+
+    # Pull it from a tuple
     if isinstance(result, tuple):
-        return result[1]
+        status_code = result[1]
+    else:
+        # Try to pull it from an object
+        try:
+            status_code = getattr(result, 'status_code')
+        except:
+            pass
 
-    try:
-        return getattr(result, 'status_code')
-    except:
-        pass
+    if not is_valid_status_code(status_code):
+        return 500
 
-    return 200
+    return status_code
 
 
 def add_wrapper1(endpoint, fun):
