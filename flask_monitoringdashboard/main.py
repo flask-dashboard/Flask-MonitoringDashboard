@@ -1,45 +1,29 @@
 """
     This file can be executed for developing purposes.
-    To run use
-
-        python main.py
-
-    Note: This is not used when the flask_monitoring_dashboard
-    is attached to your flask application.
+    It is not used when the flask_monitoring_dashboard is attached to an existing flask application.
 """
-from random import random
-import datetime
+import random
 import time
-from flask import jsonify
+
 from flask import Flask
 
-import flask_monitoringdashboard as dashboard
 
+import flask_monitoringdashboard as dashboard
 app = Flask(__name__)
 
 dashboard.config.version = '3.2'
 dashboard.config.group_by = '2'
 dashboard.config.database_name = 'sqlite:///data.db'
-
-
 # dashboard.config.database_name = 'mysql+pymysql://user:password@localhost:3306/db1'
 # dashboard.config.database_name = 'postgresql://user:password@localhost:5432/mydb'
-
 dashboard.bind(app)
 
 
-@app.route('/endpoint')
+@app.route('/endpointd')
 def endpoint():
     print("Hello, world")
-    response = jsonify(dict(a=9))
-    response.status_code = 401
+    return 'Ok2d'
 
-    return response
-
-
-@app.route('/ridiculous')
-def testttt():
-    return 'hello', 'ridiculous'
 
 @app.route('/endpoint2')
 def endpoint2():
@@ -72,5 +56,10 @@ def my_func():
     # here should be something actually useful
     return 33.3
 
-
-app.run()
+# schedule = {'weeks': 0,
+#             'days': 0,
+#             'hours': 1,
+#             'minutes': 30,
+#             'seconds': 0}
+#
+# dashboard.add_graph('Graph1', lambda: my_func(), **schedule)
