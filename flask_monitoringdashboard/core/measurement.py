@@ -58,20 +58,25 @@ def add_wrapper0(endpoint, fun):
     config.app.view_functions[endpoint.name] = wrapper
 
 
-def is_valid_status_code(input):
-    return type(input) == int and 100 <= input < 600
+def is_valid_status_code(status_code):
+    """
+    Returns whether the input is a valid status code. A status code is valid if it's an integer value and in the
+    range [100, 599] :param status_code: :return:
+    """
+    return type(status_code) == int and 100 <= status_code < 600
 
 
-# todo: make this less messy :)
 def status_code_from_response(result):
     """
-    :param result:
+    Extracts the status code from the result that was returned from the route handler.
+
+    :param result: The return value of the route handler
     :return:
     """
     if type(result) == str:
         return 200
 
-    status_code = 200
+    status_code = 200  # default
 
     # Pull it from a tuple
     if isinstance(result, tuple):
@@ -89,9 +94,17 @@ def status_code_from_response(result):
     return status_code
 
 
-def evaluate(f, args, kwargs):
+def evaluate(route_handler, args, kwargs):
+    """
+    Invokes the given route handler and extracts the return value, status_code and the exception if it was raised
+
+    :param route_handler:
+    :param args:
+    :param kwargs:
+    :return:
+    """
     try:
-        result = f(*args, **kwargs)
+        result = route_handler(*args, **kwargs)
         status_code = status_code_from_response(result)
 
         return result, status_code, None
@@ -104,7 +117,9 @@ def add_wrapper1(endpoint, fun):
     @wraps(fun)
     def wrapper(*args, **kwargs):
         start_time = time.time()
+
         result, status_code, raised_exception = evaluate(fun, args, kwargs)
+
         duration = time.time() - start_time
         start_performance_thread(endpoint, duration, status_code)
 
@@ -142,12 +157,15 @@ def add_wrapper3(endpoint, fun):
     def wrapper(*args, **kwargs):
         thread = start_profiler_and_outlier_thread(endpoint)
         start_time = time.time()
+
         result, status_code, raised_exception = evaluate(fun, args, kwargs)
+
         duration = time.time() - start_time
         thread.stop(duration, status_code)
 
         if raised_exception:
             raise raised_exception
+
         return result
 
     wrapper.original = fun
