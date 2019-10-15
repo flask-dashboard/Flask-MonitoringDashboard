@@ -66,6 +66,7 @@ class TestLogin(unittest.TestCase):
     def setUp(self):
         set_test_environment()
         clear_db()
+        print('cleared')
         self.app = get_test_app_for_status_code_testing()
 
     def test_simple_string_response(self):
@@ -83,7 +84,7 @@ class TestLogin(unittest.TestCase):
 
     def test_return_a_tuple(self):
         """
-        An endpoint that returns a tuple should log the second parameter as status_code≠
+        An endpoint that returns a tuple should log the second parameter as status_code
         """
         with self.app.test_client() as c:
             c.get('/return-a-tuple')
