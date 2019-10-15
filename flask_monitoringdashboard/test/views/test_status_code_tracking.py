@@ -1,4 +1,6 @@
 import unittest
+from time import sleep
+
 from flask import Flask, json, jsonify
 from flask_monitoringdashboard.core.cache import EndpointInfo
 from flask_monitoringdashboard.database import session_scope, Request
@@ -66,7 +68,6 @@ class TestLogin(unittest.TestCase):
     def setUp(self):
         set_test_environment()
         clear_db()
-        print('cleared')
         self.app = get_test_app_for_status_code_testing()
 
     def test_simple_string_response(self):
@@ -129,6 +130,24 @@ class TestLogin(unittest.TestCase):
         """
         with self.app.test_client() as c:
             c.get('/ridiculous-return-value')
+
+            with session_scope() as db_session:
+                requests = db_session.query(Request.status_code, Request.endpoint_id).all()
+
+                self.assertEqual(len(requests), 1)
+                self.assertEqual(requests[0][0], 500)
+
+    def test_unhandled_exception(self):
+        """
+        An endpoint that returns a silly status code like a string should yield a 500 status code
+        """
+        with self.app.test_client() as c:
+            try:
+                c.get('/unhandled-exception')
+            except:
+                pass
+
+            sleep(.5)
 
             with session_scope() as db_session:
                 requests = db_session.query(Request.status_code, Request.endpoint_id).all()

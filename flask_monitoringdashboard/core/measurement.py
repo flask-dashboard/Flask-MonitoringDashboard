@@ -89,14 +89,28 @@ def status_code_from_response(result):
     return status_code
 
 
+def evaluate(f, args, kwargs):
+    try:
+        result = f(*args, **kwargs)
+        status_code = status_code_from_response(result)
+
+        return result, status_code, None
+
+    except Exception as e:
+        return None, 500, e
+
+
 def add_wrapper1(endpoint, fun):
     @wraps(fun)
     def wrapper(*args, **kwargs):
         start_time = time.time()
-        result = fun(*args, **kwargs)
-        status_code = status_code_from_response(result)
+        result, status_code, raised_exception = evaluate(fun, args, kwargs)
         duration = time.time() - start_time
         start_performance_thread(endpoint, duration, status_code)
+
+        if raised_exception:
+            raise raised_exception
+
         return result
 
     wrapper.original = fun
@@ -108,10 +122,15 @@ def add_wrapper2(endpoint, fun):
     def wrapper(*args, **kwargs):
         outlier = start_outlier_thread(endpoint)
         start_time = time.time()
-        result = fun(*args, **kwargs)
-        status_code = status_code_from_response(result)
+
+        result, status_code, raised_exception = evaluate(fun, args, kwargs)
+
         duration = time.time() - start_time
         outlier.stop(duration, status_code)
+
+        if raised_exception:
+            raise raised_exception
+
         return result
 
     wrapper.original = fun
@@ -123,10 +142,12 @@ def add_wrapper3(endpoint, fun):
     def wrapper(*args, **kwargs):
         thread = start_profiler_and_outlier_thread(endpoint)
         start_time = time.time()
-        result = fun(*args, **kwargs)
-        status_code = status_code_from_response(result)
+        result, status_code, raised_exception = evaluate(fun, args, kwargs)
         duration = time.time() - start_time
         thread.stop(duration, status_code)
+
+        if raised_exception:
+            raise raised_exception
         return result
 
     wrapper.original = fun
