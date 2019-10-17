@@ -42,9 +42,9 @@ def get_all_request_status_code_counts(db_session, endpoint_id):
     """
     return (
         db_session.query(Request.status_code, func.count(Request.status_code))
-        .filter(and_(Request.endpoint_id == endpoint_id, Request.status_code.isnot(None)))
-        .group_by(Request.status_code)
-        .all()
+            .filter(and_(Request.endpoint_id == endpoint_id, Request.status_code.isnot(None)))
+            .group_by(Request.status_code)
+            .all()
     )
 
 
@@ -67,24 +67,19 @@ def get_status_code_distribution(db_session, endpoint_id):
     return {status_code: frequency / total_count for (status_code, frequency) in status_code_counts}
 
 
-def get_status_code_frequencies(db_session, endpoint_id):
+def get_status_code_frequencies(db_session, endpoint_id, *criterion):
     """
     Gets the frequencies of each status code.
 
     :param db_session: session for the database
     :param endpoint_id: id for the endpoint
-    :return: A dict where the key is the status code and the value is the fraction of requests that
-    returned the status
-    code. Example: a return value of `{ 200: 105, 404: 3 }` means that status code 200 was returned
-    105 times and
+    :return: A dict where the key is the status code and the value is the fraction of requests that returned the status
+    code. Example: a return value of `{ 200: 105, 404: 3 }` means that status code 200 was returned 105 times and
     404 was returned 3 times.
     """
-    status_code_counts = (
-        db_session.query(Request.status_code, func.count(Request.status_code))
-        .filter(and_(Request.endpoint_id == endpoint_id, Request.status_code.isnot(None)))
-        .group_by(Request.status_code)
-        .all()
-    )
+    status_code_counts = db_session.query(Request.status_code, func.count(Request.status_code)) \
+        .filter(and_(Request.endpoint_id == endpoint_id, Request.status_code.isnot(None), *criterion)) \
+        .group_by(Request.status_code).all()
 
     return dict(status_code_counts)
 
@@ -100,7 +95,7 @@ def get_error_requests(db_session, endpoint_id, *criterion):
     """
     return (
         db_session.query(Request)
-        .filter(
+            .filter(
             and_(
                 Request.endpoint_id == endpoint_id,
                 Request.status_code.isnot(None),
@@ -109,13 +104,14 @@ def get_error_requests(db_session, endpoint_id, *criterion):
                 *criterion
             )
         )
-        .all()
+            .all()
     )
 
 
 def get_status_code_frequencies_in_interval(db_session, endpoint_id, start_date, end_date):
     criterion = create_time_based_sample_criterion(start_date, end_date)
-    return get_status_code_frequencies(db_session, endpoint_id, criterion)
+
+    return get_status_code_frequencies(db_session, endpoint_id, *criterion)
 
 
 def get_hourly_load(db_session, endpoint_id, start_date, end_date):

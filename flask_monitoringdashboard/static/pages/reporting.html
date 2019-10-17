@@ -103,10 +103,10 @@
                     <div ng-show="summary.has_anything_significant || !onlyShowInteresting">
                         <h1>{{ summary.endpoint_name }}</h1>
 
-                        <div ng-repeat="answer in summary.answers">
-                            <div ng-show="answer.is_significant || !onlyShowInteresting">
+                        <ul ng-repeat="answer in summary.answers" class="list-group">
+                            <li class="list-group-item" ng-show="answer.is_significant || !onlyShowInteresting">
                                 <div ng-switch="answer.type">
-                                    <div ng-switch-when="AVERAGE_LATENCY">
+                                    <div ng-switch-when="AVERAGE_LATENCY" style="padding-bottom:15px">
                                         <h4>Average latency
                                             {{ answer.percentual_diff > 0 ? 'increased' : 'decreased' }} by
                                             {{ answer.percentual_diff | abs | number : 0 }}%</h4>
@@ -119,9 +119,28 @@
                                             Details
                                         </button>
                                     </div>
+
+                                    <div ng-switch-when="STATUS_CODE_DISTRIBUTION">
+                                        <h4>Distribution of status code changed</h4>
+
+                                        <table class="table">
+                                            <thead>
+                                            <tr>
+                                                <th scope="col">Status code</th>
+                                                <th scope="col"></th>
+                                            </tr>
+                                            </thead>
+                                            <tbody>
+                                            <tr ng-repeat="r in answer.percentages">
+                                                <td>{{ r.status_code }}</td>
+                                                <td>{{ r.compared_to_interval | number:0 }}% -> {{ r.comparison_interval | number:0 }}%</td>
+                                            </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
                                 </div>
-                            </div>
-                        </div>
+                            </li>
+                        </ul>
 
                         <hr/>
                     </div>

@@ -6,6 +6,8 @@ from flask import request
 from flask_monitoringdashboard import blueprint
 from flask_monitoringdashboard.core.date_interval import DateInterval
 from flask_monitoringdashboard.core.reporting.questions.average_latency import AverageLatency
+
+from flask_monitoringdashboard.core.reporting.questions.status_code_distribution import StatusCodeDistribution
 from flask_monitoringdashboard.database import session_scope
 from flask_monitoringdashboard.database.endpoint import get_endpoints
 
@@ -56,7 +58,7 @@ def status_code_report(endpoint, comparison_interval, compared_to_interval):
 
 
 def make_endpoint_summary(endpoint, comparison_interval, compared_to_interval):
-    questions = [AverageLatency()]
+    questions = [AverageLatency(), StatusCodeDistribution()]
 
     summary = dict(
         endpoint_id=endpoint.id,

@@ -1,38 +1,18 @@
-from flask_monitoringdashboard.core.reporting.questions.question import Question, Answer
+from flask_monitoringdashboard.core.reporting.mean_permutation_test import mean_permutation_test
 import numpy as np
+
+from flask_monitoringdashboard.core.reporting.questions.question import Answer, Question
 from flask_monitoringdashboard.database import session_scope
 
 from flask_monitoringdashboard.database.request import get_latencies_sample
 
 
-def mean_permutation_test(x, y, num_rounds=1000):
-    rng = np.random.RandomState()
-
-    m, n = len(x), len(y)
-    combined = np.hstack((x, y))
-
-    more_extreme = 0
-    reference_stat = mean_diff(x, y)
-
-    for i in range(num_rounds):
-        rng.shuffle(combined)
-        if mean_diff(combined[:m], combined[m:]) > reference_stat:
-            more_extreme += 1
-
-    return more_extreme / num_rounds
-
-
-def mean_diff(x, y):
-    return np.abs(np.mean(x) - np.mean(y))
-
-
 class AverageLatencyAnswer(Answer):
-    def __init__(self, _endpoint, is_significant, comparison_interval_latencies_sample,
-                 compared_to_interval_latencies_sample, percentual_diff=None, comparison_interval_avg=None,
+    def __init__(self, is_significant, comparison_interval_latencies_sample=None,
+                 compared_to_interval_latencies_sample=None, percentual_diff=None, comparison_interval_avg=None,
                  compared_to_interval_avg=None):
         super().__init__('AVERAGE_LATENCY')
 
-        self._endpoint = _endpoint
         self._is_significant = is_significant
         self._comparison_interval_latencies_sample = comparison_interval_latencies_sample
         self._compared_to_interval_latencies_sample = compared_to_interval_latencies_sample
@@ -64,8 +44,7 @@ class AverageLatency(Question):
             compared_to_interval_latencies_sample = get_latencies_sample(db_session, endpoint.id, compared_to_interval)
 
             if len(comparison_interval_latencies_sample) == 0 or len(compared_to_interval_latencies_sample) == 0:
-                return AverageLatencyAnswer(endpoint, False, comparison_interval_latencies_sample,
-                                            compared_to_interval_latencies_sample)
+                return AverageLatencyAnswer(is_significant=False)
 
             comparison_interval_avg = np.average(comparison_interval_latencies_sample)
             compared_to_interval_avg = np.average(compared_to_interval_latencies_sample)
@@ -77,6 +56,16 @@ class AverageLatency(Question):
                                             num_rounds=1000)
             is_significant = abs(float(percentual_diff)) > 30 and p_value < 0.05
 
-            return AverageLatencyAnswer(endpoint, is_significant, comparison_interval_latencies_sample,
-                                        compared_to_interval_latencies_sample, percentual_diff, comparison_interval_avg,
-                                        compared_to_interval_avg)
+            return AverageLatencyAnswer(
+                is_significant=is_significant,
+
+                percentual_diff=percentual_diff,
+
+                # Sample latencies
+                comparison_interval_latencies_sample=comparison_interval_latencies_sample,
+                compared_to_interval_latencies_sample=compared_to_interval_latencies_sample,
+
+                # Latency averages
+                comparison_interval_avg=comparison_interval_avg,
+                compared_to_interval_avg=compared_to_interval_avg
+            )
