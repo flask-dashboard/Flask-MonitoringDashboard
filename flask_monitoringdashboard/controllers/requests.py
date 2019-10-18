@@ -98,10 +98,10 @@ def get_error_requests(db_session, endpoint_id, *criterion):
         Request.endpoint_id == endpoint_id,
         Request.status_code.isnot(None),
         Request.status_code >= 400,
-        Request.status_code <= 599, *criterion
+        Request.status_code <= 599,
     ]
 
-    return db_session.query(Request).filter(criteria).all()
+    return db_session.query(Request).filter(criteria, *criterion).all()
 
 
 def get_status_code_frequencies_in_interval(db_session, endpoint_id, start_date, end_date):
