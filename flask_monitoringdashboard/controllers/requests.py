@@ -93,19 +93,15 @@ def get_error_requests(db_session, endpoint_id, *criterion):
     :param criterion:
     :return:
     """
-    return (
-        db_session.query(Request)
-            .filter(
-            and_(
-                Request.endpoint_id == endpoint_id,
-                Request.status_code.isnot(None),
-                Request.status_code >= 400,
-                Request.status_code <= 599,
-                *criterion
-            )
-        )
-            .all()
-    )
+
+    criteria = [
+        Request.endpoint_id == endpoint_id,
+        Request.status_code.isnot(None),
+        Request.status_code >= 400,
+        Request.status_code <= 599, *criterion
+    ]
+
+    return db_session.query(Request).filter(criteria).all()
 
 
 def get_status_code_frequencies_in_interval(db_session, endpoint_id, start_date, end_date):
