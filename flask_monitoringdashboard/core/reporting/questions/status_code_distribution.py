@@ -39,6 +39,7 @@ class StatusCodeDistribution(Question):
 
             registered_status_codes = set(compared_to_interval_frequencies.keys()).union(
                 set(comparison_interval_frequencies.keys()))
+
             total_requests_comparison_interval = sum(comparison_interval_frequencies.values())
             total_requests_compared_to_interval = sum(compared_to_interval_frequencies.values())
 
