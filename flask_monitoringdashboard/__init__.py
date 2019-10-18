@@ -54,7 +54,7 @@ def bind(app, schedule=True):
         profiler,
         version,
         auth,
-        reporting
+        reporting,
     )
     import flask_monitoringdashboard.views
 
