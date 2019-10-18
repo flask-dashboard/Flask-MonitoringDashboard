@@ -22,6 +22,9 @@ class StatusCodeDistributionAnswer(Answer):
 
 
 def frequency_to_percentage(freq, total):
+    if total == 0:
+        raise ValueError('`total` can not be zero!')
+
     return freq / total * 100
 
 
@@ -57,8 +60,11 @@ class StatusCodeDistribution(ReportQuestion):
                 count_compared_to_interval = compared_to_interval_frequencies[
                     status_code] if status_code in compared_to_interval_frequencies else 0
 
-                comparison_interval_percentage = count_comparison_interval / total_requests_comparison_interval * 100
-                compared_to_interval_percentage = count_compared_to_interval / total_requests_compared_to_interval * 100
+                comparison_interval_percentage = frequency_to_percentage(count_comparison_interval,
+                                                                         total_requests_comparison_interval)
+
+                compared_to_interval_percentage = frequency_to_percentage(count_compared_to_interval,
+                                                                          total_requests_compared_to_interval)
 
                 percentage_diff = comparison_interval_percentage - compared_to_interval_percentage
 
