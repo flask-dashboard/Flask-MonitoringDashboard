@@ -1,7 +1,7 @@
 from collections import defaultdict
 
 from flask_monitoringdashboard.controllers.requests import get_status_code_frequencies_in_interval
-from flask_monitoringdashboard.core.reporting.questions.question import Answer, Question
+from flask_monitoringdashboard.core.reporting.questions.report_question import Answer, ReportQuestion
 from flask_monitoringdashboard.database import session_scope
 
 
@@ -25,7 +25,7 @@ def frequency_to_percentage(freq, total):
     return freq / total * 100
 
 
-class StatusCodeDistribution(Question):
+class StatusCodeDistribution(ReportQuestion):
 
     def get_answer(self, endpoint, comparison_interval, compared_to_interval):
         with session_scope() as db_session:
@@ -33,9 +33,10 @@ class StatusCodeDistribution(Question):
                                                                                       comparison_interval.start_date(),
                                                                                       comparison_interval.end_date())
 
-            compared_to_interval_frequencies = get_status_code_frequencies_in_interval(db_session, endpoint.id,
-                                                                                       compared_to_interval.start_date(),
-                                                                                       compared_to_interval.end_date())
+            compared_to_interval_frequencies = get_status_code_frequencies_in_interval(
+                db_session, endpoint.id,
+                compared_to_interval.start_date(),
+                compared_to_interval.end_date())
 
             registered_status_codes = set(compared_to_interval_frequencies.keys()).union(
                 set(comparison_interval_frequencies.keys()))

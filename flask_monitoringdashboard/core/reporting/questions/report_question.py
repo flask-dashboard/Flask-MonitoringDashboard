@@ -26,7 +26,7 @@ class Answer:
         return base
 
 
-class Question:
+class ReportQuestion:
     __metaclass__ = ABCMeta
 
     @abstractmethod
