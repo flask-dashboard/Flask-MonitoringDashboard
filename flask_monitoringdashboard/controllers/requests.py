@@ -78,7 +78,7 @@ def get_status_code_frequencies(db_session, endpoint_id, *criterion):
     404 was returned 3 times.
     """
     status_code_counts = db_session.query(Request.status_code, func.count(Request.status_code)) \
-        .filter(and_(Request.endpoint_id == endpoint_id, Request.status_code.isnot(None), *criterion)) \
+        .filter(Request.endpoint_id == endpoint_id, Request.status_code.isnot(None), *criterion) \
         .group_by(Request.status_code).all()
 
     return dict(status_code_counts)
