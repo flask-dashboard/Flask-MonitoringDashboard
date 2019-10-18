@@ -71,8 +71,10 @@ def get_status_code_frequencies(db_session, endpoint_id, *criterion):
     """
     Gets the frequencies of each status code.
 
+
     :param db_session: session for the database
     :param endpoint_id: id for the endpoint
+    :param criterion:
     :return: A dict where the key is the status code and the value is the fraction of requests that returned the status
     code. Example: a return value of `{ 200: 105, 404: 3 }` means that status code 200 was returned 105 times and
     404 was returned 3 times.
