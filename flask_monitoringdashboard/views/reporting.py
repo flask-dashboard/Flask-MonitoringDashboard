@@ -16,47 +16,6 @@ def get_date(p):
     return datetime.utcfromtimestamp(int(request.args.get(p)))
 
 
-def status_code_report(endpoint, comparison_interval, compared_to_interval):
-    with session_scope() as db_session:
-        comparison_interval_distribution = get_status_code_frequencies_in_interval(db_session, endpoint.id,
-                                                                                   comparison_interval.start_date(),
-                                                                                   comparison_interval.end_date())
-
-        compared_to_interval_distribution = get_status_code_frequencies_in_interval(db_session, endpoint.id,
-                                                                                    compared_to_interval.start_date(),
-                                                                                    compared_to_interval.end_date())
-
-        total_requests_comparison_interval = sum(comparison_interval_distribution.values())
-        total_requests_compared_to_interval = sum(compared_to_interval_distribution.values())
-
-        percentages_comparison_interval = [(status_code, frequency / total_requests_comparison_interval * 100) for
-                                           (status_code, frequency) in
-                                           comparison_interval_distribution.items()]
-
-        percentages_compared_to_interval = [(status_code, frequency / total_requests_compared_to_interval * 100) for
-                                            (status_code, frequency) in
-                                            compared_to_interval_distribution.items()]
-
-        frequencies_comparison_interval = [comparison_interval_distribution[status_code] for status_code in
-                                           sorted(comparison_interval_distribution.keys())]
-
-        frequencies_compared_to_interval = [compared_to_interval_distribution[status_code] for status_code in
-                                            sorted(compared_to_interval_distribution.keys())]
-
-        chisq, p = 0, 0  # chisquare(frequencies_comparison_interval, frequencies_compared_to_interval)
-
-        return dict(
-            significant=float(p) < .05,
-            percentages_comparison_interval=comparison_interval_distribution,
-            percentages_compared_to_interval=percentages_compared_to_interval,
-            endpoint=dict(
-                id=endpoint.id,
-                name=endpoint.name,
-            ),
-            type='STATUS_CODE_DISTRIBUTION',
-        )
-
-
 def make_endpoint_summary(endpoint, comparison_interval, compared_to_interval):
     questions = [AverageLatency(), StatusCodeDistribution()]
 
