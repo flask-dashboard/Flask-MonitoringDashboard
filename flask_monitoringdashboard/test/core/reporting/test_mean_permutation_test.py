@@ -4,7 +4,6 @@ from flask_monitoringdashboard.core.reporting.mean_permutation_test import mean_
 
 
 class TestMeanPermutationTest(unittest.TestCase):
-
     def setUp(self):
         np.random.seed(0)  # We want tests to be deterministic
 
@@ -14,7 +13,9 @@ class TestMeanPermutationTest(unittest.TestCase):
 
         p = mean_permutation_test(x, y)
 
-        self.assertLess(p, 0.05)  # p < 0.05 -> reject null hypothesis that distributions come from same distribution
+        self.assertLess(
+            p, 0.05
+        )  # p < 0.05 -> reject null hypothesis that distributions come from same distribution
 
     def test_different_normal_distributions(self):
         x = np.random.normal(5, 10, 100)  # mu=5, sd=10
@@ -22,7 +23,9 @@ class TestMeanPermutationTest(unittest.TestCase):
 
         p = mean_permutation_test(x, y)
 
-        self.assertLess(p, 0.05)  # p < 0.05 -> reject null hypothesis that distributions come from same distribution
+        self.assertLess(
+            p, 0.05
+        )  # p < 0.05 -> reject null hypothesis that distributions come from same distribution
 
     def test_equal_normal_distributions(self):
         x = np.random.normal(0, 10, 100)  # mu=0, sd=10
