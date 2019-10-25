@@ -12,6 +12,7 @@ import time
 from flask import Flask
 
 import flask_monitoringdashboard as dashboard
+from flask_monitoringdashboard.database import session_scope
 
 app = Flask(__name__)
 
@@ -46,6 +47,9 @@ dashboard.bind(app)
 
 @app.route('/endpoint')
 def endpoint():
+    with session_scope() as db_session:
+        print(db_session.bind.dialect.name)
+
     print("Hello, world")
     return 'Ok'
 

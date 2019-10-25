@@ -36,6 +36,7 @@ class StatusCodeDistribution(ReportQuestion):
                                                                                       comparison_interval.start_date(),
                                                                                       comparison_interval.end_date())
 
+
             compared_to_interval_frequencies = get_status_code_frequencies_in_interval(
                 db_session, endpoint.id,
                 compared_to_interval.start_date(),
