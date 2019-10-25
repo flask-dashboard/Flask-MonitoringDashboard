@@ -25,7 +25,6 @@ dashboard.config.database_name = 'sqlite:///data.db'
 
 
 def on_the_minute():
-    print(f"On the minute: {datetime.datetime.now()}")
     return int(random() * 100 // 10)
 
 
@@ -35,7 +34,6 @@ dashboard.add_graph("On Half Minute", on_the_minute, "cron", **minute_schedule)
 
 
 def every_ten_seconds():
-    print(f"every_ten_seconds!!! {datetime.datetime.now()}")
     return int(random() * 100 // 10)
 
 

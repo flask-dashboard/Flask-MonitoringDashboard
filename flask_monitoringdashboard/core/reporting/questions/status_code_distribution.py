@@ -25,7 +25,7 @@ def frequency_to_percentage(freq, total):
     if total == 0:
         raise ValueError('`total` can not be zero!')
 
-    return freq / total * 100
+    return (float(freq)) / total * 100
 
 
 class StatusCodeDistribution(ReportQuestion):

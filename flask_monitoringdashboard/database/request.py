@@ -20,8 +20,6 @@ def get_latencies_in_timeframe(db_session, endpoint_id, start_date, end_date):
 def get_latencies_sample(db_session, endpoint_id, interval, sample_size=500):
     latencies = get_latencies_in_timeframe(db_session, endpoint_id, interval.start_date(), interval.end_date())
 
-    # todo: sample in the database, not in the application
-
     return sample(latencies, min(sample_size, len(latencies)))
 
 
