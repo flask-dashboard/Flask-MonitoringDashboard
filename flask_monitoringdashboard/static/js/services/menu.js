@@ -12,7 +12,7 @@ app.service('menuService', function ($http, endpointService) {
             $('#collapseCustomGraphs').collapse('hide');
         }
 
-        var dashboardPages = ['overview', 'hourly_load', 'multi_version', 'daily_load', 'api_performance'];
+        var dashboardPages = ['overview', 'hourly_load', 'multi_version', 'daily_load', 'api_performance', 'reporting'];
 
         if (dashboardPages.includes(page)) {
             $('#collapseDashboard').collapse('show');
