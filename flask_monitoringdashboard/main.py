@@ -12,6 +12,7 @@ import time
 from flask import Flask
 
 import flask_monitoringdashboard as dashboard
+from flask_monitoringdashboard.database import session_scope
 
 app = Flask(__name__)
 
@@ -25,7 +26,6 @@ dashboard.config.database_name = 'sqlite:///data.db'
 
 
 def on_the_minute():
-    print(f"On the minute: {datetime.datetime.now()}")
     return int(random() * 100 // 10)
 
 
@@ -35,7 +35,6 @@ dashboard.add_graph("On Half Minute", on_the_minute, "cron", **minute_schedule)
 
 
 def every_ten_seconds():
-    print(f"every_ten_seconds!!! {datetime.datetime.now()}")
     return int(random() * 100 // 10)
 
 
@@ -48,6 +47,9 @@ dashboard.bind(app)
 
 @app.route('/endpoint')
 def endpoint():
+    with session_scope() as db_session:
+        print(db_session.bind.dialect.name)
+
     print("Hello, world")
     return 'Ok'
 

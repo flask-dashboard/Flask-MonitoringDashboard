@@ -4,7 +4,7 @@ Contains all functions that access a Request object.
 import time
 from random import sample
 
-from sqlalchemy import and_
+from sqlalchemy import and_, func
 
 from flask_monitoringdashboard.database import Request
 
@@ -12,17 +12,30 @@ from flask_monitoringdashboard.database import Request
 def get_latencies_in_timeframe(db_session, endpoint_id, start_date, end_date):
     criterion = create_time_based_sample_criterion(start_date, end_date)
 
-    items = db_session.query(Request.duration).filter(and_(Request.endpoint_id == endpoint_id, *criterion)).all()
+    items = db_session.query(Request.duration).filter(Request.endpoint_id == endpoint_id, *criterion).all()
 
     return [item.duration for item in items]
 
 
 def get_latencies_sample(db_session, endpoint_id, interval, sample_size=500):
-    latencies = get_latencies_in_timeframe(db_session, endpoint_id, interval.start_date(), interval.end_date())
+    criterion = create_time_based_sample_criterion(interval.start_date(), interval.end_date())
 
-    # todo: sample in the database, not in the application
+    dialect = db_session.bind.dialect.name
 
-    return sample(latencies, min(sample_size, len(latencies)))
+    if dialect in ['sqlite', 'mysql']:
+        order_by = func.random() if dialect == 'sqlite' else func.rand()
+
+        items = db_session.query(Request.duration) \
+            .filter(Request.endpoint_id == endpoint_id, *criterion) \
+            .order_by(order_by) \
+            .limit(sample_size) \
+            .all()
+
+        durations = [item.duration for item in items]
+
+        return durations
+    else:
+        return get_latencies_in_timeframe(db_session, endpoint_id, interval.start_date(), interval.end_date())
 
 
 def add_request(db_session, duration, endpoint_id, ip, group_by, status_code):

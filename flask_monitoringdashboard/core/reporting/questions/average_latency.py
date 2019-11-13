@@ -1,7 +1,7 @@
 from flask_monitoringdashboard.core.reporting.mean_permutation_test import mean_permutation_test
 import numpy as np
 
-from flask_monitoringdashboard.core.reporting.questions.question import Answer, Question
+from flask_monitoringdashboard.core.reporting.questions.report_question import Answer, ReportQuestion
 from flask_monitoringdashboard.database import session_scope
 
 from flask_monitoringdashboard.database.request import get_latencies_sample
@@ -36,7 +36,7 @@ class AverageLatencyAnswer(Answer):
         return self._is_significant
 
 
-class AverageLatency(Question):
+class AverageLatency(ReportQuestion):
 
     def get_answer(self, endpoint, comparison_interval, compared_to_interval):
         with session_scope() as db_session:
