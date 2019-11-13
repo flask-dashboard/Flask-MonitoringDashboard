@@ -84,4 +84,4 @@ def my_func():
     return 33.3
 
 
-app.run()
+app.run(port=9999, debug=True)
