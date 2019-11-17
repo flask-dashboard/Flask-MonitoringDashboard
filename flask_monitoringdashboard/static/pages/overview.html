@@ -18,17 +18,15 @@
                 <div class="rect5"></div>
             </div>
 
+            <ul class="pagination">
+                <li class="page-item" ng-class="{'active': isHits}"><a class="page-link" ng-click="toggleHits()">Number
+                    of hits</a></li>
+                <li class="page-item" ng-class="{'active': !isHits}"><a class="page-link" ng-click="toggleHits()">Median
+                    request duration (ms)</a></li>
+            </ul>
+
             <table datatable="ng" class="table table-hover table-bordered" dt-options="options">
                 <thead>
-                <tr>
-                    <th colspan="2"></th>
-                    <th ng-show="isHits" colspan="3" style="text-align: center; font-size: large;">Number of hits</th>
-                    <th ng-show="isHits==false" colspan="3" style="text-align: center; font-size: large;">Median request
-                        duration (ms)
-                    </th>
-                    <th></th>
-                    <th></th>
-                </tr>
                 <tr>
                     <th></th>
                     <th>Endpoint</th>
@@ -75,12 +73,6 @@
                 </tbody>
             </table>
 
-            <ul class="pagination">
-                <li class="page-item" ng-class="{'active': isHits}"><a class="page-link" ng-click="toggleHits()">Number
-                    of hits</a></li>
-                <li class="page-item" ng-class="{'active': !isHits}"><a class="page-link" ng-click="toggleHits()">Median
-                    request duration</a></li>
-            </ul>
         </div>
 
     </div>
