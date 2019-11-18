@@ -160,7 +160,6 @@ def endpoint_status_code_summary(endpoint_id):
                 row2dict(row) for row in get_error_requests(db_session, endpoint_id)
             ],
         }
-
         return jsonify(result)
 
 
