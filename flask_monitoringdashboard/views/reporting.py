@@ -1,12 +1,11 @@
-from flask_monitoringdashboard.controllers.requests import get_status_code_frequencies_in_interval
-from flask_monitoringdashboard.core.auth import secure
 from datetime import datetime
+
 from flask import request
 
 from flask_monitoringdashboard import blueprint
+from flask_monitoringdashboard.core.auth import secure
 from flask_monitoringdashboard.core.date_interval import DateInterval
 from flask_monitoringdashboard.core.reporting.questions.average_latency import AverageLatency
-
 from flask_monitoringdashboard.core.reporting.questions.status_code_distribution import StatusCodeDistribution
 from flask_monitoringdashboard.database import session_scope
 from flask_monitoringdashboard.database.endpoint import get_endpoints

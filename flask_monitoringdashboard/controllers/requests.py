@@ -61,9 +61,7 @@ def get_status_code_distribution(db_session, endpoint_id):
     requests. 8% of the requests returned a 404 status code.
     """
     status_code_counts = get_all_request_status_code_counts(db_session, endpoint_id)
-
     total_count = sum(frequency for (_, frequency) in status_code_counts)
-
     return {status_code: frequency / total_count for (status_code, frequency) in status_code_counts}
 
 
@@ -96,13 +94,12 @@ def get_error_requests(db_session, endpoint_id, *criterion):
     :return:
     """
 
-    criteria = [
+    criteria = and_(
         Request.endpoint_id == endpoint_id,
         Request.status_code.isnot(None),
         Request.status_code >= 400,
         Request.status_code <= 599,
-    ]
-
+    )
     return db_session.query(Request).filter(criteria, *criterion).all()
 
 
