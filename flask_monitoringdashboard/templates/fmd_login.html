@@ -1,5 +1,6 @@
 {% extends "fmd_base.html" %}
 {% block body %}
+
 <body>
     <div class="container py-5">
         <div class="row">
@@ -7,8 +8,8 @@
 
                 <div class="text-center" style="margin-bottom: 20px; margin-top: -30px;">
                     <div style="text-align: center;">
-                    <img src="{{ url_for('dashboard.static', filename='img/header.png') }}" width="80%" />
-                        </div>
+                        <img src="{{ url_for('dashboard.static', filename='img/header.png') }}" width="80%" />
+                    </div>
                     <span>Automatically monitor the evolving performance of Flask/Python web services</span>
                 </div>
             </div>
@@ -26,19 +27,19 @@
                         <form class="form" method="POST" action="login">
                             <div class="form-group">
                                 <label for="formName"><i class="fa fa-user"></i> Login</label>
-                                <input id="formName" name="name" type="text" class="form-control"
-                                       placeholder="Username" autofocus required />
+                                <input id="formName" name="name" type="text" class="form-control" placeholder="Username"
+                                    autofocus required />
                             </div>
 
                             <div class="form-group">
-                                <label for="formPassword" ><i class="fa fa-lock"></i> Password</label>
-                                <input name="password" type="password" class="form-control"
-                                       placeholder="Username" required />
+                                <label for="formPassword"><i class="fa fa-lock"></i> Password</label>
+                                <input name="password" type="password" class="form-control" placeholder="Password"
+                                    required />
                             </div>
 
                             <button name="Login" class="btn btn-primary btn-block">Login</button>
                         </form>
-                        <hr/>
+                        <hr />
 
                         <div class="text-center">
                             For advanced documentation, see
