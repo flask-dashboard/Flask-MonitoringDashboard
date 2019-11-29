@@ -7,7 +7,7 @@ from flask_monitoringdashboard.database.count_group import count_requests_per_da
 from flask_monitoringdashboard.database.endpoint import get_endpoints, get_num_requests
 
 from flask_monitoringdashboard.database import Request
-from sqlalchemy import func, distinct, and_
+from sqlalchemy import func, and_
 
 from flask_monitoringdashboard.database.request import create_time_based_sample_criterion
 
@@ -24,15 +24,12 @@ def get_num_requests_data(db_session, start_date, end_date):
 
     hits = count_requests_per_day(db_session, days)
     endpoints = get_endpoints(db_session)
-    data = [{
-        'name': end.name,
-        'values': [get_value(hits_day, end.id) for hits_day in hits]
-    } for end in endpoints]
+    data = [
+        {'name': end.name, 'values': [get_value(hits_day, end.id) for hits_day in hits]}
+        for end in endpoints
+    ]
 
-    return {
-        'days': [d.strftime('%Y-%m-%d') for d in days],
-        'data': data
-    }
+    return {'days': [d.strftime('%Y-%m-%d') for d in days], 'data': data}
 
 
 def get_all_request_status_code_counts(db_session, endpoint_id):
@@ -43,9 +40,12 @@ def get_all_request_status_code_counts(db_session, endpoint_id):
     :param endpoint_id: id for the endpoint
     :return: A list of tuples in the form of `(status_code, count)`
     """
-    return db_session.query(Request.status_code, func.count(Request.status_code)) \
-        .filter(and_(Request.endpoint_id == endpoint_id, Request.status_code.isnot(None))) \
-        .group_by(Request.status_code).all()
+    return (
+        db_session.query(Request.status_code, func.count(Request.status_code))
+            .filter(Request.endpoint_id == endpoint_id, Request.status_code.isnot(None))
+            .group_by(Request.status_code)
+            .all()
+    )
 
 
 def get_status_code_distribution(db_session, endpoint_id):
@@ -54,29 +54,31 @@ def get_status_code_distribution(db_session, endpoint_id):
 
     :param db_session: session for the database
     :param endpoint_id: id for the endpoint
-    :return: A dict where the key is the status code and the value is the fraction of requests that returned the status
-    code. Example: a return value of `{ 200: 0.92, 404: 0.08 }` means that status code 200 was returned on 92% of the
+    :return: A dict where the key is the status code and the value is the fraction of requests
+    that returned the status
+    code. Example: a return value of `{ 200: 0.92, 404: 0.08 }` means that status code 200 was
+    returned on 92% of the
     requests. 8% of the requests returned a 404 status code.
     """
     status_code_counts = get_all_request_status_code_counts(db_session, endpoint_id)
-
     total_count = sum(frequency for (_, frequency) in status_code_counts)
-
     return {status_code: frequency / total_count for (status_code, frequency) in status_code_counts}
 
 
-def get_status_code_frequencies(db_session, endpoint_id):
+def get_status_code_frequencies(db_session, endpoint_id, *criterion):
     """
     Gets the frequencies of each status code.
 
+
     :param db_session: session for the database
     :param endpoint_id: id for the endpoint
+    :param criterion: Optional criteria used to file the requests.
     :return: A dict where the key is the status code and the value is the fraction of requests that returned the status
     code. Example: a return value of `{ 200: 105, 404: 3 }` means that status code 200 was returned 105 times and
     404 was returned 3 times.
     """
     status_code_counts = db_session.query(Request.status_code, func.count(Request.status_code)) \
-        .filter(and_(Request.endpoint_id == endpoint_id, Request.status_code.isnot(None))) \
+        .filter(Request.endpoint_id == endpoint_id, Request.status_code.isnot(None), *criterion) \
         .group_by(Request.status_code).all()
 
     return dict(status_code_counts)
@@ -86,21 +88,25 @@ def get_error_requests(db_session, endpoint_id, *criterion):
     """
     Gets all requests that did not return a 200 status code.
 
-    :param db_session:
-    :param endpoint_id:
-    :param criterion:
+    :param db_session: session for the database
+    :param endpoint_id: ID of the endpoint to be queried
+    :param criterion: Optional criteria used to file the requests.
     :return:
     """
-    return db_session \
-        .query(Request) \
-        .filter(and_(Request.endpoint_id == endpoint_id, Request.status_code.isnot(None), Request.status_code >= 400,
-                     Request.status_code <= 599, *criterion)) \
-        .all()
+
+    criteria = and_(
+        Request.endpoint_id == endpoint_id,
+        Request.status_code.isnot(None),
+        Request.status_code >= 400,
+        Request.status_code <= 599,
+    )
+    return db_session.query(Request).filter(criteria, *criterion).all()
 
 
 def get_status_code_frequencies_in_interval(db_session, endpoint_id, start_date, end_date):
     criterion = create_time_based_sample_criterion(start_date, end_date)
-    return get_status_code_frequencies(db_session, endpoint_id, criterion)
+
+    return get_status_code_frequencies(db_session, endpoint_id, *criterion)
 
 
 def get_hourly_load(db_session, endpoint_id, start_date, end_date):
@@ -117,7 +123,9 @@ def get_hourly_load(db_session, endpoint_id, start_date, end_date):
     hours = ['0{}:00'.format(h) for h in range(0, 10)] + ['{}:00'.format(h) for h in range(10, 24)]
     heatmap_data = numpy.zeros((len(hours), numdays))
 
-    start_datetime = to_utc_datetime(datetime.datetime.combine(start_date, datetime.time(0, 0, 0, 0)))
+    start_datetime = to_utc_datetime(
+        datetime.datetime.combine(start_date, datetime.time(0, 0, 0, 0))
+    )
     end_datetime = to_utc_datetime(datetime.datetime.combine(end_date, datetime.time(23, 59, 59)))
 
     for time, count in get_num_requests(db_session, endpoint_id, start_datetime, end_datetime):
@@ -126,6 +134,8 @@ def get_hourly_load(db_session, endpoint_id, start_date, end_date):
         hour_index = int(to_local_datetime(parsed_time).strftime('%H'))
         heatmap_data[hour_index][day_index] = count
     return {
-        'days': [(start_date + datetime.timedelta(days=i)).strftime('%Y-%m-%d') for i in range(numdays)],
-        "data": heatmap_data.tolist()
+        'days': [
+            (start_date + datetime.timedelta(days=i)).strftime('%Y-%m-%d') for i in range(numdays)
+        ],
+        "data": heatmap_data.tolist(),
     }

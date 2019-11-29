@@ -6,11 +6,11 @@ import traceback
 from collections import defaultdict
 
 from flask_monitoringdashboard import config
+from flask_monitoringdashboard.core.cache import update_duration_cache
 from flask_monitoringdashboard.core.logger import log
 from flask_monitoringdashboard.core.profiler.util import order_histogram
 from flask_monitoringdashboard.core.profiler.util.pathHash import PathHash
 from flask_monitoringdashboard.database import session_scope
-from flask_monitoringdashboard.database.endpoint import update_last_accessed
 from flask_monitoringdashboard.database.request import add_request
 from flask_monitoringdashboard.database.stack_line import add_stack_line
 
@@ -40,8 +40,8 @@ class StacktraceProfiler(threading.Thread):
 
     def run(self):
         """
-        Continuously takes a snapshot from the stacktrace (only the main-thread). Filters everything before the
-        endpoint has been called (i.e. the Flask library).
+        Continuously takes a snapshot from the stacktrace (only the main-thread). Filters
+        everything before the endpoint has been called (i.e. the Flask library).
         Directly computes the histogram, since this is more efficient for performance
         :return:
         """
@@ -82,26 +82,36 @@ class StacktraceProfiler(threading.Thread):
         self._duration = duration * 1000
         self._status_code = status_code
         if self._outlier_profiler:
-            self._outlier_profiler.stop()
+            self._outlier_profiler.stop_by_profiler()
         self._keeprunning = False
 
     def _on_thread_stopped(self):
+        update_duration_cache(endpoint_name=self._endpoint.name, duration=self._duration)
         with session_scope() as db_session:
-            update_last_accessed(db_session, endpoint_name=self._endpoint.name)
-            request_id = add_request(db_session, duration=self._duration, endpoint_id=self._endpoint.id, ip=self._ip,
-                                     status_code=self._status_code, group_by=self._group_by)
-              
+            request_id = add_request(
+                db_session,
+                duration=self._duration,
+                endpoint_id=self._endpoint.id,
+                ip=self._ip,
+                status_code=self._status_code,
+                group_by=self._group_by,
+            )
             self._lines_body = order_histogram(self._histogram.items())
             self.insert_lines_db(db_session, request_id)
-
             if self._outlier_profiler:
                 self._outlier_profiler.add_outlier(request_id)
 
     def insert_lines_db(self, db_session, request_id):
         position = 0
         for code_line in self.get_funcheader():
-            add_stack_line(db_session, request_id, position=position, indent=0, duration=self._duration,
-                           code_line=code_line)
+            add_stack_line(
+                db_session,
+                request_id,
+                position=position,
+                indent=0,
+                duration=self._duration,
+                code_line=code_line,
+            )
             position += 1
 
         for key, val in self._lines_body:
@@ -109,8 +119,14 @@ class StacktraceProfiler(threading.Thread):
             fn, ln = self._path_hash.get_last_fn_ln(path)
             indent = self._path_hash.get_indent(path)
             duration = val * self._duration / self._total if self._total != 0 else 0
-            add_stack_line(db_session, request_id, position=position, indent=indent, duration=duration,
-                           code_line=(fn, ln, fun, line))
+            add_stack_line(
+                db_session,
+                request_id,
+                position=position,
+                indent=indent,
+                duration=duration,
+                code_line=(fn, ln, fun, line),
+            )
             position += 1
 
     def get_funcheader(self):

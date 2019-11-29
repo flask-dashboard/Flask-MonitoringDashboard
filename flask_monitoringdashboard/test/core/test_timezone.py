@@ -5,7 +5,6 @@ from flask_monitoringdashboard.core.timezone import to_local_datetime, to_utc_da
 
 
 class TestTimezone(unittest.TestCase):
-
     def test_timezone(self):
         dt = datetime.datetime.now()
         self.assertEqual(to_local_datetime(to_utc_datetime(dt)), dt)

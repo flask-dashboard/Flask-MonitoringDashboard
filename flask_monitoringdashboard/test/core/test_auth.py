@@ -4,7 +4,6 @@ from flask_monitoringdashboard.test.utils import get_test_app
 
 
 class TestAuth(unittest.TestCase):
-
     def setUp(self):
         self.app = get_test_app()
 

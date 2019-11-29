@@ -10,8 +10,7 @@ def get_data_grouped(db_session, column, func, *where):
     :param func: the function to reduce the data
     :param where: additional where clause
     """
-    result = db_session.query(column, Request.duration). \
-        filter(*where).order_by(column).all()
+    result = db_session.query(column, Request.duration).filter(*where).order_by(column).all()
     # result is now a list of tuples per request.
     return group_result(result, func)
 
@@ -83,7 +82,8 @@ def get_two_columns_grouped(db_session, column, *where):
     :param column: column that is used for the grouping (together with the Request.version)
     :param where: additional where clause
     """
-    result = db_session.query(column, Request.version_requested, Request.duration). \
-        filter(*where).all()
+    result = (
+        db_session.query(column, Request.version_requested, Request.duration).filter(*where).all()
+    )
     result = [((g, v), t) for g, v, t in result]
     return group_result(result, median)

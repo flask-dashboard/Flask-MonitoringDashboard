@@ -1,4 +1,4 @@
-from flask_monitoringdashboard.core.profiler.util.pathHash import PathHash, LINE_SPLIT
+from flask_monitoringdashboard.core.profiler.util.pathHash import PathHash
 
 
 def order_histogram(items, path=''):
@@ -11,9 +11,14 @@ def order_histogram(items, path=''):
     sorted_list = []
     indent = PathHash.get_indent(path) + 1
 
-    order = sorted([(key, value) for key, value in items
-                    if key[0][:len(path)] == path and PathHash.get_indent(key[0]) == indent],
-                   key=lambda row: row[0][1])
+    order = sorted(
+        [
+            (key, value)
+            for key, value in items
+            if key[0][: len(path)] == path and PathHash.get_indent(key[0]) == indent
+        ],
+        key=lambda row: row[0][1],
+    )
     for key, value in order:
         sorted_list.append((key, value))
         sorted_list.extend(order_histogram(items=items, path=key[0]))

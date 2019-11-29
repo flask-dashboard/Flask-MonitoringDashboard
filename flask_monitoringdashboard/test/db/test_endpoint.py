@@ -1,6 +1,6 @@
 """
-    This file contains all unit tests for the endpoint-table in the database. (Corresponding to the file:
-    'flask_monitoringdashboard/database/endpoint.py')
+    This file contains all unit tests for the endpoint-table in the database. (Corresponding to the
+    file: 'flask_monitoringdashboard/database/endpoint.py')
     See info_box.py for how to run the test-cases.
 """
 
@@ -8,11 +8,16 @@ import unittest
 
 from flask_monitoringdashboard.core.timezone import to_utc_datetime
 from flask_monitoringdashboard.database import session_scope
-from flask_monitoringdashboard.test.utils import set_test_environment, clear_db, add_fake_data, NAME, TIMES
+from flask_monitoringdashboard.test.utils import (
+    set_test_environment,
+    clear_db,
+    add_fake_data,
+    NAME,
+    TIMES,
+)
 
 
 class TestEndpoint(unittest.TestCase):
-
     def setUp(self):
         set_test_environment()
         clear_db()
@@ -24,6 +29,7 @@ class TestEndpoint(unittest.TestCase):
         """
         from flask_monitoringdashboard.database.endpoint import get_endpoint_by_name
         from flask_monitoringdashboard import config
+
         with session_scope() as db_session:
             endpoint = get_endpoint_by_name(db_session, NAME)
         self.assertEqual(endpoint.name, NAME)
@@ -34,7 +40,11 @@ class TestEndpoint(unittest.TestCase):
         """
             Test whether the function returns the right values.
         """
-        from flask_monitoringdashboard.database.endpoint import get_endpoint_by_name, update_endpoint
+        from flask_monitoringdashboard.database.endpoint import (
+            get_endpoint_by_name,
+            update_endpoint,
+        )
+
         with session_scope() as db_session:
             current_value = get_endpoint_by_name(db_session, NAME).monitor_level
             new_value = 1 if current_value != 1 else 2
@@ -46,11 +56,16 @@ class TestEndpoint(unittest.TestCase):
             Test whether the function returns the right values.
         """
         import datetime
+
         time = datetime.datetime.utcnow()
-        from flask_monitoringdashboard.database.endpoint import update_last_accessed, get_last_requested
+        from flask_monitoringdashboard.database.endpoint import (
+            update_last_requested,
+            get_last_requested,
+        )
         from flask_monitoringdashboard.database.count_group import get_value
+
         with session_scope() as db_session:
-            update_last_accessed(db_session, NAME)
+            update_last_requested(db_session, NAME)
             result = get_value(get_last_requested(db_session), NAME)
             result_utc = to_utc_datetime(result)
             self.assertTrue((result_utc - time).seconds < 1)
@@ -61,6 +76,7 @@ class TestEndpoint(unittest.TestCase):
         """
         from flask_monitoringdashboard.database.endpoint import get_endpoints
         from flask_monitoringdashboard import config
+
         with session_scope() as db_session:
             result = get_endpoints(db_session)
             self.assertEqual(len(result), 1)

@@ -8,14 +8,19 @@ import os
 import pytz
 from tzlocal import get_localzone
 
-from flask_monitoringdashboard.core.config.parser import parse_string, parse_version, parse_bool, parse_literal
+from flask_monitoringdashboard.core.config.parser import (
+    parse_string,
+    parse_version,
+    parse_bool,
+    parse_literal,
+)
 from flask_monitoringdashboard.core.logger import log
 
 
 class Config(object):
     """
-        The settings can be changed by setting up a config file. For an example of a config file, see
-         config.cfg in the main-directory. 
+        The settings can be changed by setting up a config file. For an example of a config file,
+        see config.cfg in the main-directory.
     """
 
     def __init__(self):
@@ -27,7 +32,7 @@ class Config(object):
         self.link = 'dashboard'
         self.monitor_level = 1
         self.outlier_detection_constant = 2.5
-        self.sampling_period = 0
+        self.sampling_period = 5 / 1000.0
         self.enable_logging = False
 
         # database
@@ -69,10 +74,11 @@ class Config(object):
                 variable is 2.5.
             - SAMPLING_PERIOD: Time between two profiler-samples. The time must be specified in ms.
                 If this value is not set, the profiler continuously monitors.
-            - ENABLE_LOGGING: Boolean if you want additional logs to be printed to the console. Default
-            value is False
+            - ENABLE_LOGGING: Boolean if you want additional logs to be printed to the console.
+            Default value is False
 
-            The config_file must at least contains the following variables in section 'authentication':
+            The config_file must at least contains the following variables in section
+            'authentication':
             - USERNAME: for logging into the dashboard, a username and password is required. The
                 username can be set using this variable.
             - PASSWORD: same as for the username, but this is the password variable.
@@ -84,10 +90,11 @@ class Config(object):
             - DATABASE: Suppose you have multiple projects where you're working on and want to
                 separate the results. Then you can specify different database_names, such that the
                 result of each project is stored in its own database.
-            - TABLE_PREFIX: A prefix to every table that the Flask-MonitoringDashboard uses, to ensure
-                that there are no conflicts with the user of the dashboard.
+            - TABLE_PREFIX: A prefix to every table that the Flask-MonitoringDashboard uses, to
+                ensure that there are no conflicts with the user of the dashboard.
 
-            The config_file must at least contains the following variables in section 'visualization':
+            The config_file must at least contains the following variables in section
+            'visualization':
             - TIMEZONE: The timezone for converting a UTC timestamp to a local timestamp.
                 for a list of all timezones, use the following:
 
@@ -97,7 +104,9 @@ class Config(object):
             - COLORS: A dictionary to override the colors used per endpoint.
 
             :param file: a string pointing to the location of the config-file.
-            :param envvar: a string specifying which environment variable holds the config file location
+            :param envvar: a string specifying which environment variable holds the config file
+                location.
+            :param log_verbose: flag to print the location of the config file.
         """
 
         if envvar:
@@ -118,18 +127,31 @@ class Config(object):
             # parse 'dashboard'
             self.version = parse_version(parser, 'dashboard', self.version)
             self.link = parse_string(parser, 'dashboard', 'CUSTOM_LINK', self.link)
-            self.monitor_level = parse_literal(parser, 'dashboard', 'MONITOR_LEVEL', self.monitor_level)
-            self.outlier_detection_constant = parse_literal(parser, 'dashboard', 'OUTlIER_DETECTION_CONSTANT',
-                                                            self.outlier_detection_constant)
-            self.sampling_period = parse_literal(parser, 'dashboard', 'SAMPLING_RATE', self.sampling_period) / 1000
-            self.enable_logging = parse_bool(parser, 'dashboard', 'ENABLE_LOGGING', self.enable_logging)
+            self.monitor_level = parse_literal(
+                parser, 'dashboard', 'MONITOR_LEVEL', self.monitor_level
+            )
+            self.outlier_detection_constant = parse_literal(
+                parser, 'dashboard', 'OUTlIER_DETECTION_CONSTANT', self.outlier_detection_constant
+            )
+            self.sampling_period = (
+                parse_literal(parser, 'dashboard', 'SAMPLING_RATE', self.sampling_period) / 1000.0
+            )
+            self.enable_logging = parse_bool(
+                parser, 'dashboard', 'ENABLE_LOGGING', self.enable_logging
+            )
 
             # parse 'authentication'
             self.username = parse_string(parser, 'authentication', 'USERNAME', self.username)
             self.password = parse_string(parser, 'authentication', 'PASSWORD', self.password)
-            self.security_token = parse_string(parser, 'authentication', 'SECURITY_TOKEN', self.security_token)
-            self.guest_username = parse_string(parser, 'authentication', 'GUEST_USERNAME', self.guest_username)
-            self.guest_password = parse_literal(parser, 'authentication', 'GUEST_PASSWORD', self.guest_password)
+            self.security_token = parse_string(
+                parser, 'authentication', 'SECURITY_TOKEN', self.security_token
+            )
+            self.guest_username = parse_string(
+                parser, 'authentication', 'GUEST_USERNAME', self.guest_username
+            )
+            self.guest_password = parse_literal(
+                parser, 'authentication', 'GUEST_PASSWORD', self.guest_password
+            )
 
             # database
             self.database_name = parse_string(parser, 'database', 'DATABASE', self.database_name)
@@ -137,7 +159,9 @@ class Config(object):
 
             # visualization
             self.colors = parse_literal(parser, 'visualization', 'COLORS', self.colors)
-            self.timezone = pytz.timezone(parse_string(parser, 'visualization', 'TIMEZONE', self.timezone.zone))
+            self.timezone = pytz.timezone(
+                parse_string(parser, 'visualization', 'TIMEZONE', self.timezone.zone)
+            )
 
             if log_verbose:
                 log("version: " + self.version)

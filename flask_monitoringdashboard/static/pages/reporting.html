@@ -1,0 +1,152 @@
+<h1>Reporting</h1>
+<p>Generate a report to get more insight into how the performance of your service is changing.</p>
+
+<!-- Modal -->
+<div class="modal fade" id="details-modal"
+     tabindex="-1" role="dialog"
+     aria-labelledby="details-modal"
+     aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">
+                    {{ selectedSummary.endpoint_name }} - Average
+                    latency {{ selectedAnswer.percentual_diff > 0 ? 'increased' : 'decreased' }} by
+                    {{ selectedAnswer.percentual_diff|abs|number:0 }}%
+                </h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div id="chart"></div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-header">
+        <ul class="nav nav-tabs card-header-tabs">
+            <li class="nav-item">
+                <a ng-click="selectSection('day')"
+                   ng-class="activeSection == 'day' ? 'active nav-link' : 'nav-link'"
+                   href="#">{{ currentDay }} vs {{ yesterday }}</a>
+            </li>
+            <li class="nav-item">
+                <a ng-click="selectSection('week')"
+                   ng-class="activeSection == 'week' ? 'active nav-link' : 'nav-link'"
+                   href="#">Week {{ currentWeekNumber }} vs Week {{ previousWeekNumber }}</a>
+            </li>
+            <li class="nav-item">
+                <a ng-click="selectSection('month')"
+                   ng-class="activeSection == 'month' ? 'active nav-link' : 'nav-link'"
+                   href="#">{{ monthName }} vs {{ previousMonthName }}</a>
+            </li>
+
+            <li class="nav-item">
+                <a ng-click="selectSection('custom')"
+                   ng-class="activeSection == 'custom' ? 'active nav-link' : 'nav-link'"
+                   href="#">Custom</a>
+            </li>
+        </ul>
+    </div>
+
+    <div class="card-body">
+        <div style="display: flex; justify-content: space-between; align-items:center; padding-top: 15px">
+            <button ng-click="generateReport()" type="button"
+                    ng-class="generating == true ? 'btn btn-primary disabled' : 'btn btn-primary'">
+
+                <i ng-show="generating" class='fa fa-spinner fa-spin '></i>
+                {{ generating ? 'Generating...' : 'Generate' }}
+            </button>
+
+            <div class="form-check">
+                <input type="checkbox" ng-model="onlyShowInteresting" class="form-check-input" id="exampleCheck1">
+                <label class="form-check-label" for="exampleCheck1">Only Show Interesting Results</label>
+            </div>
+        </div>
+
+
+        <hr/>
+        <div ng-show="activeSection == 'custom'">
+            <div>
+                <div class="input-group">
+                    <input type="datetime-local" ng-model="intervals.comparison_interval.from" class="form-control"/>
+                    <input type="datetime-local" ng-model="intervals.comparison_interval.to" class="form-control"/>
+                </div>
+            </div>
+
+            <p style="text-align: center; margin-top: 15px">Compared to</p>
+
+            <div style="margin-top:15px; margin-bottom: 15px">
+                <div class="input-group">
+                    <input type="datetime-local" ng-model="intervals.compared_to_interval.from" class="form-control"/>
+                    <input type="datetime-local" ng-model="intervals.compared_to_interval.to" class="form-control"/>
+                </div>
+            </div>
+            <hr/>
+        </div>
+
+
+        <div class="card">
+            <div class="card-body">
+                <div ng-show="!reports[activeSection]" style="text-align: center">
+                    <i>No report generated yet</i>
+                </div>
+
+                <div ng-repeat="summary in reports[activeSection].summaries">
+                    <div ng-show="summary.has_anything_significant || !onlyShowInteresting">
+                        <h1>{{ summary.endpoint_name }}</h1>
+
+                        <ul ng-repeat="answer in summary.answers" class="list-group">
+                            <li class="list-group-item" ng-show="answer.is_significant || !onlyShowInteresting">
+                                <div ng-switch="answer.type">
+                                    <div ng-switch-when="AVERAGE_LATENCY" style="padding-bottom:15px">
+                                        <h4>Average latency
+                                            {{ answer.percentual_diff > 0 ? 'increased' : 'decreased' }} by
+                                            {{ answer.percentual_diff | abs | number : 0 }}%</h4>
+                                        <p>From {{ answer.compared_to_average|number:0 }}ms to
+                                            {{ answer.comparison_average|number:0 }}ms</p>
+
+                                        <button ng-click="selectEntry(summary, answer)" type="button"
+                                                class="btn btn-secondary btm-sm"
+                                                data-toggle="modal" data-target="#details-modal">
+                                            Details
+                                        </button>
+                                    </div>
+
+                                    <div ng-switch-when="STATUS_CODE_DISTRIBUTION">
+                                        <h4>Distribution of status code changed</h4>
+
+                                        <table class="table">
+                                            <thead>
+                                            <tr>
+                                                <th scope="col">Status code</th>
+                                                <th scope="col"></th>
+                                            </tr>
+                                            </thead>
+                                            <tbody>
+                                            <tr ng-repeat="r in answer.percentages">
+                                                <td>{{ r.status_code }}</td>
+                                                <td>{{ r.compared_to_interval | number:0 }}% -> {{ r.comparison_interval | number:0 }}%</td>
+                                            </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </li>
+                        </ul>
+
+                        <hr/>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>

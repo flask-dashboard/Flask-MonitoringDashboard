@@ -115,3 +115,7 @@ app.filter('dateDifference', function () {
         return year + " year" + s(year) + " ago";
     }
 });
+
+app.filter('abs', function() {
+    return function(num) { return Math.abs(num); }
+});

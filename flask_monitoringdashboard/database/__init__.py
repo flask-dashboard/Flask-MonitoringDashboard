@@ -1,13 +1,23 @@
 """
-    Creates the database. 
-    For information about how to access the database via a session-variable, see: session_scope() 
+    Creates the database.
+    For information about how to access the database via a session-variable, see: session_scope()
 """
 import datetime
 import random
 import time
 from contextlib import contextmanager
 
-from sqlalchemy import Column, Integer, String, DateTime, create_engine, Float, TEXT, ForeignKey, exc
+from sqlalchemy import (
+    Column,
+    Integer,
+    String,
+    DateTime,
+    create_engine,
+    Float,
+    TEXT,
+    ForeignKey,
+    exc,
+)
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker, relationship, scoped_session
 
@@ -18,11 +28,12 @@ Base = declarative_base()
 
 class Endpoint(Base):
     """ Table for storing information about the endpoints. """
+
     __tablename__ = '{}Endpoint'.format(config.table_prefix)
     id = Column(Integer, primary_key=True)
     # name of the endpoint
     name = Column(String(250), unique=True, nullable=False)
-    # 0 - disabled, 1 - performance, 2 - profiler, 3 - profiler + outliers
+    # 0 - disabled, 1 - performance, 2 - outliers, 3 - profiler + outliers
     monitor_level = Column(Integer, default=config.monitor_level)
     # the time when the endpoint was added
     time_added = Column(DateTime, default=datetime.datetime.utcnow)
@@ -34,6 +45,7 @@ class Endpoint(Base):
 
 class Request(Base):
     """ Table for storing measurements of requests. """
+
     __tablename__ = '{}Request'.format(config.table_prefix)
     id = Column(Integer, primary_key=True)
     endpoint_id = Column(Integer, ForeignKey(Endpoint.id))
@@ -57,6 +69,7 @@ class Request(Base):
 
 class Outlier(Base):
     """ Table for storing information about outliers. """
+
     __tablename__ = '{}Outlier'.format(config.table_prefix)
     id = Column(Integer, primary_key=True)
     request_id = Column(Integer, ForeignKey(Request.id))
@@ -80,7 +93,8 @@ class CodeLine(Base):
     __tablename__ = '{}CodeLine'.format(config.table_prefix)
     """ Table for storing the text of a StackLine. """
     id = Column(Integer, primary_key=True)
-    # quadruple (filename, line_number, function_name, code) that uniquely identifies a statement in the code
+    # quadruple (filename, line_number, function_name, code) that uniquely identifies a statement
+    # in the code
     filename = Column(String(250), nullable=False)
     line_number = Column(Integer, nullable=False)
     function_name = Column(String(250), nullable=False)
@@ -89,6 +103,7 @@ class CodeLine(Base):
 
 class StackLine(Base):
     """ Table for storing lines of execution paths of calls. """
+
     __tablename__ = '{}StackLine'.format(config.table_prefix)
     request_id = Column(Integer, ForeignKey(Request.id), primary_key=True)
     code_id = Column(Integer, ForeignKey(CodeLine.id))
@@ -105,6 +120,7 @@ class StackLine(Base):
 
 class CustomGraph(Base):
     """ Table for storing custom graphs names. """
+
     __tablename__ = '{}CustomGraph'.format(config.table_prefix)
     graph_id = Column(Integer, primary_key=True)
     title = Column(String(250), nullable=False, unique=True)
@@ -114,6 +130,7 @@ class CustomGraph(Base):
 
 class CustomGraphData(Base):
     """ Table for storing data collected by custom graphs. """
+
     __tablename__ = '{}CustomGraphData'.format(config.table_prefix)
     id = Column(Integer, primary_key=True)
     graph_id = Column(Integer, ForeignKey(CustomGraph.graph_id))
@@ -134,7 +151,6 @@ def session_scope():
     When accessing the database, use the following syntax:
         with session_scope() as db_session:
             db_session.query(...)
-            
     :return: the session for accessing the database
     """
     session_obj = scoped_session(DBSession)

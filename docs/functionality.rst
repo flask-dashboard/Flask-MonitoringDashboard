@@ -112,42 +112,9 @@ that endpoint. The following data is recorded:
      print(request.environ['REMOTE_ADDR'])
 
 
-Monitoring Level 2 - Profiler
+Monitoring Level 2 - Outliers
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-When the monitoring level is set to 2, the Dashboard performs a
-`statistical profiling <https://docs.python.org/3/library/profile.html#what-is-deterministic-profiling>`_
-of all the requests coming to that endpoint. What this means is that another
-thread will be launched in parallel with the one processing the request, it
-will periodically sample the processing thread, and will analyze its current stack
-trace. Using this information, the Dashboard will infer how long every function
-call inside the endpoint code takes to execute.
-
-The profiler is one of the most powerful features of the Dashboard, pointing to
-where your optimization efforts should be directed, one level of abstraction
-lower than the performance monitoring of Level 1. To access this information,
-you have to:
-
-1. Go to the Overview tab in the left menu: http://localhost:5000/dashboard/overview
-
-2. Select an endpoint for which the monitoring level is or was at some point at least 2.
-
-3. Go to the Profiler tab: http://localhost:5000/dashboard/endpoint/:endpoint_id:/profiler
-
-4. Go to the Grouped Profiler tab: http://localhost:5000/dashboard/endpoint/:endpoint_id:/grouped-profiler
-
-The Profiler tab shows all individual profiled requests of an endpoint
-in the form of a execution tree. Each code line is displayed along with
-its execution time and its share of the total execution time of the request.
-
-The Grouped Profiler tab shows the merged execution of up to 100 most recent
-profiled requests of an endpoint. This is displayed both as a table and as
-a Sunburst graph. The table shows for each code line information about
-the Hits (i.e. how many times it has been executed), average execution time
-and standard deviation, and also total execution time.
-
-Monitoring Level 3 - Outliers
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-When the monitoring level is set to 3, the Dashboard collects extra information
+When the monitoring level is set to 2, the Dashboard collects extra information
 about slow requests.
 
 It is useful to investigate why certain requests take way longer to process than other requests.
@@ -181,6 +148,41 @@ The data that is collected from outliers, can be seen by the following procedure
 2. Click the endpoint for which you want to see the Outlier information.
 
 3. Go to the Outliers tab: http://localhost:5000/dashboard/endpoint/:endpoint_id:/outliers
+
+
+Monitoring Level 3 - Profiler
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+When the monitoring level is set to 3, the Dashboard performs a
+`statistical profiling <https://docs.python.org/3/library/profile.html#what-is-deterministic-profiling>`_
+of all the requests coming to that endpoint. What this means is that another
+thread will be launched in parallel with the one processing the request, it
+will periodically sample the processing thread, and will analyze its current stack
+trace. Using this information, the Dashboard will infer how long every function
+call inside the endpoint code takes to execute.
+
+The profiler is one of the most powerful features of the Dashboard, pointing to
+where your optimization efforts should be directed, one level of abstraction
+lower than the performance monitoring of Level 1. To access this information,
+you have to:
+
+1. Go to the Overview tab in the left menu: http://localhost:5000/dashboard/overview
+
+2. Select an endpoint for which the monitoring level is or was at some point at least 2.
+
+3. Go to the Profiler tab: http://localhost:5000/dashboard/endpoint/:endpoint_id:/profiler
+
+4. Go to the Grouped Profiler tab: http://localhost:5000/dashboard/endpoint/:endpoint_id:/grouped-profiler
+
+The Profiler tab shows all individual profiled requests of an endpoint
+in the form of a execution tree. Each code line is displayed along with
+its execution time and its share of the total execution time of the request.
+
+The Grouped Profiler tab shows the merged execution of up to 100 most recent
+profiled requests of an endpoint. This is displayed both as a table and as
+a Sunburst graph. The table shows for each code line information about
+the Hits (i.e. how many times it has been executed), average execution time
+and standard deviation, and also total execution time.
+
 
 
 2. Data Visualization
@@ -249,26 +251,59 @@ You might wish to know how the number of unique users, the size of your
 database, or the total number of endpoints have evolved over time. This is now
 easy to visualize using FMD.
 
-An example of a custom graph is shown below. FMD will execute :code:`my_func()`
-every hour and a half and the graph will appear in the **Custom graphs** menu.
+An example of a custom graph is shown below. FMD will execute :code:`on_the_minute()`
+every minute at the second 01 and the graph will appear in the **Custom graphs** menu.
 
   .. code-block:: python
 
-     def my_func():
-         # here should be something actually useful
-         return 35
+   def on_the_minute():
+       print(f"On the minute: {datetime.datetime.now()}")
+       return int(random() * 100 // 10)
 
-     schedule = {'weeks': 0,
-                  'days': 0,
-                  'hours': 1,
-                  'minutes': 30,
-                  'seconds': 0}
 
-     dashboard.add_graph('Graph1', lambda: my_func(), **schedule)
+   minute_schedule = {'second': 00}
+
+   dashboard.add_graph("On Half Minute", on_the_minute, "cron", **minute_schedule)
+
+
+Note the "cron" argument to the add graph.
+Just like in the case of the unix cron utility you can use
+more complex schedules. For example, if you want to collect
+the data every day at midnight you would use:
+
+  .. code-block:: python
+
+   midnight_schedule = {'month':"*",
+                        'day': "*",
+                        'hour': 23,
+                        'minute': 59,
+                        'second': 00}
+
+Besides cron, there's also the "interval" schedule type, which
+is exemplified in the following snippet:
+
+  .. code-block:: python
+
+   def every_ten_seconds():
+       print(f"every_ten_seconds!!! {datetime.datetime.now()}")
+       return int(random() * 100 // 10)
+
+
+   every_ten_seconds_schedule = {'seconds': 10}
+
+   dashboard.add_graph("Every 10 Seconds", every_ten_seconds, "interval", **every_ten_seconds_schedule)
+
 
 
 Note that not all fields in the :code:`schedule` dictionary
-are required, only the non-zero ones.
+are required, only the non-zero / non-star ones.
+
+Also, note that in the "cron" graph types you use singular names (e.g. second)
+while in the "interval" you use plurals (e.g. seconds).
+
+Finally, the implementation of the scheduler in the FMD
+is based on the appscheduler.schedulers.Background schedulers
+about which you can read more `in the corresponding documentation page <apscheduler.schedulers>`_.
 
 Need more information?
 ----------------------

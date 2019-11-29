@@ -33,11 +33,7 @@ setuptools.setup(
     description="Automatically monitor the evolving performance of Flask/Python web services.",
     long_description=get_description(),
     install_requires=required,
-    entry_points={
-        'flask.commands': [
-            'fmd=flask_monitoringdashboard.cli:fmd'
-        ],
-    },
+    entry_points={'flask.commands': ['fmd=flask_monitoringdashboard.cli:fmd']},
     classifiers=[
         'Environment :: Web Environment',
         'Intended Audience :: Developers',
@@ -49,7 +45,8 @@ setuptools.setup(
         'Programming Language :: Python :: 3.5',
         'Programming Language :: Python :: 3.6',
         'Programming Language :: Python :: 3.7',
-        'Framework :: Flask'],
+        'Framework :: Flask',
+    ],
     project_urls={
         'Bug Reports': 'https://github.com/flask-dashboard/Flask-MonitoringDashboard/issues',
         'PyPi': 'https://pypi.org/project/Flask-MonitoringDashboard/',

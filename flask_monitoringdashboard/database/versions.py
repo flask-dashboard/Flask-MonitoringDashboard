@@ -28,9 +28,14 @@ def get_first_requests(db_session, endpoint_id, limit=None):
     :param endpoint_id: id of the endpoint
     :return list of tuples with versions
     """
-    query = db_session.query(Request.version_requested, func.min(Request.time_requested).label('first_used')). \
-        filter(Request.endpoint_id == endpoint_id). \
-        group_by(Request.version_requested).order_by(desc('first_used'))
+    query = (
+        db_session.query(
+            Request.version_requested, func.min(Request.time_requested).label('first_used')
+        )
+        .filter(Request.endpoint_id == endpoint_id)
+        .group_by(Request.version_requested)
+        .order_by(desc('first_used'))
+    )
     if limit:
         query = query.limit(limit)
     return query.all()

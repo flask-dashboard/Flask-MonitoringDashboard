@@ -4,7 +4,6 @@ Class used for hashing the paths.
 
 
 class StringHash(object):
-
     def __init__(self):
         self._h = {}
 

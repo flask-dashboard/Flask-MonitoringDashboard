@@ -1,11 +1,19 @@
 import unittest
 
-from flask_monitoringdashboard.test.utils import set_test_environment, clear_db, add_fake_data, \
-    get_test_app, login, NAME, test_admin_secure, test_get_ok, test_get_redirect
+from flask_monitoringdashboard.test.utils import (
+    set_test_environment,
+    clear_db,
+    add_fake_data,
+    get_test_app,
+    login,
+    NAME,
+    test_admin_secure,
+    test_get_ok,
+    test_get_redirect,
+)
 
 
 class TestSetup(unittest.TestCase):
-
     def setUp(self):
         set_test_environment()
         clear_db()

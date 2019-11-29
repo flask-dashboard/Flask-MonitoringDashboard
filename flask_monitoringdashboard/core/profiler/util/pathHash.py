@@ -7,12 +7,14 @@ LINE_SPLIT = ':'
 class PathHash(object):
     """
     Used for encoding the stacktrace.
-    A stacktrace can be seen by a list of tuples (filename and linenumber): e.g. [(fn1, 25), (fn2, 30)]
+    A stacktrace can be seen by a list of tuples (filename and linenumber): e.g. [(fn1, 25),
+    (fn2, 30)]
     this is encoded as a string:
 
         encoded = 'fn1:25->fn2->30'
 
-   However, the filename could possibly contain '->', therefore the filename is hashed into a number.
+    However, the filename could possibly contain '->', therefore the filename is hashed into a
+    number.
     So, the encoding becomes:
 
         encoded = '0:25->1:30'
@@ -77,7 +79,8 @@ class PathHash(object):
 
     def get_code(self, path):
         """
-        :param path: only take the last tuple of the path. the last part contains the code line, but hashed.
+        :param path: only take the last tuple of the path. the last part contains the code line,
+        but hashed.
         :return: the line of code, based on the given path
         """
         last = path.rpartition(STRING_SPLIT)[-1]
@@ -102,5 +105,7 @@ class PathHash(object):
             while index >= 0 and stack_lines[index].indent != current_indent - 1:
                 index -= 1
         for code_line in reversed(path):
-            self._current_path = self.append(code_line.filename, self._string_hash.hash(code_line.code))
+            self._current_path = self.append(
+                code_line.filename, self._string_hash.hash(code_line.code)
+            )
         return self._current_path
