@@ -29,8 +29,8 @@ def parse_version(parser, header, version):
                 # cut version to at most 6 chars
                 return version[:6]
             else:
-                # Return dummy version in case of no git version file found
-                return "v0.0.1"
+                # Return "dummy" version in case of no git version file found
+                return version
         except IOError:
             log("Error reading one of the files to retrieve the current git-version.")
             raise
