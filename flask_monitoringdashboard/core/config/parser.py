@@ -24,8 +24,8 @@ def parse_version(parser, header, version):
             git_file = (open(os.path.join(git, 'HEAD')).read().rsplit(': ', 1)[1]).rstrip()
             # read the git-version
             version_file = os.path.join(git , git_file)
-            if os.path.exists(version):
-                version = open(version).read()
+            if os.path.exists(version_file):
+                version = open(version_file).read()
                 # cut version to at most 6 chars
                 return version[:6]
             else:
