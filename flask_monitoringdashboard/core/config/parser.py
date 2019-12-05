@@ -23,9 +23,14 @@ def parse_version(parser, header, version):
             # The file is specified by: 'ref: <location>'
             git_file = (open(os.path.join(git, 'HEAD')).read().rsplit(': ', 1)[1]).rstrip()
             # read the git-version
-            version = open(git + '/' + git_file).read()
-            # cut version to at most 6 chars
-            return version[:6]
+            version_file = os.path.join(git , git_file)
+            if os.path.exists(version):
+                version = open(version).read()
+                # cut version to at most 6 chars
+                return version[:6]
+            else:
+                # Return "dummy" version in case of no git version file found
+                return version
         except IOError:
             log("Error reading one of the files to retrieve the current git-version.")
             raise
