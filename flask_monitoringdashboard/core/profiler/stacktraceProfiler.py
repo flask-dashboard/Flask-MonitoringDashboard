@@ -37,6 +37,7 @@ class StacktraceProfiler(threading.Thread):
         self._lines_body = []
         self._total = 0
         self._outlier_profiler = outlier_profiler
+        self._status_code = 404
 
     def run(self):
         """

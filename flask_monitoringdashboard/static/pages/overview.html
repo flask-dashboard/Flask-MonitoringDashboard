@@ -67,7 +67,7 @@
                     <td ng-show="isHits==false" style="text-align: right;">{{ row['median-overall'] | duration_ms }}</td>
                     <td style="text-align: center;">{{ row['last-accessed'] | dateDifference }}</td>
                     <td ng-click="$event.stopPropagation()">
-                        <monitorlevel name="row.name" value="row.monitor" />
+                        <monitorlevel name="row.name" value="row.monitor"></monitorlevel>
                     </td>
                 </tr>
                 </tbody>
