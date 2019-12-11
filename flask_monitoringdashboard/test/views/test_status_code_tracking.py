@@ -1,7 +1,7 @@
 import unittest
 from time import sleep
 
-from flask import Flask, json, jsonify
+from flask import Flask, jsonify
 from flask_monitoringdashboard.core.cache import EndpointInfo
 from flask_monitoringdashboard.database import session_scope, Request
 

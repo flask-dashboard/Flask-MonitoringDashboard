@@ -2,7 +2,6 @@
 Contains all functions that access a Request object.
 """
 import time
-from random import sample
 
 from sqlalchemy import and_, func
 
