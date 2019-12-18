@@ -107,7 +107,7 @@
                             <li class="list-group-item" ng-show="answer.is_significant || !onlyShowInteresting">
                                 <div ng-switch="answer.type">
                                     <div ng-switch-when="AVERAGE_LATENCY" style="padding-bottom:15px">
-                                        <h4>Average latency
+                                        <h4 ng-class="answer.percentual_diff > 0 ? 'greenText' : 'redText'">Average latency
                                             {{ answer.percentual_diff > 0 ? 'increased' : 'decreased' }} by
                                             {{ answer.percentual_diff | abs | number : 0 }}%</h4>
                                         <p>From {{ answer.compared_to_average|number:0 }}ms to
