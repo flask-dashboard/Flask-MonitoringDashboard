@@ -498,3 +498,6 @@ footer.sticky-footer {
         -webkit-transform: scaleY(1.0);
     }
 }
+
+.greenText {color:green;}
+.redText {color:red;}
