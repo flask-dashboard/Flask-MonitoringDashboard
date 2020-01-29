@@ -50,9 +50,9 @@ class Request(Base):
     id = Column(Integer, primary_key=True)
     endpoint_id = Column(Integer, ForeignKey(Endpoint.id))
     # the processing time of the request
-    duration = Column(Float, nullable=False)
+    duration = Column(Float, nullable=False, index=True)
     # the time when the request was handled
-    time_requested = Column(DateTime, default=datetime.datetime.utcnow)
+    time_requested = Column(DateTime, default=datetime.datetime.utcnow, index=True)
     # the version when the request was handled
     version_requested = Column(String(100), default=config.version)
     # a criteria by which the requests can be grouped

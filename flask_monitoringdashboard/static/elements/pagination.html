@@ -17,6 +17,17 @@
                 ng-class="{'disabled': pagination.page == pagination.getLastPage()}">
                 <a href="#" class="page-link" ng-click="pagination.goto(pagination.page+1)">Next</a>
             </li>
+            <li>
+                <h6 class="page-link">Sort By:</h6>
+            </li>
+            <li class="paginate_button page-item previous"
+                ng-class="{'disabled': pagination.sortby == 'latest'}">
+                <a href="#" class="page-link" ng-click="pagination.updatesort('latest')">Latest</a>
+            </li>
+            <li class="paginate_button page-item next"
+                ng-class="{'disabled': pagination.sortby == 'duration'}">
+                <a href="#" class="page-link" ng-click="pagination.updatesort('duration')">Duration</a>
+            </li>
         </ul>
     </div>
 </div>

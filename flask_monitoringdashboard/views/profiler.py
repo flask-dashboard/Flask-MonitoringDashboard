@@ -1,4 +1,4 @@
-from flask import jsonify
+from flask import jsonify, request
 
 from flask_monitoringdashboard.controllers.profiler import get_profiler_table, get_grouped_profiler
 from flask_monitoringdashboard.database import session_scope
@@ -19,8 +19,9 @@ def num_profiled(endpoint_id):
 @blueprint.route('/api/profiler_table/<endpoint_id>/<offset>/<per_page>')
 @secure
 def profiler_table(endpoint_id, offset, per_page):
+    sort_by = request.args.get('sortby', 'latest')
     with session_scope() as db_session:
-        return jsonify(get_profiler_table(db_session, endpoint_id, offset, per_page))
+        return jsonify(get_profiler_table(db_session, endpoint_id, offset, per_page, sort_by))
 
 
 @blueprint.route('/api/grouped_profiler/<endpoint_id>')

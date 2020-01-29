@@ -5,6 +5,7 @@ app.service('paginationService', function () {
         this.perPage = 5;
         this.total = 0;
         this.name = name;
+        this.sortby = "latest";
     };
 
     this.maxPages = function () {
@@ -20,6 +21,11 @@ app.service('paginationService', function () {
 
     this.getRight = function () {
         return Math.min(this.total, this.getLeft() + this.perPage);
+    };
+
+    this.updatesort = function (sort) {
+        this.sortby = sort;
+        this.onReload();
     };
 
     this.getFirstPage = function () {

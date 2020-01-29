@@ -32,7 +32,7 @@ def add_stack_line(db_session, request_id, position, indent, duration, code_line
     )
 
 
-def get_profiled_requests(db_session, endpoint_id, offset, per_page):
+def get_profiled_requests(db_session, endpoint_id, sortby, offset, per_page):
     """
     Gets the requests of an endpoint sorted by request time, together with the stack lines.
     :param db_session: session for the database
@@ -42,12 +42,16 @@ def get_profiled_requests(db_session, endpoint_id, offset, per_page):
     :return: A list with tuples. Each tuple consists first of a Request-object, and the second part
     of the tuple is a list of StackLine-objects.
     """
+    if sortby == "duration":
+        sortkey = Request.duration
+    else:
+        sortkey = Request.time_requested
     result = (
         db_session.query(Request)
         .filter(Request.endpoint_id == endpoint_id)
         .options(joinedload(Request.stack_lines).joinedload(StackLine.code))
         .filter(Request.stack_lines.any())
-        .order_by(desc(Request.time_requested))
+        .order_by(desc(sortkey))
         .offset(offset)
         .limit(per_page)
         .all()
