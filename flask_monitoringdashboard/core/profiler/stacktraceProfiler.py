@@ -24,12 +24,13 @@ class StacktraceProfiler(threading.Thread):
     This is used when monitoring-level == 2 and monitoring-level == 3
     """
 
-    def __init__(self, thread_to_monitor, endpoint, ip, group_by, outlier_profiler=None):
+    def __init__(self, thread_to_monitor, endpoint, ip, group_by, request_data, outlier_profiler=None):
         threading.Thread.__init__(self)
         self._keeprunning = True
         self._thread_to_monitor = thread_to_monitor
         self._endpoint = endpoint
         self._ip = ip
+        self._request_data = request_data
         self._group_by = group_by
         self._duration = 0
         self._histogram = defaultdict(float)
@@ -101,8 +102,40 @@ class StacktraceProfiler(threading.Thread):
             if self._outlier_profiler:
                 self._outlier_profiler.add_outlier(request_id)
 
-    def insert_lines_db(self, db_session, request_id):
+    def insert_request_params_db(self, db_session, request_id):
+        try:
+            fun = config.app.view_functions[self._endpoint.name]
+        except AttributeError:
+            fun = None
+        if hasattr(fun, 'original'):
+            original = fun.original
+            fn = inspect.getfile(original)
+        count = 0
         position = 0
+        for key, value in self._request_data.items():
+            if value:
+                add_stack_line(
+                    db_session,
+                    request_id,
+                    position=position,
+                    indent=0,
+                    duration=self._duration,
+                    code_line=((fn, count, 'None', key)),
+                )
+
+                add_stack_line(
+                    db_session,
+                    request_id,
+                    position=position + 1,
+                    indent=1,
+                    duration=self._duration,
+                    code_line=((fn, count, 'None', str(value))),
+                )
+                position += 2
+        return position
+
+    def insert_lines_db(self, db_session, request_id):
+        position = self.insert_request_params_db(db_session, request_id) if config.enable_param_logs else 0
         for code_line in self.get_funcheader():
             add_stack_line(
                 db_session,

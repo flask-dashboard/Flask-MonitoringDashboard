@@ -51,11 +51,17 @@ def start_outlier_thread(endpoint):
 
 def start_profiler_and_outlier_thread(endpoint):
     """ Starts two threads: PerformanceProfiler and StacktraceProfiler.  """
+    import json
     current_thread = threading.current_thread().ident
     ip = request.environ['REMOTE_ADDR']
     group_by = get_group_by()
+    request_data = {
+        'Headers': request.headers,
+        'Params': request.args.to_dict(),
+        'Payload': json.loads(request.data) if request.data else {}
+    }
     outlier = OutlierProfiler(current_thread, endpoint, ip, group_by)
-    thread = StacktraceProfiler(current_thread, endpoint, ip, group_by, outlier)
+    thread = StacktraceProfiler(current_thread, endpoint, ip, group_by, request_data, outlier)
     thread.start()
     outlier.start()
     return thread
