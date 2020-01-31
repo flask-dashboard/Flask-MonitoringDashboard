@@ -113,25 +113,36 @@ class StacktraceProfiler(threading.Thread):
         count = 0
         position = 0
         for key, value in self._request_data.items():
-            if value:
+            if position == 0:
                 add_stack_line(
                     db_session,
                     request_id,
                     position=position,
                     indent=0,
                     duration=self._duration,
-                    code_line=((fn, count, 'None', key)),
+                    code_line=((fn, count, 'None', 'Request Parameters')),
                 )
-
+                position += 1
+            if value:
                 add_stack_line(
                     db_session,
                     request_id,
-                    position=position + 1,
+                    position=position,
                     indent=1,
                     duration=self._duration,
-                    code_line=((fn, count, 'None', str(value))),
+                    code_line=((fn, count, 'None', key)),
                 )
-                position += 2
+                position += 1
+                for k, v in value.items():
+                    add_stack_line(
+                        db_session,
+                        request_id,
+                        position=position,
+                        indent=2,
+                        duration=self._duration,
+                        code_line=((fn, count, 'None', f'{k}:{v}')),
+                    )
+                    position += 1
         return position
 
     def insert_lines_db(self, db_session, request_id):
