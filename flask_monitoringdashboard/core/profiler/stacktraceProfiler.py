@@ -24,7 +24,7 @@ class StacktraceProfiler(threading.Thread):
     This is used when monitoring-level == 2 and monitoring-level == 3
     """
 
-    def __init__(self, thread_to_monitor, endpoint, ip, group_by, request_data, outlier_profiler=None):
+    def __init__(self, thread_to_monitor, endpoint, ip, group_by, request_data= {}, outlier_profiler=None):
         threading.Thread.__init__(self)
         self._keeprunning = True
         self._thread_to_monitor = thread_to_monitor
