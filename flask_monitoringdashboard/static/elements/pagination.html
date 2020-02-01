@@ -2,22 +2,20 @@
     <div class="col-sm-6">
         Displaying <strong>{{ pagination.getLeft() + 1 }}
         - {{ pagination.getRight() }}</strong> {{ pagination.name }}: <strong>{{ pagination.total | number }}</strong> in total
-        <div>
-            <ul class="pagination" style="float: left;">
-                <h6>Sort By:</h6>&nbsp;&nbsp;
-                <div ng-class="{'disabled': pagination.sortby == 'latest'}">
-                    <a href="#" ng-click="pagination.updatesort('latest')">Latest</a>
-                </div>
-                <div>
-                    <h6>|</h6>
-                </div>
-                <div ng-class="{'disabled': pagination.sortby == 'duration'}">
-                    <a href="#" ng-click="pagination.updatesort('duration')">Duration</a>
-                </div>
-                <div>
-                    &nbsp;&nbsp;(Sorted by: <strong> {{ pagination.sortby }}</strong>)
-                </div>
-            </ul>
+        <div class="pagination" style="float: left;">
+            <h6>Sort By:</h6>&nbsp;&nbsp;
+            <div>
+                <a href="#" ng-click="pagination.updatesort('time_requested', 'Latest')">Latest</a>
+            </div>
+            <div>
+                <h6>|</h6>
+            </div>
+            <div>
+                <a href="#" ng-click="pagination.updatesort('duration', 'Duration')">Duration</a>
+            </div>
+            <div>
+                &nbsp;&nbsp;(Sorted by: <strong> {{ pagination.showValue }}</strong>)
+            </div>
         </div>
     </div>
     <div class="col-sm-6">

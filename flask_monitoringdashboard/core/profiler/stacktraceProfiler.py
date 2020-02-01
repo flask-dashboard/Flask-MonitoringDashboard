@@ -24,13 +24,13 @@ class StacktraceProfiler(threading.Thread):
     This is used when monitoring-level == 2 and monitoring-level == 3
     """
 
-    def __init__(self, thread_to_monitor, endpoint, ip, group_by, request_data= {}, outlier_profiler=None):
+    def __init__(self, thread_to_monitor, endpoint, ip, group_by, request_data= None, outlier_profiler=None):
         threading.Thread.__init__(self)
         self._keeprunning = True
         self._thread_to_monitor = thread_to_monitor
         self._endpoint = endpoint
         self._ip = ip
-        self._request_data = request_data
+        self._request_data = request_data or {}
         self._group_by = group_by
         self._duration = 0
         self._histogram = defaultdict(float)
@@ -103,6 +103,10 @@ class StacktraceProfiler(threading.Thread):
                 self._outlier_profiler.add_outlier(request_id)
 
     def insert_request_params_db(self, db_session, request_id):
+        """
+        Used for saving API request parameters
+        If config.enable_param_logs is set to True
+        """
         try:
             fun = config.app.view_functions[self._endpoint.name]
         except AttributeError:

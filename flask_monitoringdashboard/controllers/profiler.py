@@ -18,7 +18,7 @@ def get_profiler_table(db_session, endpoint_id, offset, per_page, sortby='latest
     :param offset: number of items that are skipped
     :param per_page: number of items that are returned (at most)
     """
-    table = get_profiled_requests(db_session, endpoint_id, sortby, offset, per_page)
+    table = get_profiled_requests(db_session, endpoint_id, offset, per_page, sortby)
 
     for idx, row in enumerate(table):
         row.time_requested = to_local_datetime(row.time_requested)
