@@ -140,7 +140,7 @@ class StacktraceProfiler(threading.Thread):
                         position=position,
                         indent=2,
                         duration=self._duration,
-                        code_line=((fn, count, 'None', f'{k}:{v}')),
+                        code_line=((fn, count, 'None', '{}:{}'.format(k,v))),
                     )
                     position += 1
         return position
