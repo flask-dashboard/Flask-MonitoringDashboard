@@ -2,6 +2,23 @@
     <div class="col-sm-6">
         Displaying <strong>{{ pagination.getLeft() + 1 }}
         - {{ pagination.getRight() }}</strong> {{ pagination.name }}: <strong>{{ pagination.total | number }}</strong> in total
+        <div>
+            <ul class="pagination" style="float: left;">
+                <h6>Sort By:</h6>&nbsp;&nbsp;
+                <div ng-class="{'disabled': pagination.sortby == 'latest'}">
+                    <a href="#" ng-click="pagination.updatesort('latest')">Latest</a>
+                </div>
+                <div>
+                    <h6>|</h6>
+                </div>
+                <div ng-class="{'disabled': pagination.sortby == 'duration'}">
+                    <a href="#" ng-click="pagination.updatesort('duration')">Duration</a>
+                </div>
+                <div>
+                    &nbsp;&nbsp;(Sorted by: <strong> {{ pagination.sortby }}</strong>)
+                </div>
+            </ul>
+        </div>
     </div>
     <div class="col-sm-6">
         <ul class="pagination" style="float: right;">
@@ -16,17 +33,6 @@
             <li class="paginate_button page-item next"
                 ng-class="{'disabled': pagination.page == pagination.getLastPage()}">
                 <a href="#" class="page-link" ng-click="pagination.goto(pagination.page+1)">Next</a>
-            </li>
-            <li>
-                <h6 class="page-link">Sort By:</h6>
-            </li>
-            <li class="paginate_button page-item previous"
-                ng-class="{'disabled': pagination.sortby == 'latest'}">
-                <a href="#" class="page-link" ng-click="pagination.updatesort('latest')">Latest</a>
-            </li>
-            <li class="paginate_button page-item next"
-                ng-class="{'disabled': pagination.sortby == 'duration'}">
-                <a href="#" class="page-link" ng-click="pagination.updatesort('duration')">Duration</a>
             </li>
         </ul>
     </div>
