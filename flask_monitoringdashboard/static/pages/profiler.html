@@ -16,6 +16,7 @@
                 <div class="card-header">
                     <div class="row align-items-end">
                         <div class="col-sm"><h6>Request id: {{ request.id }}</h6></div>
+                        <div class="col-sm"><h6>Status Code: {{ request.status_code }}</h6></div>
                         <div class="col-sm"><h6>Request date: {{ request.time_requested | dateLayout }}</h6></div>
                         <div class="col-sm">
                             <button class="btn btn-primary" style="float: right;"

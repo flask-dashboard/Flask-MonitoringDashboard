@@ -17,6 +17,27 @@
                 &nbsp;&nbsp;(Sorted by: <strong> {{ pagination.showValue }}</strong>)
             </div>
         </div>
+        <div class="pagination" style="float: left;">
+            <h6>API Status Code:</h6>&nbsp;&nbsp;
+            <div>
+                <a href="#" ng-click="pagination.updateStatusCode('all')">All</a>
+            </div>
+            <div>
+                <h6>|</h6>
+            </div>
+            <div>
+                <a href="#" ng-click="pagination.updateStatusCode('success')">Success</a>
+            </div>
+            <div>
+                <h6>|</h6>
+            </div>
+            <div>
+                <a href="#" ng-click="pagination.updateStatusCode('failed')">Failed</a>
+            </div>
+            <div>
+                &nbsp;&nbsp;(Displaying: <strong> {{ pagination.response_status }}</strong>)
+            </div>
+        </div>
     </div>
     <div class="col-sm-6">
         <ul class="pagination" style="float: right;">

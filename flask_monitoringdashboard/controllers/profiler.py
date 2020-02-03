@@ -11,14 +11,14 @@ from flask_monitoringdashboard.database.stack_line import (
 )
 
 
-def get_profiler_table(db_session, endpoint_id, offset, per_page, sortby='latest'):
+def get_profiler_table(db_session, endpoint_id, offset, per_page, sortby='latest', response_status='all'):
     """
     :param db_session: session for the database
     :param endpoint_id: endpoint to filter on
     :param offset: number of items that are skipped
     :param per_page: number of items that are returned (at most)
     """
-    table = get_profiled_requests(db_session, endpoint_id, offset, per_page, sortby)
+    table = get_profiled_requests(db_session, endpoint_id, offset, per_page, sortby, response_status)
 
     for idx, row in enumerate(table):
         row.time_requested = to_local_datetime(row.time_requested)

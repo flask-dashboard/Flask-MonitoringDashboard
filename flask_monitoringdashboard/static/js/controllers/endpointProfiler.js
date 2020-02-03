@@ -16,7 +16,7 @@ function EndpointProfilerController($scope, $http, menuService, endpointService,
     paginationService.onReload = function () {
         formService.isLoading = true;
         $http.get('api/profiler_table/' + endpointService.info.id + '/' +
-            paginationService.getLeft() + '/' + paginationService.perPage + '?sortby='+ paginationService.sortby ).then(function (response) {
+            paginationService.getLeft() + '/' + paginationService.perPage + '?sortby='+ paginationService.sortby + '&response_status='+ paginationService.response_status ).then(function (response) {
             $scope.table = response.data;
             formService.isLoading = false;
             // Add more properties

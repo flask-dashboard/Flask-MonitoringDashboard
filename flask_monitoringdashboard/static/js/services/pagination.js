@@ -7,6 +7,7 @@ app.service('paginationService', function () {
         this.name = name;
         this.sortby = "time_requested";
         this.showValue = "Latest";
+        this.response_status = "all";
     };
 
     this.maxPages = function () {
@@ -27,6 +28,11 @@ app.service('paginationService', function () {
     this.updatesort = function (sortby, value) {
         this.sortby = sortby;
         this.showValue = value
+        this.onReload();
+    };
+
+    this.updateStatusCode = function (status) {
+        this.response_status = status;
         this.onReload();
     };
 
