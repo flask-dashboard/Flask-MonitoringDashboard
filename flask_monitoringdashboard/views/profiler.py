@@ -22,7 +22,7 @@ def profiler_table(endpoint_id, offset, per_page):
     sort_by = request.args.get('sortby', 'latest')
     response_status = request.args.get('response_status', 'all').lower()
     with session_scope() as db_session:
-        return jsonify(get_profiler_table(db_session, endpoint_id, offset, per_page, sort_by, response_status))
+        return jsonify(get_profiler_table(db_session, endpoint_id, offset, per_page, sort_by, filter_by_status))
 
 
 @blueprint.route('/api/grouped_profiler/<endpoint_id>')
