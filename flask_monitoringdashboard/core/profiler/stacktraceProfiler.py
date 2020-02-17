@@ -105,7 +105,7 @@ class StacktraceProfiler(threading.Thread):
     def insert_request_params_db(self, db_session, request_id):
         """
         Used for saving API request parameters
-        If config.enable_param_logs is set to True
+        If config.enable_param_logs_in_profiler is set to True
         """
         try:
             fun = config.app.view_functions[self._endpoint.name]
@@ -150,7 +150,7 @@ class StacktraceProfiler(threading.Thread):
         return position
 
     def insert_lines_db(self, db_session, request_id):
-        position = self.insert_request_params_db(db_session, request_id) if config.enable_param_logs else 0
+        position = self.insert_request_params_db(db_session, request_id) if config.enable_param_logs_in_profiler else 0
         for code_line in self.get_funcheader():
             add_stack_line(
                 db_session,
