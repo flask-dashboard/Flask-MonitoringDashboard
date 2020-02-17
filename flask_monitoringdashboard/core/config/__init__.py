@@ -34,7 +34,7 @@ class Config(object):
         self.outlier_detection_constant = 2.5
         self.sampling_period = 5 / 1000.0
         self.enable_logging = False
-        self.enable_param_logs = False
+        self.enable_param_logs_in_profiler = False
 
         # database
         self.database_name = 'sqlite:///flask_monitoringdashboard.db'
