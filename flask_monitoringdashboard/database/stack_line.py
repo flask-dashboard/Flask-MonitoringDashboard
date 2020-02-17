@@ -46,7 +46,7 @@ def get_profiled_requests(db_session, endpoint_id, offset, per_page, sortby="tim
     if response_status == "failed":
         start_code=400
     elif response_status == "success":
-        end_code=400
+        end_code=399
     result = (
         db_session.query(Request)
         .filter(Request.endpoint_id == endpoint_id, Request.status_code.between(start_code, end_code))
