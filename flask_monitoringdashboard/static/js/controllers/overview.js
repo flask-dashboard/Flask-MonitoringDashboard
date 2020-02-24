@@ -35,7 +35,7 @@ function OverviewController($scope, $http, $location, DTOptionsBuilder, menuServ
 
 }
 
-function isNewestVersion(pypi_version,dashboard_version ){ // greater than or equal
+function isNewestVersion(pypi_version,dashboard_version ){
     if (pypi_version[0] > dashboard_version[0]) return false;
     else if (pypi_version[2] > dashboard_version[2]) return false;
     else if (pypi_version[4] > dashboard_version[4]) return false;
