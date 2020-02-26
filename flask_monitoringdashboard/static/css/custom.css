@@ -498,3 +498,10 @@ footer.sticky-footer {
         -webkit-transform: scaleY(1.0);
     }
 }
+
+.table_cell_with_error_count:after {
+    content:attr(error-count);
+    color: red;
+    vertical-align: super;
+    font-size: small;
+}
