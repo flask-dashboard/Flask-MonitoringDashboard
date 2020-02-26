@@ -2,7 +2,6 @@
 Contains all functions that access a Request object.
 """
 import time
-from random import sample
 
 from sqlalchemy import and_, func
 
@@ -56,7 +55,7 @@ def add_request(db_session, duration, endpoint_id, ip, group_by, status_code):
         status_code=status_code,
     )
     db_session.add(request)
-    db_session.flush()
+    db_session.commit()
     return request.id
 
 

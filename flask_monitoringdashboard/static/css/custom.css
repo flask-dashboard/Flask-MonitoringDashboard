@@ -499,6 +499,9 @@ footer.sticky-footer {
     }
 }
 
+.greenText {color:green;}
+.redText {color:red;}
+
 .table_cell_with_error_count:after {
     content:attr(error-count);
     color: red;
