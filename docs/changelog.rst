@@ -8,7 +8,7 @@ Please note that the changes before version 1.10.0 have not been documented.
 v3.0.7 
 ----------
 Changed
-- Added the Reporting tab 
+- Added a first version of the Reporting functionality
 - Improved usability of the overview table
 - Fixed issue #`295` <https://github.com/flask-dashboard/Flask-MonitoringDashboard/issues/295>`_.
 
