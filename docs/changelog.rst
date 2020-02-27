@@ -5,6 +5,14 @@ All notable changes to this project will be documented in this file.
 This project adheres to `Semantic Versioning <http://semver.org/>`_.
 Please note that the changes before version 1.10.0 have not been documented.
 
+v3.0.7 
+----------
+Changed
+- Added the Reporting tab 
+- Improved usability of the overview table
+- Fixed issue #`295` <https://github.com/flask-dashboard/Flask-MonitoringDashboard/issues/295>`_.
+
+
 v3.0.6
 ----------
 Changed
