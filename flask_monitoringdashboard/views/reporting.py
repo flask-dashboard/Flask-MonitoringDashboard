@@ -48,7 +48,7 @@ def make_report():
         compared_to_interval = DateInterval(datetime.fromtimestamp(int(arguments['compared_to_interval']['from'])),
                                             datetime.fromtimestamp(int(arguments['compared_to_interval']['to'])))
 
-    except Exception as err:
+    except Exception:
         return 'Invalid payload', 422
 
     endpoint_summaries = []

@@ -214,6 +214,10 @@ at least 1) in the application can be found under the **Dashboard** menu:
    requests for that endpoint. This provides information whether certain endpoints perform better (in terms of
    execution time) than other endpoints.
 
+6. **Reporting:** A more experimental feature which aims to automatically
+   detect and report changes in performance for various intervals
+   (e.g. today vs. yesterday, this week vs. last week, etc).
+
 Endpoint
 ~~~~~~~~~~~~~~
 
