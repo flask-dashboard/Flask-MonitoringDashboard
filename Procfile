@@ -1,0 +1,1 @@
+web: export FLASK_APP=flask_monitoringdashboard/main.py:app && flask run
