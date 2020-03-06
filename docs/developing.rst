@@ -24,7 +24,7 @@ responsible for setting up the project, and installing the following pre-commit 
 - `Black`_: for automatic formatting the code. Note that we use a width-length of 100 characters.
 - `Flake8`_: for checking style error.
 - Auto increase the Python version. This can either be a major, minor, or patch version increase. For more info, see
-the Versions-section below.
+  the Versions-section below.
 
 Architecture
 --------------
@@ -130,6 +130,13 @@ The following tools are used for helping the development of the Dashboard:
   - **Feature branch**: This branch is specific per feature, and will be removed after the
     corresponding feature has been merged into the development branch. It is recommended to often
     merge development into this branch, to keep the feature branch up to date.
+
+- **Heroku deployment**: The following branches are automatically deployed to Heroku. This is useful for quickly
+  testing, without running any code locally.
+
+   - **Master**: The master branch is deployed at: `<https://fmd-master.herokuapp.com>`_.
+   - **Development**: The development is deployed at: `<https://fmd-development.herokuapp.com>`_.
+   - **Pull requests**: Pull requests are also automatically build with a unique URL.
 
 - **Unit testing**: The code is tested before a Pull Request is accepted. If you want to run the unit
   tests locally, you can use the following command from the root of Flask-MonitoringDashboard
