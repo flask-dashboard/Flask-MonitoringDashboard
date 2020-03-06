@@ -28,9 +28,16 @@ function OverviewController($scope, $http, $location, DTOptionsBuilder, menuServ
 
         $http.get('api/deploy_details').then(function (response) {
             $scope.dashboard_version = response.data['dashboard-version'];
-            $scope.alertShow = $scope.pypi_version !== $scope.dashboard_version;
+            $scope.alertShow = !(isNewestVersion($scope.pypi_version,$scope.dashboard_version))
         })
     });
 
 
+}
+
+function isNewestVersion(pypi_version,dashboard_version ){
+    if (pypi_version[0] > dashboard_version[0]) return false;
+    else if (pypi_version[2] > dashboard_version[2]) return false;
+    else if (pypi_version[4] > dashboard_version[4]) return false;
+    else true;
 }
