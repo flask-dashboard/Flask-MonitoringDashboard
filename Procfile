@@ -1,1 +1,1 @@
-web: export FLASK_APP=flask_monitoringdashboard/main.py:app && flask run
+web: pip install gunicorn && gunicorn flask_monitoringdashboard.main:app
