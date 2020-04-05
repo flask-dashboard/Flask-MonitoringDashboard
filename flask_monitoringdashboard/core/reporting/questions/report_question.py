@@ -1,4 +1,3 @@
-
 from abc import ABCMeta, abstractmethod
 
 
@@ -17,10 +16,7 @@ class Answer:
         pass
 
     def serialize(self):
-        base = dict(
-            is_significant=self.is_significant(),
-            type=self.type
-        )
+        base = dict(is_significant=self.is_significant(), type=self.type)
         base.update(self.meta())
 
         return base
