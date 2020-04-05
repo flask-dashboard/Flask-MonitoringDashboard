@@ -1,16 +1,6 @@
-function offsettedDate(date, offsetInDays) {
-    const copy = new Date(date);
-    copy.setDate(date.getDate() + offsetInDays);
-
-    return copy;
-}
-
-
 function ReportingController($scope, $http, $location, DTOptionsBuilder, menuService, endpointService, plotlyService) {
     endpointService.reset();
     menuService.reset('reporting');
-
-    const now = new Date();
 
     $scope.reports = {};
 
@@ -76,16 +66,25 @@ function ReportingController($scope, $http, $location, DTOptionsBuilder, menuSer
         const {comparison_interval, compared_to_interval} = answer.latencies_sample;
 
         const data = [
-            {name: 'Comparison Interval', type: 'violin', y: comparison_interval},
-            {name: 'Compared To Interval', type: 'violin', y: compared_to_interval}
+            {
+                name: `Comparison (N=${comparison_interval.length})`,
+                type: 'violin',
+                y: comparison_interval
+            },
+            {
+                name: `Compared To (N=${compared_to_interval.length})`,
+                type: 'violin',
+                y: compared_to_interval
+            }
         ];
 
         plotlyService.chart(data, {
-            xaxis: {
-                title: 'Execution time (ms)',
-            },
             yaxis: {
+                title: 'Execution time (ms)',
                 rangemode: "nonnegative"
+            },
+            xaxis: {
+                categories: ['', '', '']
             }
         });
     };
