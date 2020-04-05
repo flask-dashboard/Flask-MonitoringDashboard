@@ -77,7 +77,7 @@ class MedianLatency(ReportQuestion):
                 * 100
             )
 
-            stat, p, med, tbl = median_test(
+            _, p, _, _ = median_test(
                 comparison_interval_latencies_sample, compared_to_interval_latencies_sample
             )
 
