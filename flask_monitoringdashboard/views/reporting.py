@@ -60,7 +60,6 @@ def make_report():
     endpoint_summaries = []
     with session_scope() as db_session:
         for endpoint in get_endpoints(db_session):
-            print(endpoint.name)
             endpoint_summary = make_endpoint_summary(
                 endpoint, comparison_interval, compared_to_interval
             )
