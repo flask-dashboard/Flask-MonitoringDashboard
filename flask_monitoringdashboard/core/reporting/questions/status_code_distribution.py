@@ -51,7 +51,7 @@ class StatusCodeDistribution(ReportQuestion):
             total_requests_comparison_interval = sum(comparison_interval_frequencies.values())
             total_requests_compared_to_interval = sum(compared_to_interval_frequencies.values())
 
-            if total_requests_comparison_interval == 0 or total_requests_compared_to_interval == 0:
+            if total_requests_comparison_interval < 30 or total_requests_compared_to_interval < 30:
                 return StatusCodeDistributionAnswer(is_significant=False)
 
             percentages = []
