@@ -156,9 +156,9 @@
                                             <tr ng-repeat="r in answer.percentages">
                                                 <td>{{ r.status_code }}</td>
                                                 <td>
-                                                    {{ r.compared_to_interval | number:0 }}%
+                                                    {{ r.compared_to_interval | number:1 }}%
                                                     ->
-                                                    {{ r.comparison_interval | number:0 }}%
+                                                    {{ r.comparison_interval | number:1 }}%
                                                 </td>
                                             </tr>
                                             </tbody>
