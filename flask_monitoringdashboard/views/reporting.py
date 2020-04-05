@@ -27,7 +27,7 @@ def make_endpoint_summary(endpoint, comparison_interval, compared_to_interval):
         has_anything_significant=False,
     )
 
-    for idx, question in enumerate(questions):
+    for question in questions:
         answer = question.get_answer(endpoint, comparison_interval, compared_to_interval)
 
         if answer.is_significant():
