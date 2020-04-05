@@ -11,7 +11,7 @@
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title" id="exampleModalLabel">
-                    {{ selectedSummary.endpoint_name }} - Average
+                    {{ selectedSummary.endpoint_name }} - Median
                     latency
                     {{ selectedAnswer.percentual_diff > 0 ? 'increased' : 'decreased' }}
                     by
@@ -23,11 +23,6 @@
                 </button>
             </div>
             <div class="modal-body">
-                <div>
-                    Based on sample size
-                    of {{ selectedAnswer.latencies_sample.compared_to_interval.length }}
-                    and {{ selectedAnswer.latencies_sample.comparison_interval.length }} items
-                </div>
                 <div id="chart"></div>
             </div>
             <div class="modal-footer">

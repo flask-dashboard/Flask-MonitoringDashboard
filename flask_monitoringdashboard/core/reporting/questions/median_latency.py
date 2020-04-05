@@ -1,4 +1,3 @@
-from flask_monitoringdashboard.core.reporting.mean_permutation_test import mean_permutation_test
 import numpy as np
 from scipy.stats import median_test
 
