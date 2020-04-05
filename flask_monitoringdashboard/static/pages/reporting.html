@@ -129,9 +129,9 @@
                                             {{ answer.percentual_diff > 0 ? 'increased' : 'decreased' }}
                                             by
                                             {{ answer.percentual_diff | abs | number : 0 }}%</h4>
-                                        <p>From {{ answer.compared_to_average|number:0 }}ms
+                                        <p>From {{ answer.compared_to_median|number:0 }}ms
                                             to
-                                            {{ answer.comparison_average|number:0 }}ms</p>
+                                            {{ answer.comparison_median|number:0 }}ms</p>
 
                                         <button ng-click="selectEntry(summary, answer)"
                                                 type="button"

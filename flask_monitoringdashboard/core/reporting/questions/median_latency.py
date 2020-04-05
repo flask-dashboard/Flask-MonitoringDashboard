@@ -17,8 +17,8 @@ class MedianLatencyAnswer(Answer):
         comparison_interval_latencies_sample=None,
         compared_to_interval_latencies_sample=None,
         percentual_diff=None,
-        comparison_interval_avg=None,
-        compared_to_interval_avg=None,
+        comparison_interval_median=None,
+        compared_to_interval_median=None,
     ):
         super().__init__('MEDIAN_LATENCY')
 
@@ -27,8 +27,8 @@ class MedianLatencyAnswer(Answer):
         self._compared_to_interval_latencies_sample = compared_to_interval_latencies_sample
         self._percentual_diff = percentual_diff
 
-        self._compared_to_interval_avg = compared_to_interval_avg
-        self._comparison_interval_avg = comparison_interval_avg
+        self._compared_to_interval_median = compared_to_interval_median
+        self._comparison_interval_median = comparison_interval_median
 
     def meta(self):
         return dict(
@@ -36,8 +36,8 @@ class MedianLatencyAnswer(Answer):
                 comparison_interval=self._comparison_interval_latencies_sample,
                 compared_to_interval=self._compared_to_interval_latencies_sample,
             ),
-            comparison_average=self._comparison_interval_avg,
-            compared_to_average=self._compared_to_interval_avg,
+            comparison_median=self._comparison_interval_median,
+            compared_to_median=self._compared_to_interval_median,
             percentual_diff=self._percentual_diff,
         )
 
@@ -68,12 +68,12 @@ class MedianLatency(ReportQuestion):
                     compared_to_interval_latencies_sample=compared_to_interval_latencies_sample,
                 )
 
-            comparison_interval_avg = float(np.median(comparison_interval_latencies_sample))
-            compared_to_interval_avg = float(np.median(compared_to_interval_latencies_sample))
+            comparison_interval_median = float(np.median(comparison_interval_latencies_sample))
+            compared_to_interval_median = float(np.median(compared_to_interval_latencies_sample))
 
             percentual_diff = (
-                (comparison_interval_avg - compared_to_interval_avg)
-                / compared_to_interval_avg
+                (comparison_interval_median - compared_to_interval_median)
+                / compared_to_interval_median
                 * 100
             )
 
@@ -89,7 +89,7 @@ class MedianLatency(ReportQuestion):
                 # Sample latencies
                 comparison_interval_latencies_sample=comparison_interval_latencies_sample,
                 compared_to_interval_latencies_sample=compared_to_interval_latencies_sample,
-                # Latency averages
-                comparison_interval_avg=comparison_interval_avg,
-                compared_to_interval_avg=compared_to_interval_avg,
+                # Latency medians
+                comparison_interval_median=comparison_interval_median,
+                compared_to_interval_median=compared_to_interval_median,
             )
