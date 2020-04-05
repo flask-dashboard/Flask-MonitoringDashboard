@@ -82,9 +82,6 @@ function ReportingController($scope, $http, $location, DTOptionsBuilder, menuSer
             yaxis: {
                 title: 'Execution time (ms)',
                 rangemode: "nonnegative"
-            },
-            xaxis: {
-                categories: ['', '', '']
             }
         });
     };
