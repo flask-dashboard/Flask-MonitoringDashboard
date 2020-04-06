@@ -1,12 +1,12 @@
 from flask_monitoringdashboard.controllers.requests import get_status_code_frequencies_in_interval
 from flask_monitoringdashboard.core.reporting.questions.report_question import (
-    Answer,
+    ReportAnswer,
     ReportQuestion,
 )
 from flask_monitoringdashboard.database import session_scope
 
 
-class StatusCodeDistributionAnswer(Answer):
+class StatusCodeDistributionReportAnswer(ReportAnswer):
     def __init__(self, is_significant=False, percentages=None):
         super().__init__('STATUS_CODE_DISTRIBUTION')
 
@@ -52,7 +52,7 @@ class StatusCodeDistribution(ReportQuestion):
             total_requests_compared_to_interval = sum(compared_to_interval_frequencies.values())
 
             if total_requests_comparison_interval < 30 or total_requests_compared_to_interval < 30:
-                return StatusCodeDistributionAnswer(is_significant=False)
+                return StatusCodeDistributionReportAnswer(is_significant=False)
 
             percentages = []
             max_absolute_diff = 0
@@ -91,6 +91,6 @@ class StatusCodeDistribution(ReportQuestion):
 
                 max_absolute_diff = max(max_absolute_diff, percentage_diff)
 
-            return StatusCodeDistributionAnswer(
+            return StatusCodeDistributionReportAnswer(
                 is_significant=max_absolute_diff > 3, percentages=percentages
             )

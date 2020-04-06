@@ -2,7 +2,7 @@ import numpy as np
 from scipy.stats import median_test
 
 from flask_monitoringdashboard.core.reporting.questions.report_question import (
-    Answer,
+    ReportAnswer,
     ReportQuestion,
 )
 from flask_monitoringdashboard.database import session_scope
@@ -10,7 +10,7 @@ from flask_monitoringdashboard.database import session_scope
 from flask_monitoringdashboard.database.request import get_latencies_sample
 
 
-class MedianLatencyAnswer(Answer):
+class MedianLatencyReportAnswer(ReportAnswer):
     def __init__(
         self,
         is_significant,
@@ -62,7 +62,7 @@ class MedianLatency(ReportQuestion):
                 )
                 == 0
             ):
-                return MedianLatencyAnswer(
+                return MedianLatencyReportAnswer(
                     is_significant=False,
                     comparison_interval_latencies_sample=comparison_interval_latencies_sample,
                     compared_to_interval_latencies_sample=compared_to_interval_latencies_sample,
@@ -83,7 +83,7 @@ class MedianLatency(ReportQuestion):
 
             is_significant = abs(float(percentual_diff)) > 0 and float(p) < 0.05
 
-            return MedianLatencyAnswer(
+            return MedianLatencyReportAnswer(
                 is_significant=is_significant,
                 percentual_diff=percentual_diff,
                 # Sample latencies

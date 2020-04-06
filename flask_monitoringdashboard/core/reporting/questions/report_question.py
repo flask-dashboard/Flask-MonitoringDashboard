@@ -1,7 +1,7 @@
 from abc import ABCMeta, abstractmethod
 
 
-class Answer:
+class ReportAnswer:
     __metaclass__ = ABCMeta
 
     def __init__(self, type):
