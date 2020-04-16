@@ -1,8 +1,10 @@
 <div>
     <div id="alert" class="alert alert-warning alert-dismissible" ng-show="alertShow">
-        <a class="close" data-dismiss="alert" aria-label="close" ng-click="alertShow = false">&times;</a>
+        <a class="close" data-dismiss="alert" aria-label="close"
+           ng-click="alertShow = false">&times;</a>
         <strong>Warning:</strong>
-        Version {{ pypi_version }} is now available, while you are still using version {{ dashboard_version }}.<br/>
+        Version {{ pypi_version }} is now available, while you are still using
+        version {{ dashboard_version }}.<br/>
         To upgrade run the following command on your server: <code>pip install --upgrade
         flask_monitoringdashboard</code>
     </div>
@@ -10,7 +12,8 @@
     <div class="card mb-3">
         <div class="card-header"><h4>Dashboard Overview</h4></div>
         <div class="card-body">
-            <div class="spinner" ng-controller="FormController" ng-show="table.length === 0">
+            <div class="spinner" ng-controller="FormController"
+                 ng-show="table.length === 0">
                 <div class="rect1"></div>
                 <div class="rect2"></div>
                 <div class="rect3"></div>
@@ -19,13 +22,15 @@
             </div>
 
             <ul class="pagination">
-                <li class="page-item" ng-class="{'active': isHits}"><a class="page-link" ng-click="toggleHits()">Number
+                <li class="page-item" ng-class="{'active': isHits}"><a class="page-link"
+                                                                       ng-click="toggleHits()">Number
                     of hits</a></li>
-                <li class="page-item" ng-class="{'active': !isHits}"><a class="page-link" ng-click="toggleHits()">Median
+                <li class="page-item" ng-class="{'active': !isHits}"><a class="page-link"
+                                                                        ng-click="toggleHits()">Median
                     request duration (ms)</a></li>
             </ul>
 
-            <table datatable="ng" class="table table-hover table-bordered" dt-options="options">
+            <table class="table table-hover table-bordered">
                 <thead>
                 <tr>
                     <th></th>
@@ -52,14 +57,16 @@
                     <td class="table_cell_with_error_count"
                         ng-show="isHits"
                         style="text-align: right;"
-                        ng-attr-error-count="{{ (row['hits-today-errors'] > 0) ? row['hits-today-errors'] : ''}}">
+                        ng-attr-error-count="
+                                {{ (row['hits-today-errors'] > 0) ? row['hits-today-errors'] : ''}}">
                         {{ row['hits-today'] | number }}
                     </td>
 
 
                     <td class="table_cell_with_error_count"
                         ng-show="isHits" style="text-align: right;"
-                        ng-attr-error-count="{{ (row['hits-week-errors'] > 0) ? row['hits-week-errors'] : ''}}">
+                        ng-attr-error-count="
+                                {{ (row['hits-week-errors'] > 0) ? row['hits-week-errors'] : ''}}">
                         {{ row['hits-week'] | number }}
                     </td>
 
@@ -67,8 +74,10 @@
                         {{ row['hits-overall'] | number }}
                     </td>
 
-                    <td ng-show="isHits==false" style="text-align: right;">{{ row['median-today'] | duration_ms }}</td>
-                    <td ng-show="isHits==false" style="text-align: right;">{{ row['median-week'] | duration_ms }}</td>
+                    <td ng-show="isHits==false"
+                        style="text-align: right;">{{ row['median-today'] | duration_ms }}</td>
+                    <td ng-show="isHits==false"
+                        style="text-align: right;">{{ row['median-week'] | duration_ms }}</td>
                     <td ng-show="isHits==false"
                         style="text-align: right;">{{ row['median-overall'] | duration_ms }}</td>
                     <td style="text-align: center;">{{ row['last-accessed'] | dateDifference }}</td>
@@ -87,14 +96,20 @@
         <div class="card-header"><h5><sup>*</sup>Monitoring-level</h5></div>
         <div class="card-body">
             <b>0 - Disabled</b>
-            <p>When the monitoring-level is set to 0, you don't monitor anything about the performance of this endpoint.
-                The only data that is stored is when the <b>endpoint is last requested.</b></p><b>1 - Performance</b>
-            <p>When the monitoring-level is set to 1, you collect data when the endpoint is last requested, plus data
-                about the <b>performance and utilization</b> of this endpoint (as a black-box).</p><b>2 - Outliers</b>
-            <p>When the monitoring-level is set to 2, you get all the functionality from 1, plus <b>extra information
-                if the request is an outlier.</b></p><b>3 - Profiler + Outliers</b>
-            <p>When the monitoring-level is set to 3, you get all the functionality from 2, plus data about the <b>performance
-                per line of code</b> from all requests.</p>
+            <p>When the monitoring-level is set to 0, you don't monitor anything about the
+                performance of this endpoint.
+                The only data that is stored is when the <b>endpoint is last
+                    requested.</b></p><b>1 - Performance</b>
+            <p>When the monitoring-level is set to 1, you collect data when the endpoint
+                is last requested, plus data
+                about the <b>performance and utilization</b> of this endpoint (as a
+                black-box).</p><b>2 - Outliers</b>
+            <p>When the monitoring-level is set to 2, you get all the functionality from
+                1, plus <b>extra information
+                    if the request is an outlier.</b></p><b>3 - Profiler + Outliers</b>
+            <p>When the monitoring-level is set to 3, you get all the functionality from
+                2, plus data about the <b>performance
+                    per line of code</b> from all requests.</p>
         </div>
     </div>
 </div>
