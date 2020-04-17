@@ -23,8 +23,7 @@ jobs:
     - name: Lint with flake8
       run: |
         pip install flake8
-        flake8 . --max-line-length=100 --ignore=F401, W503
-        flake8 . --count --exit-zero --max-complexity=10 --max-line-length=100 --statistics
+        flake8 . --exit-zero --max-line-length=100 --ignore=F401,W503 --max-complexity=10 --max-line-length=100
     - name: Test with unittest
       run: |
         coverage run setup.py test
