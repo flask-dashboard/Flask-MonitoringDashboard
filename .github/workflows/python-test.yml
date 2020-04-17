@@ -28,8 +28,7 @@ jobs:
     - name: Test with unittest
       run: |
         coverage run setup.py test
-        coverage
     - name: Upload coverage to Codecov
-        uses: codecov/codecov-action@v1
-        with:
-          fail_ci_if_error: true
+      uses: codecov/codecov-action@v1
+      with:
+        fail_ci_if_error: true
