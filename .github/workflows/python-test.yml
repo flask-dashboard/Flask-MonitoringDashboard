@@ -1,4 +1,4 @@
-name: Python application
+name: Python Testing
 
 on: [push]
 
@@ -23,9 +23,13 @@ jobs:
     - name: Lint with flake8
       run: |
         pip install flake8
-        flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
-        flake8 . --count --exit-zero --max-complexity=10 --max-line-length=120 --statistics
+        flake8 . --max-line-length=100 --ignore=F401, W503
+        flake8 . --count --exit-zero --max-complexity=10 --max-line-length=100 --statistics
     - name: Test with unittest
       run: |
         coverage run setup.py test
         coverage
+    - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v1
+        with:
+          fail_ci_if_error: true

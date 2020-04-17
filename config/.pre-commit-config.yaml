@@ -9,13 +9,3 @@ repos:
     hooks:
       - id: flake8
         args: ['--max-line-length=100', '--ignore=F401, W503']
-  - repo: local
-    hooks:
-      - id: version_increase
-        name: version_increase
-        description: Increase version in constants.json
-        entry: env/bin/python config/increase_version.py
-        language: python
-        files: ^$
-        args: ['patch']
-        always_run: true
