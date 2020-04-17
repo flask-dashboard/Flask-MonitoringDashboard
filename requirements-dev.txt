@@ -3,4 +3,3 @@
 
 # ... and install more
 requests
-codecov
