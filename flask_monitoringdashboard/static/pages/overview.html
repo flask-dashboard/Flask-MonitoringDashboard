@@ -44,30 +44,36 @@
                 <tbody>
                 <tr ng-repeat="row in table" style="cursor: pointer"
                     ng-click="go('/endpoint/' + row.id + '/hourly_load')">
+
                     <td style="background-color: {{ row.color }}"></td>
                     <td style="max-width: 200px;">{{ row.name }}</td>
 
-                    <td ng-show="isHits" style="text-align: right;">
-                        {{ row['hits-today'] | number }}
-                        <span ng-show="row['hits-today-errors'] > 0"
-                              style="color: red">({{ row['hits-today-errors'] }})</span>
-                    </td>
-                    <td ng-show="isHits" style="text-align: right;">
-                        {{ row['hits-week'] | number }}
-                        <span ng-show="row['hits-week-errors'] > 0"
-                              style="color: red">({{ row['hits-week-errors'] }})</span>
 
+                    <td class="table_cell_with_error_count"
+                        ng-show="isHits"
+                        style="text-align: right;"
+                        ng-attr-error-count="{{ (row['hits-today-errors'] > 0) ? row['hits-today-errors'] : ''}}">
+                        {{ row['hits-today'] | number }}
                     </td>
+
+
+                    <td class="table_cell_with_error_count"
+                        ng-show="isHits" style="text-align: right;"
+                        ng-attr-error-count="{{ (row['hits-week-errors'] > 0) ? row['hits-week-errors'] : ''}}">
+                        {{ row['hits-week'] | number }}
+                    </td>
+
                     <td ng-show="isHits" style="text-align: right;">
                         {{ row['hits-overall'] | number }}
                     </td>
 
                     <td ng-show="isHits==false" style="text-align: right;">{{ row['median-today'] | duration_ms }}</td>
                     <td ng-show="isHits==false" style="text-align: right;">{{ row['median-week'] | duration_ms }}</td>
-                    <td ng-show="isHits==false" style="text-align: right;">{{ row['median-overall'] | duration_ms }}</td>
+                    <td ng-show="isHits==false"
+                        style="text-align: right;">{{ row['median-overall'] | duration_ms }}</td>
                     <td style="text-align: center;">{{ row['last-accessed'] | dateDifference }}</td>
                     <td ng-click="$event.stopPropagation()">
-                        <monitorlevel name="row.name" value="row.monitor" />
+                        <monitorlevel name="row.name" value="row.monitor"></monitorlevel>
                     </td>
                 </tr>
                 </tbody>

@@ -5,6 +5,23 @@ All notable changes to this project will be documented in this file.
 This project adheres to `Semantic Versioning <http://semver.org/>`_.
 Please note that the changes before version 1.10.0 have not been documented.
 
+v3.0.8
+----------
+Changed
+
+- Fixed the changelog; functionality is the same as 3.0.7 :)
+
+
+v3.0.7 
+----------
+Changed
+
+- Added a first version of the Reporting functionality
+- Improved usability of the overview table
+- Fixed the issue with some table columns being sorted as text as opposed to numbers
+- A few other bug fixes
+
+
 v3.0.6
 ----------
 Changed

@@ -1,5 +1,3 @@
-from collections import defaultdict
-
 from flask_monitoringdashboard.controllers.requests import get_status_code_frequencies_in_interval
 from flask_monitoringdashboard.core.reporting.questions.report_question import Answer, ReportQuestion
 from flask_monitoringdashboard.database import session_scope

@@ -26,13 +26,13 @@ Currently, the team consists of three active developers:
    +------------+----------------------------------------------------------------------+
 
 .. |Picture1| image:: https://avatars2.githubusercontent.com/u/17162650?s=460&v=4
-              ..:width: 100px
+			  ..:width: 100px
 
 .. |Picture2| image:: https://avatars2.githubusercontent.com/u/7281856?s=400&v=4
-              ..:width: 100px
+			  ..:width: 100px
 
 .. |Picture3| image:: https://avatars3.githubusercontent.com/u/17165311?s=400&v=4
-              ..:width: 100px
+			  ..:width: 100px
 
 
 Found a bug?

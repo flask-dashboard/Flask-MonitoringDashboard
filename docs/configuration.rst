@@ -39,9 +39,9 @@ The line should then be:
 
 .. code-block:: python
 
-   dashboard.config.init_from(envvar='DASHBOARD_CONFIG')
+   dashboard.config.init_from(envvar='FLASK_MONITORING_DASHBOARD_CONFIG')
 
-This will configure the Dashboard based on the file provided in the environment variable called `DASHBOARD_CONFIG`.
+This will configure the Dashboard based on the file provided in the environment variable called `FLASK_MONITORING_DASHBOARD_CONFIG`.
 
 The content of the configuration file
 -------------------------------------
