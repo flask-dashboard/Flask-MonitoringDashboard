@@ -25,7 +25,7 @@ class TestEndpoint(unittest.TestCase):
 
     def test_get_endpoint(self):
         """
-            Test wheter the function returns the right values.
+            Test whether the function returns the right values.
         """
         from flask_monitoringdashboard.database.endpoint import get_endpoint_by_name
         from flask_monitoringdashboard import config
