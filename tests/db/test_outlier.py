@@ -8,7 +8,7 @@ import unittest
 
 from flask_monitoringdashboard.database import session_scope
 from flask_monitoringdashboard.database.outlier import add_outlier
-from flask_monitoringdashboard.test.utils import (
+from tests.utils import (
     set_test_environment,
     clear_db,
     add_fake_data,

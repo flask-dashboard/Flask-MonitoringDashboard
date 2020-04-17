@@ -5,7 +5,7 @@ from flask_monitoringdashboard.database.count_group import (
     count_requests_group,
     count_requests_per_day,
 )
-from flask_monitoringdashboard.test.utils import (
+from tests.utils import (
     set_test_environment,
     clear_db,
     add_fake_data,

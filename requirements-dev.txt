@@ -4,3 +4,4 @@
 # ... and install more
 pre-commit
 requests
+codecov
