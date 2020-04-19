@@ -17,7 +17,7 @@ def get_date(p):
     return datetime.utcfromtimestamp(int(request.args.get(p)))
 
 
-def make_endpoint_summary(endpoint, comparison_interval, compared_to_interval):
+def make_endpoint_summary(endpoint, interval, baseline_interval):
     questions = [MedianLatency(), StatusCodeDistribution()]
 
     summary = dict(
@@ -28,7 +28,7 @@ def make_endpoint_summary(endpoint, comparison_interval, compared_to_interval):
     )
 
     for question in questions:
-        answer = question.get_answer(endpoint, comparison_interval, compared_to_interval)
+        answer = question.get_answer(endpoint, interval, baseline_interval)
 
         if answer.is_significant():
             summary['has_anything_significant'] = True
@@ -44,14 +44,14 @@ def make_report():
     arguments = request.json
 
     try:
-        comparison_interval = DateInterval(
-            datetime.fromtimestamp(int(arguments['comparison_interval']['from'])),
-            datetime.fromtimestamp(int(arguments['comparison_interval']['to'])),
+        interval = DateInterval(
+            datetime.fromtimestamp(int(arguments['interval']['from'])),
+            datetime.fromtimestamp(int(arguments['interval']['to'])),
         )
 
-        compared_to_interval = DateInterval(
-            datetime.fromtimestamp(int(arguments['compared_to_interval']['from'])),
-            datetime.fromtimestamp(int(arguments['compared_to_interval']['to'])),
+        baseline_interval = DateInterval(
+            datetime.fromtimestamp(int(arguments['baseline_interval']['from'])),
+            datetime.fromtimestamp(int(arguments['baseline_interval']['to'])),
         )
 
     except Exception:
@@ -60,9 +60,7 @@ def make_report():
     endpoint_summaries = []
     with session_scope() as db_session:
         for endpoint in get_endpoints(db_session):
-            endpoint_summary = make_endpoint_summary(
-                endpoint, comparison_interval, compared_to_interval
-            )
+            endpoint_summary = make_endpoint_summary(endpoint, baseline_interval, interval)
             endpoint_summaries.append(endpoint_summary)
 
     return dict(summaries=endpoint_summaries)
