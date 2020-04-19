@@ -13,6 +13,10 @@ class ReportAnswer:
 
     @abstractmethod
     def meta(self):
+        """
+        Should return a `dict` that contains any additional information required on the
+        frontend. This will be included in the response.
+        """
         pass
 
     def serialize(self):
