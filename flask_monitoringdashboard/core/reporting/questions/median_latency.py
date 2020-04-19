@@ -6,7 +6,6 @@ from flask_monitoringdashboard.core.reporting.questions.report_question import (
     ReportQuestion,
 )
 from flask_monitoringdashboard.database import session_scope
-
 from flask_monitoringdashboard.database.request import get_latencies_sample
 
 
@@ -63,8 +62,6 @@ class MedianLatency(ReportQuestion):
 
             median = float(np.median(latencies_sample))
             baseline_median = float(np.median(baseline_latencies_sample))
-
-            print(dict(median=median, baseline_median=baseline_median))
 
             percentual_diff = (median - baseline_median) / baseline_median * 100
 

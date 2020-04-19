@@ -28,69 +28,63 @@ def frequency_to_percentage(freq, total):
 
 
 class StatusCodeDistribution(ReportQuestion):
-    def get_answer(self, endpoint, comparison_interval, compared_to_interval):
+    MIN_NUM_REQUESTS = 30
+    MIN_PERCENTAGE_DIFF_THRESHOLD = 3
+
+    def get_answer(self, endpoint, interval, baseline_interval):
         with session_scope() as db_session:
-            comparison_interval_frequencies = get_status_code_frequencies_in_interval(
+            frequencies = get_status_code_frequencies_in_interval(
+                db_session, endpoint.id, interval.start_date(), interval.end_date()
+            )
+
+            baseline_frequencies = get_status_code_frequencies_in_interval(
                 db_session,
                 endpoint.id,
-                comparison_interval.start_date(),
-                comparison_interval.end_date(),
+                baseline_interval.start_date(),
+                baseline_interval.end_date(),
             )
 
-            compared_to_interval_frequencies = get_status_code_frequencies_in_interval(
-                db_session,
-                endpoint.id,
-                compared_to_interval.start_date(),
-                compared_to_interval.end_date(),
+        # all monitored status codes in both intervals
+        all_monitored_status_codes = set(baseline_frequencies.keys()).union(set(frequencies.keys()))
+
+        total_requests = sum(frequencies.values())
+        total_baseline_requests = sum(baseline_frequencies.values())
+
+        if (
+            total_requests < self.MIN_NUM_REQUESTS
+            or total_baseline_requests < self.MIN_NUM_REQUESTS
+        ):
+            return StatusCodeDistributionReportAnswer(is_significant=False)
+
+        percentages = []
+        max_percentage_diff = 0
+
+        for status_code in all_monitored_status_codes:
+            count = frequencies[status_code] if status_code in frequencies else 0
+
+            baseline_count = (
+                baseline_frequencies[status_code] if status_code in baseline_frequencies else 0
             )
 
-            registered_status_codes = set(compared_to_interval_frequencies.keys()).union(
-                set(comparison_interval_frequencies.keys())
+            percentage = frequency_to_percentage(freq=count, total=total_requests)
+            baseline_percentage = frequency_to_percentage(
+                freq=baseline_count, total=total_baseline_requests
             )
 
-            total_requests_comparison_interval = sum(comparison_interval_frequencies.values())
-            total_requests_compared_to_interval = sum(compared_to_interval_frequencies.values())
+            percentage_diff = percentage - baseline_percentage
 
-            if total_requests_comparison_interval < 30 or total_requests_compared_to_interval < 30:
-                return StatusCodeDistributionReportAnswer(is_significant=False)
-
-            percentages = []
-            max_absolute_diff = 0
-
-            for status_code in registered_status_codes:
-                count_comparison_interval = (
-                    comparison_interval_frequencies[status_code]
-                    if status_code in comparison_interval_frequencies
-                    else 0
+            percentages.append(
+                dict(
+                    status_code=status_code,
+                    comparison=percentage,
+                    baseline=baseline_percentage,
+                    percentage_diff=percentage_diff,
                 )
-
-                count_compared_to_interval = (
-                    compared_to_interval_frequencies[status_code]
-                    if status_code in compared_to_interval_frequencies
-                    else 0
-                )
-
-                comparison_interval_percentage = frequency_to_percentage(
-                    count_comparison_interval, total_requests_comparison_interval
-                )
-
-                compared_to_interval_percentage = frequency_to_percentage(
-                    count_compared_to_interval, total_requests_compared_to_interval
-                )
-
-                percentage_diff = comparison_interval_percentage - compared_to_interval_percentage
-
-                percentages.append(
-                    dict(
-                        status_code=status_code,
-                        comparison_interval=comparison_interval_percentage,
-                        compared_to_interval=compared_to_interval_percentage,
-                        percentage_diff=percentage_diff,
-                    )
-                )
-
-                max_absolute_diff = max(max_absolute_diff, percentage_diff)
-
-            return StatusCodeDistributionReportAnswer(
-                is_significant=max_absolute_diff > 3, percentages=percentages
             )
+
+            max_percentage_diff = max(max_percentage_diff, percentage_diff)
+
+        return StatusCodeDistributionReportAnswer(
+            is_significant=max_percentage_diff > self.MIN_PERCENTAGE_DIFF_THRESHOLD,
+            percentages=percentages,
+        )

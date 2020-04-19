@@ -53,7 +53,6 @@ def make_report():
             datetime.fromtimestamp(int(arguments['baseline_interval']['from'])),
             datetime.fromtimestamp(int(arguments['baseline_interval']['to'])),
         )
-
     except Exception:
         return 'Invalid payload', 422
 
