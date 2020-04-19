@@ -16,9 +16,8 @@ app = Flask(__name__)
 
 dashboard.config.version = '3.2'
 dashboard.config.group_by = '2'
-dashboard.config.database_name = 'mysql://root:my-secret-pw@127.0.0.1:3306/fmd'
-
-
+dashboard.config.database_name = 'sqlite:///data.db'
+# dashboard.config.database_name = 'mysql+pymysql://user:password@localhost:3306/db1'
 # dashboard.config.database_name = 'postgresql://user:password@localhost:5432/mydb'
 
 
