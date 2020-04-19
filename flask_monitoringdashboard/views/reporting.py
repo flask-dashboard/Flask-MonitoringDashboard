@@ -59,7 +59,7 @@ def make_report():
     endpoint_summaries = []
     with session_scope() as db_session:
         for endpoint in get_endpoints(db_session):
-            endpoint_summary = make_endpoint_summary(endpoint, baseline_interval, interval)
+            endpoint_summary = make_endpoint_summary(endpoint, interval, baseline_interval)
             endpoint_summaries.append(endpoint_summary)
 
     return dict(summaries=endpoint_summaries)

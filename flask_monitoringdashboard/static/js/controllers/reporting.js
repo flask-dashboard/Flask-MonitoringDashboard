@@ -74,9 +74,10 @@ function ReportingController($scope, $http, $location, DTOptionsBuilder, menuSer
             {
                 name: `Baseline (N=${baseline.length})`,
                 type: 'violin',
-                y: baseline
+                y: baseline,
             }
         ];
+
 
         plotlyService.chart(data, {
             yaxis: {
