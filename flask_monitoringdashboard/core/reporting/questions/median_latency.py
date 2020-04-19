@@ -14,30 +14,31 @@ class MedianLatencyReportAnswer(ReportAnswer):
     def __init__(
         self,
         is_significant,
-        comparison_interval_latencies_sample=None,
-        compared_to_interval_latencies_sample=None,
+        latencies_sample=None,
+        baseline_latencies_sample=None,
         percentual_diff=None,
-        comparison_interval_median=None,
-        compared_to_interval_median=None,
+        median=None,
+        baseline_median=None,
     ):
         super().__init__('MEDIAN_LATENCY')
 
         self._is_significant = is_significant
-        self._comparison_interval_latencies_sample = comparison_interval_latencies_sample
-        self._compared_to_interval_latencies_sample = compared_to_interval_latencies_sample
+
+        self._baseline_latencies_sample = baseline_latencies_sample
+        self._latencies_sample = latencies_sample
+
         self._percentual_diff = percentual_diff
 
-        self._compared_to_interval_median = compared_to_interval_median
-        self._comparison_interval_median = comparison_interval_median
+        self._baseline_median = baseline_median
+        self._median = median
 
     def meta(self):
         return dict(
-            latencies_sample=dict(
-                comparison_interval=self._comparison_interval_latencies_sample,
-                compared_to_interval=self._compared_to_interval_latencies_sample,
+            latencies_samples=dict(
+                baseline=self._baseline_latencies_sample, comparison=self._latencies_sample
             ),
-            comparison_median=self._comparison_interval_median,
-            compared_to_median=self._compared_to_interval_median,
+            median=self._median,
+            baseline_median=self._baseline_median,
             percentual_diff=self._percentual_diff,
         )
 
@@ -46,40 +47,28 @@ class MedianLatencyReportAnswer(ReportAnswer):
 
 
 class MedianLatency(ReportQuestion):
-    def get_answer(self, endpoint, comparison_interval, compared_to_interval):
+    def get_answer(self, endpoint, interval, baseline_interval):
         with session_scope() as db_session:
-            comparison_interval_latencies_sample = get_latencies_sample(
-                db_session, endpoint.id, comparison_interval
-            )
-            compared_to_interval_latencies_sample = get_latencies_sample(
-                db_session, endpoint.id, compared_to_interval
+            latencies_sample = get_latencies_sample(db_session, endpoint.id, interval)
+            baseline_latencies_sample = get_latencies_sample(
+                db_session, endpoint.id, baseline_interval
             )
 
-            if (
-                min(
-                    len(comparison_interval_latencies_sample),
-                    len(compared_to_interval_latencies_sample),
-                )
-                == 0
-            ):
+            if len(latencies_sample) == 0 or len(baseline_latencies_sample) == 0:
                 return MedianLatencyReportAnswer(
                     is_significant=False,
-                    comparison_interval_latencies_sample=comparison_interval_latencies_sample,
-                    compared_to_interval_latencies_sample=compared_to_interval_latencies_sample,
+                    latencies_sample=latencies_sample,
+                    baseline_latencies_sample=baseline_latencies_sample,
                 )
 
-            comparison_interval_median = float(np.median(comparison_interval_latencies_sample))
-            compared_to_interval_median = float(np.median(compared_to_interval_latencies_sample))
+            median = float(np.median(latencies_sample))
+            baseline_median = float(np.median(baseline_latencies_sample))
 
-            percentual_diff = (
-                (comparison_interval_median - compared_to_interval_median)
-                / compared_to_interval_median
-                * 100
-            )
+            print(dict(median=median, baseline_median=baseline_median))
 
-            _, p, _, _ = median_test(
-                comparison_interval_latencies_sample, compared_to_interval_latencies_sample
-            )
+            percentual_diff = (median - baseline_median) / baseline_median * 100
+
+            _, p, _, _ = median_test(latencies_sample, baseline_latencies_sample)
 
             is_significant = abs(float(percentual_diff)) > 0 and float(p) < 0.05
 
@@ -87,9 +76,9 @@ class MedianLatency(ReportQuestion):
                 is_significant=is_significant,
                 percentual_diff=percentual_diff,
                 # Sample latencies
-                comparison_interval_latencies_sample=comparison_interval_latencies_sample,
-                compared_to_interval_latencies_sample=compared_to_interval_latencies_sample,
+                latencies_sample=latencies_sample,
+                baseline_latencies_sample=baseline_latencies_sample,
                 # Latency medians
-                comparison_interval_median=comparison_interval_median,
-                compared_to_interval_median=compared_to_interval_median,
+                median=median,
+                baseline_median=baseline_median,
             )

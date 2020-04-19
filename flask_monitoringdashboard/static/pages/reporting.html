@@ -84,10 +84,10 @@
             <div>
                 <div class="input-group">
                     <input type="datetime-local"
-                           ng-model="intervals.comparison_interval.from"
+                           ng-model="intervals.comparison.from"
                            class="form-control"/>
                     <input type="datetime-local"
-                           ng-model="intervals.comparison_interval.to"
+                           ng-model="intervals.comparison.to"
                            class="form-control"/>
                 </div>
             </div>
@@ -97,10 +97,10 @@
             <div style="margin-top:15px; margin-bottom: 15px">
                 <div class="input-group">
                     <input type="datetime-local"
-                           ng-model="intervals.compared_to_interval.from"
+                           ng-model="intervals.baseline.from"
                            class="form-control"/>
                     <input type="datetime-local"
-                           ng-model="intervals.compared_to_interval.to"
+                           ng-model="intervals.baseline.to"
                            class="form-control"/>
                 </div>
             </div>
@@ -129,9 +129,9 @@
                                             {{ answer.percentual_diff > 0 ? 'increased' : 'decreased' }}
                                             by
                                             {{ answer.percentual_diff | abs | number : 1 }}%</h4>
-                                        <p>From {{ answer.compared_to_median|number:1 }}ms
+                                        <p>From {{ answer.baseline_median|number:1 }}ms
                                             to
-                                            {{ answer.comparison_median|number:1 }}ms</p>
+                                            {{ answer.median|number:1 }}ms</p>
 
                                         <button ng-click="selectEntry(summary, answer)"
                                                 type="button"
