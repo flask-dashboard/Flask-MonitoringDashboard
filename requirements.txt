@@ -9,4 +9,4 @@ colorhash             # for hashing a string into a color
 numpy                 # for computing median and other stats
 pytz                  # for timezone info
 tzlocal               # for figuring out the local timezone
-scipy==1.4.1          # for statistical analysis of latency measurements
+scipy.                # for statistical analysis of latency measurements
