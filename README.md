@@ -10,6 +10,7 @@ A dashboard for automatic monitoring of <a href="http://flask.pocoo.org/" target
 </p>
 
 <span align="center">
+    
 ![Build Status](https://github.com/flask-dashboard/Flask-MonitoringDashboard/workflows/Python%20Testing/badge.svg)
 [![Documentation Status](https://readthedocs.org/projects/flask-monitoringdashboard/badge/?version=latest)](http://flask-monitoringdashboard.readthedocs.io/en/latest/?badge=latest)
 [![codecov](https://codecov.io/gh/flask-dashboard/Flask-MonitoringDashboard/branch/master/graph/badge.svg)](https://codecov.io/gh/flask-dashboard/Flask-MonitoringDashboard)
