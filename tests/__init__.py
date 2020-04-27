@@ -14,5 +14,5 @@ def get_test_suite():
         Finds all files that are located in a file named 'test_*.py', where * can be anything
     """
     test_loader = unittest.TestLoader()
-    test_suite = test_loader.discover('flask_monitoringdashboard.test', pattern='test_*.py')
+    test_suite = test_loader.discover('tests', pattern='test_*.py')
     return test_suite

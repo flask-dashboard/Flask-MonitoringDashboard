@@ -2,5 +2,5 @@
 -r requirements.txt
 
 # ... and install more
-pre-commit
 requests
+codecov

@@ -7,7 +7,7 @@ from flask_monitoringdashboard.database.stack_line import (
 )
 
 from flask_monitoringdashboard.database import session_scope, StackLine
-from flask_monitoringdashboard.test.utils import (
+from tests.utils import (
     set_test_environment,
     clear_db,
     add_fake_data,

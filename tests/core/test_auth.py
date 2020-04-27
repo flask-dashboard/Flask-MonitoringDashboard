@@ -1,6 +1,6 @@
 import unittest
 
-from flask_monitoringdashboard.test.utils import get_test_app
+from tests.utils import get_test_app
 
 
 class TestAuth(unittest.TestCase):
