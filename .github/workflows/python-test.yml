@@ -1,4 +1,4 @@
-name: Python Testing
+name: Continous Integration
 
 on: [push]
 
