@@ -54,6 +54,7 @@ import {
     FormController,
     PaginationController
 } from './controllers/util'
+import {applyFilters} from "./filters";
 
 let app = angular.module('fmdApp', ['ngRoute']);
 
@@ -167,5 +168,7 @@ app.config(['$locationProvider', '$routeProvider', function ($locationProvider, 
         requireBase: true
     });
 }]);
+
+applyFilters(app);
 
 window.app = app;
