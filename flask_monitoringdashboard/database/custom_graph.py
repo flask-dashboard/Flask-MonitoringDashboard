@@ -1,3 +1,5 @@
+from datetime import timedelta
+
 from sqlalchemy.orm.exc import NoResultFound
 
 from flask_monitoringdashboard.database import CustomGraph, CustomGraphData, row2dict
@@ -43,7 +45,7 @@ def get_graph_data(db_session, graph_id, start_date, end_date):
         .filter(
             CustomGraphData.graph_id == graph_id,
             CustomGraphData.time >= start_date,
-            CustomGraphData.time <= end_date,
+            CustomGraphData.time < end_date + timedelta(days=1),
         )
         .all()
     ]
