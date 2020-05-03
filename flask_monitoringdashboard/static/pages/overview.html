@@ -30,66 +30,118 @@
                     request duration (ms)</a></li>
             </ul>
 
-            <table class="table table-hover table-bordered">
-                <thead>
-                <tr>
-                    <th></th>
-                    <th>Endpoint</th>
-                    <th ng-show="isHits">Today</th>
-                    <th ng-show="isHits">Last 7 days</th>
-                    <th ng-show="isHits">Overall</th>
-                    <th ng-show="isHits==false">Today</th>
-                    <th ng-show="isHits==false">Last 7 days</th>
-                    <th ng-show="isHits==false">Overall</th>
-                    <th>Last requested</th>
-                    <th>Monitoring-level<sup>*</sup></th>
-                </tr>
-                </thead>
+            <div class="row" style="margin-bottom: 7px">
+                <div class="col-md-6 col-sm-12">
+                    Show
+                    <select style="width: 60px; display: inline-block;"
+                            class='form-control form-control-sm' name="ddwa"
+                            ng-model="pageSize">
+                        <option value="10">10</option>
+                        <option value="25">25</option>
+                        <option value="50">50</option>
+                        <option value="100">100</option>
+                    </select>
+                    entries
+                </div>
 
-                <tbody>
-                <tr ng-repeat="row in table" style="cursor: pointer"
-                    ng-click="go('/endpoint/' + row.id + '/hourly_load')">
+                <div class="col-md-6 col-sm-12" style="text-align: right">
+                    Search:
+                    <input ng-model="searchQuery"
+                           style="display: inline-block; width: 180px"
+                           class="form-control form-control-sm">
+                </div>
+            </div>
 
-                    <td style="background-color: {{ row.color }}"></td>
-                    <td style="max-width: 200px;">{{ row.name }}</td>
+            <div class="row">
+                <div class="col-md-12">
+                    <table class="table table-hover table-bordered">
+                        <thead>
+                        <tr>
+                            <th></th>
+                            <th>Endpoint</th>
+                            <th ng-show="isHits">Today</th>
+                            <th ng-show="isHits">Last 7 days</th>
+                            <th ng-show="isHits">Overall</th>
+                            <th ng-show="isHits==false">Today</th>
+                            <th ng-show="isHits==false">Last 7 days</th>
+                            <th ng-show="isHits==false">Overall</th>
+                            <th>Last requested</th>
+                            <th>Monitoring-level<sup>*</sup></th>
+                        </tr>
+                        </thead>
+
+                        <tbody>
+                        <tr ng-repeat="row in getFilteredItems() track by $index"
+                            style="cursor: pointer"
+                            ng-click="go('/endpoint/' + row.id + '/hourly_load')">
+
+                            <td style="background-color: {{ row.color }}"></td>
+                            <td style="max-width: 200px;">{{ row.name }}</td>
 
 
-                    <td class="table_cell_with_error_count"
-                        ng-show="isHits"
-                        style="text-align: right;"
-                        ng-attr-error-count="
-                                {{ (row['hits-today-errors'] > 0) ? row['hits-today-errors'] : ''}}">
-                        {{ row['hits-today'] | number }}
-                    </td>
+                            <td class="table_cell_with_error_count"
+                                ng-show="isHits"
+                                style="text-align: right;"
+                                ng-attr-error-count="
 
 
-                    <td class="table_cell_with_error_count"
-                        ng-show="isHits" style="text-align: right;"
-                        ng-attr-error-count="
-                                {{ (row['hits-week-errors'] > 0) ? row['hits-week-errors'] : ''}}">
-                        {{ row['hits-week'] | number }}
-                    </td>
 
-                    <td ng-show="isHits" style="text-align: right;">
-                        {{ row['hits-overall'] | number }}
-                    </td>
 
-                    <td ng-show="isHits==false"
-                        style="text-align: right;">{{ row['median-today'] | duration_ms }}</td>
-                    <td ng-show="isHits==false"
-                        style="text-align: right;">{{ row['median-week'] | duration_ms }}</td>
-                    <td ng-show="isHits==false"
-                        style="text-align: right;">{{ row['median-overall'] | duration_ms }}</td>
-                    <td style="text-align: center;">{{ row['last-accessed'] | dateDifference }}</td>
-                    <td ng-click="$event.stopPropagation()">
-                        <monitorlevel name="row.name" value="row.monitor"></monitorlevel>
-                    </td>
-                </tr>
-                </tbody>
-            </table>
+                                        {{ (row['hits-today-errors'] > 0) ? row['hits-today-errors'] : ''}}">
+                                {{ row['hits-today'] | number }}
+                            </td>
 
+
+                            <td class="table_cell_with_error_count"
+                                ng-show="isHits" style="text-align: right;"
+                                ng-attr-error-count="
+
+
+
+
+                                        {{ (row['hits-week-errors'] > 0) ? row['hits-week-errors'] : ''}}">
+                                {{ row['hits-week'] | number }}
+                            </td>
+
+                            <td ng-show="isHits" style="text-align: right;">
+                                {{ row['hits-overall'] | number }}
+                            </td>
+
+                            <td ng-show="isHits==false"
+                                style="text-align: right;">{{ row['median-today'] | duration_ms }}</td>
+                            <td ng-show="isHits==false"
+                                style="text-align: right;">{{ row['median-week'] | duration_ms }}</td>
+                            <td ng-show="isHits==false"
+                                style="text-align: right;">{{ row['median-overall'] | duration_ms }}</td>
+                            <td style="text-align: center;">{{ row['last-accessed'] | dateDifference }}</td>
+                            <td ng-click="$event.stopPropagation()">
+                                <monitorlevel name="row.name"
+                                              value="row.monitor"></monitorlevel>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-12">
+                    <nav aria-label="Page navigation example" style="float: right">
+                        <ul class="pagination">
+                            <li ng-class="{'disabled': !canGoBack()}"
+                                class="page-item">
+                                <a class="page-link" href="#" ng-click="previousPage()">Previous</a>
+                            </li>
+
+                            <li ng-class="{'disabled': !canGoForward() }" class="page-item">
+                                <a class="page-link" href="#"
+                                   ng-click="nextPage()">Next</a>
+                            </li>
+                        </ul>
+                    </nav>
+                </div>
+            </div>
         </div>
-
     </div>
 
     <div class="card mb-3">
@@ -112,5 +164,4 @@
                     per line of code</b> from all requests.</p>
         </div>
     </div>
-</div>
 </div>

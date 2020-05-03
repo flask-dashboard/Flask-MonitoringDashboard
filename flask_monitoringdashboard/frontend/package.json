@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "webpack --mode production && cp ./build/css/app.css ../static/css/app.css && rm -rf ../static/fonts && cp -R ./build/fonts ../static/fonts && cp ./build/js/app.js ../static/js/new-app.js"
+    "build": "webpack --mode production && cp ./build/css/app.css ../static/css/app.css && rm -rf ../static/fonts && cp -R ./build/fonts ../static/fonts && cp ./build/js/app.js ../static/js/app.js"
   },
   "keywords": [],
   "author": "",
