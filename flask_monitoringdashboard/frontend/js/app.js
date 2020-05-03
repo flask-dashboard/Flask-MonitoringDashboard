@@ -55,8 +55,11 @@ import {
     PaginationController
 } from './controllers/util'
 import {applyFilters} from "./filters";
+import applyDirectives from "./directives";
 
 let app = angular.module('fmdApp', ['ngRoute']);
+applyFilters(app);
+applyDirectives(app);
 
 app.service('formService', ['$http', 'endpointService', '$filter', formService]);
 app.service('infoService', infoService);
@@ -68,7 +71,7 @@ app.service('plotlyService', ['formService', plotlyService]);
 
 app.controller('MonitorLevelController', ['$scope', '$http', MonitorLevelController]);
 
-app.controller('MenuController', ['$scope', '$http', MenuController]);
+app.controller('MenuController', ['$scope', 'menuService', MenuController]);
 app.controller('InfoController', ['$scope', 'infoService', InfoController]);
 app.controller('FormController', ['$scope', 'formService', FormController]);
 app.controller('EndpointController', ['$scope', 'endpointService', EndpointController]);
@@ -169,6 +172,18 @@ app.config(['$locationProvider', '$routeProvider', function ($locationProvider, 
     });
 }]);
 
-applyFilters(app);
+// Toggle the side navigation
+$("#sidenavToggler").click(function (e) {
+    e.preventDefault();
+    $("body").toggleClass("sidenav-toggled");
+    $(".navbar-sidenav .nav-link-collapse").addClass("collapsed");
+    $(".navbar-sidenav .sidenav-second-level, .navbar-sidenav .sidenav-third-level").removeClass("show");
+});
+// Force the toggled class to be removed when a collapsible nav link is clicked
+$(".navbar-sidenav .nav-link-collapse").click(function (e) {
+    e.preventDefault();
+    $("body").removeClass("sidenav-toggled");
+});
+
 
 window.app = app;
