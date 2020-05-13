@@ -13,8 +13,7 @@ from flask_monitoringdashboard.database.count import count_profiled_requests
 @secure
 def num_profiled(endpoint_id):
     with session_scope() as session:
-        endpoint = session.query(Endpoint).get(endpoint_id)
-        return jsonify(count_profiled_requests(session, endpoint))
+        return jsonify(count_profiled_requests(session, endpoint_id))
 
 
 @blueprint.route('/api/profiler_table/<endpoint_id>/<offset>/<per_page>')

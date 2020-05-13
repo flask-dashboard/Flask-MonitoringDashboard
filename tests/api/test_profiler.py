@@ -3,7 +3,7 @@ import pytest
 from flask_monitoringdashboard.core.timezone import to_local_datetime
 
 
-@pytest.mark.usefixtures('request_1', 'request_2')
+@pytest.mark.usefixtures('stack_line', 'stack_line_2')
 def test_num_profiled(dashboard_as_admin, endpoint):
     response = dashboard_as_admin.get('dashboard/api/num_profiled/{0}'.format(endpoint.id))
     assert response.status_code == 200

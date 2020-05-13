@@ -37,9 +37,9 @@ def test_users(dashboard_as_admin, endpoint, session):
     row1, row2 = data
 
     assert row1['hits'] == 1
-    assert row1['user'] == 'something else'
+    assert row1['user'] == '42' or 'something else'
     assert row2['hits'] == 1
-    assert row2['user'] == '42'
+    assert row2['user'] == '42' or 'something else'
 
 
 @pytest.mark.parametrize('request_1__ip', ['42'])
@@ -53,9 +53,9 @@ def test_ips(dashboard_as_admin, endpoint, session):
     row1, row2 = data
 
     assert row1['hits'] == 1
-    assert row1['ip'] == 'something else'
+    assert row1['ip'] == '42' or 'something else'
     assert row2['hits'] == 1
-    assert row2['ip'] == '42'
+    assert row2['ip'] == '42' or 'something else'
 
 
 def test_endpoints(dashboard_as_admin, endpoint, session):
