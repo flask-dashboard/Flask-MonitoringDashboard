@@ -21,8 +21,8 @@ def versions(endpoint_id=None):
     :param endpoint_id: integer
     :return: A JSON-list with all versions of a specific endpoint (version represented by a string)
     """
-    with session_scope() as db_session:
-        version_dates = get_versions(db_session, endpoint_id)
+    with session_scope() as session:
+        version_dates = get_versions(session, endpoint_id)
         dicts = []
         for vt in version_dates:
             dicts.append({'version': vt[0], 'date': vt[1]})
@@ -49,8 +49,8 @@ def multi_version():
     data = json.loads(request.data)['data']
     endpoints = data['endpoints']
     versions = data['versions']
-    with session_scope() as db_session:
-        return jsonify(get_multi_version_data(db_session, endpoints, versions))
+    with session_scope() as session:
+        return jsonify(get_multi_version_data(session, endpoints, versions))
 
 
 @blueprint.route('/api/version_user/<endpoint_id>', methods=['POST'])
@@ -79,8 +79,8 @@ def version_user(endpoint_id):
     versions = data['versions']
     users = data['users']
 
-    with session_scope() as db_session:
-        return jsonify(get_version_user_data(db_session, endpoint_id, versions, users))
+    with session_scope() as session:
+        return jsonify(get_version_user_data(session, endpoint_id, versions, users))
 
 
 @blueprint.route('/api/version_ip/<endpoint_id>', methods=['POST'])
@@ -109,5 +109,5 @@ def version_ip(endpoint_id):
     versions = data['versions']
     ips = data['ip']
 
-    with session_scope() as db_session:
-        return jsonify(get_version_ip_data(db_session, endpoint_id, versions, ips))
+    with session_scope() as session:
+        return jsonify(get_version_ip_data(session, endpoint_id, versions, ips))

@@ -15,8 +15,8 @@ def deploy_details():
     """
     :return: A JSON-object with deployment details
     """
-    with session_scope() as db_session:
-        details = get_details(db_session)
+    with session_scope() as session:
+        details = get_details(session)
     details['first-request'] = to_local_datetime(
         datetime.datetime.fromtimestamp(details['first-request'])
     )

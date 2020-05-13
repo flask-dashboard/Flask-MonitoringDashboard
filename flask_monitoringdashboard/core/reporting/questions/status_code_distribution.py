@@ -32,13 +32,13 @@ class StatusCodeDistribution(ReportQuestion):
     MIN_PERCENTAGE_DIFF_THRESHOLD = 3
 
     def get_answer(self, endpoint, interval, baseline_interval):
-        with session_scope() as db_session:
+        with session_scope() as session:
             frequencies = get_status_code_frequencies_in_interval(
-                db_session, endpoint.id, interval.start_date(), interval.end_date()
+                session, endpoint.id, interval.start_date(), interval.end_date()
             )
 
             baseline_frequencies = get_status_code_frequencies_in_interval(
-                db_session,
+                session,
                 endpoint.id,
                 baseline_interval.start_date(),
                 baseline_interval.end_date(),

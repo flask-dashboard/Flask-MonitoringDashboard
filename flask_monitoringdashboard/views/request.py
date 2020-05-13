@@ -24,8 +24,8 @@ def num_requests(start_date, end_date):
     start_date = datetime.datetime.strptime(start_date, '%Y-%m-%d')
     end_date = datetime.datetime.strptime(end_date, '%Y-%m-%d')
 
-    with session_scope() as db_session:
-        return jsonify(get_num_requests_data(db_session, start_date, end_date))
+    with session_scope() as session:
+        return jsonify(get_num_requests_data(session, start_date, end_date))
 
 
 @blueprint.route('/api/hourly_load/<start_date>/<end_date>')
@@ -45,5 +45,5 @@ def hourly_load(start_date, end_date, endpoint_id=None):
     start_date = datetime.datetime.strptime(start_date, '%Y-%m-%d')
     end_date = datetime.datetime.strptime(end_date, '%Y-%m-%d')
 
-    with session_scope() as db_session:
-        return jsonify(get_hourly_load(db_session, endpoint_id, start_date, end_date))
+    with session_scope() as session:
+        return jsonify(get_hourly_load(session, endpoint_id, start_date, end_date))

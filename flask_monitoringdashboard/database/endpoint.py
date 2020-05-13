@@ -11,16 +11,16 @@ from flask_monitoringdashboard.core.timezone import to_local_datetime
 from flask_monitoringdashboard.database import Request, Endpoint
 
 
-def get_num_requests(db_session, endpoint_id, start_date, end_date):
+def get_num_requests(session, endpoint_id, start_date, end_date):
     """
     Returns a list with all dates on which an endpoint is accessed.
-    :param db_session: session for the database
+    :param session: session for the database
     :param endpoint_id: if None, the result is the sum of all endpoints
     :param start_date: datetime.date object
     :param end_date: datetime.date object
     :return list of dates
     """
-    query = db_session.query(Request.time_requested)
+    query = session.query(Request.time_requested)
     if endpoint_id:
         query = query.filter(Request.endpoint_id == endpoint_id)
     result = query.filter(
@@ -43,17 +43,17 @@ def group_request_times(datetimes):
     return hours_dict.items()
 
 
-def get_users(db_session, endpoint_id, limit=None):
+def get_users(session, endpoint_id, limit=None):
     """
     Returns a list with the distinct group-by from a specific endpoint. The limit is used to
     filter the most used distinct.
-    :param db_session: session for the database
+    :param session: session for the database
     :param endpoint_id: the id of the endpoint to filter on
     :param limit: the max number of results
     :return a list of tuples (group_by, hits)
     """
     query = (
-        db_session.query(Request.group_by, func.count(Request.group_by))
+        session.query(Request.group_by, func.count(Request.group_by))
         .filter(Request.endpoint_id == endpoint_id)
         .group_by(Request.group_by)
         .order_by(desc(func.count(Request.group_by)))
@@ -61,21 +61,21 @@ def get_users(db_session, endpoint_id, limit=None):
     if limit:
         query = query.limit(limit)
     result = query.all()
-    db_session.expunge_all()
+    session.expunge_all()
     return result
 
 
-def get_ips(db_session, endpoint_id, limit=None):
+def get_ips(session, endpoint_id, limit=None):
     """
     Returns a list with the distinct group-by from a specific endpoint. The limit is used to
     filter the most used distinct.
-    :param db_session: session for the database
+    :param session: session for the database
     :param endpoint_id: the endpoint_id to filter on
     :param limit: the number of
     :return a list with the group_by as strings.
     """
     query = (
-        db_session.query(Request.ip, func.count(Request.ip))
+        session.query(Request.ip, func.count(Request.ip))
         .filter(Request.endpoint_id == endpoint_id)
         .group_by(Request.ip)
         .order_by(desc(func.count(Request.ip)))
@@ -83,101 +83,101 @@ def get_ips(db_session, endpoint_id, limit=None):
     if limit:
         query = query.limit(limit)
     result = query.all()
-    db_session.expunge_all()
+    session.expunge_all()
     return result
 
 
-def get_endpoint_by_name(db_session, endpoint_name):
+def get_endpoint_by_name(session, endpoint_name):
     """
     Returns the Endpoint object from a given endpoint_name.
     If the result doesn't exist in the database, a new row is added.
-    :param db_session: session for the database
+    :param session: session for the database
     :param endpoint_name: string with the endpoint name
     :return Endpoint object
     """
     try:
-        result = db_session.query(Endpoint).filter(Endpoint.name == endpoint_name).one()
+        result = session.query(Endpoint).filter(Endpoint.name == endpoint_name).one()
         result.time_added = to_local_datetime(result.time_added)
         result.last_requested = to_local_datetime(result.last_requested)
     except NoResultFound:
         result = Endpoint(name=endpoint_name)
-        db_session.add(result)
-        db_session.flush()
-    db_session.expunge(result)
+        session.add(result)
+        session.flush()
+    session.expunge(result)
     return result
 
 
-def get_endpoint_by_id(db_session, endpoint_id):
+def get_endpoint_by_id(session, endpoint_id):
     """
     Returns the Endpoint object from a given endpoint id.
-    :param db_session: session for the database
+    :param session: session for the database
     :param endpoint_id: id of the endpoint.
     :return Endpoint object
     """
-    result = db_session.query(Endpoint).filter(Endpoint.id == endpoint_id).one()
-    db_session.expunge(result)
+    result = session.query(Endpoint).filter(Endpoint.id == endpoint_id).one()
+    session.expunge(result)
     return result
 
 
-def update_endpoint(db_session, endpoint_name, value):
+def update_endpoint(session, endpoint_name, value):
     """
     Updates the value of a specific Endpoint.
-    :param db_session: session for the database
+    :param session: session for the database
     :param endpoint_name: name of the endpoint
     :param value: new monitor level
     """
-    db_session.query(Endpoint).filter(Endpoint.name == endpoint_name).update(
+    session.query(Endpoint).filter(Endpoint.name == endpoint_name).update(
         {Endpoint.monitor_level: value}
     )
-    db_session.flush()
+    session.flush()
 
 
-def get_last_requested(db_session):
+def get_last_requested(session):
     """
     Returns the accessed time of all endpoints.
-    :param db_session: session for the database
+    :param session: session for the database
     :return list of tuples with name of the endpoint and date it was last used
     """
-    result = db_session.query(Endpoint.name, Endpoint.last_requested).all()
-    db_session.expunge_all()
+    result = session.query(Endpoint.name, Endpoint.last_requested).all()
+    session.expunge_all()
     return result
 
 
-def update_last_requested(db_session, endpoint_name, timestamp=None):
+def update_last_requested(session, endpoint_name, timestamp=None):
     """
     Updates the timestamp of last access of the endpoint.
-    :param db_session: session for the database
+    :param session: session for the database
     :param endpoint_name: name of the endpoint
     :param timestamp: optional timestamp. If not given, timestamp is current time
     """
     ts = timestamp if timestamp else datetime.datetime.utcnow()
-    db_session.query(Endpoint).filter(Endpoint.name == endpoint_name).update(
+    session.query(Endpoint).filter(Endpoint.name == endpoint_name).update(
         {Endpoint.last_requested: ts}
     )
 
 
-def get_endpoints(db_session):
+def get_endpoints(session):
     """
     Returns all Endpoint objects from the database.
-    :param db_session: session for the database
+    :param session: session for the database
     :return list of Endpoint objects, sorted on the number of requests (descending)
     """
     return (
-        db_session.query(Endpoint)
+        session.query(Endpoint)
         .outerjoin(Request)
         .group_by(Endpoint.id)
         .order_by(desc(func.count(Request.endpoint_id)))
     )
 
 
-def get_endpoints_hits(db_session):
+def get_endpoints_hits(session):
     """
     Returns all endpoint names and total hits from the database.
-    :param db_session: session for the database
+    :param session: session for the database
     :return list of (endpoint name, total hits) tuples
     """
     return (
-        db_session.query(Endpoint.name, func.count(Request.endpoint_id))
+        session.query(Endpoint.name, func.count(Request.endpoint_id))
         .join(Request)
         .group_by(Endpoint.name)
         .order_by(desc(func.count(Request.endpoint_id)))
@@ -185,15 +185,15 @@ def get_endpoints_hits(db_session):
     )
 
 
-def get_avg_duration(db_session, endpoint_id):
+def get_avg_duration(session, endpoint_id):
     """ Returns the average duration of all the requests of an endpoint. If there are no requests
         for that endpoint, it returns 0.
-    :param db_session: session for the database
+    :param session: session for the database
     :param endpoint_id: id of the endpoint
     :return average duration
     """
     result = (
-        db_session.query(func.avg(Request.duration).label('average'))
+        session.query(func.avg(Request.duration).label('average'))
         .filter(Request.endpoint_id == endpoint_id)
         .one()
     )
@@ -202,14 +202,14 @@ def get_avg_duration(db_session, endpoint_id):
     return 0
 
 
-def get_endpoint_averages(db_session):
+def get_endpoint_averages(session):
     """ Returns the average duration of all endpoints. If there are no requests for an endpoint,
         the average will be none.
-    :param db_session: session for the database
+    :param session: session for the database
     :return tuple of (endpoint_name, avg_duration)
     """
     result = (
-        db_session.query(Endpoint.name, func.avg(Request.duration).label('average'))
+        session.query(Endpoint.name, func.avg(Request.duration).label('average'))
         .outerjoin(Request)
         .group_by(Endpoint.name)
         .all()

@@ -1,9 +1,10 @@
 import datetime
 
 from numpy import median
+from sqlalchemy import and_
 
-import flask_monitoringdashboard.core.cache as cache
 from flask_monitoringdashboard import config
+from flask_monitoringdashboard.core import cache
 from flask_monitoringdashboard.core.colors import get_color
 from flask_monitoringdashboard.core.measurement import add_decorator
 from flask_monitoringdashboard.core.timezone import to_local_datetime, to_utc_datetime
@@ -22,12 +23,11 @@ from flask_monitoringdashboard.database.endpoint import (
     update_endpoint,
 )
 from flask_monitoringdashboard.database.versions import get_first_requests
-from sqlalchemy import and_
 
 
-def get_endpoint_overview(db_session):
+def get_endpoint_overview(session):
     """
-    :param db_session: session for the database
+    :param session: session for the database
     :return: A list of properties for each endpoint that is found in the database
     """
     week_ago = datetime.datetime.utcnow() - datetime.timedelta(days=7)
@@ -39,22 +39,22 @@ def get_endpoint_overview(db_session):
     cache.flush_cache()
     error_hits_criterion = and_(Request.status_code >= 400, Request.status_code < 600)
 
-    hits_today = count_requests_group(db_session, Request.time_requested > today_utc)
+    hits_today = count_requests_group(session, Request.time_requested > today_utc)
     hits_today_errors = count_requests_group(
-        db_session, and_(Request.time_requested > today_utc, error_hits_criterion)
+        session, and_(Request.time_requested > today_utc, error_hits_criterion)
     )
 
-    hits_week = count_requests_group(db_session, Request.time_requested > week_ago)
+    hits_week = count_requests_group(session, Request.time_requested > week_ago)
     hits_week_errors = count_requests_group(
-        db_session, and_(Request.time_requested > week_ago, error_hits_criterion)
+        session, and_(Request.time_requested > week_ago, error_hits_criterion)
     )
 
-    hits = count_requests_group(db_session)
+    hits = count_requests_group(session)
 
-    median_today = get_endpoint_data_grouped(db_session, median, Request.time_requested > today_utc)
-    median_week = get_endpoint_data_grouped(db_session, median, Request.time_requested > week_ago)
-    median_overall = get_endpoint_data_grouped(db_session, median)
-    access_times = get_last_requested(db_session)
+    median_today = get_endpoint_data_grouped(session, median, Request.time_requested > today_utc)
+    median_week = get_endpoint_data_grouped(session, median, Request.time_requested > week_ago)
+    median_overall = get_endpoint_data_grouped(session, median)
+    access_times = get_last_requested(session)
 
     return [
         {
@@ -72,21 +72,21 @@ def get_endpoint_overview(db_session):
             'median-overall': get_value(median_overall, endpoint.id),
             'last-accessed': get_value(access_times, endpoint.name, default=None),
         }
-        for endpoint in get_endpoints(db_session)
+        for endpoint in get_endpoints(session)
     ]
 
 
-def get_endpoint_users(db_session, endpoint_id, users):
+def get_endpoint_users(session, endpoint_id, users):
     """
-    :param db_session: session for the database
+    :param session: session for the database
     :param endpoint_id: id for the endpoint
     :param users: a list of users to be filtered on
     :return: a list of dicts with the performance of each user
     """
     times = get_user_data_grouped(
-        db_session, lambda x: simplify(x, 100), Request.endpoint_id == endpoint_id
+        session, lambda x: simplify(x, 100), Request.endpoint_id == endpoint_id
     )
-    first_requests = get_first_requests(db_session, endpoint_id)
+    first_requests = get_first_requests(session, endpoint_id)
     return [
         {
             'user': u,
@@ -98,17 +98,17 @@ def get_endpoint_users(db_session, endpoint_id, users):
     ]
 
 
-def get_endpoint_versions(db_session, endpoint_id, versions):
+def get_endpoint_versions(session, endpoint_id, versions):
     """
-    :param db_session: session for the database
+    :param session: session for the database
     :param endpoint_id: id for the endpoint
     :param versions: a list of version to be filtered on
     :return: a list of dicts with the performance of each version
     """
     times = get_version_data_grouped(
-        db_session, lambda x: simplify(x, 100), Request.endpoint_id == endpoint_id
+        session, lambda x: simplify(x, 100), Request.endpoint_id == endpoint_id
     )
-    first_requests = get_first_requests(db_session, endpoint_id)
+    first_requests = get_first_requests(session, endpoint_id)
     return [
         {
             'version': v,
@@ -120,32 +120,32 @@ def get_endpoint_versions(db_session, endpoint_id, versions):
     ]
 
 
-def get_api_performance(db_session, endpoints):
+def get_api_performance(session, endpoints):
     """
-    :param db_session: session for the database
+    :param session: session for the database
     :param endpoints: a list of endpoints, encoded by their name
     :return: for every endpoint in endpoints, a list with the performance
     """
-    db_endpoints = [get_endpoint_by_name(db_session, end) for end in endpoints]
-    data = get_endpoint_data_grouped(db_session, lambda x: simplify(x, 10))
+    db_endpoints = [get_endpoint_by_name(session, end) for end in endpoints]
+    data = get_endpoint_data_grouped(session, lambda x: simplify(x, 10))
     return [
-        {'name': end.name, 'values': get_value(data, end.id, default=[])} for end in db_endpoints
+        {'name': end.name, 'values': get_value(data, end.id, default=[])}
+        for end in db_endpoints
     ]
 
 
-def set_endpoint_rule(db_session, endpoint_name, monitor_level):
+def set_endpoint_rule(session, endpoint_name, monitor_level):
     """
-    :param db_session: session for the database
+    :param session: session for the database
     :param endpoint_name: name of the endpoint
     :param monitor_level: integer, representing the monitoring-level
-    :return:
     """
-    update_endpoint(db_session, endpoint_name, value=monitor_level)
+    update_endpoint(session, endpoint_name, value=monitor_level)
 
     # Remove wrapper
     original = getattr(config.app.view_functions[endpoint_name], 'original', None)
     if original:
         config.app.view_functions[endpoint_name] = original
-    db_session.commit()
+    session.commit()
 
-    add_decorator(get_endpoint_by_name(db_session, endpoint_name))
+    add_decorator(get_endpoint_by_name(session, endpoint_name))

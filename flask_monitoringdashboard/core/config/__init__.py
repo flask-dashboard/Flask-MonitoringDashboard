@@ -24,9 +24,7 @@ class Config(object):
     """
 
     def __init__(self):
-        """
-            Sets the default values for the project
-        """
+        """Sets the default values for the project."""
         # dashboard
         self.version = '1.0'
         self.link = 'dashboard'

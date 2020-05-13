@@ -29,8 +29,8 @@ connection = engine.connect()
 def session_scope():
     """
     When accessing the database, use the following syntax:
-        with session_scope() as db_session:
-            db_session.query(...)
+        with session_scope() as session:
+            session.query(...)
 
     :return: the session for accessing the database
     """

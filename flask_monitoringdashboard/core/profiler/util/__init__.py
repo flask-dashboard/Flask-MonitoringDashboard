@@ -1,4 +1,4 @@
-from flask_monitoringdashboard.core.profiler.util.pathHash import PathHash
+from flask_monitoringdashboard.core.profiler.util.path_hash import PathHash
 
 
 def order_histogram(items, path=''):

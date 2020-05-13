@@ -2,5 +2,8 @@
 -r requirements.txt
 
 # ... and install more
-requests
 codecov
+pytest==5.4.1
+pytest_factoryboy==2.0.3
+pytest-cov==2.8.1
+flake8==3.7.9

@@ -57,8 +57,8 @@ def make_report():
         return 'Invalid payload', 422
 
     endpoint_summaries = []
-    with session_scope() as db_session:
-        for endpoint in get_endpoints(db_session):
+    with session_scope() as session:
+        for endpoint in get_endpoints(session):
             endpoint_summary = make_endpoint_summary(endpoint, interval, baseline_interval)
             endpoint_summaries.append(endpoint_summary)
 
