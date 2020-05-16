@@ -4,9 +4,9 @@ import pytest
 from flask_monitoringdashboard.database import Endpoint
 
 
-def test_make_report_get(dashboard_as_admin):
+def test_make_report_get(dashboard_user):
     """GET is not allowed. It should return the overview page."""
-    response = dashboard_as_admin.get('dashboard/api/reporting/make_report')
+    response = dashboard_user.get('dashboard/api/reporting/make_report')
     assert not response.is_json
 
 
@@ -15,17 +15,18 @@ def test_make_report_get(dashboard_as_admin):
 @pytest.mark.parametrize('request_1__status_code', [500])
 @pytest.mark.parametrize('request_2__time_requested', [datetime.utcnow() - timedelta(days=1, hours=6)])
 @pytest.mark.parametrize('request_2__duration', [100])
-def test_make_report_post_not_significant(dashboard_as_admin, endpoint, request_1, request_2, session):
-    response = dashboard_as_admin.post(
+def test_make_report_post_not_significant(dashboard_user, endpoint, request_1, request_2, session):
+    epoch = datetime(1970, 1, 1)
+    response = dashboard_user.post(
         'dashboard/api/reporting/make_report',
         json={
             'interval': {
-                'from': (datetime.utcnow() - timedelta(days=1)).timestamp(),
-                'to': datetime.utcnow().timestamp(),
+                'from': (datetime.utcnow() - timedelta(days=1) - epoch).total_seconds(),
+                'to': (datetime.utcnow() - epoch).total_seconds(),
             },
             'baseline_interval': {
-                'from': (datetime.utcnow() - timedelta(days=2)).timestamp(),
-                'to': (datetime.utcnow() - timedelta(days=1)).timestamp(),
+                'from': (datetime.utcnow() - timedelta(days=2) - epoch).total_seconds(),
+                'to': (datetime.utcnow() - timedelta(days=1) - epoch).total_seconds(),
             },
         },
     )
@@ -49,3 +50,7 @@ def test_make_report_post_not_significant(dashboard_as_admin, endpoint, request_
     assert question2['type'] == 'STATUS_CODE_DISTRIBUTION'
     assert not question2['is_significant']
     assert question2['percentages'] is None
+
+
+def test_make_report_post_is_significant(dashboard_user, endpoint, request_1, request_2, session):
+    """TODO: implement this test."""

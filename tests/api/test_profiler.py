@@ -4,8 +4,8 @@ from flask_monitoringdashboard.core.timezone import to_local_datetime
 
 
 @pytest.mark.usefixtures('stack_line', 'stack_line_2')
-def test_num_profiled(dashboard_as_admin, endpoint):
-    response = dashboard_as_admin.get('dashboard/api/num_profiled/{0}'.format(endpoint.id))
+def test_num_profiled(dashboard_user, endpoint):
+    response = dashboard_user.get('dashboard/api/num_profiled/{0}'.format(endpoint.id))
     assert response.status_code == 200
 
     data = response.json
@@ -14,8 +14,8 @@ def test_num_profiled(dashboard_as_admin, endpoint):
 
 @pytest.mark.parametrize('request_1__group_by', ['group_by'])
 @pytest.mark.parametrize('offset,per_page', [[0, 10]])
-def test_profiler_table(dashboard_as_admin, stack_line, request_1, endpoint, offset, per_page):
-    response = dashboard_as_admin.get(
+def test_profiler_table(dashboard_user, stack_line, request_1, endpoint, offset, per_page):
+    response = dashboard_user.get(
         'dashboard/api/profiler_table/{0}/{1}/{2}'.format(endpoint.id, offset, per_page),
     )
     assert response.status_code == 200
@@ -37,8 +37,8 @@ def test_profiler_table(dashboard_as_admin, stack_line, request_1, endpoint, off
     assert data['stack_lines'][0]['code']['line_number'] == str(stack_line.code.line_number)
 
 
-def test_grouped_profiler(dashboard_as_admin, stack_line, endpoint):
-    response = dashboard_as_admin.get('dashboard/api/grouped_profiler/{0}'.format(endpoint.id))
+def test_grouped_profiler(dashboard_user, stack_line, endpoint):
+    response = dashboard_user.get('dashboard/api/grouped_profiler/{0}'.format(endpoint.id))
     assert response.status_code == 200
 
     [data] = response.json

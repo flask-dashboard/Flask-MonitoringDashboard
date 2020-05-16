@@ -1,8 +1,8 @@
 from flask_monitoringdashboard.database import Request
 
 
-def test_deployment(dashboard_as_admin, session, config):
-    response = dashboard_as_admin.get('dashboard/api/deploy_details')
+def test_deployment(dashboard_user, session, config):
+    response = dashboard_user.get('dashboard/api/deploy_details')
     assert response.status_code == 200
 
     data = response.json
@@ -11,8 +11,8 @@ def test_deployment(dashboard_as_admin, session, config):
     assert data['total-requests'] == session.query(Request).count()
 
 
-def test_deployment_config(dashboard_as_admin, config):
-    response = dashboard_as_admin.get('dashboard/api/deploy_config')
+def test_deployment_config(dashboard_user, config):
+    response = dashboard_user.get('dashboard/api/deploy_config')
     assert response.status_code == 200
 
     data = response.json

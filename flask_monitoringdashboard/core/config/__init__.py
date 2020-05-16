@@ -40,7 +40,7 @@ class Config(object):
         # authentication
         self.username = 'admin'
         self.password = 'admin'
-        self.guest_username = ['guest']
+        self.guest_username = 'guest'
         self.guest_password = ['guest_password']
         self.security_token = 'cc83733cb0af8b884ff6577086b87909'
 

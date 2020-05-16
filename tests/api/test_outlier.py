@@ -2,8 +2,8 @@ import pytest
 
 
 @pytest.mark.usefixtures('outlier_1', 'outlier_2')
-def test_num_outliers(dashboard_as_admin, endpoint):
-    response = dashboard_as_admin.get('dashboard/api/num_outliers/{0}'.format(endpoint.id))
+def test_num_outliers(dashboard_user, endpoint):
+    response = dashboard_user.get('dashboard/api/num_outliers/{0}'.format(endpoint.id))
     assert response.status_code == 200
 
     data = response.json
@@ -12,8 +12,8 @@ def test_num_outliers(dashboard_as_admin, endpoint):
 
 @pytest.mark.parametrize('outlier_1__cpu_percent', ['[0, 1, 2, 3]'])
 @pytest.mark.usefixtures('outlier_1')
-def test_outlier_graph(dashboard_as_admin, endpoint):
-    response = dashboard_as_admin.get('dashboard/api/outlier_graph/{0}'.format(endpoint.id))
+def test_outlier_graph(dashboard_user, endpoint):
+    response = dashboard_user.get('dashboard/api/outlier_graph/{0}'.format(endpoint.id))
     assert response.status_code == 200
 
     data = response.json
@@ -29,8 +29,8 @@ def test_outlier_graph(dashboard_as_admin, endpoint):
 @pytest.mark.parametrize('outlier_1__request_url', ['request_url'])
 @pytest.mark.parametrize('outlier_1__stacktrace', ['stacktrace'])
 @pytest.mark.parametrize('offset,per_page', [[0, 10]])
-def test_outlier_table(dashboard_as_admin, outlier_1, endpoint, offset, per_page):
-    response = dashboard_as_admin.get(
+def test_outlier_table(dashboard_user, outlier_1, endpoint, offset, per_page):
+    response = dashboard_user.get(
         'dashboard/api/outlier_table/{0}/{1}/{2}'.format(endpoint.id, offset, per_page),
     )
     assert response.status_code == 200

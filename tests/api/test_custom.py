@@ -3,8 +3,8 @@ from datetime import datetime, timedelta
 from flask_monitoringdashboard.database import CustomGraph
 
 
-def test_custom_graphs(dashboard_as_admin, custom_graph, session):
-    response = dashboard_as_admin.get('dashboard/api/custom_graphs')
+def test_custom_graphs(dashboard_user, custom_graph, session):
+    response = dashboard_user.get('dashboard/api/custom_graphs')
     assert response.status_code == 200
 
     data = response.json
@@ -16,10 +16,10 @@ def test_custom_graphs(dashboard_as_admin, custom_graph, session):
     assert data_custom_graph['version_added'] == custom_graph.version_added
 
 
-def test_custom_graph_data(dashboard_as_admin, custom_graph, custom_graph_data):
+def test_custom_graph_data(dashboard_user, custom_graph, custom_graph_data):
     today = datetime.utcnow()
     yesterday = today - timedelta(days=1)
-    response = dashboard_as_admin.get('dashboard/api/custom_graph/{id}/{start}/{end}'.format(
+    response = dashboard_user.get('dashboard/api/custom_graph/{id}/{start}/{end}'.format(
         id=custom_graph.graph_id,
         start=yesterday.strftime('%Y-%m-%d'),
         end=today.strftime('%Y-%m-%d'),

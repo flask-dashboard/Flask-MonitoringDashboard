@@ -4,8 +4,8 @@ from flask_monitoringdashboard.database import Endpoint, Request
 
 
 @pytest.mark.parametrize('endpoint__monitor_level', [3])
-def test_overview(dashboard_as_admin, request_1, request_2, endpoint, session):
-    response = dashboard_as_admin.get('dashboard/api/overview')
+def test_overview(dashboard_user, request_1, request_2, endpoint, session):
+    response = dashboard_user.get('dashboard/api/overview')
     assert response.status_code == 200
 
     [data] = [row for row in response.json if row['id'] == endpoint.id]
@@ -29,8 +29,8 @@ def test_overview(dashboard_as_admin, request_1, request_2, endpoint, session):
 @pytest.mark.parametrize('request_1__group_by', ['42'])
 @pytest.mark.parametrize('request_2__group_by', ['something else'])
 @pytest.mark.usefixtures('request_1', 'request_2')
-def test_users(dashboard_as_admin, endpoint, session):
-    response = dashboard_as_admin.get('dashboard/api/users/{0}'.format(endpoint.id))
+def test_users(dashboard_user, endpoint, session):
+    response = dashboard_user.get('dashboard/api/users/{0}'.format(endpoint.id))
     assert response.status_code == 200
 
     data = response.json
@@ -45,8 +45,8 @@ def test_users(dashboard_as_admin, endpoint, session):
 @pytest.mark.parametrize('request_1__ip', ['42'])
 @pytest.mark.parametrize('request_2__ip', ['something else'])
 @pytest.mark.usefixtures('request_1', 'request_2')
-def test_ips(dashboard_as_admin, endpoint, session):
-    response = dashboard_as_admin.get('dashboard/api/ip/{0}'.format(endpoint.id))
+def test_ips(dashboard_user, endpoint, session):
+    response = dashboard_user.get('dashboard/api/ip/{0}'.format(endpoint.id))
     assert response.status_code == 200
 
     data = response.json
@@ -58,8 +58,8 @@ def test_ips(dashboard_as_admin, endpoint, session):
     assert row2['ip'] == '42' or 'something else'
 
 
-def test_endpoints(dashboard_as_admin, endpoint, session):
-    response = dashboard_as_admin.get('dashboard/api/endpoints')
+def test_endpoints(dashboard_user, endpoint, session):
+    response = dashboard_user.get('dashboard/api/endpoints')
     assert response.status_code == 200
 
     assert len(response.json) == session.query(Endpoint).count()
@@ -73,8 +73,8 @@ def test_endpoints(dashboard_as_admin, endpoint, session):
 
 
 @pytest.mark.usefixtures('request_1', 'request_2')
-def test_endpoint_hits(dashboard_as_admin, endpoint, session):
-    response = dashboard_as_admin.get('dashboard/api/endpoints_hits')
+def test_endpoint_hits(dashboard_user, endpoint, session):
+    response = dashboard_user.get('dashboard/api/endpoints_hits')
     assert response.status_code == 200
 
     total_hits = sum(row['hits'] for row in response.json)
@@ -84,14 +84,14 @@ def test_endpoint_hits(dashboard_as_admin, endpoint, session):
     assert data['hits'] == 2
 
 
-def test_api_performance_get(dashboard_as_admin):
+def test_api_performance_get(dashboard_user):
     """GET is not allowed. It should return the overview page."""
-    response = dashboard_as_admin.get('dashboard/api/api_performance')
+    response = dashboard_user.get('dashboard/api/api_performance')
     assert not response.is_json
 
 
-def test_api_performance_post(dashboard_as_admin, request_1, endpoint, session):
-    response = dashboard_as_admin.post('dashboard/api/api_performance', json={
+def test_api_performance_post(dashboard_user, request_1, endpoint, session):
+    response = dashboard_user.post('dashboard/api/api_performance', json={
         'data': {'endpoints': [endpoint.name]}
     })
 
@@ -100,15 +100,25 @@ def test_api_performance_post(dashboard_as_admin, request_1, endpoint, session):
     assert data['values'] == [request_1.duration]
 
 
-def test_set_rule_get(dashboard_as_admin):
+def test_set_rule_get(dashboard_user):
     """GET is not allowed. It should return the overview page."""
-    response = dashboard_as_admin.get('dashboard/api/set_rule')
+    response = dashboard_user.get('dashboard/api/set_rule')
     assert not response.is_json
 
 
+def test_set_rule_post_guest_not_allowed(dashboard_user, endpoint):
+    """Guest is redirected to the login page."""
+    response = dashboard_user.post('dashboard/api/set_rule', data={
+        'name': endpoint.name,
+        'value': 3,
+    })
+    assert response.status_code == 302
+
+
 @pytest.mark.parametrize('endpoint__monitor_level', [1])
-def test_set_rule_post(dashboard_as_admin, endpoint, session):
-    response = dashboard_as_admin.post('dashboard/api/set_rule', data={
+@pytest.mark.parametrize('is_admin', [True])
+def test_set_rule_post(dashboard_user, endpoint, session):
+    response = dashboard_user.post('dashboard/api/set_rule', data={
         'name': endpoint.name,
         'value': 3,
     })
@@ -120,8 +130,8 @@ def test_set_rule_post(dashboard_as_admin, endpoint, session):
 
 
 @pytest.mark.usefixtures('request_1')
-def test_endpoint_info(dashboard_as_admin, endpoint):
-    response = dashboard_as_admin.get('dashboard/api/endpoint_info/{0}'.format(endpoint.id))
+def test_endpoint_info(dashboard_user, endpoint):
+    response = dashboard_user.get('dashboard/api/endpoint_info/{0}'.format(endpoint.id))
     assert response.status_code == 200
     data = response.json
 
@@ -135,8 +145,8 @@ def test_endpoint_info(dashboard_as_admin, endpoint):
 @pytest.mark.parametrize('request_1__status_code', [404])
 @pytest.mark.parametrize('request_2__status_code', [200])
 @pytest.mark.usefixtures('request_1', 'request_2')
-def test_endpoint_status_code_distribution(dashboard_as_admin, endpoint):
-    response = dashboard_as_admin.get('dashboard/api/endpoint_status_code_distribution/{0}'.format(endpoint.id))
+def test_endpoint_status_code_distribution(dashboard_user, endpoint):
+    response = dashboard_user.get('dashboard/api/endpoint_status_code_distribution/{0}'.format(endpoint.id))
     assert response.status_code == 200
 
     data = response.json
@@ -147,8 +157,8 @@ def test_endpoint_status_code_distribution(dashboard_as_admin, endpoint):
 @pytest.mark.parametrize('request_1__status_code', [404])
 @pytest.mark.parametrize('request_2__status_code', [200])
 @pytest.mark.usefixtures('request_2')
-def test_endpoint_status_code_summary(dashboard_as_admin, request_1, endpoint):
-    response = dashboard_as_admin.get('dashboard/api/endpoint_status_code_summary/{0}'.format(endpoint.id))
+def test_endpoint_status_code_summary(dashboard_user, request_1, endpoint):
+    response = dashboard_user.get('dashboard/api/endpoint_status_code_summary/{0}'.format(endpoint.id))
     assert response.status_code == 200
 
     data = response.json
@@ -164,17 +174,17 @@ def test_endpoint_status_code_summary(dashboard_as_admin, request_1, endpoint):
     assert row['version_requested'] == request_1.version_requested
 
 
-def test_endpoint_versions_get(dashboard_as_admin, endpoint):
+def test_endpoint_versions_get(dashboard_user, endpoint):
     """GET is not allowed. It should return the overview page."""
-    response = dashboard_as_admin.get('dashboard/api/endpoint_versions/{0}'.format(endpoint.id))
+    response = dashboard_user.get('dashboard/api/endpoint_versions/{0}'.format(endpoint.id))
     assert not response.is_json
 
 
 @pytest.mark.parametrize('request_1__version_requested', ['a'])
 @pytest.mark.parametrize('request_2__version_requested', ['b'])
-def test_endpoint_versions_post(dashboard_as_admin, request_1, request_2, endpoint):
+def test_endpoint_versions_post(dashboard_user, request_1, request_2, endpoint):
     """GET is not allowed. It should return the overview page."""
-    response = dashboard_as_admin.post(
+    response = dashboard_user.post(
         'dashboard/api/endpoint_versions/{0}'.format(endpoint.id),
         json={'data': {'versions': [request_1.version_requested, request_2.version_requested]}},
     )
@@ -188,17 +198,17 @@ def test_endpoint_versions_post(dashboard_as_admin, request_1, request_2, endpoi
     assert row2['values'] == [request_2.duration]
 
 
-def test_endpoint_users_get(dashboard_as_admin, endpoint):
+def test_endpoint_users_get(dashboard_user, endpoint):
     """GET is not allowed. It should return the overview page."""
-    response = dashboard_as_admin.get('dashboard/api/endpoint_users/{0}'.format(endpoint.id))
+    response = dashboard_user.get('dashboard/api/endpoint_users/{0}'.format(endpoint.id))
     assert not response.is_json
 
 
 @pytest.mark.parametrize('request_1__group_by', ['a'])
 @pytest.mark.parametrize('request_2__group_by', ['b'])
-def test_endpoint_users_post(dashboard_as_admin, request_1, request_2, endpoint):
+def test_endpoint_users_post(dashboard_user, request_1, request_2, endpoint):
     """GET is not allowed. It should return the overview page."""
-    response = dashboard_as_admin.post(
+    response = dashboard_user.post(
         'dashboard/api/endpoint_users/{0}'.format(endpoint.id),
         json={'data': {'users': [request_1.group_by, request_2.group_by]}},
     )
