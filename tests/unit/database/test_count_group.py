@@ -1,4 +1,3 @@
-import uuid
 from datetime import datetime
 from random import randint
 

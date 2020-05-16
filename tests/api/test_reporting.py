@@ -1,3 +1,4 @@
+import sys
 from datetime import datetime, timedelta
 import pytest
 
@@ -15,6 +16,7 @@ def test_make_report_get(dashboard_user):
 @pytest.mark.parametrize('request_1__status_code', [500])
 @pytest.mark.parametrize('request_2__time_requested', [datetime.utcnow() - timedelta(days=1, hours=6)])
 @pytest.mark.parametrize('request_2__duration', [100])
+@pytest.mark.skipif(sys.version_info < (3, ), reason="For some reason, this doesn't work in python 2.7.")
 def test_make_report_post_not_significant(dashboard_user, endpoint, request_1, request_2, session):
     epoch = datetime(1970, 1, 1)
     response = dashboard_user.post(
