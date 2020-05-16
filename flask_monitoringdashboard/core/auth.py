@@ -46,16 +46,6 @@ def is_admin():
     return session and session.get(config.link + '_admin')
 
 
-def check_login(name, password):
-    if name == config.username and password == config.password:
-        on_login(admin=True)
-        return True
-    elif name == config.guest_username and password in config.guest_password:
-        on_login(admin=False)
-        return True
-    return False
-
-
 def on_login(admin):
     session[config.link + '_logged_in'] = True
     if admin:

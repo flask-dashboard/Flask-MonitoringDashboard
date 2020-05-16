@@ -9,7 +9,7 @@ def test_overview(dashboard_user, request_1, request_2, endpoint, session):
     assert response.status_code == 200
 
     [data] = [row for row in response.json if row['id'] == endpoint.id]
-    print(data)
+
     assert data['hits-overall'] == 2
     assert data['hits-today'] == 2
     assert data['hits-today-errors'] == 0
