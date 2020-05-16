@@ -1,58 +1,49 @@
 import configparser
-import unittest
+import os
+
+from flask_monitoringdashboard.core.config.parser import (
+    get_environment_var,
+    parse_literal,
+    parse_bool,
+    parse_string,
+    parse_version,
+)
 
 
-class TestConfig(unittest.TestCase):
-    def test_init_from(self):
-        """
-            Test whether the group_by returns the right result
-        """
-        import flask_monitoringdashboard as dashboard
+def test_init_from(config):
+    """Test whether the group_by returns the right result."""
 
-        dashboard.config.init_from()
-        dashboard.config.init_from(file='../../config.cfg')
+    config.init_from()
+    config.init_from(file='../../config.cfg')
 
-    def test_parser(self):
-        """
-            Test whether the parser reads the right values
-        """
-        from flask_monitoringdashboard.core.config.parser import (
-            parse_literal,
-            parse_bool,
-            parse_string,
-            parse_version,
-        )
 
-        parser = configparser.RawConfigParser()
-        version = '1.2.3'
-        string = 'string-value'
-        bool = 'False'
-        literal = "['a', 'b', 'c']"
-        literal2 = '1.23'
-        section = 'dashboard'
+def test_parser():
+    """Test whether the parser reads the right values."""
 
-        parser.add_section(section)
-        parser.set(section, 'APP_VERSION', version)
-        parser.set(section, 'string', string)
-        parser.set(section, 'bool', bool)
-        parser.set(section, 'literal', literal)
-        parser.set(section, 'literal2', literal2)
+    parser = configparser.RawConfigParser()
+    version = '1.2.3'
+    string = 'string-value'
+    bool = 'False'
+    literal = "['a', 'b', 'c']"
+    literal2 = '1.23'
+    section = 'dashboard'
 
-        self.assertEqual(parse_version(parser, section, 'default'), version)
-        self.assertEqual(parse_string(parser, section, 'string', 'default'), string)
-        self.assertEqual(parse_bool(parser, section, 'bool', 'True'), False)
-        self.assertEqual(parse_literal(parser, section, 'literal', 'default'), ['a', 'b', 'c'])
-        self.assertEqual(parse_literal(parser, section, 'literal2', 'default'), 1.23)
+    parser.add_section(section)
+    parser.set(section, 'APP_VERSION', version)
+    parser.set(section, 'string', string)
+    parser.set(section, 'bool', bool)
+    parser.set(section, 'literal', literal)
+    parser.set(section, 'literal2', literal2)
 
-    def test_environment_vars(self):
-        """
-        Test whether environment variables can be read
-        """
-        name = 'ENVIRONMENT_VAR'
-        value = 'abc'
+    assert parse_version(parser, section, 'default') == version
+    assert parse_string(parser, section, 'string', 'default') == string
+    assert not parse_bool(parser, section, 'bool', 'True')
+    assert parse_literal(parser, section, 'literal', 'default') == ['a', 'b', 'c']
+    assert parse_literal(parser, section, 'literal2', 'default') == 1.23
 
-        from flask_monitoringdashboard.core.config.parser import get_environment_var
-        import os
 
-        os.environ[name] = value
-        self.assertEqual(get_environment_var(name), value)
+def test_environment_vars():
+    """Test whether environment variables can be read."""
+
+    os.environ['ENVIRONMENT_VAR'] = 'abc'
+    assert get_environment_var('ENVIRONMENT_VAR') == 'abc'

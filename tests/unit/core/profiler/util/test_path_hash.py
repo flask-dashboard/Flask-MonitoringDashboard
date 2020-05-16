@@ -1,5 +1,4 @@
 import pytest
-from pytest_factoryboy import LazyFixture
 
 
 @pytest.fixture
@@ -10,30 +9,6 @@ def filename():
 @pytest.fixture
 def line_number():
     return 42
-
-# STACK_LINES = [
-#     StackLine(
-#         request_id=0,
-#         position=0,
-#         indent=0,
-#         duration=1010,
-#         code=CodeLine(filename=filename, line_number=0, function_name='None', code='f()'),
-#     ),
-#     StackLine(
-#         request_id=0,
-#         position=1,
-#         indent=1,
-#         duration=500,
-#         code=CodeLine(filename=filename, line_number=1, function_name='f', code='sleep(1)'),
-#     ),
-#     StackLine(
-#         request_id=0,
-#         position=1,
-#         indent=1,
-#         duration=510,
-#         code=CodeLine(filename=filename, line_number=2, function_name='f', code='sleep(1.01)'),
-#     ),
-# ]
 
 
 def test_get_path(path_hash, filename, line_number):
