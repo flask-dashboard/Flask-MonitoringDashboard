@@ -1,4 +1,5 @@
 import pytest
+import pytz
 from flask import Flask
 
 import flask_monitoringdashboard
@@ -12,6 +13,7 @@ def config(username='admin', password='admin', guest_username=None, guest_passwo
     flask_monitoringdashboard.config.guest_password = guest_password or ['guest_password']
     flask_monitoringdashboard.config.colors = colors or {'endpoint': '[0, 1, 2]'}
     flask_monitoringdashboard.config.group_by = group_by
+    flask_monitoringdashboard.config.timezone = pytz.timezone('UTC')
 
     return flask_monitoringdashboard.config
 

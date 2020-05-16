@@ -27,7 +27,7 @@ def test_hourly_load(dashboard_user, endpoint):
     data = response.json
     assert data['days'] == ['2020-01-01']
     for index, row in enumerate(data['data']):
-        if index in [4, 5]:  # for some reason, the hours are off by 2
+        if index in [2, 3]:
             assert row == [1]
         else:
             assert row == [0]
