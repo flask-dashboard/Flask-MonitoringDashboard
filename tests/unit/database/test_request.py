@@ -55,7 +55,7 @@ def test_get_endpoints(session, endpoint):
     assert endpoint.name in [endpoint.name for endpoint in endpoints]
 
 
-@pytest.mark.parametrize('request_1__time_requested', [datetime(year=2020, day=1, month=1)])
+@pytest.mark.parametrize('request_1__time_requested', [datetime(1970, 1, 1)])
 def test_get_date_of_first_request(session, request_1):
     """Test whether the function returns the right values."""
     total_seconds = int(time.mktime(request_1.time_requested.timetuple()))
