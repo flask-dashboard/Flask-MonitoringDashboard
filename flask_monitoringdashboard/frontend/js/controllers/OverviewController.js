@@ -21,32 +21,25 @@ export function OverviewController($scope, $http, $location, menuService, endpoi
         $scope.table = response.data;
     });
 
-    $scope.getFilteredItems = function () {
-        const start = Number($scope.currentPage) * $scope.pageSize;
-        const end = (Number($scope.currentPage) + 1) * Number($scope.pageSize);
+    function getItemsForPage(pageNumber) {
+        const start = Number(pageNumber) * $scope.pageSize;
+        const end = (Number(pageNumber) + 1) * Number($scope.pageSize);
 
         return $scope.table
             .filter(item => item.name.includes($scope.searchQuery))
             .slice(start, end);
     }
 
-    $scope.canGoBack = function () {
-        console.log('hello', $scope.currentPage);
+    $scope.getFilteredItems = function () {
+        return getItemsForPage($scope.currentPage);
+    }
 
+    $scope.canGoBack = function () {
         return $scope.currentPage > 0;
     }
 
     $scope.canGoForward = function () {
-        const start = Number($scope.currentPage + 1) * $scope.pageSize;
-        const end = (Number($scope.currentPage + 1) + 1) * Number($scope.pageSize);
-
-        const data = $scope.table
-            .filter(item => item.name.includes($scope.searchQuery))
-            .slice(start, end);
-
-        console.log(data);
-
-        return data.length > 0;
+        return getItemsForPage($scope.currentPage + 1).length > 0;
     }
 
     $scope.nextPage = function () {

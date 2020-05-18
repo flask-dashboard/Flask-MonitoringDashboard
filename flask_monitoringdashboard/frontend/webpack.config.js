@@ -4,7 +4,7 @@ module.exports = {
     mode: process.env.NODE_ENV === 'production' ? 'production' : 'development',
     entry: ['./js/app.js', './sass/app.scss'],
     output: {
-        path: path.resolve(__dirname, 'build'),
+        path: path.resolve(__dirname, '../static'),
         filename: 'js/app.js',
     },
     module: {
