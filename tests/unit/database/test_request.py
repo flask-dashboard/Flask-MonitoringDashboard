@@ -10,7 +10,6 @@ from datetime import datetime, timedelta
 import pytest
 
 from flask_monitoringdashboard.core.date_interval import DateInterval
-from flask_monitoringdashboard.database import session_scope
 from flask_monitoringdashboard.database.count import count_requests
 from flask_monitoringdashboard.database.endpoint import get_avg_duration, get_endpoints
 from flask_monitoringdashboard.database.request import add_request, get_date_of_first_request, get_latencies_sample
@@ -23,25 +22,21 @@ def test_get_latencies_sample(session, request_1, endpoint):
     assert data == [request_1.duration]
 
 
-def test_add_request(endpoint):
-    """Test whether the function returns the right values."""
-    # For some reason, using the session-fixture here doesn't work.
+def test_add_request(endpoint, session):
     num_requests = len(endpoint.requests)
-    with session_scope() as session:
-        add_request(
-            session,
-            duration=200,
-            endpoint_id=endpoint.id,
-            ip='127.0.0.1',
-            group_by=None,
-            status_code=200,
-        )
-        assert count_requests(session, endpoint.id) == num_requests + 1
+    add_request(
+        session,
+        duration=200,
+        endpoint_id=endpoint.id,
+        ip='127.0.0.1',
+        group_by=None,
+        status_code=200,
+    )
+    assert count_requests(session, endpoint.id) == num_requests + 1
 
 
 @pytest.mark.parametrize('request_1__time_requested', [datetime(2020, 2, 3)])
 def test_get_versions(session, request_1):
-    """Test whether the function returns the right values."""
     for version, first_request in get_versions(session):
         if version == request_1.version_requested:
             assert first_request == request_1.time_requested
@@ -50,14 +45,12 @@ def test_get_versions(session, request_1):
 
 
 def test_get_endpoints(session, endpoint):
-    """Test whether the function returns the right values."""
     endpoints = get_endpoints(session)
     assert endpoint.name in [endpoint.name for endpoint in endpoints]
 
 
 @pytest.mark.parametrize('request_1__time_requested', [datetime(1970, 1, 1)])
 def test_get_date_of_first_request(session, request_1):
-    """Test whether the function returns the right values."""
     total_seconds = int(time.mktime(request_1.time_requested.timetuple()))
     assert get_date_of_first_request(session) == total_seconds
 

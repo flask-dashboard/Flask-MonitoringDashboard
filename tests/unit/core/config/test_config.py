@@ -41,9 +41,3 @@ def test_parser():
     assert parse_literal(parser, section, 'literal', 'default') == ['a', 'b', 'c']
     assert parse_literal(parser, section, 'literal2', 'default') == 1.23
 
-
-def test_environment_vars():
-    """Test whether environment variables can be read."""
-
-    os.environ['ENVIRONMENT_VAR'] = 'abc'
-    assert get_environment_var('ENVIRONMENT_VAR') == 'abc'

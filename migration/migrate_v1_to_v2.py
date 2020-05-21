@@ -1,7 +1,6 @@
-"""
-    Use this file for migrating the Database from v1.X.X to v2.X.X
-    Before running the script, make sure to change the OLD_DB_URL and NEW_DB_URL on lines 9 and 10.
-    Refer to http://docs.sqlalchemy.org/en/latest/core/engines.html on how to configure this.
+"""Use this file for migrating the Database from v1.X.X to v2.X.X
+Before running the script, make sure to change the OLD_DB_URL and NEW_DB_URL on lines 9 and 10.
+Refer to http://docs.sqlalchemy.org/en/latest/core/engines.html on how to configure this.
 """
 import datetime
 from contextlib import contextmanager
@@ -47,10 +46,9 @@ def get_connection(db_url):
 
 @contextmanager
 def session_scope():
-    """
-    When accessing the database, use the following syntax:
-        with session_scope() as session:
-            session.query(...)
+    """When accessing the database, use the following syntax:
+    >>> with session_scope() as session:
+    >>>     session.query(...)
 
     :return: the session for accessing the database
     """

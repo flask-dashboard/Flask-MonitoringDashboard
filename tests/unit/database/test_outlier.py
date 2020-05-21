@@ -11,7 +11,6 @@ from flask_monitoringdashboard.database.outlier import add_outlier, get_outliers
 
 
 def test_add_outlier(session, request_1):
-    """Test whether the function returns the right values."""
     assert not request_1.outlier
 
     add_outlier(
@@ -27,7 +26,6 @@ def test_add_outlier(session, request_1):
 
 
 def test_get_outliers(session, outlier_1, endpoint):
-    """Test whether the function returns the right values."""
     outliers = get_outliers_sorted(session, endpoint_id=endpoint.id, offset=0, per_page=10)
     assert len(outliers) == 1
     assert outliers[0].id == outlier_1.id
@@ -35,7 +33,6 @@ def test_get_outliers(session, outlier_1, endpoint):
 
 @pytest.mark.usefixtures('outlier_1', 'outlier_2')
 def test_count_outliers(session, endpoint):
-    """Test whether the function returns the right values."""
     assert count_outliers(session, endpoint.id) == 2
 
 
@@ -43,6 +40,5 @@ def test_count_outliers(session, endpoint):
 @pytest.mark.parametrize('outlier_1__cpu_percent', ['[0, 1, 2, 3]'])
 @pytest.mark.parametrize('outlier_2__cpu_percent', ['[1, 2, 3, 4]'])
 def test_get_outliers_cpus(session, endpoint):
-    """Test whether the function returns the right values."""
     expected_cpus = ['[{0}, {1}, {2}, {3}]'.format(i, i + 1, i + 2, i + 3) for i in range(2)]
     assert get_outliers_cpus(session, endpoint.id) == expected_cpus

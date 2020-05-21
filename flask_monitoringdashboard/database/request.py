@@ -16,6 +16,13 @@ def get_latencies_sample(session, endpoint_id, interval, sample_size=500):
         .filter(Request.endpoint_id == endpoint_id, *criterion)
         .limit(sample_size)
     )
+    # return random rows: See https://stackoverflow.com/a/60815
+    dialect = session.bind.dialect.name
+
+    if dialect == 'sqlite':
+        query = query.order_by(func.random())
+    elif dialect == 'mysql':
+        query = query.order_by(func.rand())
 
     return [item.duration for item in query.all()]
 
