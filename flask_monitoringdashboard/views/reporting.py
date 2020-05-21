@@ -13,10 +13,6 @@ from flask_monitoringdashboard.database import session_scope
 from flask_monitoringdashboard.database.endpoint import get_endpoints
 
 
-def get_date(p):
-    return datetime.utcfromtimestamp(int(request.args.get(p)))
-
-
 def make_endpoint_summary(endpoint, interval, baseline_interval):
     questions = [MedianLatency(), StatusCodeDistribution()]
 

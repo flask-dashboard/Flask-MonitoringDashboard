@@ -14,7 +14,6 @@ def get_latencies_sample(session, endpoint_id, interval, sample_size=500):
     query = (
         session.query(Request.duration)
         .filter(Request.endpoint_id == endpoint_id, *criterion)
-        .limit(sample_size)
     )
     # return random rows: See https://stackoverflow.com/a/60815
     dialect = session.bind.dialect.name
@@ -23,6 +22,8 @@ def get_latencies_sample(session, endpoint_id, interval, sample_size=500):
         query = query.order_by(func.random())
     elif dialect == 'mysql':
         query = query.order_by(func.rand())
+
+    query = query.limit(sample_size)
 
     return [item.duration for item in query.all()]
 
