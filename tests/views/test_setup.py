@@ -30,7 +30,7 @@ class TestSetup(unittest.TestCase):
         """
             Just retrieve the content and check if nothing breaks
         """
-        test_get_ok(self, 'static/css/custom.css')
+        test_get_ok(self, 'static/css/app.css')
 
     def test_configuration(self):
         """
