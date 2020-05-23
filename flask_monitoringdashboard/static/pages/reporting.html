@@ -54,6 +54,14 @@
             </li>
 
             <li class="nav-item">
+                <a ng-click="selectSection('commits')"
+                   ng-class="activeSection == 'commits' ? 'active nav-link' : 'nav-link'"
+                   href="#">
+                    Compare commits
+                </a>
+            </li>
+
+            <li class="nav-item">
                 <a ng-click="selectSection('custom')"
                    ng-class="activeSection == 'custom' ? 'active nav-link' : 'nav-link'"
                    href="#">Custom</a>
@@ -102,6 +110,33 @@
                     <input type="datetime-local"
                            ng-model="intervals.baseline.to"
                            class="form-control"/>
+                </div>
+            </div>
+            <hr/>
+        </div>
+
+        <div ng-show="activeSection === 'commits'">
+            <div>
+                <div class="input-group">
+                    <select class='form-control' ng-model="commitVersion">
+                        <option ng-repeat="version in versions"
+                                value="{{ version.version }}">
+                            {{ version.version }}
+                        </option>
+                    </select>
+                </div>
+            </div>
+
+            <p style="text-align: center; margin-top: 15px">Compared to</p>
+
+            <div style="margin-top:15px; margin-bottom: 15px">
+                <div class="input-group">
+                    <select class='form-control' ng-model="baseLineCommitVersion">
+                        <option ng-repeat="version in versions"
+                                value="{{ version.version }}">
+                            {{ version.version }}
+                        </option>
+                    </select>
                 </div>
             </div>
             <hr/>

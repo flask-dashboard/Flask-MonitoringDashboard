@@ -44,7 +44,17 @@ export function ReportingController($scope, $http, menuService, endpointService,
         }
     }
 
+    $scope.versions = [];
+
+    $scope.commitVersion = null;
+    $scope.baseLineCommitVersion = null;
+
     $scope.selectSection = function (section) {
+        if (section === 'commits') {
+            $http.get('/dashboard/api/versions').then(function (response) {
+                $scope.versions = response.data;
+            })
+        }
         $scope.activeSection = section;
 
         const INTERVAL_SIZES = {
@@ -90,20 +100,30 @@ export function ReportingController($scope, $http, menuService, endpointService,
     $scope.generateReport = function () {
         $scope.generating = true;
 
-        $http.post(`/dashboard/api/reporting/make_report`, {
-            interval: {
-                to: parseInt(`${$scope.intervals.comparison.to.getTime() / 1000}`),
-                from: parseInt(`${$scope.intervals.comparison.from.getTime() / 1000}`),
-            },
-            baseline_interval: {
-                to: parseInt(`${$scope.intervals.baseline.to.getTime() / 1000}`),
-                from: parseInt(`${$scope.intervals.baseline.from.getTime() / 1000}`),
-            }
-        })
-            .then(response => {
-                $scope.reports[$scope.activeSection] = response.data;
+        let promise;
+        if ($scope.activeSection === 'commits') {
+            promise = $http.post('/dashboard/api/reporting/make_report/commits', {
+                commit_version: $scope.commitVersion,
+                baseline_commit_version: $scope.baseLineCommitVersion,
+            })
+        } else {
+            promise = $http.post(`/dashboard/api/reporting/make_report/intervals`, {
+                interval: {
+                    to: parseInt(`${$scope.intervals.comparison.to.getTime() / 1000}`),
+                    from: parseInt(`${$scope.intervals.comparison.from.getTime() / 1000}`),
+                },
+                baseline_interval: {
+                    to: parseInt(`${$scope.intervals.baseline.to.getTime() / 1000}`),
+                    from: parseInt(`${$scope.intervals.baseline.from.getTime() / 1000}`),
+                }
+            })
 
-                $scope.generating = false;
-            });
+            console.log('hello');
+        }
+
+        promise.then(response => {
+            $scope.reports[$scope.activeSection] = response.data;
+            $scope.generating = false;
+        })
     };
 }

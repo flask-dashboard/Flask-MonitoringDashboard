@@ -8,24 +8,21 @@ from sqlalchemy import and_, func
 from flask_monitoringdashboard.database import Request
 
 
-def get_latencies_in_timeframe(db_session, endpoint_id, start_date, end_date):
-    criterion = create_time_based_sample_criterion(start_date, end_date)
-
-    items = db_session.query(Request.duration).filter(Request.endpoint_id == endpoint_id, *criterion).all()
+def get_latencies_in_timeframe(db_session, endpoint_id, criterion):
+    items = db_session.query(Request.duration).filter(Request.endpoint_id == endpoint_id,
+                                                      *criterion).all()
 
     return [item.duration for item in items]
 
 
-def get_latencies_sample(db_session, endpoint_id, interval, sample_size=500):
-    criterion = create_time_based_sample_criterion(interval.start_date(), interval.end_date())
-
+def get_latencies_sample(db_session, endpoint_id, criterion, sample_size=500):
     dialect = db_session.bind.dialect.name
 
     if dialect in ['sqlite', 'mysql']:
         order_by = func.random() if dialect == 'sqlite' else func.rand()
 
         items = db_session.query(Request.duration) \
-            .filter(Request.endpoint_id == endpoint_id, *criterion) \
+            .filter(Request.endpoint_id == endpoint_id, criterion) \
             .order_by(order_by) \
             .limit(sample_size) \
             .all()
@@ -33,8 +30,9 @@ def get_latencies_sample(db_session, endpoint_id, interval, sample_size=500):
         durations = [item.duration for item in items]
 
         return durations
+
     else:
-        return get_latencies_in_timeframe(db_session, endpoint_id, interval.start_date(), interval.end_date())
+        return get_latencies_in_timeframe(db_session, endpoint_id, criterion)
 
 
 def add_request(db_session, duration, endpoint_id, ip, group_by, status_code):
@@ -64,7 +62,8 @@ def get_date_of_first_request(db_session):
     :param db_session: session for the database
     :return time of the first request
     """
-    result = db_session.query(Request.time_requested).order_by(Request.time_requested).first()
+    result = db_session.query(Request.time_requested).order_by(
+        Request.time_requested).first()
     if result:
         return int(time.mktime(result[0].timetuple()))
     return -1

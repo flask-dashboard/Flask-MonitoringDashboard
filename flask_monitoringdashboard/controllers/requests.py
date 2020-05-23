@@ -103,9 +103,7 @@ def get_error_requests(db_session, endpoint_id, *criterion):
     return db_session.query(Request).filter(criteria, *criterion).all()
 
 
-def get_status_code_frequencies_in_interval(db_session, endpoint_id, start_date, end_date):
-    criterion = create_time_based_sample_criterion(start_date, end_date)
-
+def get_status_code_frequencies_in_interval(db_session, endpoint_id, criterion):
     return get_status_code_frequencies(db_session, endpoint_id, *criterion)
 
 
