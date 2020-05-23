@@ -33,11 +33,11 @@ export function ReportingController($scope, $http, menuService, endpointService,
         const t4 = moment().endOf(units);
 
         return {
-            "comparison_interval": {
+            "comparison": {
                 "from": t3.toDate(),
                 "to": t4.toDate()
             },
-            "compared_to_interval": {
+            "baseline": {
                 "from": t1.toDate(),
                 "to": t2.toDate()
             }
@@ -63,20 +63,21 @@ export function ReportingController($scope, $http, menuService, endpointService,
         $scope.selectedSummary = summary;
         $scope.selectedAnswer = answer;
 
-        const {comparison_interval, compared_to_interval} = answer.latencies_sample;
+        const {comparison, baseline} = answer.latencies_samples;
 
         const data = [
             {
-                name: `Comparison (N=${comparison_interval.length})`,
+                name: `Comparison (N=${comparison.length})`,
                 type: 'violin',
-                y: comparison_interval
+                y: comparison
             },
             {
-                name: `Compared To (N=${compared_to_interval.length})`,
+                name: `Baseline (N=${baseline.length})`,
                 type: 'violin',
-                y: compared_to_interval
+                y: baseline,
             }
         ];
+
 
         plotlyService.chart(data, {
             yaxis: {
@@ -90,13 +91,13 @@ export function ReportingController($scope, $http, menuService, endpointService,
         $scope.generating = true;
 
         $http.post(`/dashboard/api/reporting/make_report`, {
-            compared_to_interval: {
-                to: parseInt(`${$scope.intervals.compared_to_interval.to.getTime() / 1000}`),
-                from: parseInt(`${$scope.intervals.compared_to_interval.from.getTime() / 1000}`),
+            interval: {
+                to: parseInt(`${$scope.intervals.comparison.to.getTime() / 1000}`),
+                from: parseInt(`${$scope.intervals.comparison.from.getTime() / 1000}`),
             },
-            comparison_interval: {
-                to: parseInt(`${$scope.intervals.comparison_interval.to.getTime() / 1000}`),
-                from: parseInt(`${$scope.intervals.comparison_interval.from.getTime() / 1000}`),
+            baseline_interval: {
+                to: parseInt(`${$scope.intervals.baseline.to.getTime() / 1000}`),
+                from: parseInt(`${$scope.intervals.baseline.from.getTime() / 1000}`),
             }
         })
             .then(response => {

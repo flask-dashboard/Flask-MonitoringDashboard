@@ -1,5 +1,6 @@
 <h1>Reporting</h1>
-<p>Generate a report to get more insight into how the performance of your service is changing.</p>
+<p>Generate a report to get more insight into how the performance of your service is
+    changing.</p>
 
 <!-- Modal -->
 <div class="modal fade" id="details-modal"
@@ -10,11 +11,14 @@
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title" id="exampleModalLabel">
-                    {{ selectedSummary.endpoint_name }} - Average
-                    latency {{ selectedAnswer.percentual_diff > 0 ? 'increased' : 'decreased' }} by
-                    {{ selectedAnswer.percentual_diff|abs|number:0 }}%
+                    {{ selectedSummary.endpoint_name }} - Median
+                    latency
+                    {{ selectedAnswer.percentual_diff > 0 ? 'increased' : 'decreased' }}
+                    by
+                    {{ selectedAnswer.percentual_diff|abs|number:1 }}%
                 </h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <button type="button" class="close" data-dismiss="modal"
+                        aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
@@ -40,7 +44,8 @@
             <li class="nav-item">
                 <a ng-click="selectSection('week')"
                    ng-class="activeSection == 'week' ? 'active nav-link' : 'nav-link'"
-                   href="#">Week {{ currentWeekNumber }} vs Week {{ previousWeekNumber }}</a>
+                   href="#">Week {{ currentWeekNumber }} vs
+                    Week {{ previousWeekNumber }}</a>
             </li>
             <li class="nav-item">
                 <a ng-click="selectSection('month')"
@@ -66,8 +71,10 @@
             </button>
 
             <div class="form-check">
-                <input type="checkbox" ng-model="onlyShowInteresting" class="form-check-input" id="exampleCheck1">
-                <label class="form-check-label" for="exampleCheck1">Only Show Interesting Results</label>
+                <input type="checkbox" ng-model="onlyShowInteresting"
+                       class="form-check-input" id="exampleCheck1">
+                <label class="form-check-label" for="exampleCheck1">Only Show Significant
+                    Results</label>
             </div>
         </div>
 
@@ -76,8 +83,12 @@
         <div ng-show="activeSection == 'custom'">
             <div>
                 <div class="input-group">
-                    <input type="datetime-local" ng-model="intervals.comparison_interval.from" class="form-control"/>
-                    <input type="datetime-local" ng-model="intervals.comparison_interval.to" class="form-control"/>
+                    <input type="datetime-local"
+                           ng-model="intervals.comparison.from"
+                           class="form-control"/>
+                    <input type="datetime-local"
+                           ng-model="intervals.comparison.to"
+                           class="form-control"/>
                 </div>
             </div>
 
@@ -85,8 +96,12 @@
 
             <div style="margin-top:15px; margin-bottom: 15px">
                 <div class="input-group">
-                    <input type="datetime-local" ng-model="intervals.compared_to_interval.from" class="form-control"/>
-                    <input type="datetime-local" ng-model="intervals.compared_to_interval.to" class="form-control"/>
+                    <input type="datetime-local"
+                           ng-model="intervals.baseline.from"
+                           class="form-control"/>
+                    <input type="datetime-local"
+                           ng-model="intervals.baseline.to"
+                           class="form-control"/>
                 </div>
             </div>
             <hr/>
@@ -104,18 +119,25 @@
                         <h1>{{ summary.endpoint_name }}</h1>
 
                         <ul ng-repeat="answer in summary.answers" class="list-group">
-                            <li class="list-group-item" ng-show="answer.is_significant || !onlyShowInteresting">
+                            <li class="list-group-item"
+                                ng-show="answer.is_significant || !onlyShowInteresting">
                                 <div ng-switch="answer.type">
-                                    <div ng-switch-when="AVERAGE_LATENCY" style="padding-bottom:15px">
-                                        <h4 ng-class="answer.percentual_diff > 0 ? 'redText' : 'greenText'">Average latency
-                                            {{ answer.percentual_diff > 0 ? 'increased' : 'decreased' }} by
-                                            {{ answer.percentual_diff | abs | number : 0 }}%</h4>
-                                        <p>From {{ answer.compared_to_average|number:0 }}ms to
-                                            {{ answer.comparison_average|number:0 }}ms</p>
+                                    <div ng-switch-when="MEDIAN_LATENCY"
+                                         style="padding-bottom:15px">
+                                        <h4 ng-class="answer.percentual_diff > 0 ? 'redText' : 'greenText'">
+                                            Median latency
+                                            {{ answer.percentual_diff > 0 ? 'increased' : 'decreased' }}
+                                            by
+                                            {{ answer.percentual_diff | abs | number : 1 }}%</h4>
+                                        <p>From {{ answer.baseline_median|number:1 }}ms
+                                            to
+                                            {{ answer.median|number:1 }}ms</p>
 
-                                        <button ng-click="selectEntry(summary, answer)" type="button"
+                                        <button ng-click="selectEntry(summary, answer)"
+                                                type="button"
                                                 class="btn btn-secondary btm-sm"
-                                                data-toggle="modal" data-target="#details-modal">
+                                                data-toggle="modal"
+                                                data-target="#details-modal">
                                             Details
                                         </button>
                                     </div>
@@ -133,7 +155,11 @@
                                             <tbody>
                                             <tr ng-repeat="r in answer.percentages">
                                                 <td>{{ r.status_code }}</td>
-                                                <td>{{ r.compared_to_interval | number:0 }}% -> {{ r.comparison_interval | number:0 }}%</td>
+                                                <td>
+                                                    {{ r.baseline | number:1 }}%
+                                                    ->
+                                                    {{ r.comparison | number:1 }}%
+                                                </td>
                                             </tr>
                                             </tbody>
                                         </table>

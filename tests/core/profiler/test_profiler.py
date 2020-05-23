@@ -9,7 +9,7 @@ from flask_monitoringdashboard.core.profiler import (
     start_outlier_thread,
 )
 from flask_monitoringdashboard.database import Endpoint
-from flask_monitoringdashboard.test.utils import (
+from tests.utils import (
     NAME,
     set_test_environment,
     clear_db,

@@ -1,7 +1,7 @@
 import unittest
 
 from flask_monitoringdashboard.database import Endpoint
-from flask_monitoringdashboard.test.utils import (
+from tests.utils import (
     set_test_environment,
     clear_db,
     add_fake_data,

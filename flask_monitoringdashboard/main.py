@@ -47,6 +47,7 @@ def to_dashboard():
 def endpoint():
     # if session_scope is imported at the top of the file, the database config won't take effect
     from flask_monitoringdashboard.database import session_scope
+
     with session_scope() as db_session:
         print(db_session.bind.dialect.name)
 
