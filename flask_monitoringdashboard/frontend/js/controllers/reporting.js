@@ -117,8 +117,6 @@ export function ReportingController($scope, $http, menuService, endpointService,
                     from: parseInt(`${$scope.intervals.baseline.from.getTime() / 1000}`),
                 }
             })
-
-            console.log('hello');
         }
 
         promise.then(response => {
