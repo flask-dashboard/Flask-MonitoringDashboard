@@ -1,0 +1,2 @@
+# exclude minified js from being counted as source code
+/flask_monitoringdashboard/static/* linguist-generated
