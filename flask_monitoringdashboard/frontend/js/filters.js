@@ -8,8 +8,6 @@ export function applyFilters(app) {
 
     app.filter('duration', function () {
         return function (time) {
-            // ms is a float or int
-            //ms = Math.round(parseFloat(ms) / 10) * 10;
             let ms = Math.round(parseFloat(time) * 10) / 10;
             let s = ms / 1000;
             let min = Math.floor(s / 60);
