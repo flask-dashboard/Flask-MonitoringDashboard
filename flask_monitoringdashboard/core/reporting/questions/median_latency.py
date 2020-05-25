@@ -47,10 +47,10 @@ class MedianLatencyReportAnswer(ReportAnswer):
 
 class MedianLatency(ReportQuestion):
     def get_answer(self, endpoint, interval, baseline_interval):
-        with session_scope() as db_session:
-            latencies_sample = get_latencies_sample(db_session, endpoint.id, interval)
+        with session_scope() as session:
+            latencies_sample = get_latencies_sample(session, endpoint.id, interval)
             baseline_latencies_sample = get_latencies_sample(
-                db_session, endpoint.id, baseline_interval
+                session, endpoint.id, baseline_interval
             )
 
             if len(latencies_sample) == 0 or len(baseline_latencies_sample) == 0:

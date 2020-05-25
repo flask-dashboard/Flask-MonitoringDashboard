@@ -1,15 +1,15 @@
-"""
-    The app tracks the performance of various endpoints over time.
-    To bind, use the following lines of code:
-        import dashboard
-        from flask import Flask
-        ...
-        app = Flask(__name__)
-        ...
-        dashboard.bind(app)
+"""The app tracks the performance of various endpoints over time.
+To bind, use the following lines of code:
 
-    The dashboard with the results that are collected can be found at:
-        localhost:5000/dashboard
+>>> import flask_monitoringdashboard as dashboard
+>>> from flask import Flask
+    ...
+>>> app = Flask(__name__)
+    ...
+>>> dashboard.bind(app)
+
+The dashboard with the results that are collected can be found at:
+    localhost:5000/dashboard
 """
 
 import os
@@ -22,21 +22,21 @@ from flask_monitoringdashboard.core.logger import log
 config = Config()
 
 
-# get current location of the project
 def loc():
+    """Get the current location of the project."""
     return os.path.abspath(os.path.dirname(__file__)) + '/'
 
 
-# define the blueprint
 blueprint = Blueprint('dashboard', __name__, template_folder=loc() + 'templates')
+"""Define the blueprint."""
 
 
 def bind(app, schedule=True):
-    """
-        Binding the app to this object should happen before importing the routing-
-        methods below. Thus, the importing statement is part of this function.
-        :param app: the app for which the performance has to be tracked
-        :param schedule: flag telling if the background scheduler should be started
+    """Binding the app to this object should happen before importing the routing-
+    methods below. Thus, the importing statement is part of this function.
+
+    :param app: the app for which the performance has to be tracked
+    :param schedule: flag telling if the background scheduler should be started
     """
     config.app = app
     # Provide a secret-key for using WTF-forms
@@ -79,8 +79,8 @@ def bind(app, schedule=True):
 
 
 def add_graph(title, func, trigger="interval", **schedule):
-    """
-    Add a custom graph to the dashboard. You must specify the following arguments
+    """Add a custom graph to the dashboard. You must specify the following arguments:
+
     :param title: title of the graph (must be unique)
     :param schedule: dict containing values for weeks, days, hours, minutes, seconds
     :param func: function reference without arguments

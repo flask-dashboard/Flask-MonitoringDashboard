@@ -52,10 +52,10 @@ def init_cache():
     It initializes the in-memory cache from the db
     """
     global memory_cache
-    with session_scope() as db_session:
-        last_req_dict = dict(get_last_requested(db_session))
-        hits_dict = dict(get_endpoints_hits(db_session))
-        averages_dict = dict(get_endpoint_averages(db_session))
+    with session_scope() as session:
+        last_req_dict = dict(get_last_requested(session))
+        hits_dict = dict(get_endpoints_hits(session))
+        averages_dict = dict(get_endpoint_averages(session))
         for rule in get_rules():
             memory_cache[rule.endpoint] = EndpointInfo(
                 last_requested=last_req_dict.get(rule.endpoint),
@@ -104,7 +104,7 @@ def flush_cache():
     global memory_cache
     if not memory_cache:
         return
-    with session_scope() as db_session:
+    with session_scope() as session:
         for endpoint_name, endpoint_info in memory_cache.items():
             if endpoint_info.last_requested:
-                update_last_requested(db_session, endpoint_name, endpoint_info.last_requested)
+                update_last_requested(session, endpoint_name, endpoint_info.last_requested)

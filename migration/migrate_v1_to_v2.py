@@ -1,7 +1,6 @@
-"""
-    Use this file for migrating the Database from v1.X.X to v2.X.X
-    Before running the script, make sure to change the OLD_DB_URL and NEW_DB_URL on lines 9 and 10.
-    Refer to http://docs.sqlalchemy.org/en/latest/core/engines.html on how to configure this.
+"""Use this file for migrating the Database from v1.X.X to v2.X.X
+Before running the script, make sure to change the OLD_DB_URL and NEW_DB_URL on lines 9 and 10.
+Refer to http://docs.sqlalchemy.org/en/latest/core/engines.html on how to configure this.
 """
 import datetime
 from contextlib import contextmanager
@@ -47,10 +46,9 @@ def get_connection(db_url):
 
 @contextmanager
 def session_scope():
-    """
-    When accessing the database, use the following syntax:
-        with session_scope() as db_session:
-            db_session.query(...)
+    """When accessing the database, use the following syntax:
+    >>> with session_scope() as session:
+    >>>     session.query(...)
 
     :return: the session for accessing the database
     """
@@ -87,7 +85,7 @@ def parse(date_string):
 def move_rules(old_connection):
     rules = old_connection.execute("select * from {}".format(TABLES[0]))
     endpoints = []
-    with session_scope() as db_session:
+    with session_scope() as session:
         for rule in rules:
             end = Endpoint(
                 name=rule['endpoint'],
@@ -97,12 +95,12 @@ def move_rules(old_connection):
                 last_requested=parse(rule['last_accessed']),
             )
             endpoints.append(end)
-        db_session.bulk_save_objects(endpoints)
+        session.bulk_save_objects(endpoints)
 
 
-def populate_endpoint_dict(db_session):
+def populate_endpoint_dict(session):
     global endpoint_dict
-    endpoints = db_session.query(Endpoint).all()
+    endpoints = session.query(Endpoint).all()
     for endpoint in endpoints:
         endpoint_dict[endpoint.name] = endpoint.id
 
@@ -110,8 +108,8 @@ def populate_endpoint_dict(db_session):
 def move_function_calls(old_connection):
     function_calls = old_connection.execute("select * from {}".format(TABLES[1]))
     requests = []
-    with session_scope() as db_session:
-        populate_endpoint_dict(db_session)
+    with session_scope() as session:
+        populate_endpoint_dict(session)
         for fc in function_calls:
             request = Request(
                 endpoint_id=endpoint_dict[fc['endpoint']],
@@ -122,7 +120,7 @@ def move_function_calls(old_connection):
                 ip=fc['ip'],
             )
             requests.append(request)
-        db_session.bulk_save_objects(requests)
+        session.bulk_save_objects(requests)
 
 
 def get_request_id(requests, time, execution_time, start_index):
@@ -136,10 +134,10 @@ def get_request_id(requests, time, execution_time, start_index):
     return None, start_index
 
 
-def populate_outlier_dict(connection, db_session):
+def populate_outlier_dict(connection, session):
     global outlier_dict
     outliers = connection.execute("select * from {}".format(TABLES[2]))
-    requests = db_session.query(Request).options(joinedload(Request.endpoint)).all()
+    requests = session.query(Request).options(joinedload(Request.endpoint)).all()
     index = 0
     for outlier in outliers:
         req_id, index = get_request_id(
@@ -152,8 +150,8 @@ def move_outliers(old_connection):
     global outlier_dict
     old_outliers = old_connection.execute("select * from {}".format(TABLES[2]))
     outliers = []
-    with session_scope() as db_session:
-        populate_outlier_dict(old_connection, db_session)
+    with session_scope() as session:
+        populate_outlier_dict(old_connection, session)
         for o in old_outliers:
             outlier = Outlier(
                 request_id=outlier_dict[o['id']],
@@ -165,7 +163,7 @@ def move_outliers(old_connection):
                 stacktrace=o['stacktrace'],
             )
             outliers.append(outlier)
-        db_session.bulk_save_objects(outliers)
+        session.bulk_save_objects(outliers)
 
 
 def main():

@@ -9,10 +9,10 @@ from flask_monitoringdashboard.database import StackLine, Request
 from flask_monitoringdashboard.database.code_line import get_code_line
 
 
-def add_stack_line(db_session, request_id, position, indent, duration, code_line):
+def add_stack_line(session, request_id, position, indent, duration, code_line):
     """
     Adds a StackLine to the database (and possibly a CodeLine)
-    :param db_session: Session for the database
+    :param session: Session for the database
     :param request_id: id of the request
     :param position: position of the StackLine
     :param indent: indent-value
@@ -20,8 +20,8 @@ def add_stack_line(db_session, request_id, position, indent, duration, code_line
     :param code_line: quadruple that consists of: (filename, line_number, function_name, code)
     """
     fn, ln, name, code = code_line
-    db_code_line = get_code_line(db_session, fn, ln, name, code)
-    db_session.add(
+    db_code_line = get_code_line(session, fn, ln, name, code)
+    session.add(
         StackLine(
             request_id=request_id,
             position=position,
@@ -32,10 +32,10 @@ def add_stack_line(db_session, request_id, position, indent, duration, code_line
     )
 
 
-def get_profiled_requests(db_session, endpoint_id, offset, per_page):
+def get_profiled_requests(session, endpoint_id, offset, per_page):
     """
     Gets the requests of an endpoint sorted by request time, together with the stack lines.
-    :param db_session: session for the database
+    :param session: session for the database
     :param endpoint_id: filter profiled requests on this endpoint
     :param offset: number of items to skip
     :param per_page: number of items to return
@@ -43,7 +43,7 @@ def get_profiled_requests(db_session, endpoint_id, offset, per_page):
     of the tuple is a list of StackLine-objects.
     """
     result = (
-        db_session.query(Request)
+        session.query(Request)
         .filter(Request.endpoint_id == endpoint_id)
         .options(joinedload(Request.stack_lines).joinedload(StackLine.code))
         .filter(Request.stack_lines.any())
@@ -52,20 +52,20 @@ def get_profiled_requests(db_session, endpoint_id, offset, per_page):
         .limit(per_page)
         .all()
     )
-    db_session.expunge_all()
+    session.expunge_all()
     return result
 
 
-def get_grouped_profiled_requests(db_session, endpoint_id):
+def get_grouped_profiled_requests(session, endpoint_id):
     """
     Gets the grouped stack lines of all requests of an endpoint.
-    :param db_session: session for the database
+    :param session: session for the database
     :param endpoint_id: filter profiled requests on this endpoint
     :return: A list with tuples. Each tuple consists first of a Request-object, and the second part
     of the tuple is a list of StackLine-objects.
     """
     t = (
-        db_session.query(distinct(StackLine.request_id).label('id'))
+        session.query(distinct(StackLine.request_id).label('id'))
         .filter(Request.endpoint_id == endpoint_id)
         .join(Request.stack_lines)
         .order_by(StackLine.request_id.desc())
@@ -75,12 +75,12 @@ def get_grouped_profiled_requests(db_session, endpoint_id):
     # Limit the number of results by 100, otherwise the profiler gets too large
     # and the page doesn't load anymore. We show the most recent 100 requests.
     result = (
-        db_session.query(Request)
+        session.query(Request)
         .join(Request.stack_lines)
         .filter(Request.id == t.c.id)
         .order_by(desc(Request.id))
         .options(joinedload(Request.stack_lines).joinedload(StackLine.code))
         .all()
     )
-    db_session.expunge_all()
+    session.expunge_all()
     return result
