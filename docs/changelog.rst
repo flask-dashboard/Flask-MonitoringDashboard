@@ -5,6 +5,27 @@ All notable changes to this project will be documented in this file.
 This project adheres to `Semantic Versioning <http://semver.org/>`_.
 Please note that the changes before version 1.10.0 have not been documented.
 
+v3.1.0
+----------
+Changed
+
+- Added support for Python 3.8
+- Started using pytest instead of python's unittest
+- Started using Webpack for frontend packaging
+- Improved reports
+- Moved to Github Actions from Travis for CI/CD
+- Improved docstrings
+- Various bug fixes
+
+
+v3.0.9
+----------
+Changed
+
+- Fixed upgrade message bug
+- Fixed Heroku deployment
+
+
 v3.0.8
 ----------
 Changed
