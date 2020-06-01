@@ -19,15 +19,16 @@ from flask import Blueprint
 from flask_monitoringdashboard.core.config import Config
 from flask_monitoringdashboard.core.logger import log
 
-config = Config()
-
 
 def loc():
     """Get the current location of the project."""
     return os.path.abspath(os.path.dirname(__file__)) + '/'
 
 
-blueprint = Blueprint('dashboard', __name__, template_folder=loc() + 'templates')
+config = Config()
+config.init_from(os.path.join(loc(), "../config.cfg"))
+print(config.blueprint_name)
+blueprint = Blueprint(config.blueprint_name, __name__, template_folder=loc() + 'templates')
 """Define the blueprint."""
 
 

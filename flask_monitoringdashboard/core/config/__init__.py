@@ -27,6 +27,7 @@ class Config(object):
         """Sets the default values for the project."""
         # dashboard
         self.version = '1.0'
+        self.blueprint_name = 'dashboard'
         self.link = 'dashboard'
         self.monitor_level = 1
         self.outlier_detection_constant = 2.5
@@ -124,6 +125,8 @@ class Config(object):
 
             # parse 'dashboard'
             self.version = parse_version(parser, 'dashboard', self.version)
+            self.blueprint_name = parse_string(parser, 'dashboard', 'BLUEPRINT_NAME',
+                                               self.blueprint_name)
             self.link = parse_string(parser, 'dashboard', 'CUSTOM_LINK', self.link)
             self.monitor_level = parse_literal(
                 parser, 'dashboard', 'MONITOR_LEVEL', self.monitor_level

@@ -2,7 +2,7 @@ from flask_monitoringdashboard import blueprint, config
 from flask import redirect, session, render_template, url_for, request
 from flask_monitoringdashboard.core.auth import on_logout, on_login
 
-MAIN_PAGE = 'dashboard.index'
+MAIN_PAGE = config.blueprint_name + '.index'
 
 
 @blueprint.route('/login', methods=['GET', 'POST'])
@@ -24,8 +24,7 @@ def login():
         elif name == config.guest_username and password in config.guest_password:
             on_login(admin=False)
             return redirect(url_for(MAIN_PAGE))
-
-    return render_template('fmd_login.html')
+    return render_template('fmd_login.html', blueprint_name=config.blueprint_name)
 
 
 @blueprint.route('/logout')
