@@ -3,6 +3,4 @@ codecov:
 
 coverage:
   status:
-    patch:
-      default:
-        threshold: 1%
+    patch: off
