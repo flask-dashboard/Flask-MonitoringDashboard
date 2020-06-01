@@ -26,8 +26,6 @@ def loc():
 
 
 config = Config()
-config.init_from(os.path.join(loc(), "../config.cfg"))
-print(config.blueprint_name)
 blueprint = Blueprint(config.blueprint_name, __name__, template_folder=loc() + 'templates')
 """Define the blueprint."""
 

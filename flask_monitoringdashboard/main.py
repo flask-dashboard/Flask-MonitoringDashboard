@@ -6,11 +6,10 @@ To run use:
 Note: This is not used when the flask_monitoring_dashboard
 is attached to your flask application.
 """
-import os
 import time
 from random import random, randint
 
-from flask import Flask, redirect, url_for, Blueprint
+from flask import Flask, redirect, url_for
 
 import flask_monitoringdashboard as dashboard
 
@@ -19,8 +18,6 @@ app = Flask(__name__)
 dashboard.config.version = '3.2'
 dashboard.config.group_by = '2'
 dashboard.config.database_name = 'sqlite:///data.db'
-here = os.path.dirname(os.path.abspath(__file__))
-dashboard.config.init_from(os.path.join(here, "../config.cfg"))
 # dashboard.config.database_name = 'mysql+pymysql://user:password@localhost:3306/db1'
 # dashboard.config.database_name = 'postgresql://user:password@localhost:5432/mydb'
 
@@ -82,15 +79,8 @@ def endpoint4():
 
 @app.route('/endpoint5')
 def endpoint5():
-    # time.sleep(0.2)
-    print(dashboard.config.__dict__)
-    print(app.blueprints)
+    time.sleep(0.2)
     return 'Ok'
-
-
-blueprint = Blueprint('dashboard', __name__,
-                      template_folder=os.path.abspath(os.path.dirname(__file__)) + '/templates')
-app.register_blueprint(blueprint, url_prefix='/dashboard')
 
 
 def my_func():
