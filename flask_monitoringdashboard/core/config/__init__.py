@@ -27,7 +27,7 @@ class Config(object):
         """Sets the default values for the project."""
         # dashboard
         self.version = '1.0'
-        self.blueprint_name = os.environ.get('FMD_BLUEPRINT', 'dashboard')
+        self.blueprint_name = 'dashboard'
         self.link = 'dashboard'
         self.monitor_level = 1
         self.outlier_detection_constant = 2.5
@@ -66,6 +66,8 @@ class Config(object):
                 showing differences in execution times of a function over a period of time.
             - GIT = If you're using git, then it is easier to set the location to the .git-folder,
                 The location is relative to the config-file.
+            - BLUEPRINT_NAME: The name of the blueprint the FMD adds to the Flask app.
+                default: "dashboard"
             - CUSTOM_LINK: The dashboard can be visited at localhost:5000/{CUSTOM_LINK}.
             - MONITOR_LEVEL: The level for monitoring your endpoints. The default value is 3.
             - OUTLIER_DETECTION_CONSTANT: When the execution time is more than this constant *
@@ -125,6 +127,8 @@ class Config(object):
 
             # parse 'dashboard'
             self.version = parse_version(parser, 'dashboard', self.version)
+            self.blueprint_name = parse_string(parser, 'dashboard', 'BLUEPRINT_NAME',
+                                               self.blueprint_name)
             self.link = parse_string(parser, 'dashboard', 'CUSTOM_LINK', self.link)
             self.monitor_level = parse_literal(
                 parser, 'dashboard', 'MONITOR_LEVEL', self.monitor_level

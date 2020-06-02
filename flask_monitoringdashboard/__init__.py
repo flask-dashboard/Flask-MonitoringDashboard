@@ -26,8 +26,7 @@ def loc():
 
 
 config = Config()
-blueprint = Blueprint(config.blueprint_name, __name__, template_folder=loc() + 'templates')
-"""Define the blueprint."""
+blueprint = None
 
 
 def bind(app, schedule=True):
@@ -37,6 +36,8 @@ def bind(app, schedule=True):
     :param app: the app for which the performance has to be tracked
     :param schedule: flag telling if the background scheduler should be started
     """
+    global blueprint
+    blueprint = Blueprint(config.blueprint_name, __name__, template_folder=loc() + 'templates')
     config.app = app
     # Provide a secret-key for using WTF-forms
     if not app.secret_key:
