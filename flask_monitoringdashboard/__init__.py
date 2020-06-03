@@ -19,16 +19,14 @@ from flask import Blueprint
 from flask_monitoringdashboard.core.config import Config
 from flask_monitoringdashboard.core.logger import log
 
-config = Config()
-
 
 def loc():
     """Get the current location of the project."""
     return os.path.abspath(os.path.dirname(__file__)) + '/'
 
 
+config = Config()
 blueprint = Blueprint('dashboard', __name__, template_folder=loc() + 'templates')
-"""Define the blueprint."""
 
 
 def bind(app, schedule=True):
@@ -38,6 +36,7 @@ def bind(app, schedule=True):
     :param app: the app for which the performance has to be tracked
     :param schedule: flag telling if the background scheduler should be started
     """
+    blueprint.name = config.blueprint_name
     config.app = app
     # Provide a secret-key for using WTF-forms
     if not app.secret_key:

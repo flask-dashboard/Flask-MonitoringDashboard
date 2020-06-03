@@ -41,7 +41,7 @@ dashboard.bind(app)
 
 @app.route('/')
 def to_dashboard():
-    return redirect(url_for('dashboard.login'))
+    return redirect(url_for(dashboard.config.blueprint_name + '.login'))
 
 
 @app.route('/endpoint')
