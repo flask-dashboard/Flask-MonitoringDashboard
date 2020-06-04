@@ -15,6 +15,7 @@ def get_versions(session, endpoint_id=None, limit=None):
     if endpoint_id:
         query = query.filter(Request.endpoint_id == endpoint_id)
     query = query.group_by(Request.version_requested)
+    query = query.order_by(func.min(Request.time_requested).desc())
     if limit:
         query = query.limit(limit)
     return query.all()
@@ -32,9 +33,9 @@ def get_first_requests(session, endpoint_id, limit=None):
         session.query(
             Request.version_requested, func.min(Request.time_requested).label('first_used')
         )
-        .filter(Request.endpoint_id == endpoint_id)
-        .group_by(Request.version_requested)
-        .order_by(desc('first_used'))
+            .filter(Request.endpoint_id == endpoint_id)
+            .group_by(Request.version_requested)
+            .order_by(desc('first_used'))
     )
     if limit:
         query = query.limit(limit)
