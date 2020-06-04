@@ -36,7 +36,29 @@ def every_ten_seconds():
 
 every_ten_seconds_schedule = {'seconds': 10}
 dashboard.add_graph("Every 10 Seconds", every_ten_seconds, "interval", **every_ten_seconds_schedule)
+dashboard.config.link = "dashboard"
+# bp1 = dashboard.get_blueprint("dashboard")
 dashboard.bind(app)
+print(app.url_map)
+
+app_2 = Flask(__name__)
+
+
+@app_2.route('/app_2')
+def to_dashboard_2():
+    return redirect(url_for(dashboard.config.blueprint_name + '.login'))
+
+
+@app_2.route('/endpoint6')
+def endpoint5():
+    time.sleep(0.2)
+    return 'Ok'
+
+
+dashboard.config.link = "dashboard_2"
+bp2 = dashboard.get_blueprint("dashboard_2")
+dashboard.bind(app_2, bp2)
+print(app_2.url_map)
 
 
 @app.route('/')
@@ -89,4 +111,4 @@ def my_func():
 
 
 if __name__ == "__main__":
-    app.run()
+    app.run(port=5000)

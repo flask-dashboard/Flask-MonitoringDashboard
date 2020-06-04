@@ -26,17 +26,22 @@ def loc():
 
 
 config = Config()
-blueprint = Blueprint('dashboard', __name__, template_folder=loc() + 'templates')
+BLUEPRINT = Blueprint('dashboard', __name__, template_folder=loc() + 'templates')
 
 
-def bind(app, schedule=True):
+def get_blueprint(name):
+    return Blueprint(name, __name__, template_folder=loc() + 'templates')
+
+
+def bind(app, blueprint=None, schedule=True):
     """Binding the app to this object should happen before importing the routing-
     methods below. Thus, the importing statement is part of this function.
 
     :param app: the app for which the performance has to be tracked
     :param schedule: flag telling if the background scheduler should be started
     """
-    blueprint.name = config.blueprint_name
+    # blueprint.name = config.blueprint_name
+    # blueprint = get_blueprint(config.blueprint_name)
     config.app = app
     # Provide a secret-key for using WTF-forms
     if not app.secret_key:
@@ -44,18 +49,22 @@ def bind(app, schedule=True):
         app.secret_key = 'my-secret-key'
 
     # Add all route-functions to the blueprint
-    from flask_monitoringdashboard.views import (
-        deployment,
-        custom,
-        endpoint,
-        outlier,
-        request,
-        profiler,
-        version,
-        auth,
-        reporting,
-    )
-    import flask_monitoringdashboard.views
+    # from flask_monitoringdashboard.views import (
+    #     deployment,
+    #     custom,
+    #     endpoint,
+    #     outlier,
+    #     request,
+    #     profiler,
+    #     version,
+    #     auth,
+    #     reporting,
+    # )
+    blueprint = blueprint or BLUEPRINT
+    from flask_monitoringdashboard.views import attach_to_blueprint
+    attach_to_blueprint(blueprint)
+    from flask_monitoringdashboard.views.auth import attach_to_blueprint
+    attach_to_blueprint(blueprint)
 
     # Add wrappers to the endpoints that have to be monitored
     from flask_monitoringdashboard.core.measurement import init_measurement
