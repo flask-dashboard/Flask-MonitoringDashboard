@@ -85,8 +85,6 @@ def get_status_code_frequencies(db_session, endpoint_id, criterion):
                 criterion) \
         .group_by(Request.status_code)
 
-    print(status_code_counts.all())
-
     return dict(status_code_counts.all())
 
 
