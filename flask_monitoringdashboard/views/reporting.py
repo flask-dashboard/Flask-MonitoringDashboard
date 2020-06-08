@@ -91,10 +91,11 @@ def make_report_commits():
     baseline_commit_version = arguments['baseline_commit_version']
     commit_version = arguments['commit_version']
 
+    if None in [baseline_commit_version, commit_version]:
+        return dict(message="Please select two commits"), 422
+
     if baseline_commit_version == commit_version:
-        return dict(
-            message="Can't compare commit to itself"
-        ), 422
+        return dict(message="Can't compare commit to itself"), 422
 
     baseline_requests_criterion = Request.version_requested == baseline_commit_version
     requests_criterion = Request.version_requested == commit_version

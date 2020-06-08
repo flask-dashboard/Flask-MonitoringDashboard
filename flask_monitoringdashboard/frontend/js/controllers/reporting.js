@@ -99,6 +99,7 @@ export function ReportingController($scope, $http, menuService, endpointService,
 
     $scope.generateReport = function () {
         $scope.generating = true;
+        $scope.error = '';
 
         let promise;
         if ($scope.activeSection === 'commits') {
