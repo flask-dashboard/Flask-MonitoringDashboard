@@ -10,7 +10,7 @@ from flask_monitoringdashboard.database import Request
 
 def get_latencies_in_timeframe(db_session, endpoint_id, criterion):
     items = db_session.query(Request.duration).filter(Request.endpoint_id == endpoint_id,
-                                                      *criterion).all()
+                                                      criterion).all()
 
     return [item.duration for item in items]
 
