@@ -123,5 +123,10 @@ export function ReportingController($scope, $http, menuService, endpointService,
             $scope.reports[$scope.activeSection] = response.data;
             $scope.generating = false;
         })
+
+        promise.catch(response => {
+            $scope.error = response.data.message || 'An unknown error occurred!';
+            $scope.generating = false;
+        })
     };
 }
