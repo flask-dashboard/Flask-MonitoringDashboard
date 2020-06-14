@@ -28,10 +28,16 @@ export default function applyDirectives(app) {
         return {
             templateUrl: 'static/elements/endpointDetails.html',
             controller: 'EndpointController',
+        }
+    });
+
+    app.directive('modal', function () {
+        return {
+            templateUrl: 'static/elements/modal.html',
+            controller: 'ModalController',
             scope: {
                 name: '=',
-                value: '='
-            }
+            },
         }
     });
 }

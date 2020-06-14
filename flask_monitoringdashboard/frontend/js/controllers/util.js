@@ -17,3 +17,7 @@ export function EndpointController($scope, endpointService) {
 export function PaginationController($scope, paginationService) {
     $scope.pagination = paginationService;
 }
+
+export function ModalController($scope, modalService){
+    $scope.modal = modalService;
+}

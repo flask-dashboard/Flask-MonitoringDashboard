@@ -47,13 +47,15 @@ import endpointService from "./services/endpoint";
 import menuService from "./services/menu";
 import paginationService from "./services/pagination";
 import plotlyService from "./services/plotly";
+import modalService from "./services/modal";
 import {
     MenuController,
     InfoController,
     EndpointController,
     FormController,
-    PaginationController
-} from './controllers/util'
+    PaginationController,
+    ModalController,
+} from './controllers/util';
 import {applyFilters} from "./filters";
 import applyDirectives from "./directives";
 
@@ -68,6 +70,7 @@ app.service('menuService', ['$http', 'endpointService', menuService]);
 app.service('paginationService', ['$http', 'endpointService', menuService]);
 app.service('paginationService', paginationService);
 app.service('plotlyService', ['formService', plotlyService]);
+app.service('modalService', modalService);
 
 app.controller('MonitorLevelController', ['$scope', '$http', MonitorLevelController]);
 
@@ -76,6 +79,7 @@ app.controller('InfoController', ['$scope', 'infoService', InfoController]);
 app.controller('FormController', ['$scope', 'formService', FormController]);
 app.controller('EndpointController', ['$scope', 'endpointService', EndpointController]);
 app.controller('PaginationController', ['$scope', 'paginationService', PaginationController]);
+app.controller('ModalController', ['$scope', 'modalService', ModalController]);
 
 app.config(['$locationProvider', '$routeProvider', function ($locationProvider, $routeProvider) {
     $routeProvider
@@ -160,7 +164,7 @@ app.config(['$locationProvider', '$routeProvider', function ($locationProvider, 
         })
         .when('/configuration', {
             templateUrl: 'static/pages/configuration.html',
-            controller: ['$scope', '$http', 'menuService', 'endpointService', ConfigurationController]
+            controller: ['$scope', '$http', 'menuService', 'endpointService', 'modalService', ConfigurationController]
         })
         .otherwise({
             redirectTo: '/overview'

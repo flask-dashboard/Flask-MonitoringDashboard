@@ -1,0 +1,22 @@
+<div class="modal fade" id="deleteModal" tabindex="-1" role="dialog"
+     aria-labelledby="modalDeleteLabel"
+     aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalDeleteLabel">{{ modal.title }}</h5>
+                <button class="close" type="button" data-dismiss="modal"
+                        aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">{{ modal.content }} {{ name }}</div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" type="button"
+                        data-dismiss="modal">No
+                </button>
+                <button class="btn btn-primary" ng-click="deleteUser(modal.user)">Yes</button>
+            </div>
+        </div>
+    </div>
+</div>
