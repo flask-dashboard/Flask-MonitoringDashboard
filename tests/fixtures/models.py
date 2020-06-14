@@ -8,9 +8,36 @@ from pytest_factoryboy import register, LazyFixture
 from flask_monitoringdashboard.core.profiler.util import PathHash
 from flask_monitoringdashboard.core.profiler.util.grouped_stack_line import GroupedStackLine
 from flask_monitoringdashboard.core.profiler.util.string_hash import StringHash
-from flask_monitoringdashboard.database import Endpoint, Request, Outlier, CodeLine, StackLine, CustomGraph, \
-    CustomGraphData
+from flask_monitoringdashboard.database import (
+    Endpoint,
+    Request,
+    Outlier,
+    CodeLine,
+    StackLine,
+    CustomGraph,
+    CustomGraphData,
+    User,
+)
 from tests.fixtures.database import ModelFactory
+
+
+class UserFactory(ModelFactory):
+    class Meta:
+        model = User
+    username = factory.LazyFunction(lambda: str(uuid.uuid4()))
+    password_hash = factory.LazyFunction(lambda: str(uuid.uuid4()))
+    is_admin = True
+
+    @classmethod
+    def _create(cls, model_class, password_hash=None, *args, **kwargs):
+        """Override _create, because we set the password differently"""
+        instance = model_class(**kwargs)
+        instance.password = password_hash  # store the original password
+        instance.set_password(password=password_hash)
+        session = cls._meta.sqlalchemy_session
+        session.add(instance)
+        session.commit()
+        return instance
 
 
 class EndpointFactory(ModelFactory):
@@ -118,6 +145,7 @@ class PathHashFactory(factory.Factory):
         return obj
 
 
+register(UserFactory, 'user')
 register(EndpointFactory, 'endpoint')
 register(RequestFactory, 'request_1')  # unfortunately, we can't use fixture name: 'request'
 register(RequestFactory, 'request_2')

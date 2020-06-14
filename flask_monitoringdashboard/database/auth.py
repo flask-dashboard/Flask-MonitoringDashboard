@@ -1,7 +1,5 @@
 from flask_monitoringdashboard.database import User, session_scope
-
-DEFAULT_USERNAME = 'admin'
-DEFAULT_PASSWORD = 'admin'
+from flask_monitoringdashboard import config
 
 
 def get_user(username, password):
@@ -10,8 +8,8 @@ def get_user(username, password):
     """
     with session_scope() as session:
         if session.query(User).count() == 0:
-            user = User(username=DEFAULT_USERNAME, is_admin=True)
-            user.set_password(password=DEFAULT_PASSWORD)
+            user = User(username=config.username, is_admin=True)
+            user.set_password(password=config.password)
             session.add(user)
 
         user = session.query(User).filter(User.username == username).one_or_none()

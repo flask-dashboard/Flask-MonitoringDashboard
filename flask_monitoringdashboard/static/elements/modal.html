@@ -1,21 +1,26 @@
-<div class="modal fade" id="deleteModal" tabindex="-1" role="dialog"
-     aria-labelledby="modalDeleteLabel"
+<div class="modal fade" id="{{ name }}Modal" tabindex="-1" role="dialog"
+     aria-labelledby="modalLabel{{ name }}"
      aria-hidden="true">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="modalDeleteLabel">{{ modal.title }}</h5>
+                <h5 class="modal-title" id="modalLabel{{ name }}">{{ title }}</h5>
                 <button class="close" type="button" data-dismiss="modal"
                         aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
-            <div class="modal-body">{{ modal.content }} {{ name }}</div>
+            <div class="modal-body">
+                <ng-transclude></ng-transclude>
+                <p ng-show="modal.error[name]" style="color: red;">Error: {{ modal.error[name] }}</p>
+            </div>
             <div class="modal-footer">
-                <button class="btn btn-secondary" type="button"
-                        data-dismiss="modal">No
+                <button class="btn btn-secondary" type="button" data-dismiss="modal">
+                    {{ modal.getTextButtonNo(name) }}
                 </button>
-                <button class="btn btn-primary" ng-click="deleteUser(modal.user)">Yes</button>
+                <button class="btn btn-primary" ng-click="modal.confirm(name)">
+                    {{ modal.getTextButtonYes(name) }}
+                </button>
             </div>
         </div>
     </div>

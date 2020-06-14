@@ -1,10 +1,16 @@
 export function ConfigurationController($scope, $http, menuService, endpointService, modalService) {
     endpointService.reset();
     menuService.reset('configuration');
-    modalService.configure('Delete', 'Are you sure that you want to delete this user?')
+    modalService.setConfirm('delete', () => deleteUser($scope.user));
+    modalService.setConfirm('edit', () => editUser($scope.user));
+    modalService.setConfirm('create', createUser);
+
+    modalService.textButtonYes['create'] = 'Create';
+    modalService.textButtonNo['create'] = 'Cancel';
 
     $scope.details = {};
     $scope.config = {};
+    $scope.error = {};
     $scope.userData = [];
 
     $http.get('api/user_management').then(function (response) {
@@ -18,16 +24,78 @@ export function ConfigurationController($scope, $http, menuService, endpointServ
         $scope.config = response.data;
     });
 
-    $scope.deleteUser = function (user) {
-        console.log(user);
-        $http.post('api/user/delete',
+    $scope.openModal = function(name, user){
+        $scope.user = user;
+        $(`#${name}Modal`).modal();
+    }
+
+    function createUser(){
+        $http.post(
+            'api/user/create',
             $.param({
-                'user': user
+                'username': $('#create-username')[0].value,
+                'password': $('#create-pwd')[0].value,
+                'password2': $('#create-pwd2')[0].value,
+                'is_admin': $('#create-admin')[0].checked,
             }),
             {
                 headers: {
                     'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8;'
                 }
-            });
-    };
+            }).then(function(successResponse){
+                $http.get('api/user_management').then(function (response) {
+                    $scope.userData = response.data;  // reload user data
+                });
+                $('#createModal').modal('hide');
+                modalService.setErrorMessage('create', null); // remove error message.
+        }, function(errorResponse){
+                modalService.setErrorMessage('create', errorResponse.data.message);
+        });
+    }
+
+    function editUser(){
+        $http.post(
+            'api/user/edit',
+            $.param({
+                'user_id': $scope.user.id,
+                'old_password': $('#edit-old-pwd')[0].value,
+                'new_password': $('#edit-new-pwd')[0].value,
+                'new_password2': $('#edit-new-pwd2')[0].value,
+                'is_admin': $('#edit-admin')[0].checked,
+            }),
+            {
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8;'
+                }
+            }).then(function(successResponse){
+                $http.get('api/user_management').then(function (response) {
+                    $scope.userData = response.data;  // reload user data
+                });
+                $('#editModal').modal('hide');
+                modalService.setErrorMessage('edit', null); // remove error message.
+        }, function(errorResponse){
+                modalService.setErrorMessage('edit', errorResponse.data.message);
+        });
+    }
+
+    function deleteUser(user) {
+        $http.post(
+            'api/user/delete',
+            $.param({
+                'user_id': user.id
+            }),
+            {
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8;'
+                }
+            }).then(function(successResponse){
+                $http.get('api/user_management').then(function (response) {
+                    $scope.userData = response.data;  // reload user data
+                });
+                $('#deleteModal').modal('hide');
+                modalService.setErrorMessage('delete', null); // remove error message.
+        }, function(errorResponse){
+                modalService.setErrorMessage('delete', errorResponse.data.message);
+        });
+    }
 }

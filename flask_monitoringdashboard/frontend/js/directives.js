@@ -33,10 +33,12 @@ export default function applyDirectives(app) {
 
     app.directive('modal', function () {
         return {
+            transclude: true,
             templateUrl: 'static/elements/modal.html',
             controller: 'ModalController',
             scope: {
                 name: '=',
+                title: '='
             },
         }
     });

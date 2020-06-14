@@ -106,6 +106,7 @@ def test_set_rule_get(dashboard_user):
     assert not response.is_json
 
 
+@pytest.mark.parametrize('user__is_admin', [False])
 def test_set_rule_post_guest_not_allowed(dashboard_user, endpoint):
     """Guest is redirected to the login page."""
     response = dashboard_user.post('dashboard/api/set_rule', data={
@@ -116,7 +117,6 @@ def test_set_rule_post_guest_not_allowed(dashboard_user, endpoint):
 
 
 @pytest.mark.parametrize('endpoint__monitor_level', [1])
-@pytest.mark.parametrize('is_admin', [True])
 def test_set_rule_post(dashboard_user, endpoint, session):
     response = dashboard_user.post('dashboard/api/set_rule', data={
         'name': endpoint.name,

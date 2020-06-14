@@ -46,9 +46,10 @@ def is_admin():
     return session and session.get(config.link + '_admin')
 
 
-def on_login(admin):
+def on_login(user):
+    session[config.link + '_user_id'] = user.id
     session[config.link + '_logged_in'] = True
-    if admin:
+    if user.is_admin:
         session[config.link + '_admin'] = True
 
 

@@ -1,11 +1,26 @@
 export default function () {
-    this.title = '';
-    this.content = '';
-    this.user = '';
+    this.action = {};
+    this.error = {};
+    this.textButtonYes = {};
+    this.textButtonNo = {};
 
-    this.configure = function(title, content){
-        this.title = title;
-        this.content = content;
-        console.log("Check - " + this.name);
+    this.setConfirm = function(name, action){
+        this.action[name] = action;
+    }
+
+    this.getTextButtonYes = function(name){
+        return this.textButtonYes[name] || "Yes";
+    }
+
+    this.getTextButtonNo = function(name){
+        return this.textButtonNo[name] || "No";
+    }
+
+    this.setErrorMessage = function(name, message){
+        this.error[name] = message;
+    }
+
+    this.confirm = function(name){
+        this.action[name]();
     }
 }

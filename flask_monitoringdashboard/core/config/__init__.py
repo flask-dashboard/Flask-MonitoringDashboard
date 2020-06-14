@@ -41,8 +41,6 @@ class Config(object):
         # authentication
         self.username = 'admin'
         self.password = 'admin'
-        self.guest_username = 'guest'
-        self.guest_password = ['guest_password']
         self.security_token = 'cc83733cb0af8b884ff6577086b87909'
 
         # visualization
@@ -83,8 +81,6 @@ class Config(object):
             - USERNAME: for logging into the dashboard, a username and password is required. The
                 username can be set using this variable.
             - PASSWORD: same as for the username, but this is the password variable.
-            - GUEST_USERNAME: A guest can only see the results, but cannot configure/download data.
-            - GUEST_PASSWORD: A guest can only see the results, but cannot configure/download data.
             - SECURITY_TOKEN: Used for getting the data in /get_json_data
 
             The config_file must at least contains the following variables in section 'database':
@@ -148,12 +144,6 @@ class Config(object):
             self.password = parse_string(parser, 'authentication', 'PASSWORD', self.password)
             self.security_token = parse_string(
                 parser, 'authentication', 'SECURITY_TOKEN', self.security_token
-            )
-            self.guest_username = parse_string(
-                parser, 'authentication', 'GUEST_USERNAME', self.guest_username
-            )
-            self.guest_password = parse_literal(
-                parser, 'authentication', 'GUEST_PASSWORD', self.guest_password
             )
 
             # database
