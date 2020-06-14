@@ -1,6 +1,7 @@
 import flask
 from flask import redirect, render_template, url_for, request, jsonify
 from sqlalchemy.exc import IntegrityError
+from sqlalchemy.orm.exc import NoResultFound
 
 from flask_monitoringdashboard import blueprint, config
 from flask_monitoringdashboard.core.auth import on_logout, on_login, secure, is_admin, admin_secure
@@ -42,9 +43,9 @@ def logout():
     return on_logout()
 
 
-@blueprint.route('/api/user_management')
+@blueprint.route('/api/users')
 @secure
-def user_management():
+def users_list():
     """
     :return: A JSON-object with configuration details
     """
@@ -100,13 +101,13 @@ def user_edit():
     if flask.session.get(config.link + '_user_id') == user_id and not is_admin:
         return jsonify({'message': 'Cannot remove the admin permissions from itself.'}), BAD_REQUEST_STATUS
 
-    try:
-        with session_scope() as session:
+    with session_scope() as session:
+        try:
             user = session.query(User).filter(User.id == user_id).one()
             user.is_admin = is_admin
 
-            old_password = request.form['old_password']
-            if old_password:
+            old_password = request.form.get('old_password')
+            if old_password is not None:
                 if user.check_password(old_password):
                     new_password = request.form['new_password']
                     new_password2 = request.form['new_password2']
@@ -117,6 +118,8 @@ def user_edit():
                     user.set_password(new_password)
                 else:
                     return jsonify({'message': "Old password doesn't match."}), BAD_REQUEST_STATUS
-    except Exception as e:
-        return jsonify({'message': str(e)}), BAD_REQUEST_STATUS
+        except NoResultFound:
+            return jsonify({'message': "User ID doesn't exist."}), BAD_REQUEST_STATUS
+        except Exception as e:
+            return jsonify({'message': str(e)}), BAD_REQUEST_STATUS
     return 'OK'

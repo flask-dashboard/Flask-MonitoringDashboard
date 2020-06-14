@@ -146,6 +146,7 @@ class PathHashFactory(factory.Factory):
 
 
 register(UserFactory, 'user')
+register(UserFactory, 'another_user')
 register(EndpointFactory, 'endpoint')
 register(RequestFactory, 'request_1')  # unfortunately, we can't use fixture name: 'request'
 register(RequestFactory, 'request_2')

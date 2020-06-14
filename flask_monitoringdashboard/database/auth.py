@@ -22,7 +22,7 @@ def get_user(username, password):
 
 
 def get_all_users(session):
-    users = session.query(User).all()
+    users = session.query(User).order_by(User.id).all()
 
     return [
         {

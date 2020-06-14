@@ -13,7 +13,7 @@ export function ConfigurationController($scope, $http, menuService, endpointServ
     $scope.error = {};
     $scope.userData = [];
 
-    $http.get('api/user_management').then(function (response) {
+    $http.get('api/users').then(function (response) {
         $scope.userData = response.data;
     });
 
@@ -43,7 +43,7 @@ export function ConfigurationController($scope, $http, menuService, endpointServ
                     'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8;'
                 }
             }).then(function(successResponse){
-                $http.get('api/user_management').then(function (response) {
+                $http.get('api/users').then(function (response) {
                     $scope.userData = response.data;  // reload user data
                 });
                 $('#createModal').modal('hide');
@@ -68,7 +68,7 @@ export function ConfigurationController($scope, $http, menuService, endpointServ
                     'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8;'
                 }
             }).then(function(successResponse){
-                $http.get('api/user_management').then(function (response) {
+                $http.get('api/users').then(function (response) {
                     $scope.userData = response.data;  // reload user data
                 });
                 $('#editModal').modal('hide');
@@ -89,7 +89,7 @@ export function ConfigurationController($scope, $http, menuService, endpointServ
                     'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8;'
                 }
             }).then(function(successResponse){
-                $http.get('api/user_management').then(function (response) {
+                $http.get('api/users').then(function (response) {
                     $scope.userData = response.data;  // reload user data
                 });
                 $('#deleteModal').modal('hide');
