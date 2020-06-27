@@ -39,50 +39,65 @@
     <p>Are you sure that you want to delete user <strong>{{ user.username }}</strong>?</p>
 </modal>
 
-<modal name="'create'" title="'Create new user'">
-        <table class="table table-striped table-bordered table-hover">
-        <tr>
-            <td><label for="create-username">Username</label></td>
-            <td><input id="create-username" class="form-control" type="text" required></td>
-        </tr>
-        <tr>
-            <td><label for="create-pwd">Password</label></td>
-            <td><input id="create-pwd" class="form-control" type="password" required></td>
-        </tr>
-        <tr>
-            <td><label for="create-pwd2">Confirm password</label></td>
-            <td><input id="create-pwd2" class="form-control" type="password" required></td>
-        </tr>
-        <tr>
-            <td><label for="create-admin">Admin</label></td>
-            <td><input id="create-admin" class="form-control" type="checkbox" required></td>
-        </tr>
-    </table>
+<modal name="'create'" title="'Create new user'" no="'Cancel'" yes="'Create'">
+    <div class="form-group row">
+        <label class="col-md-4 col-form-label text-md-right" for="create-username">Username</label>
+        <div class="col-md-8">
+            <input type="text" id="create-username" class="form-control" required />
+        </div>
+    </div>
+    <div class="form-group row">
+        <label class="col-md-4 col-form-label text-md-right" for="create-pwd">Password</label>
+        <div class="col-md-8">
+            <input type="password" id="create-pwd" class="form-control" required />
+        </div>
+    </div>
+    <div class="form-group row">
+        <label class="col-md-4 col-form-label text-md-right" for="create-pwd2">Confirm password</label>
+        <div class="col-md-8">
+            <input type="password" id="create-pwd2" class="form-control" required />
+        </div>
+    </div>
+    <div class="form-group row">
+        <label class="col-md-4 col-form-label text-md-right" for="create-admin">Admin</label>
+        <div class="col-md-8">
+            <input type="checkbox" id="create-admin" class="form-control" />
+        </div>
+    </div>
 </modal>
 
-<modal name="'edit'" title="'Edit user'">
-    <table class="table table-bordered table-hover">
-        <tr>
-            <td><label for="edit-username">Username</label></td>
-            <td>{{ user.username }}</td>
-        </tr>
-        <tr>
-            <td><label for="edit-old-pwd">Old password</label></td>
-            <td><input id="edit-old-pwd" class="form-control" type="password" required></td>
-        </tr>
-        <tr>
-            <td><label for="edit-new-pwd">New password</label></td>
-            <td><input id="edit-new-pwd" class="form-control" type="password" required></td>
-        </tr>
-        <tr>
-            <td><label for="edit-new-pwd2">Confirm new password</label></td>
-            <td><input id="edit-new-pwd2" class="form-control" type="password" required></td>
-        </tr>
-        <tr>
-            <td><label for="edit-admin">Admin</label></td>
-            <td><input id="edit-admin" name="admin" class="form-control" type="checkbox" ng-model="user.is_admin"></td>
-        </tr>
-    </table>
+<modal name="'edit'" title="'Edit user'" no="'Cancel'" yes="'Update'">
+    <div class="form-group row">
+        <label class="col-md-4 col-form-label text-md-right" for="edit-username">Username</label>
+        <div class="col-md-8">
+            <input type="text" id="edit-username" class="form-control"
+                   value="{{ user.username }}" disabled required />
+        </div>
+    </div>
+    <div class="form-group row">
+        <label class="col-md-4 col-form-label text-md-right" for="edit-old-pwd">Old password</label>
+        <div class="col-md-8">
+            <input type="password" id="edit-old-pwd" class="form-control" required />
+        </div>
+    </div>
+    <div class="form-group row">
+        <label class="col-md-4 col-form-label text-md-right" for="edit-new-pwd">New password</label>
+        <div class="col-md-8">
+            <input type="password" id="edit-new-pwd" class="form-control" required />
+        </div>
+    </div>
+    <div class="form-group row">
+        <label class="col-md-4 col-form-label text-md-right" for="edit-new-pwd2">Confirm new password</label>
+        <div class="col-md-8">
+            <input type="password" id="edit-new-pwd2" class="form-control" required />
+        </div>
+    </div>
+    <div class="form-group row">
+        <label class="col-md-4 col-form-label text-md-right" for="edit-admin">Admin</label>
+        <div class="col-md-8">
+            <input type="checkbox" id="edit-admin" class="form-control" ng-model="user.is_admin" />
+        </div>
+    </div>
 </modal>
 
 <div class="card mb-3" ng-show="userData.length > 0">

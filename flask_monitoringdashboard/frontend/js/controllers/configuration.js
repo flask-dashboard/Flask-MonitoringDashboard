@@ -5,9 +5,6 @@ export function ConfigurationController($scope, $http, menuService, endpointServ
     modalService.setConfirm('edit', () => editUser($scope.user));
     modalService.setConfirm('create', createUser);
 
-    modalService.textButtonYes['create'] = 'Create';
-    modalService.textButtonNo['create'] = 'Cancel';
-
     $scope.details = {};
     $scope.config = {};
     $scope.error = {};
@@ -29,6 +26,12 @@ export function ConfigurationController($scope, $http, menuService, endpointServ
         $(`#${name}Modal`).modal();
     }
 
+    function fetchUsers(){
+        $http.get('api/users').then(function (response) {
+            $scope.userData = response.data;  // reload user data
+        });
+    }
+
     function createUser(){
         $http.post(
             'api/user/create',
@@ -43,9 +46,7 @@ export function ConfigurationController($scope, $http, menuService, endpointServ
                     'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8;'
                 }
             }).then(function(successResponse){
-                $http.get('api/users').then(function (response) {
-                    $scope.userData = response.data;  // reload user data
-                });
+                fetchUsers();
                 $('#createModal').modal('hide');
                 modalService.setErrorMessage('create', null); // remove error message.
         }, function(errorResponse){
@@ -68,9 +69,7 @@ export function ConfigurationController($scope, $http, menuService, endpointServ
                     'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8;'
                 }
             }).then(function(successResponse){
-                $http.get('api/users').then(function (response) {
-                    $scope.userData = response.data;  // reload user data
-                });
+                fetchUsers();
                 $('#editModal').modal('hide');
                 modalService.setErrorMessage('edit', null); // remove error message.
         }, function(errorResponse){
@@ -89,9 +88,7 @@ export function ConfigurationController($scope, $http, menuService, endpointServ
                     'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8;'
                 }
             }).then(function(successResponse){
-                $http.get('api/users').then(function (response) {
-                    $scope.userData = response.data;  // reload user data
-                });
+                fetchUsers();
                 $('#deleteModal').modal('hide');
                 modalService.setErrorMessage('delete', null); // remove error message.
         }, function(errorResponse){

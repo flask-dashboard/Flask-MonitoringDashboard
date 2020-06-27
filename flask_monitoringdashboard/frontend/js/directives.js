@@ -38,7 +38,9 @@ export default function applyDirectives(app) {
             controller: 'ModalController',
             scope: {
                 name: '=',
-                title: '='
+                title: '=',
+                yes: '=?',
+                no: '=?'
             },
         }
     });
