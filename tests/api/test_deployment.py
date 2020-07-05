@@ -17,8 +17,6 @@ def test_deployment_config(dashboard_user, config):
 
     data = response.json
     assert data['database_name'] == config.database_name
-    assert data['username'] == config.username
-    assert data['guest_username'] == config.guest_username
     assert data['outlier_detection_constant'] == config.outlier_detection_constant
     assert data['timezone'] == str(config.timezone)
     assert data['colors'] == config.colors

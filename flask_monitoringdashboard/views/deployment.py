@@ -35,8 +35,6 @@ def deploy_config():
     return jsonify(
         {
             'database_name': config.database_name,
-            'username': config.username,
-            'guest_username': config.guest_username,
             'outlier_detection_constant': config.outlier_detection_constant,
             'timezone': str(config.timezone),
             'colors': config.colors,

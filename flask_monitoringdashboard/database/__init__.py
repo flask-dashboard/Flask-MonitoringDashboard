@@ -7,6 +7,7 @@ import time
 from contextlib import contextmanager
 
 from sqlalchemy import (
+    Boolean,
     Column,
     Integer,
     String,
@@ -20,10 +21,34 @@ from sqlalchemy import (
 
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker, relationship, scoped_session
+from werkzeug.security import generate_password_hash, check_password_hash
 
 from flask_monitoringdashboard import config
 
 Base = declarative_base()
+
+
+class User(Base):
+    """Table for storing user management."""
+
+    __tablename__ = '{}User'.format(config.table_prefix)
+
+    id = Column(Integer, primary_key=True)
+
+    username = Column(String(250), unique=True, nullable=False)
+    """Username for logging into the FMD."""
+
+    password_hash = Column(String(128), nullable=False)
+    """Hashed password."""
+
+    is_admin = Column(Boolean, default=False)
+    """False for guest permissions (only view access). True for admin permissions."""
+
+    def set_password(self, password):
+        self.password_hash = generate_password_hash(password)
+
+    def check_password(self, password):
+        return check_password_hash(self.password_hash, password)
 
 
 class Endpoint(Base):

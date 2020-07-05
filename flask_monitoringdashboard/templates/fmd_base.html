@@ -39,7 +39,7 @@
             </ul>
             <ul class="navbar-nav ml-auto">
                 <li class="nav-item">
-                    <a class="nav-link" data-toggle="modal" data-target="#exampleModal">
+                    <a class="nav-link" data-toggle="modal" data-target="#logoutModal">
                         <i class="fas fa-sign-out-alt"></i>Logout</a>
                 </li>
             </ul>
@@ -55,37 +55,14 @@
                 <div class="text-center">
                     Click <a target="_blank"
                              href="http://flask-monitoringdashboard.readthedocs.io">here</a>
-                    to read
-                    advanced documentation.
+                    to read advanced documentation.
                 </div>
             </div>
         </footer>
 
-        <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog"
-             aria-labelledby="exampleModalLabel"
-             aria-hidden="true">
-            <div class="modal-dialog" role="document">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="exampleModalLabel">Logout?</h5>
-                        <button class="close" type="button" data-dismiss="modal"
-                                aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
-                        </button>
-                    </div>
-                    <div class="modal-body">Are you sure you want to logout?</div>
-                    <div class="modal-footer">
-                        <button class="btn btn-secondary" type="button"
-                                data-dismiss="modal">Cancel
-                        </button>
-                        <button class="btn btn-primary"
-                                onclick="document.location.href='{{ url_for(blueprint_name + '.logout') }}';">
-                            Logout
-                        </button>
-                    </div>
-                </div>
-            </div>
-        </div>
+        <modal name="'logout'" title="'Logout?'">
+            <p>Are you sure you want to logout?</p>
+        </modal>
     </div>
 {% endblock %}
 

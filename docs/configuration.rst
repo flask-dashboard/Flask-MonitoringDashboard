@@ -64,8 +64,6 @@ file that contains the entry point of the app. The following properties can be c
    [authentication]
    USERNAME=admin
    PASSWORD=admin
-   GUEST_USERNAME=guest
-   GUEST_PASSWORD=['dashboardguest!', 'second_pw!']
    SECURITY_TOKEN=cc83733cb0af8b884ff6577086b87909
 
    [database]
@@ -109,8 +107,6 @@ Authentication
 ~~~~~~~~~~~~~~
 
 - **USERNAME** and **PASSWORD:** Must be used for logging into the Dashboard. Both are required.
-
-- **GUEST_USERNAME** and **GUEST_PASSWORD:** A guest can only see the results, but cannot configure/download any data.
 
 - **SECURITY_TOKEN:** The token that is used for exporting the data to other services. If you leave this unchanged,
   any service is able to retrieve the data from the database.

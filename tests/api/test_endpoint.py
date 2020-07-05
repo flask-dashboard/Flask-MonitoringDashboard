@@ -106,6 +106,7 @@ def test_set_rule_get(dashboard_user):
     assert not response.is_json
 
 
+@pytest.mark.parametrize('user__is_admin', [False])
 def test_set_rule_post_guest_not_allowed(dashboard_user, endpoint):
     """Guest is redirected to the login page."""
     response = dashboard_user.post('dashboard/api/set_rule', data={
@@ -116,7 +117,6 @@ def test_set_rule_post_guest_not_allowed(dashboard_user, endpoint):
 
 
 @pytest.mark.parametrize('endpoint__monitor_level', [1])
-@pytest.mark.parametrize('is_admin', [True])
 def test_set_rule_post(dashboard_user, endpoint, session):
     response = dashboard_user.post('dashboard/api/set_rule', data={
         'name': endpoint.name,
@@ -183,7 +183,6 @@ def test_endpoint_versions_get(dashboard_user, endpoint):
 @pytest.mark.parametrize('request_1__version_requested', ['a'])
 @pytest.mark.parametrize('request_2__version_requested', ['b'])
 def test_endpoint_versions_post(dashboard_user, request_1, request_2, endpoint):
-    """GET is not allowed. It should return the overview page."""
     response = dashboard_user.post(
         'dashboard/api/endpoint_versions/{0}'.format(endpoint.id),
         json={'data': {'versions': [request_1.version_requested, request_2.version_requested]}},
@@ -207,7 +206,6 @@ def test_endpoint_users_get(dashboard_user, endpoint):
 @pytest.mark.parametrize('request_1__group_by', ['a'])
 @pytest.mark.parametrize('request_2__group_by', ['b'])
 def test_endpoint_users_post(dashboard_user, request_1, request_2, endpoint):
-    """GET is not allowed. It should return the overview page."""
     response = dashboard_user.post(
         'dashboard/api/endpoint_users/{0}'.format(endpoint.id),
         json={'data': {'users': [request_1.group_by, request_2.group_by]}},
