@@ -52,7 +52,6 @@ export function ReportingController($scope, $http, menuService, endpointService,
     $scope.selectSection = function (section) {
         if (section === 'commits') {
             $http.get('/dashboard/api/versions').then(function (response) {
-                console.log(response.data);
                 $scope.versions = response.data;
             })
         }
