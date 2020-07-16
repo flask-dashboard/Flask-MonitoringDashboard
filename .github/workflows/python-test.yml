@@ -22,12 +22,10 @@ jobs:
         pip install -r requirements-dev.txt
     - name: Lint with flake8
       run: |
-        pip install flake8
         flake8 . --exit-zero --max-line-length=100 --ignore=F401,W503 --max-complexity=10 --max-line-length=100
-    - name: Test with unittest
+    - name: Test with pytest
       run: |
-        coverage run setup.py test
-        coverage xml
+        pytest --cov --cov-report=xml
     - name: Upload coverage to Codecov
       uses: codecov/codecov-action@v1
       with:

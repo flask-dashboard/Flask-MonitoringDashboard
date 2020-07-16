@@ -23,9 +23,9 @@ def init_measurement():
     This function is used in the config-method in __init__ of this folder
     It adds wrappers to the endpoints for tracking their performance and last access times.
     """
-    with session_scope() as db_session:
+    with session_scope() as session:
         for rule in get_rules():
-            endpoint = get_endpoint_by_name(db_session, rule.endpoint)
+            endpoint = get_endpoint_by_name(session, rule.endpoint)
             add_decorator(endpoint)
 
 

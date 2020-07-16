@@ -2,16 +2,16 @@
 <html lang="en" ng-app="fmdApp">
 <head>
     <title>Flask-MonitoringDashboard</title>
-    <base href="{{ url_for('dashboard.index') }}">
+    <base href="{{ url_for(blueprint_name + '.index') }}">
     <meta charset="utf-8">
 
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
     <link rel="stylesheet"
-          href="{{ url_for('dashboard.static', filename='css/app.css') }}"/>
+          href="{{ url_for(blueprint_name + '.static', filename='css/app.css') }}"/>
 
     <link rel="shortcut icon"
-          href="{{ url_for('dashboard.static', filename='img/favicon.ico') }}"/>
+          href="{{ url_for(blueprint_name + '.static', filename='img/favicon.ico') }}"/>
 </head>
 
 {% block body %}
@@ -39,7 +39,7 @@
             </ul>
             <ul class="navbar-nav ml-auto">
                 <li class="nav-item">
-                    <a class="nav-link" data-toggle="modal" data-target="#exampleModal">
+                    <a class="nav-link" data-toggle="modal" data-target="#logoutModal">
                         <i class="fas fa-sign-out-alt"></i>Logout</a>
                 </li>
             </ul>
@@ -55,37 +55,14 @@
                 <div class="text-center">
                     Click <a target="_blank"
                              href="http://flask-monitoringdashboard.readthedocs.io">here</a>
-                    to read
-                    advanced documentation.
+                    to read advanced documentation.
                 </div>
             </div>
         </footer>
 
-        <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog"
-             aria-labelledby="exampleModalLabel"
-             aria-hidden="true">
-            <div class="modal-dialog" role="document">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="exampleModalLabel">Logout?</h5>
-                        <button class="close" type="button" data-dismiss="modal"
-                                aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
-                        </button>
-                    </div>
-                    <div class="modal-body">Are you sure you want to logout?</div>
-                    <div class="modal-footer">
-                        <button class="btn btn-secondary" type="button"
-                                data-dismiss="modal">Cancel
-                        </button>
-                        <button class="btn btn-primary"
-                                onclick="document.location.href='{{ url_for('dashboard.logout') }}';">
-                            Logout
-                        </button>
-                    </div>
-                </div>
-            </div>
-        </div>
+        <modal name="'logout'" title="'Logout?'">
+            <p>Are you sure you want to logout?</p>
+        </modal>
     </div>
 {% endblock %}
 
@@ -94,6 +71,6 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/4.12.0/d3.min.js"></script>
 <script src="https://unpkg.com/sunburst-chart"></script>
 
-<script src="{{ url_for('dashboard.static', filename='js/app.js') }}"></script>
+<script src="{{ url_for(blueprint_name + '.static', filename='js/app.js') }}"></script>
 </body>
 </html>

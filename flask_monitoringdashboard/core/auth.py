@@ -19,7 +19,7 @@ def admin_secure(func):
         if session and session.get(config.link + '_logged_in'):
             if session.get(config.link + '_admin'):
                 return func(*args, **kwargs)
-        return redirect(url_for('dashboard.login'))
+        return redirect(url_for(config.blueprint_name + '.login'))
 
     return wrapper
 
@@ -37,7 +37,7 @@ def secure(func):
     def wrapper(*args, **kwargs):
         if session and session.get(config.link + '_logged_in'):
             return func(*args, **kwargs)
-        return redirect(url_for('dashboard.login'))
+        return redirect(url_for(config.blueprint_name + '.login'))
 
     return wrapper
 
@@ -46,23 +46,14 @@ def is_admin():
     return session and session.get(config.link + '_admin')
 
 
-def check_login(name, password):
-    if name == config.username and password == config.password:
-        on_login(admin=True)
-        return True
-    elif name == config.guest_username and password in config.guest_password:
-        on_login(admin=False)
-        return True
-    return False
-
-
-def on_login(admin):
+def on_login(user):
+    session[config.link + '_user_id'] = user.id
     session[config.link + '_logged_in'] = True
-    if admin:
+    if user.is_admin:
         session[config.link + '_admin'] = True
 
 
 def on_logout():
     session.pop(config.link + '_logged_in', None)
     session.pop(config.link + '_admin', None)
-    return redirect(url_for('dashboard.login'))
+    return redirect(url_for(config.blueprint_name + '.login'))

@@ -22,7 +22,6 @@ with open('flask_monitoringdashboard/constants.json', 'r') as f:
 setuptools.setup(
     name="Flask-MonitoringDashboard",
     version=constants['version'],
-    use_scm_version=True,
     setup_requires=['setuptools_scm'],
     packages=setuptools.find_packages(),
     include_package_data=True,
@@ -47,6 +46,7 @@ setuptools.setup(
         'Programming Language :: Python :: 3.5',
         'Programming Language :: Python :: 3.6',
         'Programming Language :: Python :: 3.7',
+        'Programming Language :: Python :: 3.8',
         'Framework :: Flask',
     ],
     project_urls={

@@ -2,5 +2,8 @@
 -r requirements.txt
 
 # ... and install more
-requests
 codecov
+pytest
+pytest_factoryboy
+pytest-cov
+flake8

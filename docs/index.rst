@@ -46,6 +46,8 @@ If you are interested in the Flask-MonitoringDashboard, you can find more inform
    
    functionality
 
+   known_issues
+
 Developer information
 ---------------------
 .. toctree::

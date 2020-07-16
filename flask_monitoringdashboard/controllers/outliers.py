@@ -8,13 +8,13 @@ from flask_monitoringdashboard.database import row2dict
 from flask_monitoringdashboard.database.outlier import get_outliers_cpus, get_outliers_sorted
 
 
-def get_outlier_graph(db_session, endpoint_id):
+def get_outlier_graph(session, endpoint_id):
     """
-    :param db_session: session for the database
+    :param session: session for the database
     :param endpoint_id: id of the endpoint
     :return: a list with data about each CPU performance
     """
-    all_cpus = get_outliers_cpus(db_session, endpoint_id)
+    all_cpus = get_outliers_cpus(session, endpoint_id)
     cpu_data = [ast.literal_eval(cpu) for cpu in all_cpus]
 
     return [
@@ -23,15 +23,15 @@ def get_outlier_graph(db_session, endpoint_id):
     ]
 
 
-def get_outlier_table(db_session, endpoint_id, offset, per_page):
+def get_outlier_table(session, endpoint_id, offset, per_page):
     """
-    :param db_session: session for the database
+    :param session: session for the database
     :param endpoint_id: id of the endpoint
     :param offset: number of items to be skipped
     :param per_page: maximum number of items to be returned
     :return: a list of length at most 'per_page' with data about each outlier
     """
-    table = get_outliers_sorted(db_session, endpoint_id, offset, per_page)
+    table = get_outliers_sorted(session, endpoint_id, offset, per_page)
     for idx, row in enumerate(table):
         row.request.time_requested = to_local_datetime(row.request.time_requested)
         try:

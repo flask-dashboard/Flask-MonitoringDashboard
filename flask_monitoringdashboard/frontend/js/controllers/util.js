@@ -17,3 +17,11 @@ export function EndpointController($scope, endpointService) {
 export function PaginationController($scope, paginationService) {
     $scope.pagination = paginationService;
 }
+
+export function ModalController($scope, $window, $browser, modalService){
+    modalService.setConfirm('logout', function(){
+        $window.location.href = $browser.baseHref() + 'logout';
+    });
+
+    $scope.modal = modalService;
+}
