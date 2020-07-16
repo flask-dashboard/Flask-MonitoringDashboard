@@ -34,14 +34,13 @@ class StatusCodeDistribution(ReportQuestion):
 
     def get_answer(self, endpoint, requests_criterion, baseline_requests_criterion):
 
-        with session_scope() as db_session:
+        with session_scope() as session:
 
-            frequencies = get_status_code_frequencies_in_interval(
-                db_session, endpoint.id, requests_criterion
-            )
+            frequencies = get_status_code_frequencies_in_interval(session, endpoint.id,
+                                                                  requests_criterion)
 
             baseline_frequencies = get_status_code_frequencies_in_interval(
-                db_session,
+                session,
                 endpoint.id,
                 baseline_requests_criterion
             )
@@ -54,8 +53,8 @@ class StatusCodeDistribution(ReportQuestion):
         total_baseline_requests = sum(baseline_frequencies.values())
 
         if (
-                total_requests < self.MIN_NUM_REQUESTS
-                or total_baseline_requests < self.MIN_NUM_REQUESTS
+            total_requests < self.MIN_NUM_REQUESTS
+            or total_baseline_requests < self.MIN_NUM_REQUESTS
         ):
             return StatusCodeDistributionReportAnswer(is_significant=False)
 
@@ -66,8 +65,7 @@ class StatusCodeDistribution(ReportQuestion):
             count = frequencies[status_code] if status_code in frequencies else 0
 
             baseline_count = (
-                baseline_frequencies[
-                    status_code] if status_code in baseline_frequencies else 0
+                baseline_frequencies[status_code] if status_code in baseline_frequencies else 0
             )
 
             percentage = frequency_to_percentage(freq=count, total=total_requests)
