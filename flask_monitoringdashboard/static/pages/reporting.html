@@ -103,7 +103,7 @@
                     <select class='form-control' ng-model="commitVersion">
                         <option ng-repeat="version in versions"
                                 value="{{ version.version }}">
-                            {{ version.version }} : {{ version.date | dateLayout }}
+                            {{ version.date | dateLayout }} : {{ version.version }}
                         </option>
                     </select>
                 </div>
