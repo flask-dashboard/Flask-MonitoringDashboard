@@ -239,9 +239,6 @@ def session_scope():
         session.rollback()
         time.sleep(0.5 + random.random())
         session.commit()
-    except Exception as e:
-        session.rollback()
-        print('No commit has been made, due to the following error: {}'.format(e))
     finally:
         session.close()
 
