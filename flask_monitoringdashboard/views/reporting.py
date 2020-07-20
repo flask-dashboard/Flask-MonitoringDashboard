@@ -1,6 +1,6 @@
 from datetime import datetime
 
-from flask import request
+from flask import request, jsonify
 from sqlalchemy import and_
 
 from flask_monitoringdashboard.database import Request
@@ -80,7 +80,9 @@ def make_report_intervals():
     requests_criterion = create_time_based_sample_criterion(interval.start_date(),
                                                             interval.end_date())
 
-    return make_endpoint_summaries(requests_criterion, baseline_requests_criterion)
+    summaries = make_endpoint_summaries(requests_criterion, baseline_requests_criterion)
+
+    return jsonify(summaries)
 
 
 @blueprint.route('/api/reporting/make_report/commits', methods=['POST'])
@@ -100,4 +102,5 @@ def make_report_commits():
     baseline_requests_criterion = Request.version_requested == baseline_commit_version
     requests_criterion = Request.version_requested == commit_version
 
-    return make_endpoint_summaries(requests_criterion, baseline_requests_criterion)
+    summaries = make_endpoint_summaries(requests_criterion, baseline_requests_criterion)
+    return jsonify(summaries)
