@@ -12,13 +12,16 @@ import pytest
 from flask_monitoringdashboard.core.date_interval import DateInterval
 from flask_monitoringdashboard.database.count import count_requests
 from flask_monitoringdashboard.database.endpoint import get_avg_duration, get_endpoints
-from flask_monitoringdashboard.database.request import add_request, get_date_of_first_request, get_latencies_sample
+from flask_monitoringdashboard.database.request import add_request, \
+    get_date_of_first_request, get_latencies_sample, create_time_based_sample_criterion
 from flask_monitoringdashboard.database.versions import get_versions
 
 
 def test_get_latencies_sample(session, request_1, endpoint):
     interval = DateInterval(datetime.utcnow() - timedelta(days=1), datetime.utcnow())
-    data = get_latencies_sample(session, endpoint.id, interval, sample_size=500)
+    requests_criterion = create_time_based_sample_criterion(interval.start_date(),
+                                                            interval.end_date())
+    data = get_latencies_sample(session, endpoint.id, requests_criterion, sample_size=500)
     assert data == [request_1.duration]
 
 

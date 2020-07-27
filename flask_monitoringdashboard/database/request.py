@@ -8,12 +8,10 @@ from sqlalchemy import and_, func
 from flask_monitoringdashboard.database import Request
 
 
-def get_latencies_sample(session, endpoint_id, interval, sample_size=500):
-    criterion = create_time_based_sample_criterion(interval.start_date(), interval.end_date())
-
+def get_latencies_sample(session, endpoint_id, criterion, sample_size=500):
     query = (
-        session.query(Request.duration)
-        .filter(Request.endpoint_id == endpoint_id, *criterion)
+        session.query(Request.duration).filter(Request.endpoint_id == endpoint_id,
+                                               *criterion)
     )
     # return random rows: See https://stackoverflow.com/a/60815
     dialect = session.bind.dialect.name
@@ -55,7 +53,8 @@ def get_date_of_first_request(session):
     :param session: session for the database
     :return time of the first request
     """
-    result = session.query(Request.time_requested).order_by(Request.time_requested).first()
+    result = session.query(Request.time_requested).order_by(
+        Request.time_requested).first()
     if result:
         return int(time.mktime(result[0].timetuple()))
     return -1
@@ -73,9 +72,9 @@ def get_date_of_first_request_version(session, version):
     """
     result = (
         session.query(Request.time_requested)
-        .filter(Request.version_requested == version)
-        .order_by(Request.time_requested)
-        .first()
+            .filter(Request.version_requested == version)
+            .order_by(Request.time_requested)
+            .first()
     )
     if result:
         return int(time.mktime(result[0].timetuple()))

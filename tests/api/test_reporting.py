@@ -7,7 +7,7 @@ from flask_monitoringdashboard.database import Endpoint
 
 def test_make_report_get(dashboard_user):
     """GET is not allowed. It should return the overview page."""
-    response = dashboard_user.get('dashboard/api/reporting/make_report')
+    response = dashboard_user.get('dashboard/api/reporting/make_report/intervals')
     assert not response.is_json
 
 
@@ -20,7 +20,7 @@ def test_make_report_get(dashboard_user):
 def test_make_report_post_not_significant(dashboard_user, endpoint, request_1, request_2, session):
     epoch = datetime(1970, 1, 1)
     response = dashboard_user.post(
-        'dashboard/api/reporting/make_report',
+        'dashboard/api/reporting/make_report/intervals',
         json={
             'interval': {
                 'from': (datetime.utcnow() - timedelta(days=1) - epoch).total_seconds(),

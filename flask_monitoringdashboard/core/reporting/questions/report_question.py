@@ -30,5 +30,5 @@ class ReportQuestion:
     __metaclass__ = ABCMeta
 
     @abstractmethod
-    def get_answer(self, endpoint, interval, baseline_interval):
+    def get_answer(self, endpoint, requests_criterion, baseline_requests_criterion):
         pass
