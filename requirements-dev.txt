@@ -4,6 +4,6 @@
 # ... and install more
 codecov
 pytest
-pytest_factoryboy
+pytest-factoryboy
 pytest-cov
 flake8
