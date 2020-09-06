@@ -1,4 +1,5 @@
-from flask_monitoringdashboard.controllers.requests import get_status_code_frequencies_in_interval
+from flask_monitoringdashboard.controllers.requests import \
+    get_status_code_frequencies_in_interval
 from flask_monitoringdashboard.core.reporting.questions.report_question import (
     ReportAnswer,
     ReportQuestion,
@@ -31,21 +32,22 @@ class StatusCodeDistribution(ReportQuestion):
     MIN_NUM_REQUESTS = 30
     MIN_PERCENTAGE_DIFF_THRESHOLD = 3
 
-    def get_answer(self, endpoint, interval, baseline_interval):
+    def get_answer(self, endpoint, requests_criterion, baseline_requests_criterion):
+
         with session_scope() as session:
-            frequencies = get_status_code_frequencies_in_interval(
-                session, endpoint.id, interval.start_date(), interval.end_date()
-            )
+
+            frequencies = get_status_code_frequencies_in_interval(session, endpoint.id,
+                                                                  requests_criterion)
 
             baseline_frequencies = get_status_code_frequencies_in_interval(
                 session,
                 endpoint.id,
-                baseline_interval.start_date(),
-                baseline_interval.end_date(),
+                baseline_requests_criterion
             )
 
         # all monitored status codes in both intervals
-        all_monitored_status_codes = set(baseline_frequencies.keys()).union(set(frequencies.keys()))
+        all_monitored_status_codes = set(baseline_frequencies.keys()).union(
+            set(frequencies.keys()))
 
         total_requests = sum(frequencies.values())
         total_baseline_requests = sum(baseline_frequencies.values())

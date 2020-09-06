@@ -3,28 +3,26 @@ export function StatusCodeDistributionController($scope, $http, infoService, end
     endpointService.reset();
 
     formService.setReload(function () {
-        var endpointId = endpointService.info.id;
+        const endpointId = endpointService.info.id;
 
         $http.get('api/endpoint_status_code_summary/' + endpointId).then(function (response) {
 
-            var layout = {
+            const layout = {
                 height: 400,
                 width: 500,
             };
 
-            var distribution = response.data.distribution;
+            const distribution = response.data.distribution;
 
-            var statusCodes = Object.keys(distribution);
+            const statusCodes = Object.keys(distribution);
 
-            var data = [{
+            const data = [{
                 values: statusCodes.map(statusCode => distribution[statusCode]),
                 labels: statusCodes,
                 type: 'pie'
             }];
 
-            $scope.hello = 'hello, world';
             $scope.error_requests = response.data.error_requests;
-
 
             plotlyService.chart(data, layout);
         });
