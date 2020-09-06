@@ -1,3 +1,9 @@
+const HEADERS = {
+    headers: {
+        'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8;'
+    }
+}
+
 export function ConfigurationController($scope, $http, menuService, endpointService, modalService) {
     endpointService.reset();
     menuService.reset('configuration');
@@ -41,11 +47,8 @@ export function ConfigurationController($scope, $http, menuService, endpointServ
                 'password2': $('#create-pwd2')[0].value,
                 'is_admin': $('#create-admin')[0].checked,
             }),
-            {
-                headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8;'
-                }
-            }).then(function(successResponse){
+            HEADERS
+        ).then(function(successResponse){
                 fetchUsers();
                 $('#createModal').modal('hide');
                 modalService.setErrorMessage('create', null); // remove error message.
@@ -64,11 +67,8 @@ export function ConfigurationController($scope, $http, menuService, endpointServ
                 'new_password2': $('#edit-new-pwd2')[0].value,
                 'is_admin': $('#edit-admin')[0].checked,
             }),
-            {
-                headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8;'
-                }
-            }).then(function(successResponse){
+            HEADERS
+        ).then(function(successResponse){
                 fetchUsers();
                 $('#editModal').modal('hide');
                 modalService.setErrorMessage('edit', null); // remove error message.
@@ -83,11 +83,8 @@ export function ConfigurationController($scope, $http, menuService, endpointServ
             $.param({
                 'user_id': user.id
             }),
-            {
-                headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8;'
-                }
-            }).then(function(successResponse){
+            HEADERS
+        ).then(function(successResponse){
                 fetchUsers();
                 $('#deleteModal').modal('hide');
                 modalService.setErrorMessage('delete', null); // remove error message.

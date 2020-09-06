@@ -22,14 +22,14 @@ def count_rows_group(session, column, *criterion):
     )
 
 
-def get_value(iterable, name, default=0):
+def get_value(tuples, name, default=0):
     """
-    :param iterable: must be structured as: [(a, b), (c, d), ..]
+    :param tuples: must be structured as: [(a, b), (c, d), ..]
     :param name: name to filter on, e.g.: if name == a, it returns b
     :param default: returned if the name was not found in the list
     :return value corresponding to the name in the list.
     """
-    for key, value in iterable:
+    for key, value in tuples:
         if key == name:
             return value
     return default
