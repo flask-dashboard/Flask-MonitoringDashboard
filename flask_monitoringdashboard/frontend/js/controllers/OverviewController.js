@@ -70,8 +70,10 @@ function isNewestVersion(pypi_version, dashboard_version) {
     let dashboard_version_array = dashboard_version.split('.');
     for (let i = 0; i < 3; i++) {
         if (pypi_version_array[i] > dashboard_version_array[i]) {
-            return false;
+            return false;  // using an older version.
+        } else if (pypi_version_array[i] < dashboard_version_array[i]){
+            return true;  // using a newer version.
         }
     }
-    return true;
+    return true;  // using the same version.
 }
