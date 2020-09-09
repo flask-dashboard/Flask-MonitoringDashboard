@@ -1,0 +1,13 @@
+// Bootstrap
+@import "~bootstrap/scss/bootstrap";
+
+
+// Font awesome
+$fa-font-path: "/dashboard/static/fonts";
+@import "~@fortawesome/fontawesome-free/scss/fontawesome.scss";
+@import "~@fortawesome/fontawesome-free/scss/solid.scss";
+
+// Bootstrap Data tables
+@import "~datatables.net-bs4/css/dataTables.bootstrap4.min.css";
+
+@import "./custom.css";

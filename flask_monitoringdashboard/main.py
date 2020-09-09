@@ -1,9 +1,10 @@
-"""
-    This file can be executed for developing purposes.
-    To run use
-        python main.py
-    Note: This is not used when the flask_monitoring_dashboard
-    is attached to your flask application.
+"""This file can be executed for developing purposes.
+To run use:
+
+>>> python main.py
+
+Note: This is not used when the flask_monitoring_dashboard
+is attached to your flask application.
 """
 import time
 from random import random, randint
@@ -40,15 +41,16 @@ dashboard.bind(app)
 
 @app.route('/')
 def to_dashboard():
-    return redirect(url_for('dashboard.login'))
+    return redirect(url_for(dashboard.config.blueprint_name + '.login'))
 
 
 @app.route('/endpoint')
 def endpoint():
     # if session_scope is imported at the top of the file, the database config won't take effect
     from flask_monitoringdashboard.database import session_scope
-    with session_scope() as db_session:
-        print(db_session.bind.dialect.name)
+
+    with session_scope() as session:
+        print(session.bind.dialect.name)
 
     print("Hello, world")
     return 'Ok'

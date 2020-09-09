@@ -11,14 +11,14 @@ from flask_monitoringdashboard.database.stack_line import (
 )
 
 
-def get_profiler_table(db_session, endpoint_id, offset, per_page):
+def get_profiler_table(session, endpoint_id, offset, per_page):
     """
-    :param db_session: session for the database
+    :param session: session for the database
     :param endpoint_id: endpoint to filter on
     :param offset: number of items that are skipped
     :param per_page: number of items that are returned (at most)
     """
-    table = get_profiled_requests(db_session, endpoint_id, offset, per_page)
+    table = get_profiled_requests(session, endpoint_id, offset, per_page)
 
     for idx, row in enumerate(table):
         row.time_requested = to_local_datetime(row.time_requested)
@@ -32,14 +32,14 @@ def get_profiler_table(db_session, endpoint_id, offset, per_page):
     return table
 
 
-def get_grouped_profiler(db_session, endpoint_id):
+def get_grouped_profiler(session, endpoint_id):
     """
-    :param db_session: session for the database
+    :param session: session for the database
     :param endpoint_id: endpoint to filter on
     :return:
     """
-    requests = get_grouped_profiled_requests(db_session, endpoint_id)
-    db_session.expunge_all()
+    requests = get_grouped_profiled_requests(session, endpoint_id)
+    session.expunge_all()
 
     histogram = defaultdict(list)  # path -> [list of values]
     path_hash = PathHash()

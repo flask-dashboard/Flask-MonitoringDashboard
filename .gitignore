@@ -9,6 +9,7 @@ __pycache__/
 # Distribution / packaging
 .Python
 env/
+.venv
 build/
 develop-eggs/
 dist/
@@ -103,3 +104,5 @@ ENV/
 # own scripts
 flask_monitoringdashboard/make_requests.py
 flask_monitoringdashboard/session_test.py
+frontend/node_modules/
+frontend/build/

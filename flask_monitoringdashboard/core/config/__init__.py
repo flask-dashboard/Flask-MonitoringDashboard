@@ -24,11 +24,10 @@ class Config(object):
     """
 
     def __init__(self):
-        """
-            Sets the default values for the project
-        """
+        """Sets the default values for the project."""
         # dashboard
         self.version = '1.0'
+        self.blueprint_name = 'dashboard'
         self.link = 'dashboard'
         self.monitor_level = 1
         self.outlier_detection_constant = 2.5
@@ -42,8 +41,6 @@ class Config(object):
         # authentication
         self.username = 'admin'
         self.password = 'admin'
-        self.guest_username = ['guest']
-        self.guest_password = ['guest_password']
         self.security_token = 'cc83733cb0af8b884ff6577086b87909'
 
         # visualization
@@ -67,6 +64,8 @@ class Config(object):
                 showing differences in execution times of a function over a period of time.
             - GIT = If you're using git, then it is easier to set the location to the .git-folder,
                 The location is relative to the config-file.
+            - BLUEPRINT_NAME: The name of the blueprint the FMD adds to the Flask app.
+                default: "dashboard"
             - CUSTOM_LINK: The dashboard can be visited at localhost:5000/{CUSTOM_LINK}.
             - MONITOR_LEVEL: The level for monitoring your endpoints. The default value is 3.
             - OUTLIER_DETECTION_CONSTANT: When the execution time is more than this constant *
@@ -82,8 +81,6 @@ class Config(object):
             - USERNAME: for logging into the dashboard, a username and password is required. The
                 username can be set using this variable.
             - PASSWORD: same as for the username, but this is the password variable.
-            - GUEST_USERNAME: A guest can only see the results, but cannot configure/download data.
-            - GUEST_PASSWORD: A guest can only see the results, but cannot configure/download data.
             - SECURITY_TOKEN: Used for getting the data in /get_json_data
 
             The config_file must at least contains the following variables in section 'database':
@@ -126,6 +123,8 @@ class Config(object):
 
             # parse 'dashboard'
             self.version = parse_version(parser, 'dashboard', self.version)
+            self.blueprint_name = parse_string(parser, 'dashboard', 'BLUEPRINT_NAME',
+                                               self.blueprint_name)
             self.link = parse_string(parser, 'dashboard', 'CUSTOM_LINK', self.link)
             self.monitor_level = parse_literal(
                 parser, 'dashboard', 'MONITOR_LEVEL', self.monitor_level
@@ -145,12 +144,6 @@ class Config(object):
             self.password = parse_string(parser, 'authentication', 'PASSWORD', self.password)
             self.security_token = parse_string(
                 parser, 'authentication', 'SECURITY_TOKEN', self.security_token
-            )
-            self.guest_username = parse_string(
-                parser, 'authentication', 'GUEST_USERNAME', self.guest_username
-            )
-            self.guest_password = parse_literal(
-                parser, 'authentication', 'GUEST_PASSWORD', self.guest_password
             )
 
             # database

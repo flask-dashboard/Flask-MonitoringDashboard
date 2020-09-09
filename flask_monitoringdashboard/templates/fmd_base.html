@@ -2,19 +2,16 @@
 <html lang="en" ng-app="fmdApp">
 <head>
     <title>Flask-MonitoringDashboard</title>
-    <base href="{{ url_for('dashboard.index') }}">
+    <base href="{{ url_for(blueprint_name + '.index') }}">
     <meta charset="utf-8">
 
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.1.1/css/bootstrap.css"
-          rel="stylesheet" type="text/css">
-    <link href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css"
-          rel="stylesheet" type="text/css">
-    <link href="https://cdn.datatables.net/1.10.19/css/dataTables.bootstrap4.min.css"
-          rel="stylesheet" type="text/css">
-    <link href="{{ url_for('dashboard.static', filename='css/custom.css') }}"
-          rel="stylesheet" type="text/css">
-    <link rel="shortcut icon" href="{{ url_for('dashboard.static', filename='img/favicon.ico') }}"/>
+
+    <link rel="stylesheet"
+          href="{{ url_for(blueprint_name + '.static', filename='css/app.css') }}"/>
+
+    <link rel="shortcut icon"
+          href="{{ url_for(blueprint_name + '.static', filename='img/favicon.ico') }}"/>
 </head>
 
 {% block body %}
@@ -42,8 +39,8 @@
             </ul>
             <ul class="navbar-nav ml-auto">
                 <li class="nav-item">
-                    <a class="nav-link" data-toggle="modal" data-target="#exampleModal">
-                        <i class="fa fa-fw fa-sign-out"></i>Logout</a>
+                    <a class="nav-link" data-toggle="modal" data-target="#logoutModal">
+                        <i class="fas fa-sign-out-alt"></i>Logout</a>
                 </li>
             </ul>
         </div>
@@ -56,84 +53,24 @@
         <footer class="sticky-footer">
             <div class="container">
                 <div class="text-center">
-                    Click <a target="_blank" href="http://flask-monitoringdashboard.readthedocs.io">here</a> to read
-                    advanced documentation.
+                    Click <a target="_blank"
+                             href="http://flask-monitoringdashboard.readthedocs.io">here</a>
+                    to read advanced documentation.
                 </div>
             </div>
         </footer>
 
-        <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
-             aria-hidden="true">
-            <div class="modal-dialog" role="document">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="exampleModalLabel">Logout?</h5>
-                        <button class="close" type="button" data-dismiss="modal" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
-                        </button>
-                    </div>
-                    <div class="modal-body">Are you sure you want to logout?</div>
-                    <div class="modal-footer">
-                        <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
-                        <button class="btn btn-primary"
-                                onclick="document.location.href='{{ url_for('dashboard.logout') }}';">Logout
-                        </button>
-                    </div>
-                </div>
-            </div>
-        </div>
+        <modal name="'logout'" title="'Logout?'">
+            <p>Are you sure you want to logout?</p>
+        </modal>
     </div>
 {% endblock %}
 
-<script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
-<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js"></script>
-<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.bundle.min.js"></script>
-<script src="https://cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js"></script>
-<script src="https://cdn.datatables.net/1.10.18/js/dataTables.bootstrap4.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.7.5/angular.js"></script>
 <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.7.5/angular-route.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/4.12.0/d3.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.24.0/moment.min.js"
-         `integrity="sha256-4iQZ6BVL4qNKlQ27TExEhBN1HFPvAvAMbFavKKosSWQ=" crossorigin="anonymous"></script>
 <script src="https://unpkg.com/sunburst-chart"></script>
 
-<script src="{{ url_for('dashboard.static', filename='js/angular-datatables.js') }}"></script>
-<script src="{{ url_for('dashboard.static', filename='js/custom.js') }}"></script>
-<script src="{{ url_for('dashboard.static', filename='js/app.js') }}"></script>
-
-<!-- Services -->
-<script src="{{ url_for('dashboard.static', filename='js/services/endpoint.js') }}"></script>
-<script src="{{ url_for('dashboard.static', filename='js/services/form.js') }}"></script>
-<script src="{{ url_for('dashboard.static', filename='js/services/info.js') }}"></script>
-<script src="{{ url_for('dashboard.static', filename='js/services/menu.js') }}"></script>
-<script src="{{ url_for('dashboard.static', filename='js/services/pagination.js') }}"></script>
-<script src="{{ url_for('dashboard.static', filename='js/services/plotly.js') }}"></script>
-
-<!-- Controllers -->
-<script src="{{ url_for('dashboard.static', filename='js/controllers/apiPerformance.js') }}"></script>
-<script src="{{ url_for('dashboard.static', filename='js/controllers/configuration.js') }}"></script>
-<script src="{{ url_for('dashboard.static', filename='js/controllers/customGraph.js') }}"></script>
-<script src="{{ url_for('dashboard.static', filename='js/controllers/dailyUtilization.js') }}"></script>
-<script src="{{ url_for('dashboard.static', filename='js/controllers/reporting.js') }}"></script>
-
-<script src="{{ url_for('dashboard.static', filename='js/controllers/endpointGroupedProfiler.js') }}"></script>
-<script src="{{ url_for('dashboard.static', filename='js/controllers/endpointHourlyLoad.js') }}"></script>
-<script src="{{ url_for('dashboard.static', filename='js/controllers/endpointOutlier.js') }}"></script>
-<script src="{{ url_for('dashboard.static', filename='js/controllers/endpointProfiler.js') }}"></script>
-<script src="{{ url_for('dashboard.static', filename='js/controllers/endpointUsers.js') }}"></script>
-<script src="{{ url_for('dashboard.static', filename='js/controllers/endpointVersion.js') }}"></script>
-<script src="{{ url_for('dashboard.static', filename='js/controllers/endpointVersionIP.js') }}"></script>
-<script src="{{ url_for('dashboard.static', filename='js/controllers/endpointVersionUser.js') }}"></script>
-<script src="{{ url_for('dashboard.static', filename='js/controllers/hourlyLoad.js') }}"></script>
-<script src="{{ url_for('dashboard.static', filename='js/controllers/statusCodeDistribution.js') }}"></script>
-<script src="{{ url_for('dashboard.static', filename='js/controllers/monitorLevel.js') }}"></script>
-<script src="{{ url_for('dashboard.static', filename='js/controllers/multiVersion.js') }}"></script>
-<script src="{{ url_for('dashboard.static', filename='js/controllers/overview.js') }}"></script>
-<script src="{{ url_for('dashboard.static', filename='js/controllers/util.js') }}"></script>
-
-<script src="{{ url_for('dashboard.static', filename='js/directives.js') }}"></script>
-<script src="{{ url_for('dashboard.static', filename='js/filters.js') }}"></script>
-
+<script src="{{ url_for(blueprint_name + '.static', filename='js/app.js') }}"></script>
 </body>
 </html>

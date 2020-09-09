@@ -3,10 +3,10 @@ import threading
 from flask import request
 
 from flask_monitoringdashboard.core.group_by import get_group_by
-from flask_monitoringdashboard.core.profiler.baseProfiler import BaseProfiler
-from flask_monitoringdashboard.core.profiler.outlierProfiler import OutlierProfiler
-from flask_monitoringdashboard.core.profiler.performanceProfiler import PerformanceProfiler
-from flask_monitoringdashboard.core.profiler.stacktraceProfiler import StacktraceProfiler
+from flask_monitoringdashboard.core.profiler.base_profiler import BaseProfiler
+from flask_monitoringdashboard.core.profiler.outlier_profiler import OutlierProfiler
+from flask_monitoringdashboard.core.profiler.performance_profiler import PerformanceProfiler
+from flask_monitoringdashboard.core.profiler.stacktrace_profiler import StacktraceProfiler
 
 
 def start_thread_last_requested(endpoint):

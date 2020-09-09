@@ -1,7 +1,7 @@
-"""
-Contains custom commands for the Flask-MonitoringDashboard
+"""Contains custom commands for the Flask-MonitoringDashboard
 For a list of all commands, open a terminal and type:
-    flask fmd --help
+
+>>> flask fmd --help
 """
 
 import click

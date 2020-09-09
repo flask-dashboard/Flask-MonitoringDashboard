@@ -23,5 +23,5 @@ def custom_graphs():
 def custom_graph(graph_id, start_date, end_date):
     start_date = datetime.datetime.strptime(start_date, '%Y-%m-%d')
     end_date = datetime.datetime.strptime(end_date, '%Y-%m-%d')
-    with session_scope() as db_session:
-        return jsonify(get_graph_data(db_session, graph_id, start_date, end_date))
+    with session_scope() as session:
+        return jsonify(get_graph_data(session, graph_id, start_date, end_date))

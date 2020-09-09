@@ -1,0 +1,51 @@
+{
+  "name": "frontend",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "webpack --watch",
+    "build": "webpack --mode production"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@fortawesome/fontawesome-free": "^5.14.0",
+    "angular": "^1.8.0",
+    "angular-datatables": "^9.0.2",
+    "angular-route": "^1.8.0",
+    "bootstrap": "^4.5.0",
+    "css-loader": "^3.6.0",
+    "d3": "^4.13.0",
+    "datatables": "^1.10.18",
+    "datatables.net-bs4": "^1.10.21",
+    "datatables.net-dt": "^1.10.21",
+    "extract-loader": "^5.1.0",
+    "file-loader": "^6.0.0",
+    "jquery": "^3.5.1",
+    "moment": "^2.27.0",
+    "node-sass": "^4.13.1",
+    "plotly.js": "^1.54.6",
+    "plotly.js-basic-dist": "^1.54.6",
+    "plotly.js-basic-dist-min": "^1.54.6",
+    "plotly.js-cartesian-dist": "^1.54.6",
+    "plotly.js-dist": "^1.54.6",
+    "popper.js": "^1.16.1",
+    "postcss-loader": "^3.0.0",
+    "sass-loader": "^8.0.2",
+    "style-loader": "^1.2.1",
+    "sunburst-chart": "^1.11.1",
+    "url-loader": "^4.1.0"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.10.5",
+    "@babel/preset-env": "^7.10.4",
+    "@babel/preset-react": "^7.10.4",
+    "babel-loader": "^8.1.0",
+    "font-awesome": "^4.7.0",
+    "webpack": "^4.43.0",
+    "webpack-cli": "^3.3.12"
+  }
+}

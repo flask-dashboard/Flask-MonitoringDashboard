@@ -32,8 +32,8 @@ def create_db_session(db_url, clean=False):
 
 
 @contextmanager
-def session_scope(db_session):
-    session = db_session()
+def session_scope(session):
+    session = session()
     try:
         yield session
         session.commit()
@@ -45,27 +45,27 @@ def session_scope(db_session):
 
 
 def get_row_count(db_session_old, entity_class):
-    with session_scope(db_session_old) as db_session:
-        count = db_session.query(entity_class).count()
-        db_session.expunge_all()
+    with session_scope(db_session_old) as session:
+        count = session.query(entity_class).count()
+        session.expunge_all()
     return count
 
 
 def get_old_instances(db_session_old, entity_class, start, end):
-    with session_scope(db_session_old) as db_session:
-        old_instances = db_session.query(entity_class).slice(start, end).all()
-        db_session.expunge_all()
+    with session_scope(db_session_old) as session:
+        old_instances = session.query(entity_class).slice(start, end).all()
+        session.expunge_all()
     return old_instances
 
 
 def migrate_batch(old_instances, db_session_new, entity_class):
     new_instances = []
-    with session_scope(db_session_new) as db_session:
+    with session_scope(db_session_new) as session:
         for (index, old_instance) in enumerate(old_instances):
             # _sa_instance_state is a non-db value used internally by SQLAlchemy
             del old_instance.__dict__['_sa_instance_state']
             new_instances.append(entity_class(**old_instance.__dict__))
-        db_session.bulk_save_objects(new_instances)
+        session.bulk_save_objects(new_instances)
 
 
 def migrate_all(db_session_old, db_session_new, entity_class, count):

@@ -1,0 +1,6 @@
+codecov:
+  token: bda4fd4f-e8ae-4cdd-8b9a-3bb3a0932003
+
+coverage:
+  status:
+    patch: off

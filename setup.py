@@ -22,11 +22,12 @@ with open('flask_monitoringdashboard/constants.json', 'r') as f:
 setuptools.setup(
     name="Flask-MonitoringDashboard",
     version=constants['version'],
+    setup_requires=['setuptools_scm'],
     packages=setuptools.find_packages(),
     include_package_data=True,
     platforms='Any',
     zip_safe=False,
-    test_suite='flask_monitoringdashboard.test.get_test_suite',
+    test_suite='tests.get_test_suite',
     url='https://github.com/flask-dashboard/Flask-MonitoringDashboard',
     author=constants['author'],
     author_email=constants['email'],
@@ -45,6 +46,7 @@ setuptools.setup(
         'Programming Language :: Python :: 3.5',
         'Programming Language :: Python :: 3.6',
         'Programming Language :: Python :: 3.7',
+        'Programming Language :: Python :: 3.8',
         'Framework :: Flask',
     ],
     project_urls={
