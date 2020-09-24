@@ -2,7 +2,17 @@ export function applyFilters(app) {
 
     app.filter('duration_ms', function () {
         return function (time) {
-            return Math.round(parseFloat(time) * 10) / 10;
+            const t = parseFloat(time);
+            // only show 0 for actual 0 values
+            if (t === 0){
+                return t
+            }
+            // calculate how many decimals to show for really small numbers
+            let decimalsPow10 = 10;
+            while (Math.round(t * decimalsPow10) === 0) {
+                decimalsPow10 *= 10;
+            }
+            return Math.round(t * decimalsPow10) / decimalsPow10;
         }
     });
 
