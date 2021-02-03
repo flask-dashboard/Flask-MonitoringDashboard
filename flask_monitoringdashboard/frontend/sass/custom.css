@@ -508,3 +508,9 @@ footer.sticky-footer {
     vertical-align: super;
     font-size: small;
 }
+
+@media (min-width: 1500px) {
+    .container {
+        max-width: 1600px !important;
+    }
+}
