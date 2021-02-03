@@ -78,6 +78,11 @@ def bind(app, schedule=True, micro=False):
 
     atexit.register(flush_cache)
 
+    if micro:
+        @app.teardown_request
+        def teardown(_):
+            flush_cache()
+
 
 def add_graph(title, func, trigger="interval", **schedule):
     """Add a custom graph to the dashboard. You must specify the following arguments:
