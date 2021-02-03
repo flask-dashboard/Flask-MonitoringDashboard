@@ -5,6 +5,7 @@ from sqlalchemy import and_
 
 from flask_monitoringdashboard import config
 from flask_monitoringdashboard.core import cache
+from flask_monitoringdashboard.core.blueprints import get_blueprint
 from flask_monitoringdashboard.core.colors import get_color
 from flask_monitoringdashboard.core.measurement import add_decorator
 from flask_monitoringdashboard.core.timezone import to_local_datetime, to_utc_datetime
@@ -60,6 +61,7 @@ def get_endpoint_overview(session):
         {
             'id': endpoint.id,
             'name': endpoint.name,
+            'blueprint': get_blueprint(endpoint.name),
             'monitor': endpoint.monitor_level,
             'color': get_color(endpoint.name),
             'hits-today': get_value(hits_today, endpoint.id),

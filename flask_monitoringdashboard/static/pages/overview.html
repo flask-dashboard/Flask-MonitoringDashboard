@@ -31,7 +31,7 @@
             </ul>
 
             <div class="row" style="margin-bottom: 7px">
-                <div class="col-md-6 col-sm-12">
+                <div class="col-md-3 col-sm-12">
                     Show
                     <select style="width: 60px; display: inline-block;"
                             class='form-control form-control-sm' name="ddwa"
@@ -44,7 +44,18 @@
                     entries
                 </div>
 
-                <div class="col-md-6 col-sm-12" style="text-align: right">
+                <div class="col-md-6 col-sm-12">
+                    Blueprint:
+                    <select style='width: 180px; display: inline-block;' ng-model="slectedBlueprint"
+                            class="form-control form-control-sm">
+                        <option ng-repeat="blueprint in blueprints track by $index"
+                                value="{{ blueprint }}">
+                            {{ blueprint }}
+                        </option>
+                    </select>
+                </div>
+
+                <div class="col-md-3 col-sm-12" style="text-align: right">
                     Search:
                     <input ng-model="searchQuery"
                            style="display: inline-block; width: 180px"
