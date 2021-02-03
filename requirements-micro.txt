@@ -1,0 +1,17 @@
+click
+apscheduler
+flask>=0.9            # for monitoring the web-service
+sqlalchemy>=1.1.9     # for database support
+configparser          # for parsing the config-file
+psutil                # for logging extra CPU-info
+colorhash             # for hashing a string into a color
+numpy                 # for computing median and other stats
+pytz                  # for timezone info
+tzlocal               # for figuring out the local timezone
+
+# pinning this to avoid flask pulling in a later one which breaks python3.6
+jinja2==2.11.1; python_version < '3.7'
+jinja2; python_version >= '3.7'
+# for statistical analysis of latency measurements
+# scipy<1.6.0; python_version < '3.7'
+# scipy; python_version >= '3.7'

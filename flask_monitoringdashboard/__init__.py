@@ -29,12 +29,13 @@ config = Config()
 blueprint = Blueprint('dashboard', __name__, template_folder=loc() + 'templates')
 
 
-def bind(app, schedule=True):
+def bind(app, schedule=True, include_views=True):
     """Binding the app to this object should happen before importing the routing-
     methods below. Thus, the importing statement is part of this function.
 
     :param app: the app for which the performance has to be tracked
     :param schedule: flag telling if the background scheduler should be started
+    :param include_views: flag telling if the views should be added - default True - False if you want only the db stuff
     """
     blueprint.name = config.blueprint_name
     config.app = app
@@ -44,18 +45,19 @@ def bind(app, schedule=True):
         app.secret_key = 'my-secret-key'
 
     # Add all route-functions to the blueprint
-    from flask_monitoringdashboard.views import (
-        deployment,
-        custom,
-        endpoint,
-        outlier,
-        request,
-        profiler,
-        version,
-        auth,
-        reporting,
-    )
-    import flask_monitoringdashboard.views
+    if include_views:
+        from flask_monitoringdashboard.views import (
+            deployment,
+            custom,
+            endpoint,
+            outlier,
+            request,
+            profiler,
+            version,
+            auth,
+            reporting,
+        )
+        import flask_monitoringdashboard.views
 
     # Add wrappers to the endpoints that have to be monitored
     from flask_monitoringdashboard.core.measurement import init_measurement
