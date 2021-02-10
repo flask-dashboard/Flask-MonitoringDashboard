@@ -1,12 +1,2 @@
-click
-apscheduler
-flask>=0.9            # for monitoring the web-service
-jinja2==2.11.1		  # pinning this to avoid flask pulling in a later one which breaks python3.6
-sqlalchemy>=1.1.9     # for database support
-configparser          # for parsing the config-file
-psutil                # for logging extra CPU-info
-colorhash             # for hashing a string into a color
-numpy                 # for computing median and other stats
-pytz                  # for timezone info
-tzlocal               # for figuring out the local timezone
+-r requirements-micro.txt
 scipy                 # for statistical analysis of latency measurements
