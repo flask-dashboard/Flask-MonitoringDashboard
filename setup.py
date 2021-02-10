@@ -1,9 +1,16 @@
 import json
 import os
+import sys
 
 import setuptools
 
 loc = os.path.dirname(os.path.abspath(__file__))
+
+micro = False
+if '--micro' in sys.argv:
+    micro = True
+    sys.argv.remove('--micro')
+    print('In micro mode')
 
 
 def get_description():
@@ -13,18 +20,43 @@ def get_description():
         return info + '\n\n' + changelog.read()
 
 
-with open(loc + '/requirements.txt') as f:
+with open(loc + '/requirements-micro.txt') as f:
     required = f.read().splitlines()
+if not micro:
+    with open(loc + '/requirements.txt') as f:
+        for line in f:
+            line = line.strip()
+            if line != '-r requirements-micro.txt':
+                required.append(line)
 
 with open('flask_monitoringdashboard/constants.json', 'r') as f:
     constants = json.load(f)
 
+if micro:
+    packages = setuptools.find_packages(include=[
+        'flask_monitoringdashboard',
+        'flask_monitoringdashboard.database',
+        'flask_monitoringdashboard.core',
+        'flask_monitoringdashboard.core.config',
+        'flask_monitoringdashboard.core.custom_graph',
+        'flask_monitoringdashboard.core.profiler',
+        'flask_monitoringdashboard.core.profiler.*',
+    ],
+        exclude=['flask_monitoringdashboard.controllers.*',
+                 'flask_monitoringdashboard.frontend.*',
+                 'flask_monitoringdashboard.views.*',
+                 'flask_monitoringdashboard.static.*',
+                 'tests', 'test.*']
+    )
+else:
+    packages = setuptools.find_packages()
+
 setuptools.setup(
-    name="Flask-MonitoringDashboard",
+    name="Flask-MonitoringDashboard" if not micro else "Flask-MonitoringDashboard-Micro",
     version=constants['version'],
     setup_requires=['setuptools_scm'],
-    packages=setuptools.find_packages(),
-    include_package_data=True,
+    packages=packages,
+    include_package_data=not micro,  # This is all the html files and things which are not needed in micro mode
     platforms='Any',
     zip_safe=False,
     test_suite='tests.get_test_suite',
