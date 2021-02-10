@@ -509,7 +509,7 @@ footer.sticky-footer {
     font-size: small;
 }
 
-@media (min-width: 1500px) {
+@media (min-width: 1644px) {
     .container {
         max-width: 1600px !important;
     }
