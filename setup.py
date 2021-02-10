@@ -24,10 +24,7 @@ with open(loc + '/requirements-micro.txt') as f:
     required = f.read().splitlines()
 if not micro:
     with open(loc + '/requirements.txt') as f:
-        for line in f:
-            line = line.strip()
-            if line != '-r requirements-micro.txt':
-                required.append(line)
+        required.extend([req for req in f.read().splitlines() if req != '-r requirements-micro.txt'])
 
 with open('flask_monitoringdashboard/constants.json', 'r') as f:
     constants = json.load(f)
