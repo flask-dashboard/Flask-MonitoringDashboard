@@ -12,6 +12,3 @@ tzlocal               # for figuring out the local timezone
 # pinning this to avoid flask pulling in a later one which breaks python3.6
 jinja2==2.11.1; python_version < '3.7'
 jinja2; python_version >= '3.7'
-# for statistical analysis of latency measurements
-# scipy<1.6.0; python_version < '3.7'
-# scipy; python_version >= '3.7'
