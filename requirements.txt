@@ -1,7 +1,7 @@
 click
 apscheduler
 flask>=0.9            # for monitoring the web-service
-jinja2==2.11.1		  # pinning this to avoid flask pulling in a later one which breaks python3.6
+jinja2==2.11.3		  # pinning this to avoid flask pulling in a later one which breaks python3.6
 sqlalchemy>=1.1.9     # for database support
 configparser          # for parsing the config-file
 psutil                # for logging extra CPU-info
