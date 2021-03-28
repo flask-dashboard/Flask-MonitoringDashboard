@@ -12,12 +12,19 @@ export function OverviewController($scope, $http, $location, menuService, endpoi
     $scope.searchQuery = '';
     $scope.pageSize = '10';
     $scope.currentPage = 0;
+    $scope.blueprints = [''];
+    $scope.slectedBlueprint = '';
 
     $scope.toggleHits = function () {
         $scope.isHits = !$scope.isHits;
     };
 
     $http.get('api/overview').then(function (response) {
+        response.data.forEach((endpoint) => {
+            if (!$scope.blueprints.includes(endpoint.blueprint)) {
+                $scope.blueprints.push(endpoint.blueprint)
+            }
+        })
         $scope.table = response.data;
     });
 
@@ -25,9 +32,13 @@ export function OverviewController($scope, $http, $location, menuService, endpoi
         const start = Number(pageNumber) * $scope.pageSize;
         const end = (Number(pageNumber) + 1) * Number($scope.pageSize);
 
-        return $scope.table
+        let items = $scope.table
             .filter(item => item.name.includes($scope.searchQuery))
-            .slice(start, end);
+        if ($scope.slectedBlueprint) {
+            items = items.filter(item => item.blueprint===$scope.slectedBlueprint)
+        }
+
+        return items.slice(start, end);
     }
 
     $scope.getFilteredItems = function () {
