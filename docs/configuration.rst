@@ -60,6 +60,11 @@ file that contains the entry point of the app. The following properties can be c
    OUTLIER_DETECTION_CONSTANT=2.5
    SAMPLING_PERIOD=20
    ENABLE_LOGGING=True
+   BRAND_NAME=Flask Monitoring Dashboard
+   TITLE_NAME=Flask-MonitoringDashboard
+   DESCRIPTION=Automatically monitor the evolving performance of Flask/Python web services
+   SHOW_LOGIN_BANNER=True
+   SHOW_LOGIN_FOOTER=True
 
    [authentication]
    USERNAME=admin
@@ -102,6 +107,19 @@ Dashboard
 
 - **ENABLE_LOGGING:** Boolean if you want additional logs to be printed to the console. Default
   value is False.
+
+- **BRAND_NAME:** The name displayed in the Dashboard Navbar. Default value is 'Flask Monitoring Dashboard'.
+
+- **TITLE_NAME:** The name displayed in the browser tab. Default value is 'Flask-MonitoringDashboard'.
+
+- **DESCRIPTION:** The text displayed in center of the Dashboard Navbar. Default value is 
+  'Automatically monitor the evolving performance of Flask/Python web services'.
+
+- **SHOW_LOGIN_BANNER:** Boolean if you want the login page to show the 'Flask Monitoring Dashboard' logo and title. 
+  Default value is True.
+
+- **SHOW_LOGIN_FOOTER:** Boolean if you want the login page to show a link to the official documentation. 
+  Default value is True.
 
 Authentication
 ~~~~~~~~~~~~~~
