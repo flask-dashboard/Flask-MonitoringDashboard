@@ -23,4 +23,9 @@ def static(filename):
 @blueprint.route('/<path:path>')  # Catch-All URL: http://flask.pocoo.org/snippets/57/
 @secure
 def index(path):
-    return render_template('fmd_base.html', blueprint_name=config.blueprint_name)
+    return render_template('fmd_base.html', 
+        blueprint_name=config.blueprint_name, 
+        brand_name=config.brand_name, 
+        title_name=config.title_name,
+        description=config.description,
+    )
