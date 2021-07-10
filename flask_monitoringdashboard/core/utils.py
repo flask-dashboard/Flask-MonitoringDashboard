@@ -1,5 +1,4 @@
 import numpy as np
-from flask import url_for
 from werkzeug.routing import BuildError
 
 from flask_monitoringdashboard import config
@@ -68,7 +67,7 @@ def get_url(end):
     :return: the url_for(end) or None,
     """
     try:
-        return url_for(end)
+        return config.url_for(end)
     except BuildError:
         return None
 

@@ -8,6 +8,8 @@ import os
 import pytz
 from tzlocal import get_localzone
 
+from flask import url_for as flask_url_for
+
 from flask_monitoringdashboard.core.config.parser import (
     parse_string,
     parse_version,
@@ -59,16 +61,23 @@ class Config(object):
 
         # dependencies
         self.get_ip = None
+        self.url_for = flask_url_for
 
-    def inject_dependencies(self, get_ip=None):
+    def inject_dependencies(self, get_ip=None, url_for=None):
         """
             Injects certain dependencies into the Monitoring Dashboard for better integration.
             :param get_ip: a function that gets the appropriate client IP address inside a request
                 context. Overriding this allows you to provide the correct IP for logging purposes
                 in case your setup is running behind reverse proxies.
+            :param url_for: a function that takes on the role of Flask's url_for. This is useful
+                for cases where Flask's standard url_for is not sufficient or appropriate, such
+                as in a multi-host environment.
         """
         if get_ip:
             self.get_ip = get_ip
+
+        if url_for:
+            self.url_for = url_for
 
     def init_from(self, file=None, envvar=None, log_verbose=False):
         """

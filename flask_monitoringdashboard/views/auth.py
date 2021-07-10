@@ -1,5 +1,5 @@
 import flask
-from flask import redirect, render_template, url_for, request, jsonify
+from flask import redirect, render_template, request, jsonify
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm.exc import NoResultFound
 
@@ -20,7 +20,7 @@ def login():
     :return:
     """
     if flask.session.get(config.link + '_logged_in'):
-        return redirect(url_for(MAIN_PAGE))
+        return redirect(config.url_for(MAIN_PAGE))
 
     if request.method == 'POST':
         name = request.form['name']
@@ -29,8 +29,8 @@ def login():
         user = get_user(username=name, password=password)
         if user is not None:
             on_login(user=user)
-            return redirect(url_for(MAIN_PAGE))
-    return render_template('fmd_login.html', blueprint_name=config.blueprint_name)
+            return redirect(config.url_for(MAIN_PAGE))
+    return render_template('fmd_login.html', blueprint_name=config.blueprint_name, url_for=config.url_for)
 
 
 @blueprint.route('/logout')
