@@ -60,7 +60,7 @@ class Config(object):
         # dependencies
         self.get_ip = None
 
-    def inject_dependencies(self, get_ip=None, url_for=None):
+    def inject_dependencies(self, get_ip=None):
         """
             Injects certain dependencies into the Monitoring Dashboard for better integration.
             :param get_ip: a function that gets the appropriate client IP address inside a request
