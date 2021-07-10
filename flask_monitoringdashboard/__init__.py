@@ -68,7 +68,10 @@ def bind(app, schedule=True):
         custom_graph.init(app)
 
     # register the blueprint to the app
-    app.register_blueprint(blueprint, url_prefix='/' + config.link)
+    if config.host:
+        app.register_blueprint(blueprint, url_prefix='/' + config.link, host=config.host)
+    else:
+        app.register_blueprint(blueprint, url_prefix='/' + config.link)
 
     # flush cache to db before shutdown
     import atexit

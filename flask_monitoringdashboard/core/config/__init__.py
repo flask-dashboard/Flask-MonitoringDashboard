@@ -30,6 +30,7 @@ class Config(object):
         # dashboard
         self.version = '1.0'
         self.blueprint_name = 'dashboard'
+        self.host = None
         self.link = 'dashboard'
         self.monitor_level = 1
         self.outlier_detection_constant = 2.5
@@ -88,7 +89,8 @@ class Config(object):
                 The location is relative to the config-file.
             - BLUEPRINT_NAME: The name of the blueprint the FMD adds to the Flask app.
                 default: "dashboard"
-            - CUSTOM_LINK: The dashboard can be visited at localhost:5000/{CUSTOM_LINK}.
+            - HOST: The dashboard will use this host.
+            - CUSTOM_LINK: The dashboard can be visited at {HOST}/{CUSTOM_LINK}.
             - MONITOR_LEVEL: The level for monitoring your endpoints. The default value is 3.
             - OUTLIER_DETECTION_CONSTANT: When the execution time is more than this constant *
                 average, extra information is logged into the database. A default value for this
@@ -147,6 +149,7 @@ class Config(object):
             self.version = parse_version(parser, 'dashboard', self.version)
             self.blueprint_name = parse_string(parser, 'dashboard', 'BLUEPRINT_NAME',
                                                self.blueprint_name)
+            self.host = parse_string(parser, 'dashboard', 'HOST', self.host)
             self.link = parse_string(parser, 'dashboard', 'CUSTOM_LINK', self.link)
             self.monitor_level = parse_literal(
                 parser, 'dashboard', 'MONITOR_LEVEL', self.monitor_level
