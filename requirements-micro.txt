@@ -1,0 +1,10 @@
+click
+apscheduler
+flask>=0.9            # for monitoring the web-service
+sqlalchemy>=1.1.9     # for database support
+configparser          # for parsing the config-file
+psutil                # for logging extra CPU-info
+colorhash             # for hashing a string into a color
+numpy                 # for computing median and other stats
+pytz                  # for timezone info
+tzlocal==2.0          # for figuring out the local timezone; frozen to 2.0 because 3.0 conflicts the latest version of appscheduler (as of jan.2020)
