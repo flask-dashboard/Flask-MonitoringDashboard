@@ -82,14 +82,13 @@ class OutlierProfiler(threading.Thread):
     def stop_by_profiler(self):
         self._exit.set()
 
-    def add_outlier(self, request_id):
+    def add_outlier(self, session, request_id):
         if self._memory:
-            with session_scope() as session:
-                add_outlier(
-                    session,
-                    request_id,
-                    self._cpu_percent,
-                    self._memory,
-                    self._stacktrace,
-                    self._request,
-                )
+            add_outlier(
+                session,
+                request_id,
+                self._cpu_percent,
+                self._memory,
+                self._stacktrace,
+                self._request,
+            )

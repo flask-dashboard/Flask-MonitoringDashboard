@@ -33,6 +33,11 @@ class Config(object):
         self.outlier_detection_constant = 2.5
         self.sampling_period = 5 / 1000.0
         self.enable_logging = False
+        self.brand_name = 'Flask Monitoring Dashboard'
+        self.title_name = 'Flask-MonitoringDashboard'
+        self.description = 'Automatically monitor the evolving performance of Flask/Python web services'
+        self.show_login_banner = True
+        self.show_login_footer = True
 
         # database
         self.database_name = 'sqlite:///flask_monitoringdashboard.db'
@@ -57,6 +62,19 @@ class Config(object):
         # store the Flask app
         self.app = None
 
+        # dependencies
+        self.get_ip = None
+
+    def inject_dependencies(self, get_ip=None):
+        """
+            Injects certain dependencies into the Monitoring Dashboard for better integration.
+            :param get_ip: a function that gets the appropriate client IP address inside a request
+                context. Overriding this allows you to provide the correct IP for logging purposes
+                in case your setup is running behind reverse proxies.
+        """
+        if get_ip:
+            self.get_ip = get_ip
+
     def init_from(self, file=None, envvar=None, log_verbose=False):
         """
             The config_file must at least contains the following variables in section 'dashboard':
@@ -75,6 +93,16 @@ class Config(object):
                 If this value is not set, the profiler continuously monitors.
             - ENABLE_LOGGING: Boolean if you want additional logs to be printed to the console.
             Default value is False
+            - BRAND_NAME: The name displayed in the Dashboard Navbar. 
+            Default value is 'Flask Monitoring Dashboard'
+            - TITLE_NAME: The name displayed in the browser tab. 
+            Default value is 'Flask-MonitoringDashboard'
+            - DESCRIPTION: The text displayed in center of the Dashboard Navbar. 
+            Default value is 'Automatically monitor the evolving performance of Flask/Python web services'
+            - SHOW_LOGIN_BANNER: Boolean if you want the login page to show the 'Flask Monitoring Dashboard' logo and title. 
+            Default value is True
+            - SHOW_LOGIN_FOOTER: Boolean if you want the login page to show a link to the official documentation. 
+            Default value is True
 
             The config_file must at least contains the following variables in section
             'authentication':
@@ -138,6 +166,11 @@ class Config(object):
             self.enable_logging = parse_bool(
                 parser, 'dashboard', 'ENABLE_LOGGING', self.enable_logging
             )
+            self.brand_name = parse_string(parser, 'dashboard', 'BRAND_NAME', self.brand_name)
+            self.title_name = parse_string(parser, 'dashboard', 'TITLE_NAME', self.title_name)
+            self.description = parse_string(parser, 'dashboard', 'DESCRIPTION', self.description)
+            self.show_login_banner = parse_bool(parser, 'dashboard', 'SHOW_LOGIN_BANNER', self.show_login_banner)
+            self.show_login_footer = parse_bool(parser, 'dashboard', 'SHOW_LOGIN_FOOTER', self.show_login_footer)
 
             # parse 'authentication'
             self.username = parse_string(parser, 'authentication', 'USERNAME', self.username)

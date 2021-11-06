@@ -24,6 +24,7 @@ def test_overview(dashboard_user, request_1, request_2, endpoint, session):
 
     assert data['monitor'] == 3
     assert data['name'] == endpoint.name
+    assert data['blueprint'] == endpoint.name
 
 
 @pytest.mark.parametrize('request_1__group_by', ['42'])

@@ -31,7 +31,7 @@
             </ul>
 
             <div class="row" style="margin-bottom: 7px">
-                <div class="col-md-6 col-sm-12">
+                <div class="col-md-3 col-sm-12">
                     Show
                     <select style="width: 60px; display: inline-block;"
                             class='form-control form-control-sm' name="ddwa"
@@ -44,7 +44,18 @@
                     entries
                 </div>
 
-                <div class="col-md-6 col-sm-12" style="text-align: right">
+                <div class="col-md-6 col-sm-12">
+                    Blueprint:
+                    <select style='width: 180px; display: inline-block;' ng-model="slectedBlueprint"
+                            class="form-control form-control-sm">
+                        <option ng-repeat="blueprint in blueprints track by $index"
+                                value="{{ blueprint }}">
+                            {{ blueprint }}
+                        </option>
+                    </select>
+                </div>
+
+                <div class="col-md-3 col-sm-12" style="text-align: right">
                     Search:
                     <input ng-model="searchQuery"
                            style="display: inline-block; width: 180px"
@@ -54,7 +65,7 @@
 
             <div class="row">
                 <div class="col-md-12">
-                    <table class="table table-hover table-bordered">
+                    <table class="table table-hover table-bordered table-sm">
                         <thead>
                         <tr>
                             <th></th>
@@ -76,23 +87,15 @@
                             ng-click="go('/endpoint/' + row.id + '/hourly_load')">
 
                             <td style="background-color: {{ row.color }}"></td>
-                            <td style="max-width: 200px;">{{ row.name }}</td>
-
-
-                            <td class="table_cell_with_error_count"
+                            <td class="align-middle">{{ row.name }}</td>
+                            <td class="table_cell_with_error_count align-middle"
                                 ng-show="isHits"
                                 style="text-align: right;"
                                 ng-attr-error-count="
-
-
-
-
                                         {{ (row['hits-today-errors'] > 0) ? row['hits-today-errors'] : ''}}">
                                 {{ row['hits-today'] | number }}
                             </td>
-
-
-                            <td class="table_cell_with_error_count"
+                            <td class="table_cell_with_error_count align-middle"
                                 ng-show="isHits" style="text-align: right;"
                                 ng-attr-error-count="
 
@@ -103,17 +106,17 @@
                                 {{ row['hits-week'] | number }}
                             </td>
 
-                            <td ng-show="isHits" style="text-align: right;">
+                            <td ng-show="isHits" style="text-align: right;" class="align-middle">
                                 {{ row['hits-overall'] | number }}
                             </td>
 
-                            <td ng-show="isHits==false"
+                            <td ng-show="isHits==false" class="align-middle"
                                 style="text-align: right;">{{ row['median-today'] | duration_ms }}</td>
-                            <td ng-show="isHits==false"
+                            <td ng-show="isHits==false" class="align-middle"
                                 style="text-align: right;">{{ row['median-week'] | duration_ms }}</td>
-                            <td ng-show="isHits==false"
+                            <td ng-show="isHits==false" class="align-middle"
                                 style="text-align: right;">{{ row['median-overall'] | duration_ms }}</td>
-                            <td style="text-align: center;">{{ row['last-accessed'] | dateDifference }}</td>
+                            <td style="text-align: center;" class="align-middle">{{ row['last-accessed'] | dateDifference }}</td>
                             <td ng-click="$event.stopPropagation()">
                                 <monitorlevel name="row.name"
                                               value="row.monitor"></monitorlevel>
