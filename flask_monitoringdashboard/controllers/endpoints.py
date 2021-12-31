@@ -144,10 +144,11 @@ def set_endpoint_rule(session, endpoint_name, monitor_level):
     """
     update_endpoint(session, endpoint_name, value=monitor_level)
 
-    # Remove wrapper
-    original = getattr(config.app.view_functions[endpoint_name], 'original', None)
-    if original:
-        config.app.view_functions[endpoint_name] = original
-    session.commit()
+    if config.app.view_functions.get(endpoint_name):
+        # Remove wrapper
+        original = getattr(config.app.view_functions[endpoint_name], 'original', None)
+        if original:
+            config.app.view_functions[endpoint_name] = original
+        session.commit()
 
-    add_decorator(get_endpoint_by_name(session, endpoint_name))
+        add_decorator(get_endpoint_by_name(session, endpoint_name))
