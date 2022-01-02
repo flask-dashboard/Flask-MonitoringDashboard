@@ -39,7 +39,6 @@ def get_grouped_profiler(session, endpoint_id):
     :return:
     """
     requests = get_grouped_profiled_requests(session, endpoint_id)
-    session.expunge_all()
 
     histogram = defaultdict(list)  # path -> [list of values]
     path_hash = PathHash()

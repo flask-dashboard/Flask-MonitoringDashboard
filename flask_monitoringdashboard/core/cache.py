@@ -94,7 +94,7 @@ def get_last_requested_overview():
     Get the last requested values from the cache for the overview page.
     """
     global memory_cache
-    return [(endpoint_name, endpoint_info.last_requested) for endpoint_name, endpoint_info in memory_cache.items]
+    return [(endpoint_name, endpoint_info.last_requested) for endpoint_name, endpoint_info in memory_cache.items()]
 
 
 def flush_cache():

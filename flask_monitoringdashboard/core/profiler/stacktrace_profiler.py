@@ -134,7 +134,8 @@ class StacktraceProfiler(threading.Thread):
         lines_returned = []
         try:
             fun = config.app.view_functions[self._endpoint.name]
-        except AttributeError:
+        except AttributeError as error:
+            print(error)
             fun = None
         if hasattr(fun, 'original'):
             original = fun.original

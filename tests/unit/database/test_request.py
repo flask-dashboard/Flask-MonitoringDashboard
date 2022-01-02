@@ -54,7 +54,10 @@ def test_get_endpoints(session, endpoint):
 
 @pytest.mark.parametrize('request_1__time_requested', [datetime(1970, 1, 1)])
 def test_get_date_of_first_request(session, request_1):
-    total_seconds = int(time.mktime(request_1.time_requested.timetuple()))
+    try:
+        total_seconds = int(time.mktime(request_1.time_requested.timetuple()))
+    except:
+        total_seconds = int((request_1.time_requested-datetime(1970, 1, 1)).total_seconds())
     assert get_date_of_first_request(session) == total_seconds
 
 

@@ -41,5 +41,4 @@ def add_background_job(func, graph_id, trigger, **schedule):
 def get_custom_graphs():
     with session_scope() as session:
         result = get_graphs(session)
-        session.expunge_all()
         return result

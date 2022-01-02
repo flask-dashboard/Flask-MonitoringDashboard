@@ -28,7 +28,10 @@ def add_value(session, graph_id, value):
 
 
 def get_graphs(session):
-    return session.query(CustomGraph).all()
+    try:
+        return session.query(CustomGraph).all()
+    finally:
+        session.expunge_all()
 
 
 def get_graph_data(session, graph_id, start_date, end_date):
