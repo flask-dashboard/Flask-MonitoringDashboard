@@ -45,7 +45,10 @@ def test_user_delete_normal_flow(dashboard_user, another_user, session):
     )
     assert response.status_code == 200
     assert response.data == b'OK'
-    assert session.query(User).filter(User.username == another_user.username).count() == 0
+    if getattr(User, "is_mongo_db", False):
+        assert User().get_collection(session).count_documents({"username": another_user.username}) == 0
+    else:
+        assert session.query(User).filter(User.username == another_user.username).count() == 0
 
 
 def test_user_delete_cannot_delete_itself(dashboard_user, user, session):
@@ -106,7 +109,8 @@ def test_user_create_success(dashboard_user, session, is_admin):
     assert response.status_code == 200
     assert response.data == b'OK'
 
-    user = session.query(User).filter(User.username == username).one()
+    user = session.query(User).filter(User.username == username).one() if not getattr(User, "is_mongo_db", False) else \
+        User(**User().get_collection(session).find_one({"username": username}))
     assert user.check_password(password)
     assert user.is_admin is is_admin
 
@@ -126,7 +130,7 @@ def test_user_edit_admin_secure(dashboard_user):
 
 
 def test_user_edit_user_id_does_not_exists(dashboard_user, session):
-    new_user_id = session.query(User).count() + 1
+    new_user_id = session.query(User).count() + 1 if not getattr(User, "is_mongo_db", False) else str(uuid.uuid4())
     response = dashboard_user.post('dashboard/api/user/edit', data={
         'user_id': new_user_id,
         'is_admin': 'true',
@@ -167,7 +171,9 @@ def test_user_edit_update_is_admin_only(dashboard_user, another_user, session):
     assert response.data == b'OK'
 
     # reload the user
-    user = session.query(User).filter(User.id == another_user.id).one()
+    user = session.query(User).filter(User.id == another_user.id).one() \
+        if not getattr(User, "is_mongo_db", False) else \
+        User(**User().get_collection(session).find_one({"id": another_user.id}))
     assert user.is_admin is True
 
 
@@ -185,6 +191,9 @@ def test_user_edit_update_password(dashboard_user, another_user, session):
     assert response.data == b'OK'
 
     # reload the user
-    user = session.query(User).filter(User.id == another_user.id).one()
+    user = session.query(User).filter(User.id == another_user.id).one() \
+        if not getattr(User, "is_mongo_db", False) else \
+        User(**User().get_collection(session).find_one({"id": another_user.id}))
+    print(user)
     assert user.is_admin is True
     assert user.check_password(new_password) is True

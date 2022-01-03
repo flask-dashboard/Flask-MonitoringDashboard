@@ -61,7 +61,10 @@ def users_list():
 @admin_secure
 def user_delete():
     """Delete the user in the database."""
-    user_id = int(request.form['user_id'])
+    try:
+        user_id = int(request.form['user_id'])
+    except ValueError:
+        user_id = request.form['user_id']
     if flask.session.get(config.link + '_user_id') == user_id:
         return jsonify({'message': 'Cannot delete itself.'}), BAD_REQUEST_STATUS
     delete_user(user_id)
@@ -93,7 +96,10 @@ def user_create():
 @admin_secure
 def user_edit():
     """Update the user in the database."""
-    user_id = int(request.form['user_id'])
+    try:
+        user_id = int(request.form['user_id'])
+    except ValueError:
+        user_id = request.form['user_id']
     user_is_admin = request.form['is_admin'] == 'true'
     if flask.session.get(config.link + '_user_id') == user_id and not user_is_admin:
         return jsonify({'message': 'Cannot remove the admin permissions from itself.'}), BAD_REQUEST_STATUS

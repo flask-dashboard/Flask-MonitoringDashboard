@@ -26,7 +26,10 @@ def test_get_latencies_sample(session, request_1, endpoint):
 
 
 def test_add_request(endpoint, session):
-    num_requests = len(endpoint.requests)
+    try:
+        num_requests = len(endpoint.requests)
+    except:
+        num_requests = 0
     add_request(
         session,
         duration=200,

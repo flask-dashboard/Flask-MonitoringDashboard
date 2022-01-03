@@ -35,9 +35,14 @@ class UserFactory(ModelFactory):
         instance.password = password_hash  # store the original password
         instance.set_password(password=password_hash)
         session = cls._meta.sqlalchemy_session
-        session.add(instance)
-        session.commit()
-        return instance
+        if getattr(Request, "is_mongo_db", False):
+            collection = instance.get_collection(session)
+            collection.insert_one(instance)
+            return instance
+        else:
+            session.add(instance)
+            session.commit()
+            return instance
 
 
 class EndpointFactory(ModelFactory):

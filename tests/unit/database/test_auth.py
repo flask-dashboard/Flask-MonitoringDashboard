@@ -3,11 +3,18 @@ from flask_monitoringdashboard.database.auth import get_user
 
 
 def test_get_user_adds_default(session, config):
-    session.query(User).delete()  # delete all existing users
-    session.commit()
+    # delete all existing users
+    if getattr(User, "is_mongo_db", False):
+        User().get_collection(session).delete_many({})
+    else:
+        session.query(User).delete()
+        session.commit()
     new_user = get_user(config.username, config.password)
 
-    assert session.query(User).count() == 1
+    if getattr(User, "is_mongo_db", False):
+        assert User().get_collection(session).count_documents({}) == 1
+    else:
+        assert session.query(User).count() == 1
 
     assert new_user.username == config.username
     assert new_user.check_password(config.password)

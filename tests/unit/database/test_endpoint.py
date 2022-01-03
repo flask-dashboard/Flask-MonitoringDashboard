@@ -33,5 +33,8 @@ def test_update_last_accessed(session, endpoint, timestamp):
 
 def test_endpoints(session, endpoint):
     endpoints = get_endpoints(session)
-    assert endpoints.count() == session.query(Endpoint).count()
+    if getattr(Endpoint, "is_mongo_db", False):
+        assert len(endpoints) == Endpoint().get_collection(session).count_documents({})
+    else:
+        assert endpoints.count() == session.query(Endpoint).count()
     assert [endpoint.id == e.id for e in endpoints]  # check that the endpoint is included.

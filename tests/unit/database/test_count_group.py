@@ -11,7 +11,13 @@ from flask_monitoringdashboard.database.count_group import (
 
 
 def test_count_requests_group(session, request_1, endpoint):
-    assert count_requests_group(session, Request.version_requested == request_1.version_requested) == [(endpoint.id, 1)]
+    assert count_requests_group(
+        session,
+        Request.version_requested == request_1.version_requested if not getattr(Request, "is_mongo_db", False) else
+        {
+            "version_requested": request_1.version_requested
+        }
+    ) == [(endpoint.id, 1)]
 
 
 @pytest.mark.parametrize('request_1__time_requested', [datetime(1970 + randint(0, 1000), 1, 2)])

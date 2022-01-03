@@ -10,8 +10,14 @@ def get_data_grouped(session, column, func, *where):
     :param func: the function to reduce the data
     :param where: additional where clause
     """
-    result = session.query(column, Request.duration).filter(*where).order_by(column).all()
-    # result is now a list of tuples per request.
+
+    if getattr(Request, "is_mongo_db", False):
+        result = list((elem[column], elem["duration"]) for elem in
+                      Request().get_collection(session).find({"$and": list(where)}
+                                                             if len(where) > 0 else {}).sort([(column, 1)]))
+    else:
+        result = session.query(column, Request.duration).filter(*where).order_by(column).all()
+        # result is now a list of tuples per request.
     return group_result(result, func)
 
 
@@ -55,7 +61,10 @@ def get_endpoint_data_grouped(session, func, *where):
     :param func: the function to reduce the data
     :param where: additional where clause
     """
-    return get_data_grouped(session, Request.endpoint_id, func, *where)
+    return get_data_grouped(session,
+                            Request.endpoint_id if not getattr(Request, "is_mongo_db", False) else "endpoint_id",
+                            func,
+                            *where)
 
 
 def get_version_data_grouped(session, func, *where):
@@ -64,7 +73,11 @@ def get_version_data_grouped(session, func, *where):
     :param func: the function to reduce the data
     :param where: additional where clause
     """
-    return get_data_grouped(session, Request.version_requested, func, *where)
+    return get_data_grouped(session,
+                            Request.version_requested if not getattr(Request, "is_mongo_db", False) else
+                            "version_requested",
+                            func,
+                            *where)
 
 
 def get_user_data_grouped(session, func, *where):
@@ -73,7 +86,10 @@ def get_user_data_grouped(session, func, *where):
     :param func: the function to reduce the data
     :param where: additional where clause
     """
-    return get_data_grouped(session, Request.group_by, func, *where)
+    return get_data_grouped(session,
+                            Request.group_by if not getattr(Request, "is_mongo_db", False) else "group_by",
+                            func,
+                            *where)
 
 
 def get_two_columns_grouped(session, column, *where):
@@ -82,8 +98,12 @@ def get_two_columns_grouped(session, column, *where):
     :param column: column that is used for the grouping (together with the Request.version)
     :param where: additional where clause
     """
-    result = (
-        session.query(column, Request.version_requested, Request.duration).filter(*where).all()
-    )
-    result = [((g, v), t) for g, v, t in result]
+    if getattr(Request, "is_mongo_db", False):
+        result = list(((elem[column], elem["version_requested"]), elem["duration"]) for elem in
+                      Request().get_collection(session).find({"$and": list(where)}).sort([(column, 1)]))
+    else:
+        result = (
+            session.query(column, Request.version_requested, Request.duration).filter(*where).all()
+        )
+        result = [((g, v), t) for g, v, t in result]
     return group_result(result, median)

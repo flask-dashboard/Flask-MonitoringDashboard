@@ -14,12 +14,23 @@ def count_rows_group(session, column, *criterion):
     :param criterion: where-clause of the query
     :return list with the number of rows per endpoint
     """
-    return (
-        session.query(Request.endpoint_id, func.count(column))
-        .filter(*criterion)
-        .group_by(Request.endpoint_id)
-        .all()
-    )
+    if getattr(Request, "is_mongo_db", False):
+        query = [
+            {"$group": {
+                "_id": "$endpoint_id",
+                "counting": {"$sum": 1}
+            }}
+        ]
+        if len(criterion) > 0:
+            query.insert(0, {"$match": {"$and": list(criterion)}})
+        return list((elem["_id"], elem["counting"]) for elem in Request().get_collection(session).aggregate(query))
+    else:
+        return (
+            session.query(Request.endpoint_id, func.count(column))
+            .filter(*criterion)
+            .group_by(Request.endpoint_id)
+            .all()
+        )
 
 
 def get_value(tuples, name, default=0):
@@ -29,9 +40,10 @@ def get_value(tuples, name, default=0):
     :param default: returned if the name was not found in the list
     :return value corresponding to the name in the list.
     """
-    for key, value in tuples:
-        if key == name:
-            return value
+    if tuples:
+        for key, value in tuples:
+            if key == name:
+                return value
     return default
 
 
@@ -41,7 +53,9 @@ def count_requests_group(session, *where):
     :param session: session for the database
     :param where: additional arguments
     """
-    return count_rows_group(session, Request.id, *where)
+    return count_rows_group(session,
+                            Request.id if not getattr(Request, "is_mongo_db", False) else "id",
+                            *where)
 
 
 def count_requests_per_day(session, list_of_days):
@@ -59,6 +73,10 @@ def count_requests_per_day(session, list_of_days):
                 Request.id,
                 Request.time_requested >= dt_begin,
                 Request.time_requested < dt_end,
+            ) if not getattr(Request, "is_mongo_db", False) else count_rows_group(
+                session,
+                "id",
+                {"$and": [{"time_requested": {"$gte": dt_begin}}, {"time_requested": {"$lt": dt_end}}]}
             )
         )
     return result

@@ -15,7 +15,10 @@ from flask_monitoringdashboard.database.count import (
 
 @pytest.fixture
 def non_existing_endpoint_id(session):
-    return session.query(Endpoint).count() + 1
+    if getattr(Endpoint, "is_mongo_db", False):
+        return Endpoint().get_collection(session).count_documents({}) + 1
+    else:
+        return session.query(Endpoint).count() + 1
 
 
 @pytest.mark.usefixtures('request_1')
@@ -25,7 +28,8 @@ def test_count_requests(session, endpoint, non_existing_endpoint_id):
 
 
 def test_count_total_requests(session):
-    assert count_total_requests(session) == session.query(Request).count()
+    assert count_total_requests(session) == session.query(Request).count() \
+        if not getattr(Endpoint, "is_mongo_db", False) else Request().get_collection(session).count_documents({})
 
 
 @pytest.mark.usefixtures('outlier_1')

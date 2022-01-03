@@ -24,7 +24,13 @@ def add_outlier(session, request_id, cpu_percent, memory, stacktrace, request):
         memory=memory,
         stacktrace=stacktrace,
     )
-    session.add(outlier)
+    if getattr(Outlier, "is_mongo_db", False):
+        outlier.endpoint_id = Request().get_collection(session).find_one({
+            "id": request_id
+        })["endpoint_id"]
+        outlier.get_collection(session).insert_one(outlier)
+    else:
+        session.add(outlier)
 
 
 def get_outliers_sorted(session, endpoint_id, offset, per_page):
@@ -36,18 +42,36 @@ def get_outliers_sorted(session, endpoint_id, offset, per_page):
     :param per_page: number of items to return
     :return list of Outlier objects of a specific endpoint
     """
-    result = (
-        session.query(Outlier)
-        .join(Outlier.request)
-        .options(joinedload(Outlier.request).joinedload(Request.endpoint))
-        .filter(Request.endpoint_id == endpoint_id)
-        .order_by(desc(Request.time_requested))
-        .offset(offset)
-        .limit(per_page)
-        .all()
-    )
-    session.expunge_all()
-    return result
+    if getattr(Outlier, "is_mongo_db", False):
+        requests = list(Request().get_collection(session).find({
+            "endpoint_id": endpoint_id
+        }).sort([("time_requested", 1)]))
+        outliers = dict()
+        for elem in Outlier().get_collection(session).find({"endpoint_id": endpoint_id}).skip(int(offset)).limit(
+                int(per_page)):
+            outliers.setdefault(elem["request_id"], []).append(Outlier(**elem))
+        results = []
+        for request in requests:
+            if outliers.get(request["id"]):
+                for current_outlier in outliers[request["id"]]:
+                    current_outlier["request"] = Request(**request)
+                results.extend(outliers[request["id"]])
+            if len(results) > int(per_page):
+                break
+        return results
+    else:
+        result = (
+            session.query(Outlier)
+            .join(Outlier.request)
+            .options(joinedload(Outlier.request).joinedload(Request.endpoint))
+            .filter(Request.endpoint_id == endpoint_id)
+            .order_by(desc(Request.time_requested))
+            .offset(offset)
+            .limit(per_page)
+            .all()
+        )
+        session.expunge_all()
+        return result
 
 
 def get_outliers_cpus(session, endpoint_id):
@@ -57,10 +81,14 @@ def get_outliers_cpus(session, endpoint_id):
     :param endpoint_id: id of the endpoint
     :return list of cpu percentages as strings
     """
-    outliers = (
-        session.query(Outlier.cpu_percent)
-        .join(Outlier.request)
-        .filter(Request.endpoint_id == endpoint_id)
-        .all()
-    )
-    return [outlier[0] for outlier in outliers]
+    if getattr(Outlier, "is_mongo_db", False):
+        return list(elem.get("cpu_percent") for elem in
+                    Outlier().get_collection(session).find({"endpoint_id": endpoint_id}))
+    else:
+        outliers = (
+            session.query(Outlier.cpu_percent)
+            .join(Outlier.request)
+            .filter(Request.endpoint_id == endpoint_id)
+            .all()
+        )
+        return [outlier[0] for outlier in outliers]

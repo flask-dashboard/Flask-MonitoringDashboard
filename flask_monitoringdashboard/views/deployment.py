@@ -17,12 +17,16 @@ def deploy_details():
     """
     with session_scope() as session:
         details = get_details(session)
-    details['first-request'] = to_local_datetime(
-        datetime.datetime.fromtimestamp(details['first-request'])
-    )
-    details['first-request-version'] = to_local_datetime(
-        datetime.datetime.fromtimestamp(details['first-request-version'])
-    )
+    try:
+        details['first-request'] = to_local_datetime(
+            datetime.datetime.fromtimestamp(details['first-request'])
+        )
+        details['first-request-version'] = to_local_datetime(
+            datetime.datetime.fromtimestamp(details['first-request-version'])
+        )
+    except:
+        details['first-request'] = to_local_datetime(datetime.datetime.utcnow())
+        details['first-request-version'] = to_local_datetime(datetime.datetime.utcnow())
     return jsonify(details)
 
 

@@ -1,7 +1,7 @@
 from flask import jsonify
 
 from flask_monitoringdashboard.controllers.profiler import get_profiler_table, get_grouped_profiler
-from flask_monitoringdashboard.database import session_scope, Endpoint
+from flask_monitoringdashboard.database import session_scope
 
 from flask_monitoringdashboard.core.auth import secure
 

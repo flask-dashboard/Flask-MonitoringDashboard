@@ -34,7 +34,10 @@ def test_make_report_post_not_significant(dashboard_user, endpoint, request_1, r
     )
     assert response.status_code == 200
 
-    assert len(response.json['summaries']) == session.query(Endpoint).count()
+    if getattr(Endpoint, "is_mongo_db", False):
+        assert len(response.json['summaries']) == Endpoint().get_collection(session).count_documents({})
+    else:
+        assert len(response.json['summaries']) == session.query(Endpoint).count()
     [data] = [row for row in response.json['summaries'] if row['endpoint_id'] == endpoint.id]
 
     assert data['endpoint_id'] == endpoint.id

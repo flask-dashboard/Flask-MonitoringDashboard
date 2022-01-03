@@ -8,7 +8,9 @@ def test_deployment(dashboard_user, session, config):
     data = response.json
     assert data['config-version'] == config.version
     assert data['link'] == 'dashboard'
-    assert data['total-requests'] == session.query(Request).count()
+    assert data['total-requests'] == \
+           session.query(Request).count() if not getattr(Request, "is_mongo_db", False) else \
+           Request().get_collection(session).count_documents({})
 
 
 def test_deployment_config(dashboard_user, config):

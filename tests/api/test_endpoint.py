@@ -63,13 +63,14 @@ def test_endpoints(dashboard_user, endpoint, session):
     response = dashboard_user.get('dashboard/api/endpoints')
     assert response.status_code == 200
 
-    assert len(response.json) == session.query(Endpoint).count()
+    assert len(response.json) == session.query(Endpoint).count() if not getattr(Endpoint, "is_mongo_db", False) else \
+        Endpoint().get_collection(session).count_documents({})
     [data] = [row for row in response.json if row['id'] == str(endpoint.id)]
 
-    assert data['last_requested'] == str(endpoint.last_requested)
+    assert data['last_requested'][:-3] == str(endpoint.last_requested)[:-3]
     assert data['monitor_level'] == str(endpoint.monitor_level)
     assert data['name'] == endpoint.name
-    assert data['time_added'] == str(endpoint.time_added)
+    assert data['time_added'][:-3] == str(endpoint.time_added)[:-3]
     assert data['version_added'] == endpoint.version_added
 
 
@@ -79,7 +80,8 @@ def test_endpoint_hits(dashboard_user, endpoint, session):
     assert response.status_code == 200
 
     total_hits = sum(row['hits'] for row in response.json)
-    assert total_hits == session.query(Request).count()
+    assert total_hits == session.query(Request).count() if not getattr(Request, "is_mongo_db", False) else \
+        Request().get_collection(session).count_documents({})
 
     [data] = [row for row in response.json if row['name'] == endpoint.name]
     assert data['hits'] == 2
@@ -126,7 +128,9 @@ def test_set_rule_post(dashboard_user, endpoint, session):
 
     assert response.status_code == 200
     assert response.data == b'OK'
-    endpoint = session.query(Endpoint).get(endpoint.id)  # reload the endpoint
+    # reload the endpoint
+    endpoint = session.query(Endpoint).get(endpoint.id) if not getattr(Endpoint, "is_mongo_db", False) else \
+        Endpoint(**Endpoint().get_collection(session).find_one({"id": endpoint.id}))
     assert endpoint.monitor_level == 3
 
 
@@ -171,7 +175,7 @@ def test_endpoint_status_code_summary(dashboard_user, request_1, endpoint):
     assert row['group_by'] == str(request_1.group_by)
     assert row['id'] == str(request_1.id)
     assert row['ip'] == request_1.ip
-    assert row['time_requested'] == str(request_1.time_requested)
+    assert row['time_requested'][:-3] == str(request_1.time_requested)[:-3]
     assert row['version_requested'] == request_1.version_requested
 
 

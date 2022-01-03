@@ -41,6 +41,7 @@ class Config(object):
 
         # database
         self.database_name = 'sqlite:///flask_monitoringdashboard.db'
+        # self.database_name = "mongodb://localhost:27017,localhost:37017,localhost:47017/flask_monitoringdashboard?retryWrites=false"
         self.table_prefix = ''
 
         # authentication

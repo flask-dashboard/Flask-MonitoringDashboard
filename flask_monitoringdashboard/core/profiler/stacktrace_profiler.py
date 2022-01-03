@@ -133,7 +133,9 @@ class StacktraceProfiler(threading.Thread):
     def get_funcheader(self):
         lines_returned = []
         try:
-            fun = config.app.view_functions[self._endpoint.name]
+            fun = config.app.view_functions.get(self._endpoint.name)
+            if not fun:
+                return [(self._endpoint.name, 0, "None", self._endpoint.name)]
         except AttributeError as error:
             print(error)
             fun = None

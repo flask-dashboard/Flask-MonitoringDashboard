@@ -1,9 +1,7 @@
 from datetime import datetime
 
 from flask import request, jsonify
-from sqlalchemy import and_
 
-from flask_monitoringdashboard.database import Request
 from flask_monitoringdashboard import blueprint
 from flask_monitoringdashboard.core.auth import secure
 from flask_monitoringdashboard.core.date_interval import DateInterval
@@ -14,7 +12,7 @@ from flask_monitoringdashboard.core.reporting.questions.status_code_distribution
 )
 from flask_monitoringdashboard.database import session_scope
 from flask_monitoringdashboard.database.endpoint import get_endpoints
-from flask_monitoringdashboard.database.request import create_time_based_sample_criterion
+from flask_monitoringdashboard.database.request import create_time_based_sample_criterion, create_version_criterion
 
 
 def get_date(p):
@@ -99,8 +97,8 @@ def make_report_commits():
     if baseline_commit_version == commit_version:
         return dict(message="Can't compare commit to itself"), 422
 
-    baseline_requests_criterion = Request.version_requested == baseline_commit_version
-    requests_criterion = Request.version_requested == commit_version
+    baseline_requests_criterion = create_version_criterion(baseline_commit_version)
+    requests_criterion = create_version_criterion(commit_version)
 
     summaries = make_endpoint_summaries(requests_criterion, baseline_requests_criterion)
     return jsonify(summaries)

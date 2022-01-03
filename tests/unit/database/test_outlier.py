@@ -21,8 +21,11 @@ def test_add_outlier(session, request_1):
         stacktrace="stacktrace",
         request=("headers", "environ", "url"),
     )
-    session.commit()
-    assert session.query(Outlier).filter(Outlier.request_id == request_1.id).one()
+    if not getattr(Outlier, "is_mongo_db", False):
+        session.commit()
+        assert session.query(Outlier).filter(Outlier.request_id == request_1.id).one()
+    else:
+        assert Outlier().get_collection(session).find_one({"request_id": request_1.id}) is not None
 
 
 def test_get_outliers(session, outlier_1, endpoint):
