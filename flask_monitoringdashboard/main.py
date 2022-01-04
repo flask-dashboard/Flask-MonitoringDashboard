@@ -18,6 +18,7 @@ app = Flask(__name__)
 dashboard.config.version = '3.2'
 dashboard.config.group_by = '2'
 dashboard.config.database_name = 'sqlite:///data.db'
+# dashboard.config.database_name = "mongodb://localhost:27017,localhost:37017,localhost:47017/flask_monitoringdashboard?retryWrites=false"
 # dashboard.config.database_name = 'mysql+pymysql://user:password@localhost:3306/db1'
 # dashboard.config.database_name = 'postgresql://user:password@localhost:5432/mydb'
 

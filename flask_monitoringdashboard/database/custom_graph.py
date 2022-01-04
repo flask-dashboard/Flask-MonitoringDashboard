@@ -1,8 +1,4 @@
-from datetime import timedelta
-
-from sqlalchemy.orm.exc import NoResultFound
-
-from flask_monitoringdashboard.database import CustomGraph, CustomGraphData, row2dict
+from flask_monitoringdashboard.database import CustomGraphData, CustomGraphQuery
 
 
 def get_graph_id_from_name(session, name):
@@ -12,45 +8,15 @@ def get_graph_id_from_name(session, name):
     :return: the graph_id corresponding to the name. If the name does not exists in the db,
              a new graph is added to the database.
     """
-    if getattr(CustomGraph, "is_mongo_db", False):
-        collection = CustomGraph().get_collection(session)
-        result = collection.find_one({
-            "title": name
-        })
-        if not result:
-            result = CustomGraph(title=name)
-            collection.insert_one(result)
-        result = CustomGraph(**result)
-    else:
-        try:
-            result = session.query(CustomGraph).filter(CustomGraph.title == name).one()
-        except NoResultFound:
-            result = CustomGraph(title=name)
-            session.add(result)
-            session.flush()
-        session.expunge(result)
-    return result.graph_id
+    return CustomGraphQuery(session).find_or_create_graph(name).graph_id
 
 
 def add_value(session, graph_id, value):
-    data = CustomGraphData(graph_id=graph_id, value=value)
-    if getattr(CustomGraphData, "is_mongo_db", False):
-        data.get_collection(session).update_one(
-            {"graph_id": graph_id},
-            {"$set": {"value": value}}
-        )
-    else:
-        session.add(data)
+    CustomGraphQuery(session).create_obj(CustomGraphData(graph_id=graph_id, value=value))
 
 
 def get_graphs(session):
-    if getattr(CustomGraph, "is_mongo_db", False):
-        return list(CustomGraph(**elem) for elem in CustomGraph().get_collection(session).find({}))
-    else:
-        try:
-            return session.query(CustomGraph).all()
-        finally:
-            session.expunge_all()
+    return CustomGraphQuery(session).get_graphs()
 
 
 def get_graph_data(session, graph_id, start_date, end_date):
@@ -61,18 +27,4 @@ def get_graph_data(session, graph_id, start_date, end_date):
     :param end_date: Datetime object that denotes the end of the interval
     :return: A list with values retrieved from the database
     """
-    if getattr(CustomGraphData, "is_mongo_db", False):
-        rows = list(CustomGraphData(**elem) for elem in CustomGraphData().get_collection(session).find({
-            "graph_id": graph_id,
-            "$and": [{"time": {"$gte": start_date}}, {"time": {"$lt": end_date + timedelta(days=1)}}]
-        }))
-    else:
-        rows = session.query(CustomGraphData).filter(
-            CustomGraphData.graph_id == graph_id,
-            CustomGraphData.time >= start_date,
-            CustomGraphData.time < end_date + timedelta(days=1),
-        ).all()
-    return [
-        row2dict(row)
-        for row in rows
-    ]
+    return CustomGraphQuery(session).get_graph_data(graph_id, start_date, end_date)

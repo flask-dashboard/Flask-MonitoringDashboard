@@ -40,8 +40,7 @@ class Config(object):
         self.show_login_footer = True
 
         # database
-        # self.database_name = 'sqlite:///flask_monitoringdashboard.db'
-        self.database_name = "mongodb://localhost:27017,localhost:37017,localhost:47017/flask_monitoringdashboard?retryWrites=false"
+        self.database_name = "mongodb://localhost:27017/flask_monitoringdashboard"
         self.table_prefix = ''
 
         # authentication

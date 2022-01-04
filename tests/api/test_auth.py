@@ -1,7 +1,6 @@
 import uuid
 
 import pytest
-
 from flask_monitoringdashboard.database import User
 
 BAD_REQUEST = 400

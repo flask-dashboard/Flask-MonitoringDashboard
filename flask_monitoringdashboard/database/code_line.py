@@ -1,4 +1,4 @@
-from flask_monitoringdashboard.database import CodeLine
+from flask_monitoringdashboard.database import CodeLineQueries
 
 
 def get_code_line(session, fn, ln, name, code):
@@ -12,35 +12,4 @@ def get_code_line(session, fn, ln, name, code):
     :param code: line of code (string)
     :return: a CodeLine object
     """
-    if getattr(CodeLine, "is_mongo_db", False):
-        code_line_collection = CodeLine().get_collection(session)
-        code_line_json = {
-            "filename": fn,
-            "line_number": ln,
-            "function_name": name,
-            "code": code
-        }
-        code_line = code_line_collection.find_one(code_line_json)
-        if not code_line:
-            new_code_line = CodeLine(**code_line_json)
-            code_line_collection.insert_one(new_code_line)
-        else:
-            new_code_line = CodeLine(**code_line)
-        return new_code_line
-    else:
-        result = (
-            session.query(CodeLine)
-            .filter(
-                CodeLine.filename == fn,
-                CodeLine.line_number == ln,
-                CodeLine.function_name == name,
-                CodeLine.code == code,
-            )
-            .first()
-        )
-        if not result:
-            result = CodeLine(filename=fn, line_number=ln, function_name=name, code=code)
-            session.add(result)
-            session.flush()
-
-        return result
+    return CodeLineQueries(session).get_code_line(fn, ln, name, code)

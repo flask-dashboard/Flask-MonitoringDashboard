@@ -7,6 +7,7 @@ from flask_monitoringdashboard import blueprint, config
 from flask_monitoringdashboard.core.auth import on_logout, on_login, secure, is_admin, admin_secure
 from flask_monitoringdashboard.database.auth import get_user, get_all_users, delete_user, add_user, update_user
 
+
 MAIN_PAGE = config.blueprint_name + '.index'
 BAD_REQUEST_STATUS = 400
 

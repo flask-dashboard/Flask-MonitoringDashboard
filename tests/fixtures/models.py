@@ -17,6 +17,7 @@ from flask_monitoringdashboard.database import (
     CustomGraph,
     CustomGraphData,
     User,
+    UserQueries
 )
 from tests.fixtures.database import ModelFactory
 
@@ -34,15 +35,10 @@ class UserFactory(ModelFactory):
         instance = model_class(**kwargs)
         instance.password = password_hash  # store the original password
         instance.set_password(password=password_hash)
-        session = cls._meta.sqlalchemy_session
-        if getattr(Request, "is_mongo_db", False):
-            collection = instance.get_collection(session)
-            collection.insert_one(instance)
-            return instance
-        else:
-            session.add(instance)
-            session.commit()
-            return instance
+        data_base_operation = UserQueries(cls._meta.sqlalchemy_session)
+        data_base_operation.create_obj(instance)
+        data_base_operation.commit()
+        return instance
 
 
 class EndpointFactory(ModelFactory):

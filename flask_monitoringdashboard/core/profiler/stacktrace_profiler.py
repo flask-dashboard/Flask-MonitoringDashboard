@@ -137,7 +137,7 @@ class StacktraceProfiler(threading.Thread):
             if not fun:
                 return [(self._endpoint.name, 0, "None", self._endpoint.name)]
         except AttributeError as error:
-            print(error)
+            log(error)
             fun = None
         if hasattr(fun, 'original'):
             original = fun.original

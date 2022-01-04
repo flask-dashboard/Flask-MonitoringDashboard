@@ -1,3 +1,6 @@
+import logging
+
+
 def log(string):
     """
     Only print output if this is specified in the configuration
@@ -6,4 +9,4 @@ def log(string):
     from flask_monitoringdashboard import config
 
     if config.enable_logging:
-        print(string)
+        logging.info(string)
