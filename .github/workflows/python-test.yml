@@ -7,7 +7,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        python-version: [3.5, 3.6, 3.7, 3.8]
+        python-version: [3.6, 3.7, 3.8]
         mongodb-version: ['4.4']
 
     steps:
@@ -31,6 +31,10 @@ jobs:
       uses: supercharge/mongodb-github-action@1.7.0
       with:
         mongodb-version: ${{ matrix.mongodb-version }}
+    - name: Ensure right config
+      run: |
+        mv "./flask_monitoringdashboard/core/config/__init__.py" "./flask_monitoringdashboard/core/config/__init__.py.old"
+        mv "./flask_monitoringdashboard/core/config/__init__.py.mongodb" "./flask_monitoringdashboard/core/config/__init__.py"
     - name: Test with pytest with mongodb
       run: |
         export MONGO_DB=true; pytest --cov --cov-report=xml
