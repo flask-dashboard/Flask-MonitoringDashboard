@@ -98,7 +98,7 @@ if config.database_name.startswith("mongodb"):
             new_content["__tablename__"] = '{}Endpoint'.format(config.table_prefix)
             if not new_content.get("id"):
                 new_content["id"] = str(uuid.uuid4())
-            if not new_content.get("monitor_level"):
+            if new_content.get("monitor_level") is None:
                 new_content["monitor_level"] = config.monitor_level
             if not new_content.get("time_added"):
                 new_content["time_added"] = datetime.datetime.utcnow()
