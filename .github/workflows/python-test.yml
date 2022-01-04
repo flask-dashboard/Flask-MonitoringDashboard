@@ -4,11 +4,11 @@ on: [push]
 
 jobs:
   build:
-
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        python-version: [2.7, 3.5, 3.6, 3.7, 3.8]
+        python-version: [3.5, 3.6, 3.7, 3.8]
+        mongodb-version: ['4.4']
 
     steps:
     - uses: actions/checkout@v2
@@ -27,6 +27,13 @@ jobs:
     - name: Test with pytest
       run: |
         pytest --cov --cov-report=xml
+    - name: Start MongoDB
+      uses: supercharge/mongodb-github-action@1.7.0
+      with:
+        mongodb-version: ${{ matrix.mongodb-version }}
+    - name: Test with pytest with mongodb
+      run: |
+        export MONGO_DB=true; pytest --cov --cov-report=xml
     - name: Upload coverage to Codecov
       uses: codecov/codecov-action@v1
       with:
