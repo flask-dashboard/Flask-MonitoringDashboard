@@ -126,6 +126,8 @@ class Request(Base):
             new_content["time_requested"] = datetime.datetime.utcnow()
         if not new_content.get("version_requested"):
             new_content["version_requested"] = config.version
+        if not new_content.get("group_by"):
+            new_content["group_by"] = None
         if new_content.get("endpoint"):
             try:
                 new_content["endpoint_id"] = new_content["endpoint"]["id"]
@@ -197,6 +199,10 @@ class CustomGraph(Base):
             new_content["id"] = str(uuid.uuid4())
         if not new_content.get("graph_id"):
             new_content["graph_id"] = str(uuid.uuid4())
+        if not new_content.get("time_added"):
+            new_content["time_added"] = datetime.datetime.utcnow()
+        if not new_content.get("version_requested"):
+            new_content["version_requested"] = config.version
         super().__init__(new_content)
 
     def create_other_indexes(self, current_collection):
@@ -209,6 +215,8 @@ class CustomGraphData(Base):
         new_content["__tablename__"] = '{}CustomGraphData'.format(config.table_prefix)
         if not new_content.get("id"):
             new_content["id"] = str(uuid.uuid4())
+        if not new_content.get("time"):
+            new_content["time"] = datetime.datetime.utcnow()
         if new_content.get("graph"):
             try:
                 new_content["graph_id"] = new_content["graph"]["graph_id"]
