@@ -3,8 +3,11 @@ import numpy
 from flask_monitoringdashboard.core.timezone import to_utc_datetime, to_local_datetime
 from flask_monitoringdashboard.database.count_group import count_requests_per_day, get_value
 from flask_monitoringdashboard.database.endpoint import get_endpoints, get_num_requests
-from flask_monitoringdashboard.database.request import \
-    get_status_code_frequencies, get_all_request_status_code_counts, get_error_requests_db
+from flask_monitoringdashboard.database.request import (
+    get_status_code_frequencies,
+    get_all_request_status_code_counts,
+    get_error_requests_db
+)
 
 
 def get_error_requests(session, endpoint_id, *criterion):

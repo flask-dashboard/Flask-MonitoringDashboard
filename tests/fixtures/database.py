@@ -1,10 +1,9 @@
 import pytest
-from sqlalchemy.orm import scoped_session
 
 try:
+    from sqlalchemy.orm import scoped_session
     from factory.alchemy import SQLAlchemyModelFactory
     from flask_monitoringdashboard.database import DBSession
-
 
     @pytest.fixture
     def session():
@@ -75,7 +74,7 @@ except ImportError:
             return obj
 
     def get_session():
-        from flask_monitoringdashboard.database import db_connection
+        from flask_monitoringdashboard.database.data_base_queries.mongo_db_objects import db_connection
         return db_connection
 
     class ModelFactory(SQLAlchemyModelFactory):

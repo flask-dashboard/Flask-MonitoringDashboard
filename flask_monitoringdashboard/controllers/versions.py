@@ -3,8 +3,12 @@ import numpy
 from flask_monitoringdashboard.database.count_group import get_value, count_requests_group
 from flask_monitoringdashboard.database.data_grouped import get_two_columns_grouped
 from flask_monitoringdashboard.database.endpoint import get_endpoint_by_name
-from flask_monitoringdashboard.database.versions import get_first_requests, \
-    get_2d_version_data_filter, get_field_name, get_version_requested_query
+from flask_monitoringdashboard.database.versions import (
+    get_first_requests,
+    get_2d_version_data_filter,
+    get_version_requested_query,
+    get_field_name
+)
 
 
 def get_2d_version_data(session, endpoint_id, versions, column_data, column):
