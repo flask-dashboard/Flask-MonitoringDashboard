@@ -37,8 +37,6 @@ class CollectionWrapper:
 
 
 class Base(dict):
-    is_mongo_db = True
-
     def __init__(self, new_content=None):
         new_content.pop("_id", None)
         super().__init__()
@@ -311,8 +309,17 @@ class UserQueries(CommonRouting, UserQueriesBase):
         except TypeError:
             return None
 
+    def count_by_username(self, username):
+        return User().get_collection(self.session).count_documents({"username": username})
+
+    def get_next_id(self):
+        return str(uuid.uuid4())
+
     def delete_user(self, user_id):
         User().get_collection(self.session).delete_one({"id": user_id})
+
+    def delete_all_users(self):
+        User().get_collection(self.session).delete_many({})
 
     def find_all_user(self):
         return list(User(**elem) for elem in User().get_collection(self.session).find({}).sort([("id", -1)]))
@@ -543,6 +550,9 @@ class OutlierQuery(CommonRouting, OutlierQueryBase):
         return list(elem.get("cpu_percent") for elem in
                     Outlier().get_collection(self.session).find({"endpoint_id": endpoint_id}))
 
+    def find_by_request_id(self, request_id):
+        return Outlier().get_collection(self.session).find_one({"request_id": request_id})
+
 
 class VersionQuery(CommonRouting, VersionQueryBase):
     @staticmethod
@@ -645,6 +655,9 @@ class StackLineQuery(CommonRouting, StackLineQueryBase):
                     new_request.setdefault("stack_lines", []).append(stack_line)
                     results.append(new_request)
         return results
+
+    def find_by_request_id(self, request_id):
+        return StackLine().get_collection(self.session).find_one({"request_id": request_id})
 
 
 class RequestQuery(CommonRouting, RequestQueryBase):

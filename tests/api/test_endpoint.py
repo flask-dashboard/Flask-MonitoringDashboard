@@ -1,6 +1,6 @@
 import pytest
 
-from flask_monitoringdashboard.database import Endpoint, Request
+from flask_monitoringdashboard.database import Endpoint, Request, EndpointQuery, RequestQuery
 
 
 @pytest.mark.parametrize('endpoint__monitor_level', [3])
@@ -63,8 +63,7 @@ def test_endpoints(dashboard_user, endpoint, session):
     response = dashboard_user.get('dashboard/api/endpoints')
     assert response.status_code == 200
 
-    assert len(response.json) == session.query(Endpoint).count() if not getattr(Endpoint, "is_mongo_db", False) else \
-        Endpoint().get_collection(session).count_documents({})
+    assert len(response.json) == EndpointQuery(session).count(Endpoint)
     [data] = [row for row in response.json if row['id'] == str(endpoint.id)]
 
     assert data['last_requested'][:-3] == str(endpoint.last_requested)[:-3]
@@ -80,9 +79,7 @@ def test_endpoint_hits(dashboard_user, endpoint, session):
     assert response.status_code == 200
 
     total_hits = sum(row['hits'] for row in response.json)
-    assert total_hits == session.query(Request).count() if not getattr(Request, "is_mongo_db", False) else \
-        Request().get_collection(session).count_documents({})
-
+    assert total_hits == RequestQuery(session).count(Request)
     [data] = [row for row in response.json if row['name'] == endpoint.name]
     assert data['hits'] == 2
 
@@ -129,8 +126,7 @@ def test_set_rule_post(dashboard_user, endpoint, session):
     assert response.status_code == 200
     assert response.data == b'OK'
     # reload the endpoint
-    endpoint = session.query(Endpoint).get(endpoint.id) if not getattr(Endpoint, "is_mongo_db", False) else \
-        Endpoint(**Endpoint().get_collection(session).find_one({"id": endpoint.id}))
+    endpoint= EndpointQuery(session).find_by_id(Endpoint, endpoint.id)
     assert endpoint.monitor_level == 3
 
 

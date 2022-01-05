@@ -4,7 +4,7 @@ This file contains all pytests that count a number of results in the database.
 """
 import pytest
 
-from flask_monitoringdashboard.database import Endpoint, Request
+from flask_monitoringdashboard.database import Endpoint, Request, EndpointQuery, RequestQuery
 from flask_monitoringdashboard.database.count import (
     count_requests,
     count_total_requests,
@@ -15,10 +15,7 @@ from flask_monitoringdashboard.database.count import (
 
 @pytest.fixture
 def non_existing_endpoint_id(session):
-    if getattr(Endpoint, "is_mongo_db", False):
-        return Endpoint().get_collection(session).count_documents({}) + 1
-    else:
-        return session.query(Endpoint).count() + 1
+    return EndpointQuery(session).count(Endpoint) + 1
 
 
 @pytest.mark.usefixtures('request_1')
@@ -28,8 +25,7 @@ def test_count_requests(session, endpoint, non_existing_endpoint_id):
 
 
 def test_count_total_requests(session):
-    assert count_total_requests(session) == session.query(Request).count() \
-        if not getattr(Endpoint, "is_mongo_db", False) else Request().get_collection(session).count_documents({})
+    assert count_total_requests(session) == RequestQuery(session).count(Request)
 
 
 @pytest.mark.usefixtures('outlier_1')

@@ -2,7 +2,7 @@ import sys
 from datetime import datetime, timedelta
 import pytest
 
-from flask_monitoringdashboard.database import Endpoint
+from flask_monitoringdashboard.database import Endpoint, EndpointQuery
 
 
 def test_make_report_get(dashboard_user):
@@ -33,11 +33,7 @@ def test_make_report_post_not_significant(dashboard_user, endpoint, request_1, r
         },
     )
     assert response.status_code == 200
-
-    if getattr(Endpoint, "is_mongo_db", False):
-        assert len(response.json['summaries']) == Endpoint().get_collection(session).count_documents({})
-    else:
-        assert len(response.json['summaries']) == session.query(Endpoint).count()
+    assert len(response.json['summaries']) == EndpointQuery(session).count(Endpoint)
     [data] = [row for row in response.json['summaries'] if row['endpoint_id'] == endpoint.id]
 
     assert data['endpoint_id'] == endpoint.id

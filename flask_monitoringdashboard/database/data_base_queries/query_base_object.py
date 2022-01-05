@@ -41,6 +41,15 @@ class UserQueriesBase(QueryBaseObject, ABC):
     def find_all_user(self):
         raise NotImplementedError()
 
+    def count_by_username(self, username):
+        raise NotImplementedError()
+
+    def get_next_id(self):
+        raise NotImplementedError()
+
+    def delete_all_users(self):
+        raise NotImplementedError()
+
 
 class CodeLineQueriesBase(QueryBaseObject, ABC):
     def get_code_line(self, fn, ln, name, code):
@@ -139,6 +148,9 @@ class OutlierQueryBase(QueryBaseObject, ABC):
     def get_outliers_cpus(self, endpoint_id):
         raise NotImplementedError()
 
+    def find_by_request_id(self, request_if):
+        raise NotImplementedError()
+
 
 class VersionQueryBase(QueryBaseObject, ABC):
     @staticmethod
@@ -164,6 +176,9 @@ class StackLineQueryBase(QueryBaseObject, ABC):
         raise NotImplementedError()
 
     def get_grouped_profiled_requests(self, endpoint_id):
+        raise NotImplementedError()
+
+    def find_by_request_id(self, request_id):
         raise NotImplementedError()
 
 

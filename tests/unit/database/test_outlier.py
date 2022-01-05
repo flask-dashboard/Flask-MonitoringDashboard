@@ -5,7 +5,7 @@ to the file: 'flask_monitoringdashboard/database/outlier.py')
 
 import pytest
 
-from flask_monitoringdashboard.database import Outlier
+from flask_monitoringdashboard.database import Outlier, OutlierQuery
 from flask_monitoringdashboard.database.count import count_outliers
 from flask_monitoringdashboard.database.outlier import add_outlier, get_outliers_sorted, get_outliers_cpus
 
@@ -21,11 +21,8 @@ def test_add_outlier(session, request_1):
         stacktrace="stacktrace",
         request=("headers", "environ", "url"),
     )
-    if not getattr(Outlier, "is_mongo_db", False):
-        session.commit()
-        assert session.query(Outlier).filter(Outlier.request_id == request_1.id).one()
-    else:
-        assert Outlier().get_collection(session).find_one({"request_id": request_1.id}) is not None
+    OutlierQuery(session).commit()
+    assert OutlierQuery(session).find_by_request_id(request_1.id) is not None
 
 
 def test_get_outliers(session, outlier_1, endpoint):

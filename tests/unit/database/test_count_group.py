@@ -3,7 +3,7 @@ from random import randint
 
 import pytest
 
-from flask_monitoringdashboard.database import Request
+from flask_monitoringdashboard.database import VersionQuery
 from flask_monitoringdashboard.database.count_group import (
     count_requests_group,
     count_requests_per_day,
@@ -13,10 +13,7 @@ from flask_monitoringdashboard.database.count_group import (
 def test_count_requests_group(session, request_1, endpoint):
     assert count_requests_group(
         session,
-        Request.version_requested == request_1.version_requested if not getattr(Request, "is_mongo_db", False) else
-        {
-            "version_requested": request_1.version_requested
-        }
+        VersionQuery.get_version_requested_query(request_1.version_requested)
     ) == [(endpoint.id, 1)]
 
 

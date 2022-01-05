@@ -1,6 +1,6 @@
 from datetime import datetime, timedelta
 
-from flask_monitoringdashboard.database import CustomGraph
+from flask_monitoringdashboard.database import CustomGraph, CustomGraphQuery
 
 
 def test_custom_graphs(dashboard_user, custom_graph, session):
@@ -8,10 +8,7 @@ def test_custom_graphs(dashboard_user, custom_graph, session):
     assert response.status_code == 200
 
     data = response.json
-    assert len(data) == session.query(CustomGraph).count() \
-        if not getattr(CustomGraph, "is_mongo_db", False) else \
-        CustomGraph().get_collection(session).count_documents({})
-
+    assert len(data) == CustomGraphQuery(session).count(CustomGraph)
     [data_custom_graph] = [graph for graph in data if graph['graph_id'] == str(custom_graph.graph_id)]
     assert data_custom_graph['title'] == custom_graph.title
     assert data_custom_graph['time_added'][:-3] == str(custom_graph.time_added)[:-3]

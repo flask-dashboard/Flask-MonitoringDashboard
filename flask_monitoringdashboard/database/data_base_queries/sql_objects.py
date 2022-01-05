@@ -312,14 +312,20 @@ class UserQueries(CommonRouting, UserQueriesBase):
             raise ValueError()
         return self.session.query(User).filter(*query).one_or_none()
 
+    def count_by_username(self, username):
+        return self.session.query(User).filter(User.username == username).count()
+
     def delete_user(self, user_id):
         self.session.query(User).filter(User.id == user_id).delete()
+
+    def delete_all_users(self):
+        self.session.query(User).delete()
 
     def find_all_user(self):
         return self.session.query(User).order_by(User.id).all()
 
-    def find_all(self, model_class):
-        return
+    def get_next_id(self):
+        return self.session.query(User).count() + 1
 
 
 class CodeLineQueries(CommonRouting, CodeLineQueriesBase):
@@ -540,6 +546,9 @@ class OutlierQuery(CommonRouting, OutlierQueryBase):
         )
         return [outlier[0] for outlier in outliers]
 
+    def find_by_request_id(self, request_id):
+        return self.session.query(Outlier).filter(Outlier.request_id == request_id).one()
+
 
 class VersionQuery(CommonRouting, VersionQueryBase):
     @staticmethod
@@ -613,6 +622,9 @@ class StackLineQuery(CommonRouting, StackLineQueryBase):
         )
         self.session.expunge_all()
         return result
+
+    def find_by_request_id(self, request_id):
+        return self.session.query(StackLine).filter(StackLine.request_id == request_id).one_or_none()
 
 
 class RequestQuery(CommonRouting, RequestQueryBase):
