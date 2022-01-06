@@ -6,7 +6,7 @@ import os
 
 if os.environ.get("MONGO_DB") == "true":
     print("RUNNING ON MONGODB")
-    flask_monitoringdashboard.config.database_name = "mongodb://localhost:27017,localhost:37017,localhost:47017/flask_monitoringdashboard"
+    flask_monitoringdashboard.config.database_name = "mongodb://localhost:27017/flask_monitoringdashboard"
 database_connection_wrapper = DatabaseConnectionWrapper(flask_monitoringdashboard.config)
 database_connection_wrapper.database_connection.connect()
 database_connection_wrapper.database_connection.init_database()

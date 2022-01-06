@@ -13,7 +13,7 @@ def config(colors=None, group_by=None):
     flask_monitoringdashboard.config.timezone = pytz.timezone('UTC')
     if os.environ.get("MONGO_DB") == "true":
         print("RUNNING ON MONGODB")
-        flask_monitoringdashboard.config.database_name = "mongodb://localhost:27017,localhost:37017,localhost:47017/flask_monitoringdashboard"
+        flask_monitoringdashboard.config.database_name = "mongodb://localhost:27017/flask_monitoringdashboard"
     DatabaseConnectionWrapper(flask_monitoringdashboard.config)
     return flask_monitoringdashboard.config
 
