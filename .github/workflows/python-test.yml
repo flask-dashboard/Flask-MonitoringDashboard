@@ -31,7 +31,7 @@ jobs:
       uses: supercharge/mongodb-github-action@1.7.0
       with:
         mongodb-version: ${{ matrix.mongodb-version }}
-    - name: Ensure right config
+    - name: Keep coverage report
       run: |
         mv "./coverage.xml" "./sql_coverage.xml"
     - name: Test with pytest with mongodb
