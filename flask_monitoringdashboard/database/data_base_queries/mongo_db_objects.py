@@ -158,6 +158,9 @@ class Outlier(Base):
                 pass
         super().__init__(new_content)
 
+    def create_other_indexes(self, current_collection):
+        current_collection.create_index([("endpoint_id", 1)], background=True)
+
 
 class CodeLine(Base):
     def __init__(self, **new_content):
@@ -191,6 +194,9 @@ class StackLine(Base):
                 pass
         super().__init__(new_content)
 
+    def create_other_indexes(self, current_collection):
+        current_collection.create_index([("endpoint_id", 1)], background=True)
+
 
 class CustomGraph(Base):
     def __init__(self, **new_content):
@@ -207,7 +213,7 @@ class CustomGraph(Base):
 
     def create_other_indexes(self, current_collection):
         current_collection.create_index([("graph_id", 1)], unique=True, background=True)
-        current_collection.create_index([("title", 1)], background=True)
+        current_collection.create_index([("title", 1)],  unique=True, background=True)
 
 
 class CustomGraphData(Base):
@@ -226,6 +232,9 @@ class CustomGraphData(Base):
             except (KeyError, DuplicateKeyError):
                 pass
         super().__init__(new_content)
+
+    def create_other_indexes(self, current_collection):
+        current_collection.create_index([("graph_id", 1), ("time", 1)])
 
 
 def get_tables():
