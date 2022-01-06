@@ -8,23 +8,17 @@ from pytest_factoryboy import register, LazyFixture
 from flask_monitoringdashboard.core.profiler.util import PathHash
 from flask_monitoringdashboard.core.profiler.util.grouped_stack_line import GroupedStackLine
 from flask_monitoringdashboard.core.profiler.util.string_hash import StringHash
-from flask_monitoringdashboard.database import (
-    Endpoint,
-    Request,
-    Outlier,
-    CodeLine,
-    StackLine,
-    CustomGraph,
-    CustomGraphData,
-    User,
-    UserQueries
-)
+from flask_monitoringdashboard.database import DatabaseConnectionWrapper
 from tests.fixtures.database import ModelFactory
+import flask_monitoringdashboard
+
+
+database_connection_wrapper = DatabaseConnectionWrapper(flask_monitoringdashboard.config)
 
 
 class UserFactory(ModelFactory):
     class Meta:
-        model = User
+        model = database_connection_wrapper.database_connection.user
     username = factory.LazyFunction(lambda: str(uuid.uuid4()))
     password_hash = factory.LazyFunction(lambda: str(uuid.uuid4()))
     is_admin = True
@@ -35,7 +29,7 @@ class UserFactory(ModelFactory):
         instance = model_class(**kwargs)
         instance.password = password_hash  # store the original password
         instance.set_password(password=password_hash)
-        data_base_operation = UserQueries(cls._meta.sqlalchemy_session)
+        data_base_operation = database_connection_wrapper.database_connection.user_queries(cls._meta.sqlalchemy_session)
         data_base_operation.create_obj(instance)
         data_base_operation.commit()
         return instance
@@ -43,7 +37,7 @@ class UserFactory(ModelFactory):
 
 class EndpointFactory(ModelFactory):
     class Meta:
-        model = Endpoint
+        model = database_connection_wrapper.database_connection.endpoint
 
     name = factory.LazyFunction(lambda: str(uuid.uuid4()))
     monitor_level = 1
@@ -54,7 +48,7 @@ class EndpointFactory(ModelFactory):
 
 class RequestFactory(ModelFactory):
     class Meta:
-        model = Request
+        model = database_connection_wrapper.database_connection.request
 
     endpoint = factory.SubFactory(EndpointFactory)
     duration = factory.LazyFunction(lambda: random() * 5000)
@@ -67,7 +61,7 @@ class RequestFactory(ModelFactory):
 
 class OutlierFactory(ModelFactory):
     class Meta:
-        model = Outlier
+        model = database_connection_wrapper.database_connection.outlier
 
     request = None
     cpu_percent = None
@@ -80,7 +74,7 @@ class OutlierFactory(ModelFactory):
 
 class CodeLineFactory(ModelFactory):
     class Meta:
-        model = CodeLine
+        model = database_connection_wrapper.database_connection.code_line
 
     filename = 'abc.py'
     line_number = factory.LazyFunction(lambda: int(random() * 100))
@@ -90,7 +84,7 @@ class CodeLineFactory(ModelFactory):
 
 class StackLineFactory(ModelFactory):
     class Meta:
-        model = StackLine
+        model = database_connection_wrapper.database_connection.stack_line
 
     request = None
     code = factory.SubFactory(CodeLineFactory)
@@ -101,7 +95,7 @@ class StackLineFactory(ModelFactory):
 
 class CustomGraphFactory(ModelFactory):
     class Meta:
-        model = CustomGraph
+        model = database_connection_wrapper.database_connection.custom_graph
 
     title = factory.Faker('name')
     time_added = factory.LazyFunction(datetime.utcnow)
@@ -110,7 +104,7 @@ class CustomGraphFactory(ModelFactory):
 
 class CustomGraphDataFactory(ModelFactory):
     class Meta:
-        model = CustomGraphData
+        model = database_connection_wrapper.database_connection.custom_graph_data
 
     graph = factory.SubFactory(CustomGraphFactory)
     time = factory.LazyFunction(datetime.utcnow)

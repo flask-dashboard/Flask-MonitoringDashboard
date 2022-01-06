@@ -1,12 +1,15 @@
-from flask_monitoringdashboard.database import Request, VersionQuery
+from flask_monitoringdashboard.database import DatabaseConnectionWrapper
 
 
 def get_field_name(name):
-    return VersionQuery.get_field_name(name, Request)
+    database_connection_wrapper = DatabaseConnectionWrapper()
+    return database_connection_wrapper.database_connection.version_query.get_field_name(
+        name,
+        database_connection_wrapper.database_connection.request)
 
 
 def get_version_requested_query(v):
-    return VersionQuery.get_version_requested_query(v)
+    return DatabaseConnectionWrapper().database_connection.version_query.get_version_requested_query(v)
 
 
 def get_versions(session, endpoint_id=None, limit=None):
@@ -17,11 +20,12 @@ def get_versions(session, endpoint_id=None, limit=None):
     :param limit: only return the most recent versions
     :return: a list of tuples with the versions (as a string) and dates, from oldest to newest
     """
-    return VersionQuery(session).get_versions(endpoint_id=endpoint_id, limit=limit)
+    return DatabaseConnectionWrapper().database_connection.version_query(session).get_versions(endpoint_id=endpoint_id,
+                                                                                               limit=limit)
 
 
 def get_2d_version_data_filter(endpoint_id):
-    return VersionQuery.get_2d_version_data_filter(endpoint_id)
+    return DatabaseConnectionWrapper().database_connection.version_query.get_2d_version_data_filter(endpoint_id)
 
 
 def get_first_requests(session, endpoint_id, limit=None):
@@ -32,4 +36,5 @@ def get_first_requests(session, endpoint_id, limit=None):
     :param endpoint_id: id of the endpoint
     :return list of tuples with versions
     """
-    return VersionQuery(session).get_first_requests(endpoint_id, limit=limit)
+    return DatabaseConnectionWrapper().database_connection.version_query(session).get_first_requests(endpoint_id,
+                                                                                                     limit=limit)

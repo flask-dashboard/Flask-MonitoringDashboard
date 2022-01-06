@@ -3,11 +3,14 @@ Contains all functions that access a Request object.
 """
 import time
 import datetime
-from flask_monitoringdashboard.database import Request, RequestQuery
+from flask_monitoringdashboard.database import DatabaseConnectionWrapper
 
 
 def get_latencies_sample(session, endpoint_id, criterion, sample_size=500):
-    return RequestQuery(session).get_latencies_sample(endpoint_id, criterion, sample_size)
+    return DatabaseConnectionWrapper().database_connection.request_query(session).get_latencies_sample(
+        endpoint_id,
+        criterion,
+        sample_size)
 
 
 def get_error_requests_db(session, endpoint_id, *criterion):
@@ -19,7 +22,8 @@ def get_error_requests_db(session, endpoint_id, *criterion):
     :param criterion: Optional criteria used to file the requests.
     :return:
     """
-    return RequestQuery(session).get_error_requests_db(endpoint_id, criterion)
+    return DatabaseConnectionWrapper().database_connection.request_query(session).get_error_requests_db(endpoint_id,
+                                                                                                        criterion)
 
 
 def get_all_request_status_code_counts(session, endpoint_id):
@@ -30,7 +34,8 @@ def get_all_request_status_code_counts(session, endpoint_id):
     :param endpoint_id: id for the endpoint
     :return: A list of tuples in the form of `(status_code, count)`
     """
-    return RequestQuery(session).get_all_request_status_code_counts(endpoint_id)
+    return DatabaseConnectionWrapper().database_connection.request_query(session).get_all_request_status_code_counts(
+        endpoint_id)
 
 
 def get_status_code_frequencies(session, endpoint_id, *criterion):
@@ -45,7 +50,9 @@ def get_status_code_frequencies(session, endpoint_id, *criterion):
     code. Example: a return value of `{ 200: 105, 404: 3 }` means that status code 200 was returned 105 times and
     404 was returned 3 times.
     """
-    return RequestQuery(session).get_status_code_frequencies(endpoint_id, *criterion)
+    return DatabaseConnectionWrapper().database_connection.request_query(session).get_status_code_frequencies(
+        endpoint_id,
+        *criterion)
 
 
 def add_request(session, duration, endpoint_id, ip, group_by, status_code):
@@ -58,14 +65,15 @@ def add_request(session, duration, endpoint_id, ip, group_by, status_code):
     :param group_by: a criteria by which the requests can be grouped
     :return the id of the request after it was stored in the database
     """
-    request = Request(
+    database_connection_wrapper = DatabaseConnectionWrapper()
+    request = database_connection_wrapper.database_connection.request(
         endpoint_id=endpoint_id,
         duration=duration,
         ip=ip,
         group_by=group_by,
         status_code=status_code,
     )
-    request_query = RequestQuery(session)
+    request_query = database_connection_wrapper.database_connection.request_query(session)
     request_query.create_obj(request)
     request_query.commit()
     return request.id
@@ -76,7 +84,7 @@ def get_date_of_first_request(session):
     :param session: session for the database
     :return time of the first request
     """
-    current_date = RequestQuery(session).get_date_of_first_request()
+    current_date = DatabaseConnectionWrapper().database_connection.request_query(session).get_date_of_first_request()
     if current_date:
         try:
             return int(time.mktime(current_date.timetuple()))
@@ -86,11 +94,11 @@ def get_date_of_first_request(session):
 
 
 def create_version_criterion(version):
-    return RequestQuery.get_version_requested_query(version)
+    return DatabaseConnectionWrapper().database_connection.request_query.get_version_requested_query(version)
 
 
 def create_time_based_sample_criterion(start_date, end_date):
-    return RequestQuery.generate_time_query(start_date, end_date)
+    return DatabaseConnectionWrapper().database_connection.request_query.generate_time_query(start_date, end_date)
 
 
 def get_date_of_first_request_version(session, version):
@@ -99,7 +107,8 @@ def get_date_of_first_request_version(session, version):
     :param version: version of the dashboard
     :return time of the first request in that version
     """
-    current_date = RequestQuery(session).get_date_of_first_request_version(version)
+    current_date = DatabaseConnectionWrapper().database_connection.request_query(
+        session).get_date_of_first_request_version(version)
     if current_date:
         try:
             return int(time.mktime(current_date.timetuple()))

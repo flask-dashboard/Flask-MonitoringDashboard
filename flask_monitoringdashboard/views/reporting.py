@@ -10,7 +10,7 @@ from flask_monitoringdashboard.core.reporting.questions.median_latency import \
 from flask_monitoringdashboard.core.reporting.questions.status_code_distribution import (
     StatusCodeDistribution,
 )
-from flask_monitoringdashboard.database import session_scope
+from flask_monitoringdashboard.database import DatabaseConnectionWrapper
 from flask_monitoringdashboard.database.endpoint import get_endpoints
 from flask_monitoringdashboard.database.request import create_time_based_sample_criterion, create_version_criterion
 
@@ -44,7 +44,7 @@ def make_endpoint_summary(endpoint, requests_criterion, baseline_requests_criter
 def make_endpoint_summaries(requests_criterion, baseline_requests_criterion):
     endpoint_summaries = []
 
-    with session_scope() as db_session:
+    with DatabaseConnectionWrapper().database_connection.session_scope() as db_session:
         for endpoint in get_endpoints(db_session):
             endpoint_summary = make_endpoint_summary(endpoint, requests_criterion,
                                                      baseline_requests_criterion)

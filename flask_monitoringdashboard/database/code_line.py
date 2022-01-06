@@ -1,4 +1,4 @@
-from flask_monitoringdashboard.database import CodeLineQueries
+from flask_monitoringdashboard.database import DatabaseConnectionWrapper
 
 
 def get_code_line(session, fn, ln, name, code):
@@ -12,4 +12,4 @@ def get_code_line(session, fn, ln, name, code):
     :param code: line of code (string)
     :return: a CodeLine object
     """
-    return CodeLineQueries(session).get_code_line(fn, ln, name, code)
+    return DatabaseConnectionWrapper().database_connection.code_line_queries(session).get_code_line(fn, ln, name, code)

@@ -1,6 +1,14 @@
 import pytest
+from flask_monitoringdashboard.database import DatabaseConnectionWrapper
 
-from flask_monitoringdashboard.database import Endpoint, Request, EndpointQuery, RequestQuery
+
+database_connection_wrapper = DatabaseConnectionWrapper()
+
+
+Request = database_connection_wrapper.database_connection.request
+RequestQuery = database_connection_wrapper.database_connection.request_query
+Endpoint = database_connection_wrapper.database_connection.endpoint
+EndpointQuery = database_connection_wrapper.database_connection.endpoint_query
 
 
 @pytest.mark.parametrize('endpoint__monitor_level', [3])

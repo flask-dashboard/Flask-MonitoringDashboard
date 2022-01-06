@@ -1,4 +1,11 @@
-from flask_monitoringdashboard.database import Request, RequestQuery
+from flask_monitoringdashboard.database import DatabaseConnectionWrapper
+
+
+database_connection_wrapper = DatabaseConnectionWrapper()
+
+
+Request = database_connection_wrapper.database_connection.request
+RequestQuery = database_connection_wrapper.database_connection.request_query
 
 
 def test_deployment(dashboard_user, session, config):

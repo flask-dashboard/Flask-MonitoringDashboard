@@ -1,4 +1,111 @@
-from abc import ABC
+from abc import ABC, abstractmethod
+
+
+class DatabaseConnectionBase(ABC):
+    def __init__(self):
+        self.db_connection = None
+
+    @property
+    @abstractmethod
+    def user_queries(self):
+        raise NotImplementedError()
+
+    @property
+    @abstractmethod
+    def endpoint_query(self):
+        raise NotImplementedError()
+
+    @property
+    @abstractmethod
+    def request_query(self):
+        raise NotImplementedError()
+
+    @property
+    @abstractmethod
+    def outlier_query(self):
+        raise NotImplementedError()
+
+    @property
+    @abstractmethod
+    def code_line_queries(self):
+        raise NotImplementedError()
+
+    @property
+    @abstractmethod
+    def stack_line_query(self):
+        raise NotImplementedError()
+
+    @property
+    @abstractmethod
+    def custom_graph_query(self):
+        raise NotImplementedError()
+
+    @property
+    @abstractmethod
+    def count_queries(self):
+        raise NotImplementedError()
+
+    @property
+    @abstractmethod
+    def version_query(self):
+        raise NotImplementedError()
+
+    @property
+    @abstractmethod
+    def user(self):
+        raise NotImplementedError()
+
+    @property
+    @abstractmethod
+    def endpoint(self):
+        raise NotImplementedError()
+
+    @property
+    @abstractmethod
+    def request(self):
+        raise NotImplementedError()
+
+    @property
+    @abstractmethod
+    def outlier(self):
+        raise NotImplementedError()
+
+    @property
+    @abstractmethod
+    def code_line(self):
+        raise NotImplementedError()
+
+    @property
+    @abstractmethod
+    def stack_line(self):
+        raise NotImplementedError()
+
+    @property
+    @abstractmethod
+    def custom_graph(self):
+        raise NotImplementedError()
+
+    @property
+    @abstractmethod
+    def custom_graph_data(self):
+        raise NotImplementedError()
+
+    def init_database(self):
+        raise NotImplementedError()
+
+    def connect(self):
+        raise NotImplementedError()
+
+    def session_scope(self):
+        raise NotImplementedError()
+
+    @staticmethod
+    def row2dict(row):
+        raise NotImplementedError()
+
+    @staticmethod
+    def get_tables():
+        raise NotImplementedError()
 
 
 class QueryBaseObject(ABC):

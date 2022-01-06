@@ -1,6 +1,12 @@
 from datetime import datetime, timedelta
+from flask_monitoringdashboard.database import DatabaseConnectionWrapper
 
-from flask_monitoringdashboard.database import CustomGraph, CustomGraphQuery
+
+database_connection_wrapper = DatabaseConnectionWrapper()
+
+
+CustomGraph = database_connection_wrapper.database_connection.custom_graph
+CustomGraphQuery = database_connection_wrapper.database_connection.custom_graph_query
 
 
 def test_custom_graphs(dashboard_user, custom_graph, session):

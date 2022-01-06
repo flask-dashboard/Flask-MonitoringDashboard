@@ -1,4 +1,4 @@
-from flask_monitoringdashboard.database import CountQueries
+from flask_monitoringdashboard.database import DatabaseConnectionWrapper
 
 
 def count_rows(session, column, *criterion):
@@ -9,7 +9,7 @@ def count_rows(session, column, *criterion):
     :param criterion: where-clause of the query
     :return: number of rows
     """
-    return CountQueries(session).count_rows(column, *criterion)
+    return DatabaseConnectionWrapper().database_connection.count_queries(session).count_rows(column, *criterion)
 
 
 def count_requests(session, endpoint_id, *where):
@@ -19,7 +19,7 @@ def count_requests(session, endpoint_id, *where):
     :param endpoint_id: id of the endpoint
     :param where: additional arguments
     """
-    return CountQueries(session).count_requests(endpoint_id, *where)
+    return DatabaseConnectionWrapper().database_connection.count_queries(session).count_requests(endpoint_id, *where)
 
 
 def count_total_requests(session, *where):
@@ -28,7 +28,7 @@ def count_total_requests(session, *where):
     :param session: session for the database
     :param where: additional arguments
     """
-    return CountQueries(session).count_total_requests(*where)
+    return DatabaseConnectionWrapper().database_connection.count_queries(session).count_total_requests(*where)
 
 
 def count_outliers(session, endpoint_id):
@@ -37,7 +37,7 @@ def count_outliers(session, endpoint_id):
     :param endpoint_id: id of the endpoint
     :return: An integer with the number of rows in the Outlier-table.
     """
-    return CountQueries(session).count_outliers(endpoint_id)
+    return DatabaseConnectionWrapper().database_connection.count_queries(session).count_outliers(endpoint_id)
 
 
 def count_profiled_requests(session, endpoint_id):
@@ -47,4 +47,4 @@ def count_profiled_requests(session, endpoint_id):
     :param endpoint_id: id of the endpoint
     :return: An integer
     """
-    return CountQueries(session).count_profiled_requests(endpoint_id)
+    return DatabaseConnectionWrapper().database_connection.count_queries(session).count_profiled_requests(endpoint_id)

@@ -10,7 +10,7 @@ from flask_monitoringdashboard.core.cache import update_duration_cache
 from flask_monitoringdashboard.core.logger import log
 from flask_monitoringdashboard.core.profiler.util import order_histogram
 from flask_monitoringdashboard.core.profiler.util.path_hash import PathHash
-from flask_monitoringdashboard.database import session_scope
+from flask_monitoringdashboard.database import DatabaseConnectionWrapper
 from flask_monitoringdashboard.database.request import add_request
 from flask_monitoringdashboard.database.stack_line import add_stack_line
 
@@ -88,7 +88,7 @@ class StacktraceProfiler(threading.Thread):
 
     def _on_thread_stopped(self):
         update_duration_cache(endpoint_name=self._endpoint.name, duration=self._duration)
-        with session_scope() as session:
+        with DatabaseConnectionWrapper().database_connection.session_scope() as session:
             request_id = add_request(
                 session,
                 duration=self._duration,

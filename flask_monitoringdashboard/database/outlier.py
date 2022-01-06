@@ -1,4 +1,4 @@
-from flask_monitoringdashboard.database import Outlier, Request, OutlierQuery
+from flask_monitoringdashboard.database import DatabaseConnectionWrapper
 
 
 def add_outlier(session, request_id, cpu_percent, memory, stacktrace, request):
@@ -11,16 +11,19 @@ def add_outlier(session, request_id, cpu_percent, memory, stacktrace, request):
     :param stacktrace: stack trace of the request
     :param request: triple containing the headers, environment and url
     """
+    database_connection_wrapper = DatabaseConnectionWrapper()
     headers, environ, url = request
-    OutlierQuery(session).create_outlier_record(Outlier(
-        request_id=request_id,
-        request_header=headers,
-        request_environment=environ,
-        request_url=url,
-        cpu_percent=cpu_percent,
-        memory=memory,
-        stacktrace=stacktrace,
-    ))
+    database_connection_wrapper.database_connection.outlier_query(session).create_outlier_record(
+        database_connection_wrapper.database_connection.outlier(
+            request_id=request_id,
+            request_header=headers,
+            request_environment=environ,
+            request_url=url,
+            cpu_percent=cpu_percent,
+            memory=memory,
+            stacktrace=stacktrace,
+        )
+    )
 
 
 def get_outliers_sorted(session, endpoint_id, offset, per_page):
@@ -32,7 +35,9 @@ def get_outliers_sorted(session, endpoint_id, offset, per_page):
     :param per_page: number of items to return
     :return list of Outlier objects of a specific endpoint
     """
-    return OutlierQuery(session).get_outliers_sorted(endpoint_id, offset, per_page)
+    return DatabaseConnectionWrapper().database_connection.outlier_query(session).get_outliers_sorted(endpoint_id,
+                                                                                                      offset,
+                                                                                                      per_page)
 
 
 def get_outliers_cpus(session, endpoint_id):
@@ -42,4 +47,4 @@ def get_outliers_cpus(session, endpoint_id):
     :param endpoint_id: id of the endpoint
     :return list of cpu percentages as strings
     """
-    return OutlierQuery(session).get_outliers_cpus(endpoint_id)
+    return DatabaseConnectionWrapper().database_connection.outlier_query(session).get_outliers_cpus(endpoint_id)

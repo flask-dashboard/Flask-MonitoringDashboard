@@ -4,7 +4,14 @@ from flask_monitoringdashboard.database.stack_line import (
     get_grouped_profiled_requests,
 )
 
-from flask_monitoringdashboard.database import StackLine, StackLineQuery
+from flask_monitoringdashboard.database import DatabaseConnectionWrapper
+
+
+database_connection_wrapper = DatabaseConnectionWrapper()
+
+
+StackLine = database_connection_wrapper.database_connection.stack_line
+StackLineQuery = database_connection_wrapper.database_connection.stack_line_query
 
 
 def test_add_stackline(session, request_1):

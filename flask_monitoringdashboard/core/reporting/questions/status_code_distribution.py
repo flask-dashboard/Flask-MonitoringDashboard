@@ -4,7 +4,7 @@ from flask_monitoringdashboard.core.reporting.questions.report_question import (
     ReportAnswer,
     ReportQuestion,
 )
-from flask_monitoringdashboard.database import session_scope
+from flask_monitoringdashboard.database import DatabaseConnectionWrapper
 
 
 class StatusCodeDistributionReportAnswer(ReportAnswer):
@@ -34,7 +34,7 @@ class StatusCodeDistribution(ReportQuestion):
 
     def get_answer(self, endpoint, requests_criterion, baseline_requests_criterion):
 
-        with session_scope() as session:
+        with DatabaseConnectionWrapper().database_connection.session_scope() as session:
 
             frequencies = get_status_code_frequencies_in_interval(session, endpoint.id,
                                                                   requests_criterion)

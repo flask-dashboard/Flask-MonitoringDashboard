@@ -1,8 +1,6 @@
 import configparser
-import os
 
 from flask_monitoringdashboard.core.config.parser import (
-    get_environment_var,
     parse_literal,
     parse_bool,
     parse_string,
@@ -23,7 +21,7 @@ def test_parser():
     parser = configparser.RawConfigParser()
     version = '1.2.3'
     string = 'string-value'
-    bool = 'False'
+    bool_value = 'False'
     literal = "['a', 'b', 'c']"
     literal2 = '1.23'
     section = 'dashboard'
@@ -31,7 +29,7 @@ def test_parser():
     parser.add_section(section)
     parser.set(section, 'APP_VERSION', version)
     parser.set(section, 'string', string)
-    parser.set(section, 'bool', bool)
+    parser.set(section, 'bool', bool_value)
     parser.set(section, 'literal', literal)
     parser.set(section, 'literal2', literal2)
 

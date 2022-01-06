@@ -4,13 +4,22 @@ This file contains all pytests that count a number of results in the database.
 """
 import pytest
 
-from flask_monitoringdashboard.database import Endpoint, Request, EndpointQuery, RequestQuery
 from flask_monitoringdashboard.database.count import (
     count_requests,
     count_total_requests,
     count_outliers,
     count_profiled_requests,
 )
+from flask_monitoringdashboard.database import DatabaseConnectionWrapper
+
+
+database_connection_wrapper = DatabaseConnectionWrapper()
+
+
+Request = database_connection_wrapper.database_connection.request
+RequestQuery = database_connection_wrapper.database_connection.request_query
+Endpoint = database_connection_wrapper.database_connection.endpoint
+EndpointQuery = database_connection_wrapper.database_connection.endpoint_query
 
 
 @pytest.fixture

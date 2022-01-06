@@ -3,11 +3,17 @@ from random import randint
 
 import pytest
 
-from flask_monitoringdashboard.database import VersionQuery
 from flask_monitoringdashboard.database.count_group import (
     count_requests_group,
     count_requests_per_day,
 )
+from flask_monitoringdashboard.database import DatabaseConnectionWrapper
+
+
+database_connection_wrapper = DatabaseConnectionWrapper()
+
+
+VersionQuery = database_connection_wrapper.database_connection.version_query
 
 
 def test_count_requests_group(session, request_1, endpoint):

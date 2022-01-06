@@ -8,7 +8,7 @@ from flask_monitoringdashboard import config
 from flask_monitoringdashboard.database.data_base_queries.query_base_object import \
     CodeLineQueriesBase, CountQueriesBase, UserQueriesBase, QueryBaseObject, \
     CustomGraphQueryBase, EndpointQueryBase, OutlierQueryBase, VersionQueryBase, \
-    StackLineQueryBase, RequestQueryBase
+    StackLineQueryBase, RequestQueryBase, DatabaseConnectionBase
 from flask_monitoringdashboard.core.logger import log
 
 from sqlalchemy import (
@@ -224,53 +224,127 @@ class CustomGraphData(Base):
     """Actual value that is measured."""
 
 
-# define the database
-engine = create_engine(config.database_name)
-Base.metadata.create_all(engine)
-Base.metadata.bind = engine
-DBSession = sessionmaker(bind=engine)
+class SqlDatabaseConnection(DatabaseConnectionBase):
+    @property
+    def user_queries(self):
+        return UserQueries
+
+    @property
+    def endpoint_query(self):
+        return EndpointQuery
+
+    @property
+    def request_query(self):
+        return RequestQuery
+
+    @property
+    def outlier_query(self):
+        return OutlierQuery
+
+    @property
+    def code_line_queries(self):
+        return CodeLineQueries
+
+    @property
+    def stack_line_query(self):
+        return StackLineQuery
+
+    @property
+    def custom_graph_query(self):
+        return CustomGraphQuery
+
+    @property
+    def count_queries(self):
+        return CountQueries
+
+    @property
+    def version_query(self):
+        return VersionQuery
+
+    @property
+    def user(self):
+        return User
+
+    @property
+    def request(self):
+        return Request
+
+    @property
+    def endpoint(self):
+        return Endpoint
+
+    @property
+    def outlier(self):
+        return Outlier
+
+    @property
+    def stack_line(self):
+        return StackLine
+
+    @property
+    def code_line(self):
+        return CodeLine
+
+    @property
+    def custom_graph(self):
+        return CustomGraph
+
+    @property
+    def custom_graph_data(self):
+        return CustomGraphData
+
+    @staticmethod
+    def get_tables():
+        return [User, Endpoint, Request, Outlier, StackLine, CodeLine, CustomGraph, CustomGraphData]
+
+    def init_database(self):
+        pass
+
+    def connect(self):
+        # define the database
+        engine = create_engine(config.database_name)
+        Base.metadata.create_all(engine)
+        Base.metadata.bind = engine
+        self.db_connection = sessionmaker(bind=engine)
+
+    @contextmanager
+    def session_scope(self):
+        """When accessing the database, use the following syntax:
+        with session_scope() as session:
+            session.query(...)
+        :return: the session for accessing the database.
+        """
+        session_obj = scoped_session(self.db_connection)
+        session = session_obj()
+        try:
+            yield session
+            session.commit()
+        except exc.OperationalError:
+            session.rollback()
+            time.sleep(0.5 + random.random())
+            session.commit()
+        except Exception as error:
+            session.rollback()
+            log('No commit has been made, due to the following error: {}'.format(error))
+            raise error
+        finally:
+            session.close()
+
+    @staticmethod
+    def row2dict(row):
+        """Converts a database-object to a python dict.
+        This function can be used to serialize an object into JSON, as this cannot be
+        directly done (but a dict can).
+        :param row: any object
+        :return: dict
+        """
+        d = {}
+        for column in row.__table__.columns:
+            d[column.name] = str(getattr(row, column.name))
+        return d
 
 
-@contextmanager
-def session_scope():
-    """When accessing the database, use the following syntax:
-    with session_scope() as session:
-        session.query(...)
-    :return: the session for accessing the database.
-    """
-    session_obj = scoped_session(DBSession)
-    session = session_obj()
-    try:
-        yield session
-        session.commit()
-    except exc.OperationalError:
-        session.rollback()
-        time.sleep(0.5 + random.random())
-        session.commit()
-    except Exception as error:
-        session.rollback()
-        log('No commit has been made, due to the following error: {}'.format(error))
-        raise error
-    finally:
-        session.close()
-
-
-def row2dict(row):
-    """Converts a database-object to a python dict.
-    This function can be used to serialize an object into JSON, as this cannot be
-    directly done (but a dict can).
-    :param row: any object
-    :return: dict
-    """
-    d = {}
-    for column in row.__table__.columns:
-        d[column.name] = str(getattr(row, column.name))
-
-    return d
-
-
-def get_tables():
-    return [Endpoint, Request, Outlier, StackLine, CodeLine, CustomGraph, CustomGraphData]
+sql_database_connection = SqlDatabaseConnection()
 
 
 class CommonRouting(QueryBaseObject):
@@ -419,7 +493,7 @@ class CustomGraphQuery(CommonRouting, CustomGraphQueryBase):
             CustomGraphData.time >= start_date,
             CustomGraphData.time < end_date + datetime.timedelta(days=1),
         ).all()
-        return [row2dict(row) for row in rows]
+        return [SqlDatabaseConnection.row2dict(row) for row in rows]
 
 
 class EndpointQuery(CommonRouting, EndpointQueryBase):

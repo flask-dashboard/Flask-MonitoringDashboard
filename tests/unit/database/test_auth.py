@@ -1,5 +1,12 @@
-from flask_monitoringdashboard.database import User, UserQueries
+from flask_monitoringdashboard.database import DatabaseConnectionWrapper
 from flask_monitoringdashboard.database.auth import get_user
+
+
+database_connection_wrapper = DatabaseConnectionWrapper()
+
+
+User = database_connection_wrapper.database_connection.user
+UserQueries = database_connection_wrapper.database_connection.user_queries
 
 
 def test_get_user_adds_default(session, config):

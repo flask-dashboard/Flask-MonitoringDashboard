@@ -14,7 +14,7 @@ from flask_monitoringdashboard.controllers.requests import (
 )
 from flask_monitoringdashboard.core.auth import secure, admin_secure
 from flask_monitoringdashboard.core.utils import get_endpoint_details
-from flask_monitoringdashboard.database import session_scope, row2dict
+from flask_monitoringdashboard.database import DatabaseConnectionWrapper
 from flask_monitoringdashboard.database.endpoint import (
     get_users,
     get_ips,
@@ -30,7 +30,7 @@ def get_overview():
     Get information per endpoint about the number of hits and median execution time
     :return: A JSON-list with a JSON-object per endpoint
     """
-    with session_scope() as session:
+    with DatabaseConnectionWrapper().database_connection.session_scope() as session:
         return jsonify(get_endpoint_overview(session))
 
 
@@ -41,12 +41,11 @@ def users(endpoint_id):
     :param endpoint_id: integer
     :return: A JSON-list with all users of a specific endpoint (user represented by a string)
     """
-    with session_scope() as session:
-        users_hits = get_users(session, endpoint_id)
-        dicts = []
-        for uh in users_hits:
-            dicts.append({'user': uh[0], 'hits': uh[1]})
-        return jsonify(dicts)
+    users_hits = get_users(endpoint_id)
+    dicts = []
+    for uh in users_hits:
+        dicts.append({'user': uh[0], 'hits': uh[1]})
+    return jsonify(dicts)
 
 
 @blueprint.route('/api/ip/<endpoint_id>')
@@ -56,12 +55,11 @@ def ips(endpoint_id):
     :param endpoint_id: integer
     :return: A JSON-list with all IP-addresses of a specific endpoint (ip represented by a string)
     """
-    with session_scope() as session:
-        ips_hits = get_ips(session, endpoint_id)
-        dicts = []
-        for ih in ips_hits:
-            dicts.append({'ip': ih[0], 'hits': ih[1]})
-        return jsonify(dicts)
+    ips_hits = get_ips(endpoint_id)
+    dicts = []
+    for ih in ips_hits:
+        dicts.append({'ip': ih[0], 'hits': ih[1]})
+    return jsonify(dicts)
 
 
 @blueprint.route('/api/endpoints')
@@ -71,8 +69,10 @@ def endpoints():
     :return: A JSON-list with information about every endpoint (encoded in a JSON-object)
         For more information per endpoint, see :func: get_overview
     """
-    with session_scope() as session:
-        return jsonify([row2dict(row) for row in get_endpoints(session)])
+    database_connection_wrapper = DatabaseConnectionWrapper()
+    with database_connection_wrapper.database_connection.session_scope() as session:
+        return jsonify([database_connection_wrapper.database_connection.row2dict(row)
+                        for row in get_endpoints(session)])
 
 
 @blueprint.route('/api/endpoints_hits')
@@ -83,7 +83,7 @@ def endpoints_hits():
     (encoded in a JSON-object)
         For more information per endpoint, see :func: get_overview
     """
-    with session_scope() as session:
+    with DatabaseConnectionWrapper().database_connection.session_scope() as session:
         end_hits = get_endpoints_hits(session)
         dicts = []
         for et in end_hits:
@@ -106,10 +106,8 @@ def api_performance():
         }
     """
     data = json.loads(request.data)['data']
-    endpoints = data['endpoints']
-
-    with session_scope() as session:
-        return jsonify(get_api_performance(session, endpoints))
+    endpoints_rq = data['endpoints']
+    return jsonify(get_api_performance(endpoints_rq))
 
 
 @blueprint.route('/api/set_rule', methods=['POST'])
@@ -120,8 +118,7 @@ def set_rule():
     """
     endpoint_name = request.form['name']
     value = int(request.form['value'])
-    with session_scope() as session:
-        set_endpoint_rule(session, endpoint_name, value)
+    set_endpoint_rule(endpoint_name, value)
     return 'OK'
 
 
@@ -139,25 +136,27 @@ def endpoint_info(endpoint_id):
         - total_hits: number of hits
         - url: link to this endpoint
     """
-    with session_scope() as session:
+    with DatabaseConnectionWrapper().database_connection.session_scope() as session:
         return jsonify(get_endpoint_details(session, endpoint_id))
 
 
 @blueprint.route('api/endpoint_status_code_distribution/<endpoint_id>')
 @secure
 def endpoint_status_code_distribution(endpoint_id):
-    with session_scope() as session:
+    with DatabaseConnectionWrapper().database_connection.session_scope() as session:
         return jsonify(get_status_code_distribution(session, endpoint_id))
 
 
 @blueprint.route('api/endpoint_status_code_summary/<endpoint_id>')
 @secure
 def endpoint_status_code_summary(endpoint_id):
-    with session_scope() as session:
+    database_connection_wrapper = DatabaseConnectionWrapper()
+    with database_connection_wrapper.database_connection.session_scope() as session:
         result = {
             'distribution': get_status_code_distribution(session, endpoint_id),
             'error_requests': [
-                row2dict(row) for row in get_error_requests(session, endpoint_id)
+                database_connection_wrapper.database_connection.row2dict(row)
+                for row in get_error_requests(session, endpoint_id)
             ],
         }
         return jsonify(result)
@@ -166,7 +165,7 @@ def endpoint_status_code_summary(endpoint_id):
 @blueprint.route('api/endpoint_versions/<endpoint_id>', methods=['POST'])
 @secure
 def endpoint_versions(endpoint_id):
-    with session_scope() as session:
+    with DatabaseConnectionWrapper().database_connection.session_scope() as session:
         data = json.loads(request.data)['data']
         versions = data['versions']
         return jsonify(get_endpoint_versions(session, endpoint_id, versions))
@@ -175,7 +174,7 @@ def endpoint_versions(endpoint_id):
 @blueprint.route('/api/endpoint_users/<endpoint_id>', methods=['POST'])
 @secure
 def endpoint_users(endpoint_id):
-    with session_scope() as session:
+    with DatabaseConnectionWrapper().database_connection.session_scope() as session:
         data = json.loads(request.data)['data']
         users = data['users']
         return jsonify(get_endpoint_users(session, endpoint_id, users))

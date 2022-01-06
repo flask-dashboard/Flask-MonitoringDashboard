@@ -1,7 +1,15 @@
 import uuid
 
 import pytest
-from flask_monitoringdashboard.database import User, UserQueries
+from flask_monitoringdashboard.database import DatabaseConnectionWrapper
+
+
+database_connection_wrapper = DatabaseConnectionWrapper()
+
+
+User = database_connection_wrapper.database_connection.user
+UserQueries = database_connection_wrapper.database_connection.user_queries
+
 
 BAD_REQUEST = 400
 

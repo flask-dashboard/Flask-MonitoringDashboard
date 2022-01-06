@@ -1,9 +1,21 @@
 import pytest
+from flask_monitoringdashboard.database import DatabaseConnectionWrapper
+import flask_monitoringdashboard
+import os
 
-try:
+
+if os.environ.get("MONGO_DB") == "true":
+    print("RUNNING ON MONGODB")
+    flask_monitoringdashboard.config.database_name = "mongodb://localhost:27017,localhost:37017,localhost:47017/flask_monitoringdashboard"
+database_connection_wrapper = DatabaseConnectionWrapper(flask_monitoringdashboard.config)
+database_connection_wrapper.database_connection.connect()
+database_connection_wrapper.database_connection.init_database()
+
+
+if database_connection_wrapper.get_database_type() == "SqlDatabaseConnection":
     from sqlalchemy.orm import scoped_session
     from factory.alchemy import SQLAlchemyModelFactory
-    from flask_monitoringdashboard.database import DBSession
+    DBSession = database_connection_wrapper.database_connection.db_connection
 
     @pytest.fixture
     def session():
@@ -20,7 +32,7 @@ try:
             abstract = True
             sqlalchemy_session = scoped_session(DBSession)
             sqlalchemy_session_persistence = 'commit'
-except ImportError:
+elif database_connection_wrapper.get_database_type() == "MongoDBDatabaseConnection":
     from factory import base
 
     class SQLAlchemyOptions(base.FactoryOptions):
@@ -74,8 +86,7 @@ except ImportError:
             return obj
 
     def get_session():
-        from flask_monitoringdashboard.database.data_base_queries.mongo_db_objects import db_connection
-        return db_connection
+        return DatabaseConnectionWrapper().database_connection.db_connection
 
     class ModelFactory(SQLAlchemyModelFactory):
         sqlalchemy_session = None

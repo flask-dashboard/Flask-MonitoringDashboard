@@ -7,7 +7,7 @@ from flask_monitoringdashboard import config
 from flask_monitoringdashboard.database.data_base_queries.query_base_object import \
     CodeLineQueriesBase, CountQueriesBase, UserQueriesBase, QueryBaseObject, \
     CustomGraphQueryBase, EndpointQueryBase, OutlierQueryBase, VersionQueryBase, \
-    StackLineQueryBase, RequestQueryBase
+    StackLineQueryBase, RequestQueryBase, DatabaseConnectionBase
 import uuid
 from pymongo import MongoClient, uri_parser
 from pymongo.errors import AutoReconnect, ServerSelectionTimeoutError, DuplicateKeyError
@@ -103,7 +103,7 @@ class Endpoint(Base):
             new_content["version_added"] = config.version
         if new_content.get("requests"):
             try:
-                with session_scope() as session:
+                with mongodb_database_connection.session_scope() as session:
                     new_object = []
                     for elem in new_content["requests"]:
                         new_object.append(Request(**elem))
@@ -131,7 +131,7 @@ class Request(Base):
         if new_content.get("endpoint"):
             try:
                 new_content["endpoint_id"] = new_content["endpoint"]["id"]
-                with session_scope() as session:
+                with mongodb_database_connection.session_scope() as session:
                     new_object = Endpoint(**new_content["endpoint"])
                     new_object.get_collection(session).insert_one(new_object)
             except (KeyError, DuplicateKeyError):
@@ -151,7 +151,7 @@ class Outlier(Base):
             try:
                 new_content["request_id"] = new_content["request"]["id"]
                 new_content["endpoint_id"] = new_content["request"]["endpoint_id"]
-                with session_scope() as session:
+                with mongodb_database_connection.session_scope() as session:
                     new_object = Request(**new_content["request"])
                     new_object.get_collection(session).insert_one(new_object)
             except (KeyError, DuplicateKeyError):
@@ -179,7 +179,7 @@ class StackLine(Base):
             try:
                 new_content["request_id"] = new_content["request"]["id"]
                 new_content["endpoint_id"] = new_content["request"]["endpoint_id"]
-                with session_scope() as session:
+                with mongodb_database_connection.session_scope() as session:
                     new_object = Request(**new_content["request"])
                     new_object.get_collection(session).insert_one(new_object)
             except (KeyError, DuplicateKeyError):
@@ -187,7 +187,7 @@ class StackLine(Base):
         if new_content.get("code"):
             try:
                 new_content["code_id"] = new_content["code"]["id"]
-                with session_scope() as session:
+                with mongodb_database_connection.session_scope() as session:
                     new_object = CodeLine(**new_content["code"])
                     new_object.get_collection(session).insert_one(new_object)
             except (KeyError, DuplicateKeyError):
@@ -226,7 +226,7 @@ class CustomGraphData(Base):
         if new_content.get("graph"):
             try:
                 new_content["graph_id"] = new_content["graph"]["graph_id"]
-                with session_scope() as session:
+                with mongodb_database_connection.session_scope() as session:
                     new_graph = CustomGraph(**new_content["graph"])
                     new_graph.get_collection(session).insert_one(new_graph)
             except (KeyError, DuplicateKeyError):
@@ -237,39 +237,109 @@ class CustomGraphData(Base):
         current_collection.create_index([("graph_id", 1), ("time", 1)])
 
 
-def get_tables():
-    return [User, Endpoint, Request, Outlier, StackLine, CodeLine, CustomGraph, CustomGraphData]
+class MongoDBDatabaseConnection(DatabaseConnectionBase):
+    @property
+    def user_queries(self):
+        return UserQueries
+
+    @property
+    def endpoint_query(self):
+        return EndpointQuery
+
+    @property
+    def request_query(self):
+        return RequestQuery
+
+    @property
+    def outlier_query(self):
+        return OutlierQuery
+
+    @property
+    def code_line_queries(self):
+        return CodeLineQueries
+
+    @property
+    def stack_line_query(self):
+        return StackLineQuery
+
+    @property
+    def custom_graph_query(self):
+        return CustomGraphQuery
+
+    @property
+    def count_queries(self):
+        return CountQueries
+
+    @property
+    def version_query(self):
+        return VersionQuery
+
+    @property
+    def user(self):
+        return User
+
+    @property
+    def request(self):
+        return Request
+
+    @property
+    def endpoint(self):
+        return Endpoint
+
+    @property
+    def outlier(self):
+        return Outlier
+
+    @property
+    def stack_line(self):
+        return StackLine
+
+    @property
+    def code_line(self):
+        return CodeLine
+
+    @property
+    def custom_graph(self):
+        return CustomGraph
+
+    @property
+    def custom_graph_data(self):
+        return CustomGraphData
+
+    @staticmethod
+    def get_tables():
+        return [User, Endpoint, Request, Outlier, StackLine, CodeLine, CustomGraph, CustomGraphData]
+
+    @safe_mongo_call
+    def init_database(self):
+        for table in self.get_tables():
+            current_table = table()
+            collection = current_table.get_collection(self.db_connection)
+            collection.drop_indexes()
+            collection.create_index([("id", 1)], unique=True, background=True)
+            current_table.create_other_indexes(collection)
+
+    def connect(self):
+        parsed_uri = uri_parser.parse_uri(config.database_name)
+        database_name = parsed_uri["database"]
+        self.db_connection = MongoClient(config.database_name)[database_name]
+
+    @contextmanager
+    def session_scope(self):
+        """When accessing the database, use the following syntax:
+        :return: the session for accessing the database.
+        """
+        yield self.db_connection
+
+    @staticmethod
+    def row2dict(row):
+        d = {}
+        for column in row.keys():
+            d[column] = str(row[column])
+        return d
 
 
-@safe_mongo_call
-def init_database():
-    for table in get_tables():
-        current_table = table()
-        collection = current_table.get_collection(db_connection)
-        collection.drop_indexes()
-        collection.create_index([("id", 1)], unique=True, background=True)
-        current_table.create_other_indexes(collection)
-
-
-parsed_uri = uri_parser.parse_uri(config.database_name)
-database_name = parsed_uri["database"]
-db_connection = MongoClient(config.database_name)[database_name]
-init_database()
-
-
-@contextmanager
-def session_scope():
-    """When accessing the database, use the following syntax:
-    :return: the session for accessing the database.
-    """
-    yield db_connection
-
-
-def row2dict(row):
-    d = {}
-    for column in row.keys():
-        d[column] = str(row[column])
-    return d
+mongodb_database_connection = MongoDBDatabaseConnection()
 
 
 from sqlalchemy.exc import IntegrityError
@@ -423,11 +493,13 @@ class CustomGraphQuery(CommonRouting, CustomGraphQueryBase):
         return list(CustomGraph(**elem) for elem in CustomGraph().get_collection(self.session).find({}))
 
     def get_graph_data(self, graph_id, start_date, end_date):
-        rows = list(CustomGraphData(**elem) for elem in CustomGraphData().get_collection(self.session).find({
-            "graph_id": graph_id,
-            "$and": [{"time": {"$gte": start_date}}, {"time": {"$lt": end_date + datetime.timedelta(days=1)}}]
-        }))
-        return [row2dict(row) for row in rows]
+        return list(mongodb_database_connection.row2dict(CustomGraphData(**elem))
+                    for elem in CustomGraphData().get_collection(self.session).find({
+                        "graph_id": graph_id,
+                        "$and": [{"time": {"$gte": start_date}},
+                                 {"time": {"$lt": end_date + datetime.timedelta(days=1)}}]
+                        })
+                    )
 
 
 class EndpointQuery(CommonRouting, EndpointQueryBase):

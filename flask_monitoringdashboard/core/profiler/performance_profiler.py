@@ -1,6 +1,6 @@
 from flask_monitoringdashboard.core.cache import update_duration_cache
 from flask_monitoringdashboard.core.profiler.base_profiler import BaseProfiler
-from flask_monitoringdashboard.database import session_scope
+from flask_monitoringdashboard.database import DatabaseConnectionWrapper
 from flask_monitoringdashboard.database.request import add_request
 
 
@@ -20,7 +20,7 @@ class PerformanceProfiler(BaseProfiler):
 
     def run(self):
         update_duration_cache(endpoint_name=self._endpoint.name, duration=self._duration)
-        with session_scope() as session:
+        with DatabaseConnectionWrapper().database_connection.session_scope() as session:
             add_request(
                 session,
                 duration=self._duration,

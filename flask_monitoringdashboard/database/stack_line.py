@@ -1,7 +1,7 @@
 """
 Contains all functions that access an StackLine object.
 """
-from flask_monitoringdashboard.database import StackLine, StackLineQuery
+from flask_monitoringdashboard.database import DatabaseConnectionWrapper
 from flask_monitoringdashboard.database.code_line import get_code_line
 
 
@@ -17,13 +17,16 @@ def add_stack_line(session, request_id, position, indent, duration, code_line):
     """
     fn, ln, name, code = code_line
     db_code_line = get_code_line(session, fn, ln, name, code)
-    StackLineQuery(session).create_stack_line(StackLine(
-        request_id=request_id,
-        position=position,
-        indent=indent,
-        code_id=db_code_line.id,
-        duration=duration,
-    ))
+    database_connection_wrapper = DatabaseConnectionWrapper()
+    database_connection_wrapper.database_connection.stack_line_query(session).create_stack_line(
+        database_connection_wrapper.database_connection.stack_line(
+            request_id=request_id,
+            position=position,
+            indent=indent,
+            code_id=db_code_line.id,
+            duration=duration,
+        )
+    )
 
 
 def get_profiled_requests(session, endpoint_id, offset, per_page):
@@ -36,7 +39,9 @@ def get_profiled_requests(session, endpoint_id, offset, per_page):
     :return: A list with tuples. Each tuple consists first of a Request-object, and the second part
     of the tuple is a list of StackLine-objects.
     """
-    return StackLineQuery(session).get_profiled_requests(endpoint_id, offset, per_page)
+    return DatabaseConnectionWrapper().database_connection.stack_line_query(session).get_profiled_requests(endpoint_id,
+                                                                                                           offset,
+                                                                                                           per_page)
 
 
 def get_grouped_profiled_requests(session, endpoint_id):
@@ -47,4 +52,5 @@ def get_grouped_profiled_requests(session, endpoint_id):
     :return: A list with tuples. Each tuple consists first of a Request-object, and the second part
     of the tuple is a list of StackLine-objects.
     """
-    return StackLineQuery(session).get_grouped_profiled_requests(endpoint_id)
+    return DatabaseConnectionWrapper().database_connection.stack_line_query(session).get_grouped_profiled_requests(
+        endpoint_id)

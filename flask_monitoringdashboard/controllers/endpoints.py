@@ -9,6 +9,7 @@ from flask_monitoringdashboard.core.colors import get_color
 from flask_monitoringdashboard.core.measurement import add_decorator
 from flask_monitoringdashboard.core.timezone import to_local_datetime, to_utc_datetime
 from flask_monitoringdashboard.core.utils import simplify
+from flask_monitoringdashboard.database import DatabaseConnectionWrapper
 from flask_monitoringdashboard.database.count_group import count_requests_group, get_value
 from flask_monitoringdashboard.database.data_grouped import (
     get_endpoint_data_grouped,
@@ -123,31 +124,31 @@ def get_endpoint_versions(session, endpoint_id, versions):
     ]
 
 
-def get_api_performance(session, endpoints):
+def get_api_performance(endpoints):
     """
-    :param session: session for the database
     :param endpoints: a list of endpoints, encoded by their name
     :return: for every endpoint in endpoints, a list with the performance
     """
-    db_endpoints = [get_endpoint_by_name(session, end) for end in endpoints]
-    data = get_endpoint_data_grouped(session, lambda x: simplify(x, 10))
-    return [
-        {'name': end.name, 'values': get_value(data, end.id, default=[])}
-        for end in db_endpoints
-    ]
+    with DatabaseConnectionWrapper().database_connection.session_scope() as session:
+        db_endpoints = [get_endpoint_by_name(session, end) for end in endpoints]
+        data = get_endpoint_data_grouped(session, lambda x: simplify(x, 10))
+        return [
+            {'name': end.name, 'values': get_value(data, end.id, default=[])}
+            for end in db_endpoints
+        ]
 
 
-def set_endpoint_rule(session, endpoint_name, monitor_level):
+def set_endpoint_rule(endpoint_name, monitor_level):
     """
-    :param session: session for the database
     :param endpoint_name: name of the endpoint
     :param monitor_level: integer, representing the monitoring-level
     """
-    update_endpoint(session, endpoint_name, value=monitor_level)
+    with DatabaseConnectionWrapper().database_connection.session_scope() as session:
+        update_endpoint(session, endpoint_name, value=monitor_level)
 
-    if config.app.view_functions.get(endpoint_name):
-        # Remove wrapper
-        original = getattr(config.app.view_functions[endpoint_name], 'original', None)
-        if original:
-            config.app.view_functions[endpoint_name] = original
-        add_decorator(get_endpoint_by_name(session, endpoint_name))
+        if config.app.view_functions.get(endpoint_name):
+            # Remove wrapper
+            original = getattr(config.app.view_functions[endpoint_name], 'original', None)
+            if original:
+                config.app.view_functions[endpoint_name] = original
+            add_decorator(get_endpoint_by_name(session, endpoint_name))

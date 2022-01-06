@@ -8,7 +8,7 @@ from flask import request
 from flask_monitoringdashboard import config
 from flask_monitoringdashboard.core.cache import update_duration_cache, get_avg_endpoint
 from flask_monitoringdashboard.core.logger import log
-from flask_monitoringdashboard.database import session_scope
+from flask_monitoringdashboard.database import DatabaseConnectionWrapper
 from flask_monitoringdashboard.database.outlier import add_outlier
 from flask_monitoringdashboard.database.request import add_request
 
@@ -60,7 +60,7 @@ class OutlierProfiler(threading.Thread):
     def stop(self, duration, status_code):
         self._exit.set()
         update_duration_cache(endpoint_name=self._endpoint.name, duration=duration * 1000)
-        with session_scope() as session:
+        with DatabaseConnectionWrapper().database_connection.session_scope() as session:
             request_id = add_request(
                 session,
                 duration=duration * 1000,

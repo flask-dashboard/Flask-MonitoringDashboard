@@ -21,6 +21,7 @@ dashboard.config.database_name = 'sqlite:///data.db'
 # dashboard.config.database_name = "mongodb://localhost:27017,localhost:37017,localhost:47017/flask_monitoringdashboard?retryWrites=false"
 # dashboard.config.database_name = 'mysql+pymysql://user:password@localhost:3306/db1'
 # dashboard.config.database_name = 'postgresql://user:password@localhost:5432/mydb'
+dashboard.bind(app)
 
 
 def on_the_minute():
@@ -37,7 +38,6 @@ def every_ten_seconds():
 
 every_ten_seconds_schedule = {'seconds': 10}
 dashboard.add_graph("Every 10 Seconds", every_ten_seconds, "interval", **every_ten_seconds_schedule)
-dashboard.bind(app)
 
 
 @app.route('/')
@@ -45,16 +45,36 @@ def to_dashboard():
     return redirect(url_for(dashboard.config.blueprint_name + '.login'))
 
 
+@app.route('/use_mongo_db')
+def use_mongo_db():
+    from flask_monitoringdashboard.database import DatabaseConnectionWrapper
+    dashboard.config.database_name = "mongodb://localhost:27017,localhost:37017,localhost:47017/flask_monitoringdashboard?retryWrites=false"
+    DatabaseConnectionWrapper().apply_config(dashboard.config)
+    dashboard.bind(app, include_dashboard=False)
+    return 'Ok'
+
+
+@app.route('/use_sqlite')
+def use_sqlite():
+    from flask_monitoringdashboard.database import DatabaseConnectionWrapper
+    dashboard.config.database_name = "sqlite:///data.db"
+    DatabaseConnectionWrapper().apply_config(dashboard.config)
+    dashboard.bind(app, include_dashboard=False)
+    return 'Ok'
+
+
 @app.route('/endpoint')
 def endpoint():
     # if session_scope is imported at the top of the file, the database config won't take effect
-    from flask_monitoringdashboard.database import session_scope
-
-    with session_scope() as session:
-        print(session.bind.dialect.name)
-
+    from flask_monitoringdashboard.database import DatabaseConnectionWrapper
+    db = DatabaseConnectionWrapper()
+    db_dialect = db.get_database_type()
+    if db.get_database_type() == "SqlDatabaseConnection":
+        with db.database_connection.session_scope() as session:
+            db_dialect = session.bind.dialect.name
+    print(db_dialect)
     print("Hello, world")
-    return 'Ok'
+    return f'Ok, {db_dialect}'
 
 
 @app.route('/endpoint2')

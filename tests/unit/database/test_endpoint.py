@@ -6,10 +6,17 @@ from datetime import datetime
 
 import pytest
 
-from flask_monitoringdashboard.database import Endpoint, EndpointQuery
 from flask_monitoringdashboard.database.count_group import get_value
 from flask_monitoringdashboard.database.endpoint import get_endpoint_by_name, update_endpoint, update_last_requested, \
     get_last_requested, get_endpoints
+from flask_monitoringdashboard.database import DatabaseConnectionWrapper
+
+
+database_connection_wrapper = DatabaseConnectionWrapper()
+
+
+Endpoint = database_connection_wrapper.database_connection.endpoint
+EndpointQuery = database_connection_wrapper.database_connection.endpoint_query
 
 
 def test_get_endpoint(session, endpoint):

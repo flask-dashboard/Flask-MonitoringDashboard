@@ -5,7 +5,7 @@ from flask_monitoringdashboard.core.reporting.questions.report_question import (
     ReportAnswer,
     ReportQuestion,
 )
-from flask_monitoringdashboard.database import session_scope
+from flask_monitoringdashboard.database import DatabaseConnectionWrapper
 from flask_monitoringdashboard.database.request import get_latencies_sample
 
 
@@ -48,7 +48,7 @@ class MedianLatencyReportAnswer(ReportAnswer):
 
 class MedianLatency(ReportQuestion):
     def get_answer(self, endpoint, requests_criterion, baseline_requests_criterion):
-        with session_scope() as session:
+        with DatabaseConnectionWrapper().database_connection.session_scope() as session:
             latencies_sample = get_latencies_sample(session, endpoint.id,
                                                     requests_criterion)
             baseline_latencies_sample = get_latencies_sample(

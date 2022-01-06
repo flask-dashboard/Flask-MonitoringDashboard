@@ -3,7 +3,7 @@ Contains all functions that access an Endpoint object
 """
 import datetime
 from collections import defaultdict
-from flask_monitoringdashboard.database import Request, Endpoint, EndpointQuery
+from flask_monitoringdashboard.database import DatabaseConnectionWrapper
 
 
 def get_num_requests(session, endpoint_id, start_date, end_date):
@@ -15,7 +15,10 @@ def get_num_requests(session, endpoint_id, start_date, end_date):
     :param end_date: datetime.date object
     :return list of dates
     """
-    return group_request_times(EndpointQuery(session).get_num_requests(endpoint_id, start_date, end_date))
+    return group_request_times(
+        DatabaseConnectionWrapper().database_connection.endpoint_query(session).get_num_requests(endpoint_id,
+                                                                                                 start_date,
+                                                                                                 end_date))
 
 
 def group_request_times(datetimes):
@@ -31,32 +34,40 @@ def group_request_times(datetimes):
     return hours_dict.items()
 
 
-def get_users(session, endpoint_id, limit=None):
+def get_users(endpoint_id, limit=None):
     """
     Returns a list with the distinct group-by from a specific endpoint. The limit is used to
     filter the most used distinct.
-    :param session: session for the database
     :param endpoint_id: the id of the endpoint to filter on
     :param limit: the max number of results
     :return a list of tuples (group_by, hits)
     """
-    return EndpointQuery(session).get_statistics(endpoint_id,
-                                                 EndpointQuery.get_field_name("group_by", Request),
-                                                 limit)
+    database_connection_wrapper = DatabaseConnectionWrapper()
+    with database_connection_wrapper.database_connection.session_scope() as session:
+        return database_connection_wrapper.database_connection.endpoint_query(session).get_statistics(
+            endpoint_id,
+            database_connection_wrapper.database_connection.endpoint_query.get_field_name(
+                "group_by",
+                database_connection_wrapper.database_connection.request),
+            limit)
 
 
-def get_ips(session, endpoint_id, limit=None):
+def get_ips(endpoint_id, limit=None):
     """
     Returns a list with the distinct group-by from a specific endpoint. The limit is used to
     filter the most used distinct.
-    :param session: session for the database
     :param endpoint_id: the endpoint_id to filter on
     :param limit: the number of
     :return a list with the group_by as strings.
     """
-    return EndpointQuery(session).get_statistics(endpoint_id,
-                                                 EndpointQuery.get_field_name("ip", Request),
-                                                 limit)
+    database_connection_wrapper = DatabaseConnectionWrapper()
+    with database_connection_wrapper.database_connection.session_scope() as session:
+        return database_connection_wrapper.database_connection.endpoint_query(session).get_statistics(
+            endpoint_id,
+            database_connection_wrapper.database_connection.endpoint_query.get_field_name(
+                "ip",
+                database_connection_wrapper.database_connection.request),
+            limit)
 
 
 def get_endpoint_by_name(session, endpoint_name):
@@ -67,7 +78,7 @@ def get_endpoint_by_name(session, endpoint_name):
     :param endpoint_name: string with the endpoint name
     :return Endpoint object
     """
-    return EndpointQuery(session).get_endpoint_or_create(endpoint_name)
+    return DatabaseConnectionWrapper().database_connection.endpoint_query(session).get_endpoint_or_create(endpoint_name)
 
 
 def get_endpoint_by_id(session, endpoint_id):
@@ -77,8 +88,9 @@ def get_endpoint_by_id(session, endpoint_id):
     :param endpoint_id: id of the endpoint.
     :return Endpoint object
     """
-    endpoint_query = EndpointQuery(session)
-    result = endpoint_query.find_by_id(Endpoint, endpoint_id)
+    database_connection_wrapper = DatabaseConnectionWrapper()
+    endpoint_query = database_connection_wrapper.database_connection.endpoint_query(session)
+    result = endpoint_query.find_by_id(database_connection_wrapper.database_connection.endpoint, endpoint_id)
     endpoint_query.expunge(result)
     return result
 
@@ -90,9 +102,13 @@ def update_endpoint(session, endpoint_name, value):
     :param endpoint_name: name of the endpoint
     :param value: new monitor level
     """
-    EndpointQuery(session).update_endpoint(endpoint_name,
-                                           EndpointQuery.get_field_name("monitor_level", Endpoint),
-                                           value)
+    database_connection_wrapper = DatabaseConnectionWrapper()
+    database_connection_wrapper.database_connection.endpoint_query(session).update_endpoint(
+        endpoint_name,
+        database_connection_wrapper.database_connection.endpoint_query.get_field_name(
+            "monitor_level",
+            database_connection_wrapper.database_connection.endpoint),
+        value)
 
 
 def get_last_requested(session):
@@ -101,7 +117,7 @@ def get_last_requested(session):
     :param session: session for the database
     :return list of tuples with name of the endpoint and date it was last used
     """
-    return EndpointQuery(session).get_last_requested()
+    return DatabaseConnectionWrapper().database_connection.endpoint_query(session).get_last_requested()
 
 
 def update_last_requested(session, endpoint_name, timestamp=None):
@@ -111,10 +127,14 @@ def update_last_requested(session, endpoint_name, timestamp=None):
     :param endpoint_name: name of the endpoint
     :param timestamp: optional timestamp. If not given, timestamp is current time
     """
+    database_connection_wrapper = DatabaseConnectionWrapper()
     ts = timestamp if timestamp else datetime.datetime.utcnow()
-    EndpointQuery(session).update_endpoint(endpoint_name,
-                                           EndpointQuery.get_field_name("last_requested", Endpoint),
-                                           ts)
+    database_connection_wrapper.database_connection.endpoint_query(session).update_endpoint(
+        endpoint_name,
+        database_connection_wrapper.database_connection.endpoint_query.get_field_name(
+            "last_requested",
+            database_connection_wrapper.database_connection.endpoint),
+        ts)
 
 
 def get_endpoints(session):
@@ -123,7 +143,7 @@ def get_endpoints(session):
     :param session: session for the database
     :return list of Endpoint objects, sorted on the number of requests (descending)
     """
-    return EndpointQuery(session).get_endpoints()
+    return DatabaseConnectionWrapper().database_connection.endpoint_query(session).get_endpoints()
 
 
 def get_endpoints_hits(session):
@@ -132,7 +152,7 @@ def get_endpoints_hits(session):
     :param session: session for the database
     :return list of (endpoint name, total hits) tuples
     """
-    return EndpointQuery(session).get_endpoints_hits()
+    return DatabaseConnectionWrapper().database_connection.endpoint_query(session).get_endpoints_hits()
 
 
 def get_avg_duration(session, endpoint_id):
@@ -142,7 +162,7 @@ def get_avg_duration(session, endpoint_id):
     :param endpoint_id: id of the endpoint
     :return average duration
     """
-    return EndpointQuery(session).get_avg_duration(endpoint_id)
+    return DatabaseConnectionWrapper().database_connection.endpoint_query(session).get_avg_duration(endpoint_id)
 
 
 def get_endpoint_averages(session):
@@ -151,16 +171,17 @@ def get_endpoint_averages(session):
     :param session: session for the database
     :return tuple of (endpoint_name, avg_duration)
     """
-    return EndpointQuery(session).get_endpoint_averages()
+    return DatabaseConnectionWrapper().database_connection.endpoint_query(session).get_endpoint_averages()
 
 
 def generate_request_error_hits_criterion():
-    return EndpointQuery.generate_request_error_hits_criterion()
+    return DatabaseConnectionWrapper().database_connection.endpoint_query.generate_request_error_hits_criterion()
 
 
 def filter_by_endpoint_id(endpoint_id):
-    return EndpointQuery.filter_by_endpoint_id(endpoint_id)
+    return DatabaseConnectionWrapper().database_connection.endpoint_query.filter_by_endpoint_id(endpoint_id)
 
 
 def filter_by_time(current_time, hits_criterion=None):
-    return EndpointQuery.filter_by_time(current_time, hits_criterion=hits_criterion)
+    return DatabaseConnectionWrapper().database_connection.endpoint_query.filter_by_time(current_time,
+                                                                                         hits_criterion=hits_criterion)
