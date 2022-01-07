@@ -1,5 +1,8 @@
 """Creates the database.
-For information about how to access the database via a DatabaseConnectionWrapper
+For information, following the lines to access the database via the DatabaseConnectionWrapper:
+database_connection_wrapper = DatabaseConnectionWrapper()
+with database_connection_wrapper.database_connection.session_scope() as session:
+    database_connection_wrapper.database_connection.<OPERATION>()
 """
 from flask_monitoringdashboard.database.data_base_queries.mongo_db_objects import mongodb_database_connection
 from flask_monitoringdashboard.database.data_base_queries.sql_objects import sql_database_connection
