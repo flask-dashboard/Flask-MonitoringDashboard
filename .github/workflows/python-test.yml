@@ -23,7 +23,7 @@ jobs:
         pip install -r requirements-dev.txt
     - name: Lint with flake8
       run: |
-        flake8 . --exit-zero --max-line-length=100 --ignore=F401,W503 --max-complexity=10 --max-line-length=100
+        flake8 . --exit-zero --max-line-length=100 --ignore=F401,W503 --max-complexity=10
     - name: Test with pytest
       run: |
         pytest --cov --cov-report=xml
