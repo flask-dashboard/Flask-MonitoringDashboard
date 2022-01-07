@@ -137,6 +137,9 @@ class QueryBaseObject(ABC):
     def count(self, model_class):
         raise NotImplementedError()
 
+    def find_all(self, model_class):
+        raise NotImplementedError()
+
 
 class UserQueriesBase(QueryBaseObject, ABC):
     def find_one_user_or_none(self, user_id=None, username=None):
@@ -201,6 +204,9 @@ class CustomGraphQueryBase(QueryBaseObject, ABC):
         raise NotImplementedError()
 
     def get_graph_data(self, graph_id, start_date, end_date):
+        raise NotImplementedError()
+
+    def delete_all_data(self):
         raise NotImplementedError()
 
 

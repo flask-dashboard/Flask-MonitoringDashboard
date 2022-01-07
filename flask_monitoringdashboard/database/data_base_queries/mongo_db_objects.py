@@ -381,6 +381,9 @@ class CommonRouting(QueryBaseObject):
     def count(self, model_class):
         return model_class().get_collection(self.session).count_documents({})
 
+    def find_all(self, model_class):
+        return list(model_class(**elem) for elem in model_class().get_collection(self.session).find({}))
+
 
 class UserQueries(CommonRouting, UserQueriesBase):
     def find_one_user_or_none(self, user_id=None, username=None):
@@ -500,6 +503,9 @@ class CustomGraphQuery(CommonRouting, CustomGraphQueryBase):
                                  {"time": {"$lt": end_date + datetime.timedelta(days=1)}}]
                         })
                     )
+
+    def delete_all_data(self):
+        CustomGraphData().get_collection(self.session).delete_many({})
 
 
 class EndpointQuery(CommonRouting, EndpointQueryBase):
