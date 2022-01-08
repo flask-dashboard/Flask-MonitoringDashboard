@@ -140,6 +140,9 @@ class Request(Base):
 
     def create_other_indexes(self, current_collection):
         current_collection.create_index([("endpoint_id", 1)], background=True)
+        current_collection.create_index([("endpoint_id", 1), ("time_requested", 1)], background=True)
+        current_collection.create_index([("id", 1), ("time_requested", 1)], background=True)
+        current_collection.create_index([("status_code", 1), ("time_requested", 1)], background=True)
 
 
 class Outlier(Base):
@@ -160,6 +163,8 @@ class Outlier(Base):
 
     def create_other_indexes(self, current_collection):
         current_collection.create_index([("endpoint_id", 1)], background=True)
+        current_collection.create_index([("request_id", 1)], background=True)
+        current_collection.create_index([("endpoint_id", 1), ("request_id", 1)], background=True)
 
 
 class CodeLine(Base):
@@ -168,6 +173,10 @@ class CodeLine(Base):
         if not new_content.get("id"):
             new_content["id"] = str(uuid.uuid4())
         super().__init__(new_content)
+
+    def create_other_indexes(self, current_collection):
+        current_collection.create_index([("filename", 1), ("line_number", 1), ("function_name", 1), ("code", 1)],
+                                        background=True)
 
 
 class StackLine(Base):
@@ -196,6 +205,8 @@ class StackLine(Base):
 
     def create_other_indexes(self, current_collection):
         current_collection.create_index([("endpoint_id", 1)], background=True)
+        current_collection.create_index([("endpoint_id", 1), ("request_id", 1)], background=True)
+        current_collection.create_index([("endpoint_id", 1), ("request_id", 1)], background=True)
 
 
 class CustomGraph(Base):

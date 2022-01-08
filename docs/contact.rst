@@ -4,7 +4,7 @@ This page provides information about how to ask a question, or post an issue.
 
 Developing-team
 ---------------
-Currently, the team consists of three active developers:
+Currently, the team consists of four active developers:
 
 .. table::
    :widths: 2, 7
@@ -24,15 +24,22 @@ Currently, the team consists of three active developers:
    |            | |                                                                    |
    |            | | Test Monitor Specialist                                            |
    +------------+----------------------------------------------------------------------+
+   | |Picture4| | | **Amedeo Bussi**                                                   |
+   |            | |                                                                    |
+   |            | | Mongodb expert                                                     |
+   +------------+----------------------------------------------------------------------+
 
 .. |Picture1| image:: https://avatars2.githubusercontent.com/u/17162650?s=460&v=4
-			  ..:width: 100px
+              ..:width: 100px
 
 .. |Picture2| image:: https://avatars2.githubusercontent.com/u/7281856?s=400&v=4
-			  ..:width: 100px
+              ..:width: 100px
 
 .. |Picture3| image:: https://avatars3.githubusercontent.com/u/17165311?s=400&v=4
-			  ..:width: 100px
+              ..:width: 100px
+
+.. |Picture4| image:: https://avatars3.githubusercontent.com/u/8645312?s=400&v=4
+              ..:width: 100px
 
 
 Found a bug?
@@ -42,40 +49,40 @@ You can use the template below for the right formatting:
 
 .. topic:: Issue Template
 
-	- Expected Behavior
+    - Expected Behavior
 
-	  *Tell us what should happen*
+      *Tell us what should happen*
 
-	- Current Behavior
+    - Current Behavior
 
-	  *Tell us what happens instead of the expected behavior*
+      *Tell us what happens instead of the expected behavior*
 
-	- Possible Solution
+    - Possible Solution
 
-	  *Not obligatory, but suggest a fix/reason for the bug*
+      *Not obligatory, but suggest a fix/reason for the bug*
 
-	- Steps to Reproduce
+    - Steps to Reproduce
 
-	  *Provide a link to a live example, or an unambiguous set of steps to reproduce this bug. Include code to reproduce, if relevant*
+      *Provide a link to a live example, or an unambiguous set of steps to reproduce this bug. Include code to reproduce, if relevant*
 
-	  1.
+      1.
 
-	  2.
+      2.
 	  
-	  3.
+      3.
 	  
-	  4.
+      4.
 
-	- Context (Environment)
+    - Context (Environment)
 	
-	  *How has this issue affected you? What are you trying to accomplish? 
-	  Providing context helps us come up with a solution that is most useful in the real world*
+      *How has this issue affected you? What are you trying to accomplish?
+      Providing context helps us come up with a solution that is most useful in the real world*
 
-	- Detailed Description
+    - Detailed Description
 	
-	  *Provide a detailed description of the change or addition you are proposing*
+      *Provide a detailed description of the change or addition you are proposing*
 
-	- Possible Implementation
+    - Possible Implementation
 	 
-	  *Not obligatory, but suggest an idea for implementing addition or change*
+      *Not obligatory, but suggest an idea for implementing addition or change*
 
