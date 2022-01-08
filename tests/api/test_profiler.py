@@ -27,7 +27,7 @@ def test_profiler_table(dashboard_user, stack_line, request_1, endpoint, offset,
     assert data['id'] == str(request_1.id)
     assert data['ip'] == request_1.ip
     assert data['status_code'] == str(request_1.status_code)
-    assert data['time_requested'] == str(to_local_datetime(request_1.time_requested))
+    assert data['time_requested'][:-3] == str(to_local_datetime(request_1.time_requested))[:-3]
     assert data['version_requested'] == request_1.version_requested
 
     assert len(data['stack_lines']) == 1

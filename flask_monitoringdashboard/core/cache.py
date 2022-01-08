@@ -5,7 +5,7 @@ import datetime
 from multiprocessing import Lock
 
 from flask_monitoringdashboard.core.rules import get_rules
-from flask_monitoringdashboard.database import session_scope
+from flask_monitoringdashboard.database import DatabaseConnectionWrapper
 from flask_monitoringdashboard.database.endpoint import (
     get_last_requested,
     get_endpoints_hits,
@@ -52,7 +52,7 @@ def init_cache():
     It initializes the in-memory cache from the db
     """
     global memory_cache
-    with session_scope() as session:
+    with DatabaseConnectionWrapper().database_connection.session_scope() as session:
         last_req_dict = dict(get_last_requested(session))
         hits_dict = dict(get_endpoints_hits(session))
         averages_dict = dict(get_endpoint_averages(session))
@@ -94,7 +94,7 @@ def get_last_requested_overview():
     Get the last requested values from the cache for the overview page.
     """
     global memory_cache
-    return [(endpoint_name, endpoint_info.last_requested) for endpoint_name, endpoint_info in memory_cache.items]
+    return [(endpoint_name, endpoint_info.last_requested) for endpoint_name, endpoint_info in memory_cache.items()]
 
 
 def flush_cache():
@@ -104,7 +104,7 @@ def flush_cache():
     global memory_cache
     if not memory_cache:
         return
-    with session_scope() as session:
+    with DatabaseConnectionWrapper().database_connection.session_scope() as session:
         for endpoint_name, endpoint_info in memory_cache.items():
             if endpoint_info.last_requested:
                 update_last_requested(session, endpoint_name, endpoint_info.last_requested)

@@ -1,11 +1,7 @@
 """
 Contains all functions that access an StackLine object.
 """
-
-from sqlalchemy import desc, distinct
-from sqlalchemy.orm import joinedload
-
-from flask_monitoringdashboard.database import StackLine, Request
+from flask_monitoringdashboard.database import DatabaseConnectionWrapper
 from flask_monitoringdashboard.database.code_line import get_code_line
 
 
@@ -21,8 +17,9 @@ def add_stack_line(session, request_id, position, indent, duration, code_line):
     """
     fn, ln, name, code = code_line
     db_code_line = get_code_line(session, fn, ln, name, code)
-    session.add(
-        StackLine(
+    database_connection_wrapper = DatabaseConnectionWrapper()
+    database_connection_wrapper.database_connection.stack_line_query(session).create_stack_line(
+        database_connection_wrapper.database_connection.stack_line(
             request_id=request_id,
             position=position,
             indent=indent,
@@ -42,18 +39,9 @@ def get_profiled_requests(session, endpoint_id, offset, per_page):
     :return: A list with tuples. Each tuple consists first of a Request-object, and the second part
     of the tuple is a list of StackLine-objects.
     """
-    result = (
-        session.query(Request)
-        .filter(Request.endpoint_id == endpoint_id)
-        .options(joinedload(Request.stack_lines).joinedload(StackLine.code))
-        .filter(Request.stack_lines.any())
-        .order_by(desc(Request.time_requested))
-        .offset(offset)
-        .limit(per_page)
-        .all()
-    )
-    session.expunge_all()
-    return result
+    return DatabaseConnectionWrapper().database_connection.stack_line_query(session).get_profiled_requests(endpoint_id,
+                                                                                                           offset,
+                                                                                                           per_page)
 
 
 def get_grouped_profiled_requests(session, endpoint_id):
@@ -64,23 +52,5 @@ def get_grouped_profiled_requests(session, endpoint_id):
     :return: A list with tuples. Each tuple consists first of a Request-object, and the second part
     of the tuple is a list of StackLine-objects.
     """
-    t = (
-        session.query(distinct(StackLine.request_id).label('id'))
-        .filter(Request.endpoint_id == endpoint_id)
-        .join(Request.stack_lines)
-        .order_by(StackLine.request_id.desc())
-        .limit(100)
-        .subquery('t')
-    )
-    # Limit the number of results by 100, otherwise the profiler gets too large
-    # and the page doesn't load anymore. We show the most recent 100 requests.
-    result = (
-        session.query(Request)
-        .join(Request.stack_lines)
-        .filter(Request.id == t.c.id)
-        .order_by(desc(Request.id))
-        .options(joinedload(Request.stack_lines).joinedload(StackLine.code))
-        .all()
-    )
-    session.expunge_all()
-    return result
+    return DatabaseConnectionWrapper().database_connection.stack_line_query(session).get_grouped_profiled_requests(
+        endpoint_id)

@@ -4,18 +4,27 @@ This file contains all pytests that count a number of results in the database.
 """
 import pytest
 
-from flask_monitoringdashboard.database import Endpoint, Request
 from flask_monitoringdashboard.database.count import (
     count_requests,
     count_total_requests,
     count_outliers,
     count_profiled_requests,
 )
+from flask_monitoringdashboard.database import DatabaseConnectionWrapper
+
+
+database_connection_wrapper = DatabaseConnectionWrapper()
+
+
+Request = database_connection_wrapper.database_connection.request
+RequestQuery = database_connection_wrapper.database_connection.request_query
+Endpoint = database_connection_wrapper.database_connection.endpoint
+EndpointQuery = database_connection_wrapper.database_connection.endpoint_query
 
 
 @pytest.fixture
 def non_existing_endpoint_id(session):
-    return session.query(Endpoint).count() + 1
+    return EndpointQuery(session).count(Endpoint) + 1
 
 
 @pytest.mark.usefixtures('request_1')
@@ -25,7 +34,7 @@ def test_count_requests(session, endpoint, non_existing_endpoint_id):
 
 
 def test_count_total_requests(session):
-    assert count_total_requests(session) == session.query(Request).count()
+    assert count_total_requests(session) == RequestQuery(session).count(Request)
 
 
 @pytest.mark.usefixtures('outlier_1')

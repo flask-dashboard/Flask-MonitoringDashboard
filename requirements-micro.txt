@@ -2,6 +2,7 @@ click
 apscheduler
 flask>=0.9            # for monitoring the web-service
 sqlalchemy>=1.1.9     # for database support
+pymongo==4.0.1        # for mongodb support
 configparser          # for parsing the config-file
 psutil                # for logging extra CPU-info
 colorhash             # for hashing a string into a color

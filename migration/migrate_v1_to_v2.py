@@ -8,7 +8,7 @@ from contextlib import contextmanager
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker, joinedload
 
-from flask_monitoringdashboard.database import Endpoint, Request, Outlier
+from flask_monitoringdashboard.database.data_base_queries.sql_objects import Endpoint, Request, Outlier
 
 # OLD_DB_URL = 'dialect+driver://username:password@host:port/old_db'
 # NEW_DB_URL = 'dialect+driver://username:password@host:port/new_db'
@@ -28,7 +28,7 @@ tests_dict = {}
 
 
 def create_new_db(db_url):
-    from flask_monitoringdashboard.database import Base
+    from flask_monitoringdashboard.database.data_base_queries.sql_objects import Base
 
     engine = create_engine(db_url)
     Base.metadata.drop_all(engine)

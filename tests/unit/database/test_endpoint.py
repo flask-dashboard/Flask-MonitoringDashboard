@@ -6,10 +6,17 @@ from datetime import datetime
 
 import pytest
 
-from flask_monitoringdashboard.database import Endpoint
 from flask_monitoringdashboard.database.count_group import get_value
 from flask_monitoringdashboard.database.endpoint import get_endpoint_by_name, update_endpoint, update_last_requested, \
     get_last_requested, get_endpoints
+from flask_monitoringdashboard.database import DatabaseConnectionWrapper
+
+
+database_connection_wrapper = DatabaseConnectionWrapper()
+
+
+Endpoint = database_connection_wrapper.database_connection.endpoint
+EndpointQuery = database_connection_wrapper.database_connection.endpoint_query
 
 
 def test_get_endpoint(session, endpoint):
@@ -33,5 +40,9 @@ def test_update_last_accessed(session, endpoint, timestamp):
 
 def test_endpoints(session, endpoint):
     endpoints = get_endpoints(session)
-    assert endpoints.count() == session.query(Endpoint).count()
+    try:
+        endpoints_length = len(endpoints)
+    except:
+        endpoints_length = endpoints.count()
+    assert endpoints_length == EndpointQuery(session).count(Endpoint)
     assert [endpoint.id == e.id for e in endpoints]  # check that the endpoint is included.

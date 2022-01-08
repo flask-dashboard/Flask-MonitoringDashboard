@@ -37,12 +37,18 @@ def bind(app, schedule=True, include_dashboard=True):
     :param schedule: flag telling if the background scheduler should be started
     :param include_dashboard: flag telling if the views should be added or not.
     """
+    from flask_monitoringdashboard.database import DatabaseConnectionWrapper
     blueprint.name = config.blueprint_name
     config.app = app
     # Provide a secret-key for using WTF-forms
     if not app.secret_key:
         log('WARNING: You should provide a security key.')
         app.secret_key = 'my-secret-key'
+
+    # Connect to database
+    database_connection_wrapper = DatabaseConnectionWrapper(config)
+    database_connection_wrapper.database_connection.connect()
+    database_connection_wrapper.database_connection.init_database()
 
     # Add all route-functions to the blueprint
     if include_dashboard:

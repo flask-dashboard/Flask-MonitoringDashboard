@@ -1,10 +1,14 @@
 import numpy
 
-from flask_monitoringdashboard.database import Request
 from flask_monitoringdashboard.database.count_group import get_value, count_requests_group
 from flask_monitoringdashboard.database.data_grouped import get_two_columns_grouped
 from flask_monitoringdashboard.database.endpoint import get_endpoint_by_name
-from flask_monitoringdashboard.database.versions import get_first_requests
+from flask_monitoringdashboard.database.versions import (
+    get_first_requests,
+    get_2d_version_data_filter,
+    get_version_requested_query,
+    get_field_name
+)
 
 
 def get_2d_version_data(session, endpoint_id, versions, column_data, column):
@@ -17,7 +21,7 @@ def get_2d_version_data(session, endpoint_id, versions, column_data, column):
     :return: a dict with 2d information about the version and another column
     """
     first_request = get_first_requests(session, endpoint_id)
-    values = get_two_columns_grouped(session, column, Request.endpoint_id == endpoint_id)
+    values = get_two_columns_grouped(session, column, get_2d_version_data_filter(endpoint_id))
     data = [[get_value(values, (data, v)) for v in versions] for data in column_data]
 
     return {
@@ -27,11 +31,11 @@ def get_2d_version_data(session, endpoint_id, versions, column_data, column):
 
 
 def get_version_user_data(session, endpoint_id, versions, users):
-    return get_2d_version_data(session, endpoint_id, versions, users, Request.group_by)
+    return get_2d_version_data(session, endpoint_id, versions, users, get_field_name("group_by"))
 
 
 def get_version_ip_data(session, endpoint_id, versions, ips):
-    return get_2d_version_data(session, endpoint_id, versions, ips, Request.ip)
+    return get_2d_version_data(session, endpoint_id, versions, ips, get_field_name("ip"))
 
 
 def get_multi_version_data(session, endpoints, versions):
@@ -43,7 +47,9 @@ def get_multi_version_data(session, endpoints, versions):
     :return: a 2d list of data
     """
     endpoints = [get_endpoint_by_name(session, name) for name in endpoints]
-    requests = [count_requests_group(session, Request.version_requested == v) for v in versions]
+    requests = [count_requests_group(session,
+                                     get_version_requested_query(v))
+                for v in versions]
 
     total_hits = numpy.zeros(len(versions))
     hits = numpy.zeros((len(endpoints), len(versions)))

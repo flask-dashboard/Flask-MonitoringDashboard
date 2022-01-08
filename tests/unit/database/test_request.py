@@ -26,7 +26,10 @@ def test_get_latencies_sample(session, request_1, endpoint):
 
 
 def test_add_request(endpoint, session):
-    num_requests = len(endpoint.requests)
+    try:
+        num_requests = len(endpoint.requests)
+    except:
+        num_requests = 0
     add_request(
         session,
         duration=200,
@@ -54,7 +57,10 @@ def test_get_endpoints(session, endpoint):
 
 @pytest.mark.parametrize('request_1__time_requested', [datetime(1970, 1, 1)])
 def test_get_date_of_first_request(session, request_1):
-    total_seconds = int(time.mktime(request_1.time_requested.timetuple()))
+    try:
+        total_seconds = int(time.mktime(request_1.time_requested.timetuple()))
+    except:
+        total_seconds = int((request_1.time_requested-datetime(1970, 1, 1)).total_seconds())
     assert get_date_of_first_request(session) == total_seconds
 
 

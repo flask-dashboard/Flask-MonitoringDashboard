@@ -1,7 +1,8 @@
 import pytest
 import pytz
+import os
 from flask import Flask
-
+from flask_monitoringdashboard.database import DatabaseConnectionWrapper
 import flask_monitoringdashboard
 
 
@@ -10,7 +11,10 @@ def config(colors=None, group_by=None):
     flask_monitoringdashboard.config.colors = colors or {'endpoint': '[0, 1, 2]'}
     flask_monitoringdashboard.config.group_by = group_by
     flask_monitoringdashboard.config.timezone = pytz.timezone('UTC')
-
+    if os.environ.get("MONGO_DB") == "true":
+        print("RUNNING ON MONGODB")
+        flask_monitoringdashboard.config.database_name = "mongodb://localhost:27017/flask_monitoringdashboard"
+    DatabaseConnectionWrapper(flask_monitoringdashboard.config)
     return flask_monitoringdashboard.config
 
 

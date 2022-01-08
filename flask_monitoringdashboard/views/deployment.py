@@ -6,7 +6,7 @@ from flask_monitoringdashboard import blueprint, config
 from flask_monitoringdashboard.core.auth import secure
 from flask_monitoringdashboard.core.timezone import to_local_datetime
 from flask_monitoringdashboard.core.utils import get_details
-from flask_monitoringdashboard.database import session_scope
+from flask_monitoringdashboard.database import DatabaseConnectionWrapper
 
 
 @blueprint.route('/api/deploy_details')
@@ -15,14 +15,18 @@ def deploy_details():
     """
     :return: A JSON-object with deployment details
     """
-    with session_scope() as session:
+    with DatabaseConnectionWrapper().database_connection.session_scope() as session:
         details = get_details(session)
-    details['first-request'] = to_local_datetime(
-        datetime.datetime.fromtimestamp(details['first-request'])
-    )
-    details['first-request-version'] = to_local_datetime(
-        datetime.datetime.fromtimestamp(details['first-request-version'])
-    )
+    try:
+        details['first-request'] = to_local_datetime(
+            datetime.datetime.fromtimestamp(details['first-request'])
+        )
+        details['first-request-version'] = to_local_datetime(
+            datetime.datetime.fromtimestamp(details['first-request-version'])
+        )
+    except:
+        details['first-request'] = to_local_datetime(datetime.datetime.utcnow())
+        details['first-request-version'] = to_local_datetime(datetime.datetime.utcnow())
     return jsonify(details)
 
 

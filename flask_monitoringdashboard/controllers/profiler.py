@@ -4,7 +4,7 @@ import numpy
 
 from flask_monitoringdashboard.core.profiler.util import PathHash
 from flask_monitoringdashboard.core.timezone import to_local_datetime
-from flask_monitoringdashboard.database import row2dict
+from flask_monitoringdashboard.database import DatabaseConnectionWrapper
 from flask_monitoringdashboard.database.stack_line import (
     get_profiled_requests,
     get_grouped_profiled_requests,
@@ -19,14 +19,14 @@ def get_profiler_table(session, endpoint_id, offset, per_page):
     :param per_page: number of items that are returned (at most)
     """
     table = get_profiled_requests(session, endpoint_id, offset, per_page)
-
+    database_connection_wrapper = DatabaseConnectionWrapper()
     for idx, row in enumerate(table):
         row.time_requested = to_local_datetime(row.time_requested)
-        table[idx] = row2dict(row)
+        table[idx] = database_connection_wrapper.database_connection.row2dict(row)
         stack_lines = []
         for line in row.stack_lines:
-            obj = row2dict(line)
-            obj['code'] = row2dict(line.code)
+            obj = database_connection_wrapper.database_connection.row2dict(line)
+            obj['code'] = database_connection_wrapper.database_connection.row2dict(line.code)
             stack_lines.append(obj)
         table[idx]['stack_lines'] = stack_lines
     return table
@@ -39,7 +39,6 @@ def get_grouped_profiler(session, endpoint_id):
     :return:
     """
     requests = get_grouped_profiled_requests(session, endpoint_id)
-    session.expunge_all()
 
     histogram = defaultdict(list)  # path -> [list of values]
     path_hash = PathHash()

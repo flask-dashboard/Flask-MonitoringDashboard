@@ -1,14 +1,20 @@
-from flask_monitoringdashboard.database import Request
+from flask_monitoringdashboard.database import DatabaseConnectionWrapper
+
+
+database_connection_wrapper = DatabaseConnectionWrapper()
+
+
+Request = database_connection_wrapper.database_connection.request
+RequestQuery = database_connection_wrapper.database_connection.request_query
 
 
 def test_deployment(dashboard_user, session, config):
     response = dashboard_user.get('dashboard/api/deploy_details')
     assert response.status_code == 200
-
     data = response.json
     assert data['config-version'] == config.version
     assert data['link'] == 'dashboard'
-    assert data['total-requests'] == session.query(Request).count()
+    assert data['total-requests'] == RequestQuery(session).count(Request)
 
 
 def test_deployment_config(dashboard_user, config):

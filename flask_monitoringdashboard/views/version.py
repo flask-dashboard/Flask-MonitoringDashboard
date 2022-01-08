@@ -5,7 +5,7 @@ from flask_monitoringdashboard.controllers.versions import (
     get_version_user_data,
     get_version_ip_data,
 )
-from flask_monitoringdashboard.database import session_scope
+from flask_monitoringdashboard.database import DatabaseConnectionWrapper
 
 from flask_monitoringdashboard.core.auth import secure
 
@@ -21,7 +21,7 @@ def versions(endpoint_id=None):
     :param endpoint_id: integer
     :return: A JSON-list with all versions of a specific endpoint (version represented by a string)
     """
-    with session_scope() as session:
+    with DatabaseConnectionWrapper().database_connection.session_scope() as session:
         version_dates = get_versions(session, endpoint_id)
         dicts = []
         for vt in version_dates:
@@ -48,9 +48,9 @@ def multi_version():
     """
     data = json.loads(request.data)['data']
     endpoints = data['endpoints']
-    versions = data['versions']
-    with session_scope() as session:
-        return jsonify(get_multi_version_data(session, endpoints, versions))
+    versions_rq = data['versions']
+    with DatabaseConnectionWrapper().database_connection.session_scope() as session:
+        return jsonify(get_multi_version_data(session, endpoints, versions_rq))
 
 
 @blueprint.route('/api/version_user/<endpoint_id>', methods=['POST'])
@@ -76,11 +76,11 @@ def version_user(endpoint_id):
           }
     """
     data = json.loads(request.data)['data']
-    versions = data['versions']
+    versions_rq = data['versions']
     users = data['users']
 
-    with session_scope() as session:
-        return jsonify(get_version_user_data(session, endpoint_id, versions, users))
+    with DatabaseConnectionWrapper().database_connection.session_scope() as session:
+        return jsonify(get_version_user_data(session, endpoint_id, versions_rq, users))
 
 
 @blueprint.route('/api/version_ip/<endpoint_id>', methods=['POST'])
@@ -106,8 +106,8 @@ def version_ip(endpoint_id):
           }
     """
     data = json.loads(request.data)['data']
-    versions = data['versions']
+    versions_rq = data['versions']
     ips = data['ip']
 
-    with session_scope() as session:
-        return jsonify(get_version_ip_data(session, endpoint_id, versions, ips))
+    with DatabaseConnectionWrapper().database_connection.session_scope() as session:
+        return jsonify(get_version_ip_data(session, endpoint_id, versions_rq, ips))

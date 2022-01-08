@@ -10,7 +10,12 @@ from flask_monitoringdashboard.core.profiler import StacktraceProfiler
 
 @pytest.mark.usefixtures('request_context')
 def test_after_run(endpoint, config):
+    def my_func():
+        print("VERY NICE FUNCTION")
+
+    setattr(my_func, "original", my_func)
     config.app.url_map.add(Rule('/', endpoint=endpoint.name))
+    config.app.view_functions[endpoint.name] = my_func
     init_cache()
     request.environ['REMOTE_ADDR'] = '127.0.0.1'
     current_thread = threading.current_thread().ident

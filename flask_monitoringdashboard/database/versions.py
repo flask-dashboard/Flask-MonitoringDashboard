@@ -1,6 +1,15 @@
-from sqlalchemy import func, desc
+from flask_monitoringdashboard.database import DatabaseConnectionWrapper
 
-from flask_monitoringdashboard.database import Request
+
+def get_field_name(name):
+    database_connection_wrapper = DatabaseConnectionWrapper()
+    return database_connection_wrapper.database_connection.version_query.get_field_name(
+        name,
+        database_connection_wrapper.database_connection.request)
+
+
+def get_version_requested_query(v):
+    return DatabaseConnectionWrapper().database_connection.version_query.get_version_requested_query(v)
 
 
 def get_versions(session, endpoint_id=None, limit=None):
@@ -11,14 +20,12 @@ def get_versions(session, endpoint_id=None, limit=None):
     :param limit: only return the most recent versions
     :return: a list of tuples with the versions (as a string) and dates, from oldest to newest
     """
-    query = session.query(Request.version_requested, func.min(Request.time_requested))
-    if endpoint_id:
-        query = query.filter(Request.endpoint_id == endpoint_id)
-    query = query.group_by(Request.version_requested)
-    query = query.order_by(func.min(Request.time_requested).desc())
-    if limit:
-        query = query.limit(limit)
-    return query.all()
+    return DatabaseConnectionWrapper().database_connection.version_query(session).get_versions(endpoint_id=endpoint_id,
+                                                                                               limit=limit)
+
+
+def get_2d_version_data_filter(endpoint_id):
+    return DatabaseConnectionWrapper().database_connection.version_query.get_2d_version_data_filter(endpoint_id)
 
 
 def get_first_requests(session, endpoint_id, limit=None):
@@ -29,14 +36,5 @@ def get_first_requests(session, endpoint_id, limit=None):
     :param endpoint_id: id of the endpoint
     :return list of tuples with versions
     """
-    query = (
-        session.query(
-            Request.version_requested, func.min(Request.time_requested).label('first_used')
-        )
-            .filter(Request.endpoint_id == endpoint_id)
-            .group_by(Request.version_requested)
-            .order_by(desc('first_used'))
-    )
-    if limit:
-        query = query.limit(limit)
-    return query.all()
+    return DatabaseConnectionWrapper().database_connection.version_query(session).get_first_requests(endpoint_id,
+                                                                                                     limit=limit)

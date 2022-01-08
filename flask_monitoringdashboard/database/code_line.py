@@ -1,4 +1,4 @@
-from flask_monitoringdashboard.database import CodeLine
+from flask_monitoringdashboard.database import DatabaseConnectionWrapper
 
 
 def get_code_line(session, fn, ln, name, code):
@@ -12,19 +12,4 @@ def get_code_line(session, fn, ln, name, code):
     :param code: line of code (string)
     :return: a CodeLine object
     """
-    result = (
-        session.query(CodeLine)
-        .filter(
-            CodeLine.filename == fn,
-            CodeLine.line_number == ln,
-            CodeLine.function_name == name,
-            CodeLine.code == code,
-        )
-        .first()
-    )
-    if not result:
-        result = CodeLine(filename=fn, line_number=ln, function_name=name, code=code)
-        session.add(result)
-        session.flush()
-
-    return result
+    return DatabaseConnectionWrapper().database_connection.code_line_queries(session).get_code_line(fn, ln, name, code)

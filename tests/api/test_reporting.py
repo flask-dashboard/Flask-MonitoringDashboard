@@ -1,8 +1,16 @@
 import sys
 from datetime import datetime, timedelta
 import pytest
+from flask_monitoringdashboard.database import DatabaseConnectionWrapper
 
-from flask_monitoringdashboard.database import Endpoint
+
+database_connection_wrapper = DatabaseConnectionWrapper()
+
+
+Request = database_connection_wrapper.database_connection.request
+RequestQuery = database_connection_wrapper.database_connection.request_query
+Endpoint = database_connection_wrapper.database_connection.endpoint
+EndpointQuery = database_connection_wrapper.database_connection.endpoint_query
 
 
 def test_make_report_get(dashboard_user):
@@ -33,8 +41,7 @@ def test_make_report_post_not_significant(dashboard_user, endpoint, request_1, r
         },
     )
     assert response.status_code == 200
-
-    assert len(response.json['summaries']) == session.query(Endpoint).count()
+    assert len(response.json['summaries']) == EndpointQuery(session).count(Endpoint)
     [data] = [row for row in response.json['summaries'] if row['endpoint_id'] == endpoint.id]
 
     assert data['endpoint_id'] == endpoint.id
