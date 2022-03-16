@@ -31,6 +31,7 @@
 
           <div class="card-body">
             <form class="form" method="POST" action="login">
+              <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
               <div class="form-group">
                 <label for="formName"><i class="fa fa-user"></i> Login</label>
                 <input
