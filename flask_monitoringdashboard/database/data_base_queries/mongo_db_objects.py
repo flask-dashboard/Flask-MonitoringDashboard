@@ -446,9 +446,11 @@ class CodeLineQueries(CommonRouting, CodeLineQueriesBase):
 
 class CountQueries(CommonRouting, CountQueriesBase):
     def count_rows(self, column, *criterion):
-        return len(Request().get_collection(self.session).distinct(column,
-                                                                   {"$and": list(criterion)}
-                                                                   if len(criterion) > 0 else {}))
+        pipeline = []
+        if len(criterion) > 0:
+            pipeline.append({"$match": {"$and": list(criterion)}})
+        pipeline.append({"$group": {"_id": column}})
+        return len(list(Request().get_collection(self.session).aggregate(pipeline)))
 
     def count_requests(self, endpoint_id, *where):
         return self.count_rows("id",
@@ -463,7 +465,10 @@ class CountQueries(CommonRouting, CountQueriesBase):
         return Outlier().get_collection(self.session).count_documents({"endpoint_id": endpoint_id})
 
     def count_profiled_requests(self, endpoint_id):
-        return len(StackLine().get_collection(self.session).distinct("request_id", {"endpoint_id": endpoint_id}))
+        pipeline = list()
+        pipeline.append({"$match": {"endpoint_id": endpoint_id}})
+        pipeline.append({"$group": {"_id": "request_id"}})
+        return len(list(StackLine().get_collection(self.session).aggregate(pipeline)))
 
     def count_request_per_endpoint(self, *criterion):
         query = [
