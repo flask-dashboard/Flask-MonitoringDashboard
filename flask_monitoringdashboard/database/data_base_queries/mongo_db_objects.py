@@ -1,5 +1,6 @@
 import time
 import datetime
+import os
 from contextlib import contextmanager
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_monitoringdashboard.core.timezone import to_local_datetime
@@ -26,6 +27,39 @@ def safe_mongo_call(call):
     return _safe_mongo_call
 
 
+def safe_mongo_call_find(call, call_type):
+    """
+    In order to minimize the risk of failure and the impact on the app performance,
+    we need to allow the application to be able to read from the secondaries.
+    In such cases, we will have an eventual data consistence. Hence, we should re-try to read
+    """
+    def has_content(result):
+        if call_type == "find_one":
+            # we will have content is the object is not None
+            return result is not None
+        if call_type == "find":
+            return result and len(list(result.clone())) > 0
+
+    def _safe_mongo_call_find(*args, **kwargs):
+        for i in range(5):
+            try:
+                for _i in range(6):
+                    result = call(*args, **kwargs)
+                    if _i == 5 or has_content(result):
+                        return result
+                    else:
+                        time.sleep(pow(2, i))
+            except (AutoReconnect, ServerSelectionTimeoutError):
+                time.sleep(pow(2, i))
+        else:
+            raise AutoReconnect()
+
+    return _safe_mongo_call_find
+
+
+def do_nothing_function(*args, **kwargs): pass
+
+
 class CollectionWrapper:
     def __init__(self, collection):
         self.collection = collection
@@ -33,12 +67,19 @@ class CollectionWrapper:
     def __getattr__(self, item):
         elem = getattr(self.collection, item)
         if callable(elem):
-            return safe_mongo_call(elem)
+            if item in ["create_index", "drop_indexes"] and \
+                    os.environ.get("MONITORING_DISABLED_INDEX_CREATION") == "true":
+                return do_nothing_function
+            if item in ["find", "find_one"]:
+                return safe_mongo_call_find(elem, item)
+            else:
+                return safe_mongo_call(elem)
 
 
 class Base(dict):
     def __init__(self, new_content=None):
         new_content.pop("_id", None)
+        new_content["__creation_datetime__"] = datetime.datetime.utcnow()
         super().__init__()
         if new_content:
             for key, value in new_content.items():
@@ -446,9 +487,11 @@ class CodeLineQueries(CommonRouting, CodeLineQueriesBase):
 
 class CountQueries(CommonRouting, CountQueriesBase):
     def count_rows(self, column, *criterion):
-        return len(Request().get_collection(self.session).distinct(column,
-                                                                   {"$and": list(criterion)}
-                                                                   if len(criterion) > 0 else {}))
+        pipeline = []
+        if len(criterion) > 0:
+            pipeline.append({"$match": {"$and": list(criterion)}})
+        pipeline.append({"$group": {"_id": f"${column}"}})
+        return len(list(Request().get_collection(self.session).aggregate(pipeline)))
 
     def count_requests(self, endpoint_id, *where):
         return self.count_rows("id",
@@ -463,7 +506,10 @@ class CountQueries(CommonRouting, CountQueriesBase):
         return Outlier().get_collection(self.session).count_documents({"endpoint_id": endpoint_id})
 
     def count_profiled_requests(self, endpoint_id):
-        return len(StackLine().get_collection(self.session).distinct("request_id", {"endpoint_id": endpoint_id}))
+        pipeline = list()
+        pipeline.append({"$match": {"endpoint_id": endpoint_id}})
+        pipeline.append({"$group": {"_id": "$request_id"}})
+        return len(list(StackLine().get_collection(self.session).aggregate(pipeline)))
 
     def count_request_per_endpoint(self, *criterion):
         query = [
@@ -629,6 +675,8 @@ class EndpointQuery(CommonRouting, EndpointQueryBase):
 
 class OutlierQuery(CommonRouting, OutlierQueryBase):
     def create_outlier_record(self, outlier):
+        if not outlier:
+            return
         outlier.endpoint_id = Request().get_collection(self.session).find_one({
             "id": outlier.request_id
         })["endpoint_id"]

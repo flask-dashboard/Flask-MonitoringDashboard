@@ -3,6 +3,7 @@
 """
 import datetime
 from multiprocessing import Lock
+import logging
 
 from flask_monitoringdashboard.core.rules import get_rules
 from flask_monitoringdashboard.database import DatabaseConnectionWrapper
@@ -64,12 +65,34 @@ def init_cache():
             )
 
 
+def add_to_cache(endpoint_name):
+    """
+        This should be added to all endpoint no directly hosted in Flask before the first request.
+        It initializes the in-memory cache from the db
+    """
+    global memory_cache
+    if not memory_cache.get(endpoint_name):
+        with DatabaseConnectionWrapper().database_connection.session_scope() as session:
+            last_req_dict = dict(get_last_requested(session))
+            hits_dict = dict(get_endpoints_hits(session))
+            averages_dict = dict(get_endpoint_averages(session))
+            memory_cache[endpoint_name] = EndpointInfo(
+                last_requested=last_req_dict.get(endpoint_name),
+                average_duration=averages_dict.get(endpoint_name),
+                hits=hits_dict.get(endpoint_name),
+            )
+
+
 def update_last_requested_cache(endpoint_name):
     """
     Use this instead of updating the last requested to the database.
     """
     global memory_cache
-    memory_cache.get(endpoint_name).set_last_requested(datetime.datetime.utcnow())
+    try:
+        memory_cache.get(endpoint_name).set_last_requested(datetime.datetime.utcnow())
+    except Exception as error:
+        logging.debug(error)
+        logging.warning(f"Error when accessing {endpoint_name} in cache")
 
 
 def update_duration_cache(endpoint_name, duration):
@@ -77,8 +100,12 @@ def update_duration_cache(endpoint_name, duration):
     Use this together with adding a request to the database.
     """
     global memory_cache
-    memory_cache.get(endpoint_name).set_last_requested(datetime.datetime.utcnow())
-    memory_cache.get(endpoint_name).set_duration(duration)
+    try:
+        memory_cache.get(endpoint_name).set_last_requested(datetime.datetime.utcnow())
+        memory_cache.get(endpoint_name).set_duration(duration)
+    except Exception as error:
+        logging.debug(error)
+        logging.warning(f"Error when accessing {endpoint_name} in cache")
 
 
 def get_avg_endpoint(endpoint_name):
@@ -86,7 +113,12 @@ def get_avg_endpoint(endpoint_name):
     Return the average of the request duration for an endpoint.
     """
     global memory_cache
-    return memory_cache.get(endpoint_name).get_duration()
+    try:
+        return memory_cache.get(endpoint_name).get_duration()
+    except Exception as error:
+        logging.debug(error)
+        logging.warning(f"Error when accessing {endpoint_name} in cache")
+        return 0
 
 
 def get_last_requested_overview():
