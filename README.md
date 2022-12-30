@@ -33,6 +33,10 @@ A dashboard for automatic monitoring of <a href="http://flask.pocoo.org/" target
 
 ![gif](/docs/img/fmd_video.gif)
 
+## Motivation
+
+<img width="592" alt="image" src="https://user-images.githubusercontent.com/464519/210054732-bf97cfaa-fb66-4a9f-affb-7004f531b34c.png">
+
 
 ## Key Features
 The Flask Monitoring Dashboard is an extension for Flask applications that offers four main functionalities with little effort from the Flask developer:
