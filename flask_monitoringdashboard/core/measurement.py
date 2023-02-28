@@ -110,7 +110,11 @@ def evaluate(route_handler, args, kwargs):
         return result, status_code, None
 
     except Exception as e:
-        return None, 500, e
+        try:
+            status_code = e.code
+        except AttributeError:
+            status_code = 500
+        return None, status_code, e
 
 
 def add_wrapper1(endpoint, fun):
