@@ -19,7 +19,12 @@ from sqlalchemy import (
     exc,
 )
 
-from sqlalchemy.ext.declarative import declarative_base
+try:
+    # the declarative API is a part of the ORM layer since SQLAlchemy 1.4
+    from sqlalchemy.orm import declarative_base
+except ImportError:
+    # however it used to be an extension before SQLAlchemy 1.4
+    from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker, relationship, scoped_session
 from werkzeug.security import generate_password_hash, check_password_hash
 
