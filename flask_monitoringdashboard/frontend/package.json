@@ -14,7 +14,7 @@
   "dependencies": {
     "@fortawesome/fontawesome-free": "^5.14.0",
     "angular": "^1.8.0",
-    "angular-datatables": "^9.0.2",
+    "angular-datatables": "^16.0.0",
     "angular-route": "^1.8.0",
     "bootstrap": "^4.5.0",
     "css-loader": "^3.6.0",
@@ -26,7 +26,7 @@
     "file-loader": "^6.0.0",
     "jquery": "^3.5.1",
     "moment": "^2.27.0",
-    "node-sass": "^4.13.1",
+    "node-sass": "^9.0.0",
     "plotly.js": "^1.54.6",
     "plotly.js-basic-dist": "^1.54.6",
     "plotly.js-basic-dist-min": "^1.54.6",
