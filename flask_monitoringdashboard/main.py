@@ -36,7 +36,7 @@ def every_ten_seconds():
 
 every_ten_seconds_schedule = {'seconds': 10}
 dashboard.add_graph("Every 10 Seconds", every_ten_seconds, "interval", **every_ten_seconds_schedule)
-dashboard.bind(app)
+
 
 
 @app.route('/')
@@ -89,4 +89,5 @@ def my_func():
 
 
 if __name__ == "__main__":
+    dashboard.bind(app)
     app.run()

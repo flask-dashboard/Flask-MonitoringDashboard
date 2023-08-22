@@ -5,6 +5,10 @@ All notable changes to this project will be documented in this file.
 This project adheres to `Semantic Versioning <http://semver.org/>`_.
 Please note that the changes before version 1.10.0 have not been documented.
 
+v3.1.2
+----------
+- Compatibility with Flask>=2.x Removed the call to `before_app_first_request` and replaced it with `record_once` as per the PR of [@FlorianRhiem](https://github.com/FlorianRhiem).
+
 v3.1.0
 ----------
 Changed
