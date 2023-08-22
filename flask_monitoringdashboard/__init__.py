@@ -70,8 +70,9 @@ def bind(app, schedule=True, include_dashboard=True):
     from flask_monitoringdashboard.core.cache import init_cache
     from flask_monitoringdashboard.core import custom_graph
 
-    blueprint.before_app_first_request(init_measurement)
-    blueprint.before_app_first_request(init_cache)
+    with app.app_context():
+        init_measurement()
+        init_cache()
     if schedule:
         custom_graph.init(app)
 
