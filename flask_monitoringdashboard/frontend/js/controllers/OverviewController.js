@@ -6,6 +6,8 @@ export function OverviewController($scope, $http, $location, menuService, endpoi
     $scope.dashboard_version = '';
     $scope.isHits = true;
 
+    $scope.test = 'test';
+
     $scope.table = [];
     $scope.selectedItem = 2;
 
