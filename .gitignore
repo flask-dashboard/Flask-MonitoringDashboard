@@ -104,5 +104,5 @@ ENV/
 # own scripts
 flask_monitoringdashboard/make_requests.py
 flask_monitoringdashboard/session_test.py
-frontend/node_modules/
+flask_monitoringdashboard/frontend/node_modules/
 frontend/build/
