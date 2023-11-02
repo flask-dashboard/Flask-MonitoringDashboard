@@ -12,7 +12,10 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@babel/plugin-transform-class-properties": "^7.22.5",
     "@fortawesome/fontawesome-free": "^5.14.0",
+    "@npmcli/fs": "^3.1.0",
+    "@popperjs/core": "^2.11.8",
     "angular": "^1.6.10",
     "angular-datatables": "^16.0.0",
     "angular-route": "^1.8.0",
@@ -29,7 +32,6 @@
     "plotly.js-basic-dist-min": "^1.54.6",
     "plotly.js-cartesian-dist": "^1.54.6",
     "plotly.js-dist": "^1.54.6",
-    "popper.js": "^1.16.1",
     "postcss-loader": "^7.3.3",
     "sass-loader": "^13.3.2",
     "style-loader": "^1.2.1",

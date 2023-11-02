@@ -12,7 +12,8 @@ import $ from 'jquery';
 window.$ = window.jQuery = $;
 
 // Popper.js
-import 'popper.js';
+import { createPopper } from '@popperjs/core';
+
 
 require('bootstrap');
 
