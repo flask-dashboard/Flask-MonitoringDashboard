@@ -7,6 +7,7 @@ module.exports = {
     output: {
         path: path.resolve(__dirname, '../static'),
         filename: 'js/app.js',
+        publicPath: '/static/'
     },
     module: {
         rules: [
@@ -25,7 +26,7 @@ module.exports = {
             },
             {
                 test: /\.(woff(2)?|ttf|eot|svg|otf)(\?v=\d+\.\d+\.\d+)?$/,
-                type: 'asset/resource', // This replaces the previous file-loader
+                type: 'asset/resource',
                 generator: {
                     filename: 'fonts/[name][ext]'
                 }

@@ -39,12 +39,14 @@ tr.even:hover, tr.odd:hover {
 
 #mainNav .navbar-collapse .navbar-sidenav .nav-link-collapse:after {
     float: right;
-    content: '\f107';
-    font-family: 'Font Awesome 5 Free';
+    content: "\f107";
+    font-family: "Font Awesome 5 Free";
 }
 
 #mainNav .navbar-collapse .navbar-sidenav .nav-link-collapse.collapsed:after {
-    content: '\f105';
+    content: "\f106"; 
+    font-family: "Font Awesome 5 Free";
+    float: right;
 }
 
 #mainNav .navbar-collapse .navbar-sidenav .sidenav-second-level,
@@ -406,6 +408,10 @@ body.sidenav-toggled .navbar-sidenav-tooltip.show {
     #mainNav.navbar-light .navbar-collapse .navbar-sidenav > .nav-item .sidenav-second-level,
     #mainNav.navbar-light .navbar-collapse .navbar-sidenav > .nav-item .sidenav-third-level {
         color: #adb5bd;
+    }
+
+    div#navbarResponsive {
+    justify-content: space-between;
     }
 }
 
