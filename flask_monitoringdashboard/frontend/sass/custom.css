@@ -125,7 +125,7 @@ tr.even:hover, tr.odd:hover {
         -webkit-flex-direction: column;
         -ms-flex-direction: column;
         flex-direction: column;
-        margin-top: 56px;
+        margin-top: 63px;
         overflow-y: auto;
         overflow-x: hidden;
     }

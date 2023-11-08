@@ -6,7 +6,7 @@
             <form ng-submit="modal.confirm(name)">
                 <div class="modal-header">
                     <h5 class="modal-title" id="modalLabel{{ name }}">{{ title }}</h5>
-                    <button class="close" type="button" data-dismiss="modal"
+                    <button class="close" type="button" data-bs-dismiss="modal"
                             aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
@@ -16,7 +16,7 @@
                     <p ng-show="modal.error[name]" style="color: red;">Error: {{ modal.error[name] }}</p>
                 </div>
                 <div class="modal-footer">
-                    <button class="btn btn-secondary" type="button" data-dismiss="modal">
+                    <button class="btn btn-secondary" type="button" data-bs-dismiss="modal">
                         {{ no || "No" }}
                     </button>
                     <button type="submit" class="btn btn-primary">

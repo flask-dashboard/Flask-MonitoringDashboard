@@ -4,8 +4,6 @@
            data-bs-toggle="collapse" data-bs-target="#collapseDashboard">
             <i class="fas fa-tachometer-alt"></i>
             <span class="nav-link-text">Dashboard</span>
-            <i class="fa fa-angle-up"></i>
-            <i class="fa fa-angle-down"></i>
         </a>
         <ul class="sidenav-second-level collapse" id="collapseDashboard">
             <li ng-class="{'active': menu.page=='overview'}">
@@ -23,7 +21,7 @@
         </ul>
     </li>
 
-    <li class="nav-item" data-bs-toggle="tooltip" data-placement="right" ng-show="menu.endpoint.info.id > 0"
+    <li class="nav-item" data-bs-toggle="tooltip" data-bs-placement="right" ng-show="menu.endpoint.info.id > 0"
         data-original-title="{{ menu.endpoint.info.endpoint }}">
         <a class="nav-link nav-link-collapse collapsed"
            data-bs-toggle="collapse" data-bs-target="#collapseEndpoint">
