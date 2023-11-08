@@ -13,6 +13,7 @@ The dashboard with the results that are collected can be found at:
 """
 
 import os
+import sentry_sdk
 
 from flask import Blueprint
 
@@ -43,6 +44,12 @@ def bind(app, schedule=True, include_dashboard=True):
     if not app.secret_key:
         log('WARNING: You should provide a security key.')
         app.secret_key = 'my-secret-key'
+
+    sentry_sdk.init(
+        dsn="",
+        traces_sample_rate=1.0,
+        profiles_sample_rate=1.0,
+    )
 
     # Add all route-functions to the blueprint
     if include_dashboard:

@@ -38,6 +38,7 @@ class Config(object):
         self.description = 'Automatically monitor the evolving performance of Flask/Python web services'
         self.show_login_banner = True
         self.show_login_footer = True
+        self.initialized = False
 
         # database
         self.database_name = 'sqlite:///flask_monitoringdashboard.db'

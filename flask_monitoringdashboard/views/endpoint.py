@@ -1,6 +1,6 @@
 from flask import jsonify, request, json
 
-from flask_monitoringdashboard import blueprint
+from flask_monitoringdashboard import blueprint, config
 from flask_monitoringdashboard.controllers.endpoints import (
     get_endpoint_overview,
     get_api_performance,
@@ -23,6 +23,27 @@ from flask_monitoringdashboard.database.endpoint import (
 )
 
 
+def check_if_user_identifier_exists():
+    from flask_monitoringdashboard.database import TelemetryUser
+    with session_scope() as session:
+        if not bool(session.query(TelemetryUser).all()):
+            new_telemetry = TelemetryUser()
+            session.add(new_telemetry)
+            session.commit()
+        else:
+            from sqlalchemy.orm.exc import NoResultFound
+            from sqlalchemy.orm.exc import MultipleResultsFound
+
+            try:
+                telemetry_user = session.query(TelemetryUser).one()
+                telemetry_user.accessed += 1
+                session.commit()
+
+            except (MultipleResultsFound, NoResultFound):
+                session.query(TelemetryUser).delete()
+                check_if_user_identifier_exists()
+
+
 @blueprint.route('/api/overview')
 @secure
 def get_overview():
@@ -30,6 +51,9 @@ def get_overview():
     Get information per endpoint about the number of hits and median execution time
     :return: A JSON-list with a JSON-object per endpoint
     """
+    if not config.initialized:
+        check_if_user_identifier_exists()
+        config.initialized = True
     with session_scope() as session:
         return jsonify(get_endpoint_overview(session))
 

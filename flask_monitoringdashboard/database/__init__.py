@@ -4,6 +4,7 @@ For information about how to access the database via a session-variable, see: se
 import datetime
 import random
 import time
+import uuid
 from contextlib import contextmanager
 
 from sqlalchemy import (
@@ -54,6 +55,17 @@ class User(Base):
 
     def check_password(self, password):
         return check_password_hash(self.password_hash, password)
+
+
+class TelemetryUser(Base):
+    """Table for storing a unique identifier of an FMD user"""
+    __tablename__ = '{}TelemetryUser'.format(config.table_prefix)
+
+    id = Column(String(40), primary_key=True, default=str(uuid.uuid4()))
+    """Unique anonymous identifier to group the data received through telemetry"""
+
+    accessed = Column(Integer, default=1)
+    """For checking the amount of times the app was initialized"""
 
 
 class Endpoint(Base):
