@@ -1,0 +1,34 @@
+<div id="telemetry-consent" class="alert alert-info" ng-show="telemetryShow">
+    <strong>Telemetry Consent:</strong>
+    We'd like to collect anonymous telemetry to improve our services. Do you allow us to do this?
+    <button class="btn btn-primary ng-binding" ng-click="acceptTelemetry()">Yes</button>
+    <button class="btn btn-secondary ng-binding" ng-click="declineTelemetry()">No</button>
+</div>
+
+<div id="follow-up-questions" class="alert alert-danger" ng-show="followUpShow">
+    <strong>Feedback:</strong>
+    <p>We value your feedback. Please help us understand why you declined telemetry:</p>
+    
+    <div>
+        <input type="checkbox" id="privacy" ng-model="reasons.privacy">
+        <label for="privacy">Privacy concerns: I don't want my data to be collected.</label>
+    </div>
+
+    <div>
+        <input type="checkbox" id="performance" ng-model="reasons.performance">
+        <label for="performance">Performance concerns: I'm worried it might slow down the application.</label>
+    </div>
+
+    <div>
+        <input type="checkbox" id="trust" ng-model="reasons.trust">
+        <label for="trust">Trust issues: I'm not sure how the data will be used.</label>
+    </div>
+
+    <div>
+        <input type="checkbox" id="other" ng-model="reasons.other">
+        <label for="other">Other:</label>
+        <textarea ng-if="reasons.other" ng-model="customReason" placeholder="Please specify your reason..."></textarea>
+    </div>
+    
+    <button class="btn btn-primary ng-binding" ng-click="submitFollowUp()">Submit Feedback</button>
+</div>

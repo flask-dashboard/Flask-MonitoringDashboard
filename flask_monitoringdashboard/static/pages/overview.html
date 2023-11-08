@@ -1,12 +1,19 @@
+
 <div>
     <div id="alert" class="alert alert-warning alert-dismissible" ng-show="alertShow">
-        <a class="close" data-bs-dismiss="alert" aria-label="close"
+        <a class="close" data-dismiss="alert" aria-label="close"
            ng-click="alertShow = false">&times;</a>
         <strong>Warning:</strong>
         Version {{ pypi_version }} is now available, while you are still using
         version {{ dashboard_version }}.<br/>
         To upgrade run the following command on your server: <code>pip install --upgrade
         flask_monitoringdashboard</code>
+    </div>
+
+    <div>
+        {{ telemetryShow }}
+        <survey-component></survey-component>
+        <telemetry-component></telemetry-component>
     </div>
 
     <div class="card mb-3">
