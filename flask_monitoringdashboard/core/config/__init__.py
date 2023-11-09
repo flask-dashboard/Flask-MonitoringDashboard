@@ -38,11 +38,13 @@ class Config(object):
         self.description = 'Automatically monitor the evolving performance of Flask/Python web services'
         self.show_login_banner = True
         self.show_login_footer = True
-        self.initialized = False
+        self.telemetry_initialized = False
 
         # database
         self.database_name = 'sqlite:///flask_monitoringdashboard.db'
         self.table_prefix = ''
+        self.fmd_user = ''
+        self.telemetry_consent = True  # TODO change to false
 
         # authentication
         self.username = 'admin'

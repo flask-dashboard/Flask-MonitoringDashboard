@@ -64,8 +64,23 @@ class TelemetryUser(Base):
     id = Column(String(40), primary_key=True, default=str(uuid.uuid4()))
     """Unique anonymous identifier to group the data received through telemetry"""
 
-    accessed = Column(Integer, default=1)
+    times_accessed = Column(Integer, default=1)
     """For checking the amount of times the app was initialized"""
+
+    last_accessed = Column(DateTime, default=datetime.datetime.utcnow)
+    """Check when was the last time user accessed FMD"""
+
+    endpoints = Column(Integer, nullable=True)
+    """The amount of endpoints exposed"""
+
+    blueprints = Column(Integer, default=-1)
+    """The amount of blueprints created"""
+
+    survey_filled = Column(Boolean, default=False)
+    """If user filled the survey"""
+
+    monitoring_consent = Column(Boolean, default=False)
+    """If user agrees to share data"""
 
 
 class Endpoint(Base):

@@ -13,7 +13,7 @@ from flask_monitoringdashboard.controllers.requests import (
     get_error_requests,
 )
 from flask_monitoringdashboard.core.auth import secure, admin_secure
-from flask_monitoringdashboard.core.utils import get_endpoint_details
+from flask_monitoringdashboard.core.utils import get_endpoint_details, initialize_monitoring_session
 from flask_monitoringdashboard.database import session_scope, row2dict
 from flask_monitoringdashboard.database.endpoint import (
     get_users,
@@ -23,38 +23,21 @@ from flask_monitoringdashboard.database.endpoint import (
 )
 
 
-def check_if_user_identifier_exists():
-    from flask_monitoringdashboard.database import TelemetryUser
-    with session_scope() as session:
-        if not bool(session.query(TelemetryUser).all()):
-            new_telemetry = TelemetryUser()
-            session.add(new_telemetry)
-            session.commit()
-        else:
-            from sqlalchemy.orm.exc import NoResultFound
-            from sqlalchemy.orm.exc import MultipleResultsFound
-
-            try:
-                telemetry_user = session.query(TelemetryUser).one()
-                telemetry_user.accessed += 1
-                session.commit()
-
-            except (MultipleResultsFound, NoResultFound):
-                session.query(TelemetryUser).delete()
-                check_if_user_identifier_exists()
 
 
-@blueprint.route('/api/overview')
+
+@blueprint.route('/api/overview', methods=['GET', 'POST'])
 @secure
 def get_overview():
     """
     Get information per endpoint about the number of hits and median execution time
     :return: A JSON-list with a JSON-object per endpoint
     """
-    if not config.initialized:
-        check_if_user_identifier_exists()
-        config.initialized = True
     with session_scope() as session:
+        if not config.telemetry_initialized:
+            initialize_monitoring_session(session)
+            config.telemetry_initialized = True
+
         return jsonify(get_endpoint_overview(session))
 
 
