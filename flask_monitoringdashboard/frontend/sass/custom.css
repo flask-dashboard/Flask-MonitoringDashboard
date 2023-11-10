@@ -508,6 +508,25 @@ footer.sticky-footer {
 .greenText {color:green;}
 .redText {color:red;}
 
+#alert {
+    position: relative; /* Needed to position the close button absolutely within the alert */
+}
+
+#alert .close {
+    position: absolute; /* Absolute positioning */
+    right: 10px; /* Place it towards the right inside the alert */
+    top: 50%; /* Align vertically to the middle */
+    transform: translateY(-50%); /* Adjust vertical alignment */
+    font-size: 20px; /* Larger close button */
+    color: #000; /* Color of the close button, change as needed */
+    cursor: pointer; /* Change cursor to pointer to indicate it's clickable */
+}
+
+#alert .close:hover {
+    color: #666; /* Change color on hover for better user experience */
+}
+
+
 .table_cell_with_error_count:after {
     content:attr(error-count);
     color: red;
