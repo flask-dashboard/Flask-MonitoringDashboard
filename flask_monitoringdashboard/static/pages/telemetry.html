@@ -1,8 +1,8 @@
 <div id="telemetry-consent" class="alert alert-info" ng-show="telemetryShow">
     <strong>Telemetry Consent:</strong>
-    We'd like to collect anonymous telemetry to improve our services. Do you allow us to do this?
-    <button class="btn btn-primary ng-binding" ng-click="acceptTelemetry()">Yes</button>
-    <button class="btn btn-secondary ng-binding" ng-click="declineTelemetry()">No</button>
+    We'd like to collect anonymous telemetry to improve our services. Do you allow us to do this? You can change this at anytime under Configuration
+    <button class="btn btn-primary ng-binding" ng-click="handleTelemetry(true)">Yes</button>
+    <button class="btn btn-secondary ng-binding" ng-click="handleTelemetry(false)">No</button>    
 </div>
 
 <div id="follow-up-questions" class="alert alert-danger" ng-show="followUpShow">
