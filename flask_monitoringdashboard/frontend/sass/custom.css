@@ -111,6 +111,7 @@ tr.even:hover, tr.odd:hover {
 @media (min-width: 992px) {
     #mainNav .navbar-brand {
         width: 250px;
+        padding-left: 10px;
     }
 
     #mainNav .navbar-collapse {
@@ -523,9 +524,8 @@ footer.sticky-footer {
 }
 
 #alert .close:hover {
-    color: #666; /* Change color on hover for better user experience */
+    color: #666;
 }
-
 
 .table_cell_with_error_count:after {
     content:attr(error-count);

@@ -27,18 +27,18 @@ export function ConfigurationController($scope, $http, menuService, endpointServ
         $scope.config = response.data;
     });
 
-    $scope.openModal = function(name, user){
+    $scope.openModal = function (name, user) {
         $scope.user = user;
         $(`#${name}Modal`).modal();
     }
 
-    function fetchUsers(){
+    function fetchUsers() {
         $http.get('api/users').then(function (response) {
             $scope.userData = response.data;  // reload user data
         });
     }
 
-    function createUser(){
+    function createUser() {
         $http.post(
             'api/user/create',
             $.param({
@@ -48,16 +48,16 @@ export function ConfigurationController($scope, $http, menuService, endpointServ
                 'is_admin': $('#create-admin')[0].checked,
             }),
             HEADERS
-        ).then(function(successResponse){
-                fetchUsers();
-                $('#createModal').modal('hide');
-                modalService.setErrorMessage('create', null); // remove error message.
-        }, function(errorResponse){
-                modalService.setErrorMessage('create', errorResponse.data.message);
+        ).then(function (successResponse) {
+            fetchUsers();
+            $('#createModal').modal('hide');
+            modalService.setErrorMessage('create', null); // remove error message.
+        }, function (errorResponse) {
+            modalService.setErrorMessage('create', errorResponse.data.message);
         });
     }
 
-    function editUser(){
+    function editUser() {
         $http.post(
             'api/user/edit',
             $.param({
@@ -68,12 +68,12 @@ export function ConfigurationController($scope, $http, menuService, endpointServ
                 'is_admin': $('#edit-admin')[0].checked,
             }),
             HEADERS
-        ).then(function(successResponse){
-                fetchUsers();
-                $('#editModal').modal('hide');
-                modalService.setErrorMessage('edit', null); // remove error message.
-        }, function(errorResponse){
-                modalService.setErrorMessage('edit', errorResponse.data.message);
+        ).then(function (successResponse) {
+            fetchUsers();
+            $('#editModal').modal('hide');
+            modalService.setErrorMessage('edit', null); // remove error message.
+        }, function (errorResponse) {
+            modalService.setErrorMessage('edit', errorResponse.data.message);
         });
     }
 
@@ -84,12 +84,36 @@ export function ConfigurationController($scope, $http, menuService, endpointServ
                 'user_id': user.id
             }),
             HEADERS
-        ).then(function(successResponse){
-                fetchUsers();
-                $('#deleteModal').modal('hide');
-                modalService.setErrorMessage('delete', null); // remove error message.
-        }, function(errorResponse){
-                modalService.setErrorMessage('delete', errorResponse.data.message);
+        ).then(function (successResponse) {
+            fetchUsers();
+            $('#deleteModal').modal('hide');
+            modalService.setErrorMessage('delete', null); // remove error message.
+        }, function (errorResponse) {
+            modalService.setErrorMessage('delete', errorResponse.data.message);
         });
     }
+
+    $scope.telemetryConsent;
+
+    // Fetches the current telemetry consent status
+    $scope.fetchTelemetryConsent = function () {
+        $http.post(`/dashboard/get_telemetry_answered`)
+            .then(function (response) {
+                $scope.telemetryConsent = response.data.get_telemetry_answered ? 'true' : 'false';
+            }, function (error) {
+                console.error('Error fetching telemetry consent:', error);
+            });
+    };
+
+    $scope.handleTelemetry = function (consent) {
+        $http.post('/dashboard/telemetry/accept_telemetry', { 'consent': consent === 'true' })
+            .then(function (response) {
+                console.log('Telemetry consent updated');
+            }, function (error) {
+                console.error('Error updating telemetry consent:', error);
+            });
+    };
+
+    $scope.fetchTelemetryConsent();
+
 }

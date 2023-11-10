@@ -5,7 +5,7 @@ export function TelemetryController($scope, $http) {
     $scope.fetchConsent = function () {
         $http.post(`/dashboard/get_telemetry_answered`)
             .then(function (response) {
-                $scope.telemetryShow = !response.data.get_survey_filled;
+                $scope.telemetryShow = !response.data.get_telemetry_answered;
             }, function (error) {
                 console.error('Error fetching consent:', error);
             });
@@ -23,7 +23,6 @@ export function TelemetryController($scope, $http) {
                 console.error('Error:', error);
             });
     };
-
 
     $scope.reasons = {
         privacy: false,
