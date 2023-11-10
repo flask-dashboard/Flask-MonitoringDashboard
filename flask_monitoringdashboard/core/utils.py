@@ -9,6 +9,7 @@ from flask_monitoringdashboard.core.blueprints import get_blueprint
 from flask_monitoringdashboard.core.colors import get_color
 from flask_monitoringdashboard.core.rules import get_rules
 from flask_monitoringdashboard.core.timezone import to_local_datetime
+from flask_monitoringdashboard.database import TelemetryUser, Endpoint
 from flask_monitoringdashboard.database.count import count_requests, count_total_requests
 from flask_monitoringdashboard.database.endpoint import get_endpoint_by_id
 from flask_monitoringdashboard.database.request import (
@@ -89,21 +90,39 @@ def simplify(values, n=5):
     return [np.percentile(values, i * 100 // (n - 1)) for i in range(n)]
 
 
+def get_telemetry_user(session):
+    try:
+        return session.query(TelemetryUser).one()
+
+    except (MultipleResultsFound, NoResultFound):
+        session.query(TelemetryUser).delete()
+        initialize_monitoring_session(session)
+        get_telemetry_user(session)
+
+    except SQLAlchemyError as e:
+        session.rollback()
+
+
 def initialize_monitoring_session(session):
-    from flask_monitoringdashboard.database import TelemetryUser, Endpoint
+    """
+    Initializes the monitoring session by creating or updating an entry
+    """
     try:
         # check if user is registered
         if not bool(session.query(TelemetryUser).all()):
             telemetry_user = TelemetryUser()
             session.add(telemetry_user)
             session.commit()
-            config.fmd_user = telemetry_user.id
         else:
             telemetry_user = session.query(TelemetryUser).one()
             telemetry_user.times_accessed += 1
             telemetry_user.last_accessed = datetime.datetime.utcnow()
             session.commit()
-            config.fmd_user = telemetry_user.id
+
+        # save the config
+        config.fmd_user = telemetry_user.id
+        # config.telemetry_consent = True if telemetry_user.monitoring_consent == 3 else False  # TODO uncomment
+        config.telemetry_initialized = True
 
         # collect user data
         endpoints = session.query(Endpoint.name).all()
@@ -111,26 +130,32 @@ def initialize_monitoring_session(session):
         no_of_endpoints = len(endpoints)
         no_of_blueprints = len(blueprints)
 
+        telemetry_user.endpoints = no_of_endpoints
+        telemetry_user.blueprints = no_of_blueprints
+        session.commit()
+
         data = {'endpoints': no_of_endpoints,
                 'blueprints': no_of_blueprints,
                 'time_accessed': telemetry_user.last_accessed.strftime('%Y-%m-%d %H:%M:%S'),
                 'session_nr': telemetry_user.times_accessed}
+
+        # post user data
         post_to_back('FmdUsers', **data)
 
-    except (MultipleResultsFound, NoResultFound):
+    except (MultipleResultsFound, NoResultFound) as e:
+        print(e)
         session.query(TelemetryUser).delete()
         initialize_monitoring_session(session)
 
     except SQLAlchemyError as e:
+        print(e)
         session.rollback()
 
 
 def post_to_back(class_name, **kwargs):
-    # Your Back4App API endpoint
     if config.telemetry_consent:
         back4app_endpoint = f'https://parseapi.back4app.com/classes/{class_name}'
 
-        # Your Back4App Application ID and REST API Key
         headers = {
             'X-Parse-Application-Id': '',
             'X-Parse-REST-API-Key': '',
@@ -145,5 +170,3 @@ def post_to_back(class_name, **kwargs):
             print('Data posted successfully.', 201)
         else:
             print('Failed to post data.', response.status_code)
-
-

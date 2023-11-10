@@ -23,9 +23,6 @@ from flask_monitoringdashboard.database.endpoint import (
 )
 
 
-
-
-
 @blueprint.route('/api/overview', methods=['GET', 'POST'])
 @secure
 def get_overview():
@@ -36,8 +33,6 @@ def get_overview():
     with session_scope() as session:
         if not config.telemetry_initialized:
             initialize_monitoring_session(session)
-            config.telemetry_initialized = True
-
         return jsonify(get_endpoint_overview(session))
 
 

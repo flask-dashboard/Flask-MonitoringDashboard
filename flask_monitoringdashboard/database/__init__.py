@@ -79,8 +79,8 @@ class TelemetryUser(Base):
     survey_filled = Column(Boolean, default=False)
     """If user filled the survey"""
 
-    monitoring_consent = Column(Boolean, default=False)
-    """If user agrees to share data"""
+    monitoring_consent = Column(Integer, default=1)
+    """If user agrees to share data 1 - not responded 2 - declined 3 - accepted"""
 
 
 class Endpoint(Base):
