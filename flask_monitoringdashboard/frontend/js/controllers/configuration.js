@@ -95,7 +95,6 @@ export function ConfigurationController($scope, $http, menuService, endpointServ
 
     $scope.telemetryConsent;
 
-    // Fetches the current telemetry consent status
     $scope.fetchTelemetryConsent = function () {
         $http.post(`/dashboard/get_telemetry_answered`)
             .then(function (response) {
@@ -108,7 +107,6 @@ export function ConfigurationController($scope, $http, menuService, endpointServ
     $scope.handleTelemetry = function (consent) {
         $http.post('/dashboard/telemetry/accept_telemetry', { 'consent': consent === 'true' })
             .then(function (response) {
-                console.log('Telemetry consent updated');
             }, function (error) {
                 console.error('Error updating telemetry consent:', error);
             });
