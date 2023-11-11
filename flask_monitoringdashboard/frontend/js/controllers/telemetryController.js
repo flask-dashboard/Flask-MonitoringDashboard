@@ -1,5 +1,5 @@
 export function TelemetryController($scope, $http) {
-    $scope.telemetryShow = false;
+    $scope.telemetryShow = true;
     $scope.followUpShow = false;
 
     $scope.fetchConsent = function () {
@@ -57,7 +57,7 @@ export function TelemetryController($scope, $http) {
             }
         }
 
-        $http.post('https://parseapi.back4app.com/classes/followUp', { reasons: feedback }, config)
+        $http.post('https://parseapi.back4app.com/classes/FollowUp', { reasons: feedback }, config)
             .then(function (response) {
                 console.log('Feedback sent:', response.data);
             }, function (error) {
