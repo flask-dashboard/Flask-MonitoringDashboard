@@ -1,5 +1,5 @@
 export function TelemetryController($scope, $http) {
-    $scope.telemetryShow = true;
+    $scope.telemetryShow = false;
     $scope.followUpShow = false;
 
     $scope.fetchConsent = function () {

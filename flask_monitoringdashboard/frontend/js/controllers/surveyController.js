@@ -1,5 +1,5 @@
 export function SurveyController($scope, $http) {
-    $scope.surveyShow = true;
+    $scope.surveyShow = false;
     $scope.surveyCompleted = false; // New flag for survey completion
     $scope.surveyVariationIndex = 0;
     $scope.surveyVariations = [
