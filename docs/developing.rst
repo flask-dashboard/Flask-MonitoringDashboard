@@ -102,6 +102,31 @@ language, and contains 2 directories: static and templates.
   - pages: HTML files for building the web interface.
 
 
+Frontend environment
+~~~~~~~~~~~~~~~~~~~
+
+To run the frontend, these versions of Node and NPM are known to work:
+-NPM v10.1.0
+-Node v20.9.0
+
+*Use the commands while being in the frontend folder (Flask-MonitoringDashboard/flask_monitoringdashboard/frontend).*
+
+To install the packages:
+
+.. code-block:: bash
+
+    npm i
+     
+To run the testing environment:
+
+.. code-block:: bash
+
+    npm run dev
+
+Any changes made in the code will now be reflected on the dashboard. 
+A flask project with the dashboard already installed can be found at `<https://github.com/wielas/fmd_weather>`_.
+
+
 Tools
 --------------
 
@@ -138,6 +163,7 @@ The following tools are used for helping the development of the Dashboard:
    - **Development**: The development is deployed at: `<https://fmd-development.herokuapp.com>`_.
    - **Pull requests**: Pull requests are also automatically build with a unique URL.
 
+
 - **Unit testing**: The code is tested before a Pull Request is accepted. If you want to run the unit
   tests locally, you can use the following command from the root of Flask-MonitoringDashboard
   directory:
@@ -160,8 +186,15 @@ The following tools are used for helping the development of the Dashboard:
 
   .. code-block:: bash
 
+     linux:
      pip install -r requirements.txt
      make html
+
+  .. code-block:: bash
+
+     windows:
+     pip install -r requirements.txt
+     sphinx-build -b html . _build
 
   The generated html files can be found in the following folder: Flask-MonitoringDashboard/docs/build.
 

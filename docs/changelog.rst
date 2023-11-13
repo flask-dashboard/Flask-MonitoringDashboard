@@ -5,6 +5,21 @@ All notable changes to this project will be documented in this file.
 This project adheres to `Semantic Versioning <http://semver.org/>`_.
 Please note that the changes before version 1.10.0 have not been documented.
 
+v3.2.1
+----------
+Changed
+
+- Upgraded multiple frontend packages for enhanced security and performance.
+- Upgraded 'bootstrap' from '^4.5.0' to '^5.3.2'.
+- Updated 'd3' from '^4.13.0' to '^7.8.5'.
+- Added '@babel/plugin-transform-class-properties' version '^7.22.5'.
+- Upgraded 'webpack' from '^4.43.0' to '^5.89.0' and 'webpack-cli' from '^3.3.12' to '^5.1.4'.
+- Integrated 'mini-css-extract-plugin' at version '^2.7.6' and 'node-gyp' at '^10.0.0' for enhanced build processes.
+- Miscellaneous package updates.
+- Added survey alert
+- Added telemetry alert and functionality
+
+
 v3.1.2
 ----------
 - Compatibility with Flask>=2.x Removed the call to `before_app_first_request` and replaced it with `record_once` as per the PR of [@FlorianRhiem](https://github.com/FlorianRhiem).
