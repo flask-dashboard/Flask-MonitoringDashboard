@@ -3,7 +3,7 @@ export function TelemetryController($scope, $http) {
     $scope.followUpShow = false;
 
     $scope.fetchTelemetryConsent = function () {
-        $http.post(`/dashboard/get_is_telemetry_answered`)
+        $http.get(`/dashboard/telemetry/get_is_telemetry_answered`)
             .then(function (response) {
                 $scope.telemetryShow = !response.data.is_telemetry_answered;
             }, function (error) {
@@ -23,6 +23,7 @@ export function TelemetryController($scope, $http) {
                 console.error('Error updating telemetry consent:', error);
             });
     };
+
 
     $scope.reasons = {
         privacy: false,
@@ -58,7 +59,6 @@ export function TelemetryController($scope, $http) {
         }
         $http.post('https://parseapi.back4app.com/classes/FollowUp', { reasons: feedback }, config)
             .then(function (response) {
-                console.log('Feedback sent:', response.data);
             }, function (error) {
                 console.error('Error sending feedback:', error);
             });

@@ -203,7 +203,8 @@ class TelemetryConfig(object):
     def __init__(self):
         self.telemetry_initialized = False
         self.fmd_user = ''
-        self.telemetry_consent = True  # TODO change to false
+        self.telemetry_consent = False
+        self.telemetry_session = 0
         self.telemetry_headers = {
             'X-Parse-Application-Id': 'zwfDL1t45KjnXSF5ELGQajShV6eJiaKVmRFaQjUb',
             'X-Parse-REST-API-Key': 'Kr9nhaAKx04hJypCJzz5BziqbKf9Yq5Q7HsWDpI9',

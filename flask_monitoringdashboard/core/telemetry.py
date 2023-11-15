@@ -39,10 +39,13 @@ def initialize_telemetry_session(session):
             telemetry_user.last_accessed = datetime.datetime.utcnow()
             session.commit()
 
-        # save the telemetry_config
+        # check if telemetry's been agreed on
+        telemetry_config.telemetry_consent = True if telemetry_user.monitoring_consent == 3 else False
+
+        # save the telemetry_config for quick access
         telemetry_config.fmd_user = telemetry_user.id
-        # telemetry_config.telemetry_consent = True if telemetry_user.monitoring_consent == 3 else False  # TODO uncomment
         telemetry_config.telemetry_initialized = True
+        telemetry_config.telemetry_session = telemetry_user.times_accessed
 
         # collect user data
         endpoints = session.query(Endpoint.name).all()
@@ -52,8 +55,8 @@ def initialize_telemetry_session(session):
 
         data = {'endpoints': no_of_endpoints,
                 'blueprints': no_of_blueprints,
-                'time_accessed': telemetry_user.last_accessed.strftime('%Y-%m-%d %H:%M:%S'),
-                'session_nr': telemetry_user.times_accessed}
+                'time_accessed': telemetry_user.last_accessed.strftime('%Y-%m-%d %H:%M:%S')
+                }
 
         # post user data
         post_to_back('UserSession', **data)
@@ -73,7 +76,7 @@ def post_to_back(class_name='Endpoints', **kwargs):
         back4app_endpoint = f'https://parseapi.back4app.com/classes/{class_name}'
 
         headers = telemetry_config.telemetry_headers
-        data = {'fmd_id': telemetry_config.fmd_user}
+        data = {'fmd_id': telemetry_config.fmd_user, 'session': telemetry_config.telemetry_session}
 
         for key, value in kwargs.items():
             data[key] = value

@@ -64,6 +64,7 @@ def bind(app, schedule=True, include_dashboard=True):
             version,
             auth,
             reporting,
+            telemetry
         )
         import flask_monitoringdashboard.views
 

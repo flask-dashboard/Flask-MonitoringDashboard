@@ -21,7 +21,7 @@ export function SurveyController($scope, $http, $sce) {
 
     // Fetches the survey from database
     $scope.fetchSurveyFilled = function () {
-        $http.post('/dashboard/get_is_survey_filled')
+        $http.get('/dashboard/telemetry/get_is_survey_filled')
             .then(function (response) {
                 $scope.surveyCompleted = response.data.is_survey_filled;
             }, function (error) {
@@ -41,7 +41,7 @@ export function SurveyController($scope, $http, $sce) {
 
     // Mark survey as filled in database
     $scope.surveyFilled = function () {
-        $http.post('/dashboard/survey_has_been_filled')
+        $http.get('/dashboard/telemetry/survey_has_been_filled')
             .then(function (response) {
             }, function (error) {
                 console.error('Error:', error);
