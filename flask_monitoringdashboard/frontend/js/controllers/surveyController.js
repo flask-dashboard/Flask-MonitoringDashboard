@@ -1,7 +1,12 @@
 export function SurveyController($scope, $http, $sce) {
     $scope.surveyShow = false;
-    $scope.surveyCompleted = false; // New flag for survey completion
-    $scope.surveyVariationIndex = 0;
+    $scope.surveyCompleted = false;
+
+    // Fetch local storage variation index
+    const storedIndex = localStorage.getItem('surveyVariationIndex');
+    $scope.surveyVariationIndex = storedIndex && !isNaN(parseInt(storedIndex)) ? parseInt(storedIndex) : 0;
+
+    // Variations of the survey prompt
     $scope.surveyVariations = [
         'Please take a moment to <a href="https://forms.gle/kWD5mqcibS2V5f3Y6" target="_blank">fill out our survey</a>.',
         'Your feedback is valuable! <a href="https://forms.gle/kWD5mqcibS2V5f3Y6" target="_blank">Take our quick survey.</a>',
@@ -9,42 +14,39 @@ export function SurveyController($scope, $http, $sce) {
         'Help us improve! Participate in our <a href="https://forms.gle/kWD5mqcibS2V5f3Y6" target="_blank">short survey</a>.'
     ];
 
+    // Mark as trusted HTML
     $scope.surveyVariations = $scope.surveyVariations.map(variation =>
         $sce.trustAsHtml(variation)
     );
-        
 
-    $scope.fetchSurveyStatus = function () {
-        $http.post('/dashboard/survey_status')
+    // Fetches the survey from database
+    $scope.fetchSurveyFilled = function () {
+        $http.post('/dashboard/get_is_survey_filled')
             .then(function (response) {
-                $scope.surveyVariationIndex = response.data.surveyVariationIndex;
-                $scope.surveyCompleted = response.data.surveyCompleted;
-                $scope.surveyShow = !$scope.surveyCompleted && ($scope.surveyVariationIndex < $scope.surveyVariations.length);
+                $scope.surveyCompleted = response.data.is_survey_filled;
             }, function (error) {
                 console.error('Error fetching survey status:', error);
             });
+        $scope.surveyShow = !$scope.surveyCompleted && ($scope.surveyVariationIndex < $scope.surveyVariations.length);
     };
-    $scope.fetchSurveyStatus();
+    $scope.fetchSurveyFilled();
 
+    // Increment surveyVariation in localStorage
     $scope.closeSurvey = function () {
         if (!$scope.surveyCompleted) {
             $scope.surveyVariationIndex++;
-            $http.post('/dashboard/survey_status', { surveyVariationIndex: $scope.surveyVariationIndex })
-                .then(function (response) {
-                    $scope.surveyShow = false;
-                }, function (error) {
-                    console.error('Error:', error);
-                });
+            localStorage.setItem('surveyVariationIndex', $scope.surveyVariationIndex.toString());
         }
     };
 
-    $scope.surveyClicked = function () {
-        $http.post('/dashboard/survey_clicked')
+    // Mark survey as filled in database
+    $scope.surveyFilled = function () {
+        $http.post('/dashboard/survey_has_been_filled')
             .then(function (response) {
-                $scope.surveyCompleted = true;
-                $scope.surveyShow = false;
             }, function (error) {
                 console.error('Error:', error);
             });
+        $scope.surveyCompleted = true;
+        $scope.surveyShow = false;
     };
 }

@@ -1,11 +1,11 @@
 export function TelemetryController($scope, $http) {
-    $scope.telemetryShow = false;
+    $scope.telemetryShow = true;
     $scope.followUpShow = false;
 
     $scope.fetchTelemetryConsent = function () {
-        $http.post(`/dashboard/get_telemetry_answered`)
+        $http.post(`/dashboard/get_is_telemetry_answered`)
             .then(function (response) {
-                $scope.telemetryShow = !response.data.get_telemetry_answered;
+                $scope.telemetryShow = !response.data.is_telemetry_answered;
             }, function (error) {
                 console.error('Error fetching telemetry consent:', error);
             });
@@ -16,7 +16,7 @@ export function TelemetryController($scope, $http) {
         $scope.telemetryShow = false;
         $scope.followUpShow = !consent;
 
-        $http.post('/dashboard/telemetry/accept_telemetry', { 'consent': consent })
+        $http.post('/dashboard/telemetry/accept_telemetry_consent', { 'consent': consent })
             .then(function (response) {
                 $scope.telemetryShow = false;
             }, function (error) {

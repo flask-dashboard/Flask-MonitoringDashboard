@@ -96,16 +96,16 @@ export function ConfigurationController($scope, $http, menuService, endpointServ
     $scope.telemetryConsent;
 
     $scope.fetchTelemetryConsent = function () {
-        $http.post(`/dashboard/get_telemetry_answered`)
+        $http.post(`/dashboard/get_is_telemetry_answered`)
             .then(function (response) {
-                $scope.telemetryConsent = response.data.get_telemetry_answered;
+                $scope.telemetryConsent = response.data;
             }, function (error) {
                 console.error('Error fetching telemetry consent:', error);
             });
     };
 
     $scope.handleTelemetry = function (consent) {
-        $http.post('/dashboard/telemetry/accept_telemetry', { 'consent': consent })
+        $http.post('/dashboard/telemetry/accept_telemetry_consent', { 'consent': consent })
             .then(function (response) {
             }, function (error) {
                 console.error('Error updating telemetry consent:', error);
