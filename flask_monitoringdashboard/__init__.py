@@ -17,7 +17,7 @@ import sentry_sdk
 
 from flask import Blueprint
 
-from flask_monitoringdashboard.core.config import Config
+from flask_monitoringdashboard.core.config import Config, TelemetryConfig
 from flask_monitoringdashboard.core.logger import log
 
 
@@ -27,6 +27,7 @@ def loc():
 
 
 config = Config()
+telemetry_config = TelemetryConfig()
 blueprint = Blueprint('dashboard', __name__, template_folder=loc() + 'templates')
 
 
@@ -46,7 +47,7 @@ def bind(app, schedule=True, include_dashboard=True):
         app.secret_key = 'my-secret-key'
 
     sentry_sdk.init(
-        dsn="",
+        dsn=TelemetryConfig.sentry_dsn,
         traces_sample_rate=1.0,
         profiles_sample_rate=1.0,
     )

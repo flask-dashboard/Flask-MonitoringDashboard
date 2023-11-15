@@ -38,13 +38,10 @@ class Config(object):
         self.description = 'Automatically monitor the evolving performance of Flask/Python web services'
         self.show_login_banner = True
         self.show_login_footer = True
-        self.telemetry_initialized = False
 
         # database
         self.database_name = 'sqlite:///flask_monitoringdashboard.db'
         self.table_prefix = ''
-        self.fmd_user = ''
-        self.telemetry_consent = True  # TODO change to false
 
         # authentication
         self.username = 'admin'
@@ -164,7 +161,7 @@ class Config(object):
                 parser, 'dashboard', 'OUTlIER_DETECTION_CONSTANT', self.outlier_detection_constant
             )
             self.sampling_period = (
-                parse_literal(parser, 'dashboard', 'SAMPLING_RATE', self.sampling_period) / 1000.0
+                    parse_literal(parser, 'dashboard', 'SAMPLING_RATE', self.sampling_period) / 1000.0
             )
             self.enable_logging = parse_bool(
                 parser, 'dashboard', 'ENABLE_LOGGING', self.enable_logging
@@ -198,3 +195,17 @@ class Config(object):
         except AttributeError:
             log('Cannot use configparser in python2.7')
             raise
+
+
+class TelemetryConfig(object):
+    sentry_dsn = "https://809cd4a03f338f24f492746ae119522a@o4506167771070464.ingest.sentry.io/4506167775854592"
+
+    def __init__(self):
+        self.telemetry_initialized = False
+        self.fmd_user = ''
+        self.telemetry_consent = True  # TODO change to false
+        self.telemetry_headers = {
+            'X-Parse-Application-Id': 'zwfDL1t45KjnXSF5ELGQajShV6eJiaKVmRFaQjUb',
+            'X-Parse-REST-API-Key': 'Kr9nhaAKx04hJypCJzz5BziqbKf9Yq5Q7HsWDpI9',
+            'Content-Type': 'application/json'
+        }

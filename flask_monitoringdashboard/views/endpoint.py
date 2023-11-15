@@ -1,6 +1,6 @@
 from flask import jsonify, request, json
 
-from flask_monitoringdashboard import blueprint, config
+from flask_monitoringdashboard import blueprint, config, telemetry_config
 from flask_monitoringdashboard.controllers.endpoints import (
     get_endpoint_overview,
     get_api_performance,
@@ -13,7 +13,8 @@ from flask_monitoringdashboard.controllers.requests import (
     get_error_requests,
 )
 from flask_monitoringdashboard.core.auth import secure, admin_secure
-from flask_monitoringdashboard.core.utils import get_endpoint_details, initialize_monitoring_session
+from flask_monitoringdashboard.core.utils import get_endpoint_details
+from flask_monitoringdashboard.core.telemetry import initialize_telemetry_session, post_to_back
 from flask_monitoringdashboard.database import session_scope, row2dict
 from flask_monitoringdashboard.database.endpoint import (
     get_users,
@@ -31,8 +32,9 @@ def get_overview():
     :return: A JSON-list with a JSON-object per endpoint
     """
     with session_scope() as session:
-        if not config.telemetry_initialized:
-            initialize_monitoring_session(session)
+        if not telemetry_config.telemetry_initialized:
+            initialize_telemetry_session(session)
+        post_to_back(**{'name': 'overview'})
         return jsonify(get_endpoint_overview(session))
 
 
