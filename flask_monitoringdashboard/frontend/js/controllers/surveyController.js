@@ -1,4 +1,4 @@
-export function SurveyController($scope, $http) {
+export function SurveyController($scope, $http, $sce) {
     $scope.surveyShow = false;
     $scope.surveyCompleted = false; // New flag for survey completion
     $scope.surveyVariationIndex = 0;
@@ -8,7 +8,11 @@ export function SurveyController($scope, $http) {
         'We value your opinion! Click <a href="https://forms.gle/kWD5mqcibS2V5f3Y6" target="_blank">here</a> to share your thoughts.',
         'Help us improve! Participate in our <a href="https://forms.gle/kWD5mqcibS2V5f3Y6" target="_blank">short survey</a>.'
     ];
-    
+
+    $scope.surveyVariations = $scope.surveyVariations.map(variation =>
+        $sce.trustAsHtml(variation)
+    );
+        
 
     $scope.fetchSurveyStatus = function () {
         $http.post('/dashboard/survey_status')
