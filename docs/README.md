@@ -2,8 +2,14 @@
 The documentation is generated using [Sphinx](http://www.sphinx-doc.org/en/master/).
 
 If you want to generate the documentation, you can run:
+Linux:
 ```
     make html
+```
+
+Windows:
+```
+sphinx-build -b html . _build
 ```
 
 # Installation
