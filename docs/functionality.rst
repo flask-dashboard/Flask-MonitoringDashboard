@@ -309,6 +309,21 @@ Finally, the implementation of the scheduler in the FMD
 is based on the appscheduler.schedulers.Background schedulers
 about which you can read more `in the corresponding documentation page <apscheduler.schedulers>`_.
 
+Telemetry
+----------------------
+
+The Dashboard is setup to be able to collect telemetric-data. 
+This data-collection can be configured under the "Configuration" route. 
+
+You can find detailed information about what and how data is collected below.
+
+1. **Endpoint** We collect the number of endpoints
+
+2. **Blueprint** We collect the number of blueprints
+
+3. **Monitoring level** We collect the amount of monitoring levels of the endpoints
+
+
 Need more information?
 ----------------------
 Check out the `contact page <contact.html>`_ to see how you can get in touch with us.
