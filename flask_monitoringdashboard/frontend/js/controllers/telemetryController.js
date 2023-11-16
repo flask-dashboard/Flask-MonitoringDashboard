@@ -1,5 +1,9 @@
-export function TelemetryController($scope, $http) {
-    $scope.telemetryShow = true;
+export function TelemetryController($scope, $http, $window) {
+    
+    // Local
+    const telemetryAnswered = $window.localStorage.getItem('telemetryAnswered') === 'true';
+
+    $scope.telemetryShow = !telemetryAnswered;
     $scope.followUpShow = false;
 
     $scope.fetchTelemetryConsent = function () {
@@ -19,6 +23,7 @@ export function TelemetryController($scope, $http) {
         $http.post('/dashboard/telemetry/accept_telemetry_consent', { 'consent': consent })
             .then(function (response) {
                 $scope.telemetryShow = false;
+                $window.localStorage.setItem('telemetryAnswered', 'true');
             }, function (error) {
                 console.error('Error updating telemetry consent:', error);
             });
@@ -35,8 +40,8 @@ export function TelemetryController($scope, $http) {
 
     var config = {
         headers: {
-            'X-Parse-Application-Id': '',
-            'X-Parse-REST-API-Key': '',
+            'X-Parse-Application-Id': 'zwfDL1t45KjnXSF5ELGQajShV6eJiaKVmRFaQjUb',
+            'X-Parse-REST-API-Key': 'Kr9nhaAKx04hJypCJzz5BziqbKf9Yq5Q7HsWDpI9',
             'Content-Type': 'application/json'
         }
     };
@@ -57,6 +62,7 @@ export function TelemetryController($scope, $http) {
                 }
             }
         }
+
         $http.post('https://parseapi.back4app.com/classes/FollowUp', { reasons: feedback }, config)
             .then(function (response) {
             }, function (error) {

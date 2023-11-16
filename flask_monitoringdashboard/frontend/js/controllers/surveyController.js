@@ -24,10 +24,10 @@ export function SurveyController($scope, $http, $sce) {
         $http.get('/dashboard/telemetry/get_is_survey_filled')
             .then(function (response) {
                 $scope.surveyCompleted = response.data.is_survey_filled;
+                $scope.surveyShow = !$scope.surveyCompleted && ($scope.surveyVariationIndex < $scope.surveyVariations.length);
             }, function (error) {
                 console.error('Error fetching survey status:', error);
             });
-        $scope.surveyShow = !$scope.surveyCompleted && ($scope.surveyVariationIndex < $scope.surveyVariations.length);
     };
     $scope.fetchSurveyFilled();
 

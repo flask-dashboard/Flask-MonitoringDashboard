@@ -313,9 +313,12 @@ Telemetry
 ----------------------
 
 The Dashboard is setup to be able to collect telemetric-data. 
-This data-collection can be configured under the "Configuration" route. 
+This data-collection can be toggled on and off under the "Configuration" route. 
 
 You can find detailed information about what and how data is collected below.
+What:
+
+TODO: Add more documentation
 
 1. **Endpoint** We collect the number of endpoints
 
@@ -323,6 +326,10 @@ You can find detailed information about what and how data is collected below.
 
 3. **Monitoring level** We collect the amount of monitoring levels of the endpoints
 
+4. **Database size** 
+
+How:
+TODO: Add more documentation
 
 Need more information?
 ----------------------
