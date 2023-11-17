@@ -1,8 +1,6 @@
 import datetime
 import requests
 
-from collections import Counter
-
 from sqlalchemy import func
 from sqlalchemy.exc import NoResultFound, MultipleResultsFound, SQLAlchemyError
 
@@ -12,6 +10,7 @@ from flask_monitoringdashboard.database import TelemetryUser, Endpoint
 
 
 def get_telemetry_user(session):
+    """Return a telemetry user object"""
     try:
         return session.query(TelemetryUser).one()
 
@@ -24,6 +23,41 @@ def get_telemetry_user(session):
         session.rollback()
         initialize_telemetry_session(session)
         get_telemetry_user(session)
+
+
+def collect_general_telemetry_data(session, telemetry_user):
+    """
+    Collects telemetry data and posts it to the remote database
+    """
+    # collect endpoint and blueprint data
+    endpoints = session.query(Endpoint.name).all()
+    blueprints = set(get_blueprint(endpoint) for endpoint, in endpoints)
+    no_of_endpoints = len(endpoints)
+    no_of_blueprints = len(blueprints)
+
+    # collect monitoring levels
+    counts = (
+        session.query(Endpoint.monitor_level, func.count(Endpoint.monitor_level))
+        .group_by(Endpoint.monitor_level)
+        .all()
+    )
+    counts_dict = dict(counts)
+    level_zeros_count = counts_dict.get(0, 0)
+    level_ones_count = counts_dict.get(1, 0)
+    level_twos_count = counts_dict.get(2, 0)
+    level_threes_count = counts_dict.get(3, 0)
+
+    data = {'endpoints': no_of_endpoints,
+            'blueprints': no_of_blueprints,
+            'time_accessed': telemetry_user.last_accessed.strftime('%Y-%m-%d %H:%M:%S'),
+            'monitoring_0': level_zeros_count,
+            'monitoring_1': level_ones_count,
+            'monitoring_2': level_twos_count,
+            'monitoring_3': level_threes_count,
+            }
+
+    # post user data
+    post_to_back('UserSession', **data)
 
 
 def initialize_telemetry_session(session):
@@ -42,6 +76,14 @@ def initialize_telemetry_session(session):
             telemetry_user.last_accessed = datetime.datetime.utcnow()
             session.commit()
 
+        # reset telemetry and survey prompt if declined in previous session
+        if telemetry_user.monitoring_consent == 2:
+            telemetry_user.monitoring_consent = 1
+            session.commit()
+        if telemetry_user.survey_filled == 2:
+            telemetry_user.survey_filled = 1
+            session.commit()
+
         # check if telemetry's been agreed on
         telemetry_config.telemetry_consent = True if telemetry_user.monitoring_consent == 3 else False
 
@@ -50,38 +92,8 @@ def initialize_telemetry_session(session):
         telemetry_config.telemetry_initialized = True
         telemetry_config.telemetry_session = telemetry_user.times_accessed
 
-        # collect user data
-        endpoints = session.query(Endpoint.name).all()
-        print(endpoints)
-        print(type(endpoints))
-        print(type(endpoints[0]))
-        print(type(endpoints[0].name))
-        blueprints = set(get_blueprint(endpoint) for endpoint, in endpoints)
-        no_of_endpoints = len(endpoints)
-        no_of_blueprints = len(blueprints)
-        counts = (
-            session.query(Endpoint.monitor_level, func.count(Endpoint.monitor_level))
-            .group_by(Endpoint.monitor_level)
-            .all()
-        )
-        # collect monitoring levels
-        counts_dict = dict(counts)
-        level_zeros_count = counts_dict.get(0, 0)
-        level_ones_count = counts_dict.get(1, 0)
-        level_twos_count = counts_dict.get(2, 0)
-        level_threes_count = counts_dict.get(3, 0)
-
-        data = {'endpoints': no_of_endpoints,
-                'blueprints': no_of_blueprints,
-                'time_accessed': telemetry_user.last_accessed.strftime('%Y-%m-%d %H:%M:%S'),
-                'monitoring_0': level_zeros_count,
-                'monitoring_1': level_ones_count,
-                'monitoring_2': level_twos_count,
-                'monitoring_3': level_threes_count,
-                }
-
-        # post user data
-        post_to_back('UserSession', **data)
+        # collect the data and send it to the remote database
+        collect_general_telemetry_data(session, telemetry_user)
 
     except (MultipleResultsFound, NoResultFound) as e:
         print(e)
@@ -94,6 +106,9 @@ def initialize_telemetry_session(session):
 
 
 def post_to_back(class_name='Endpoints', **kwargs):
+    """
+    Function to send telemetry data to remote database
+    """
     if telemetry_config.telemetry_consent:
         back4app_endpoint = f'https://parseapi.back4app.com/classes/{class_name}'
 
