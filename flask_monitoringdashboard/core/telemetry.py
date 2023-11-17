@@ -1,6 +1,9 @@
 import datetime
 import requests
 
+from collections import Counter
+
+from sqlalchemy import func
 from sqlalchemy.exc import NoResultFound, MultipleResultsFound, SQLAlchemyError
 
 from flask_monitoringdashboard import telemetry_config
@@ -49,13 +52,32 @@ def initialize_telemetry_session(session):
 
         # collect user data
         endpoints = session.query(Endpoint.name).all()
+        print(endpoints)
+        print(type(endpoints))
+        print(type(endpoints[0]))
+        print(type(endpoints[0].name))
         blueprints = set(get_blueprint(endpoint) for endpoint, in endpoints)
         no_of_endpoints = len(endpoints)
         no_of_blueprints = len(blueprints)
+        counts = (
+            session.query(Endpoint.monitor_level, func.count(Endpoint.monitor_level))
+            .group_by(Endpoint.monitor_level)
+            .all()
+        )
+        # collect monitoring levels
+        counts_dict = dict(counts)
+        level_zeros_count = counts_dict.get(0, 0)
+        level_ones_count = counts_dict.get(1, 0)
+        level_twos_count = counts_dict.get(2, 0)
+        level_threes_count = counts_dict.get(3, 0)
 
         data = {'endpoints': no_of_endpoints,
                 'blueprints': no_of_blueprints,
-                'time_accessed': telemetry_user.last_accessed.strftime('%Y-%m-%d %H:%M:%S')
+                'time_accessed': telemetry_user.last_accessed.strftime('%Y-%m-%d %H:%M:%S'),
+                'monitoring_0': level_zeros_count,
+                'monitoring_1': level_ones_count,
+                'monitoring_2': level_twos_count,
+                'monitoring_3': level_threes_count,
                 }
 
         # post user data
@@ -81,8 +103,4 @@ def post_to_back(class_name='Endpoints', **kwargs):
         for key, value in kwargs.items():
             data[key] = value
 
-        response = requests.post(back4app_endpoint, json=data, headers=headers)
-        if response.status_code == 201:  # TODO remove
-            print(f'Data posted successfully to {class_name}.', 201)
-        else:
-            print(f'Failed to post data to {class_name}.', response.status_code)
+        requests.post(back4app_endpoint, json=data, headers=headers)

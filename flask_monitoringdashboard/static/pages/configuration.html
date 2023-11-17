@@ -37,9 +37,9 @@
                     <td>
                         <div>
                             <input type="radio" ng-model="telemetryConsent" value="true"
-                                ng-change="handleTelemetry(telemetryConsent)"> Agree 
+                                   ng-change="handleTelemetry(true)"> Agree
                             <input type="radio" ng-model="telemetryConsent" value="false"
-                                ng-change="handleTelemetry(telemetryConsent)"> Decline
+                                   ng-change="handleTelemetry(false)"> Decline
                         </div>
                     </td>
                 </tr>
@@ -56,25 +56,25 @@
     <div class="form-group row">
         <label class="col-md-4 col-form-label text-md-right" for="create-username">Username</label>
         <div class="col-md-8">
-            <input type="text" id="create-username" class="form-control" required />
+            <input type="text" id="create-username" class="form-control" required/>
         </div>
     </div>
     <div class="form-group row">
         <label class="col-md-4 col-form-label text-md-right" for="create-pwd">Password</label>
         <div class="col-md-8">
-            <input type="password" id="create-pwd" class="form-control" required />
+            <input type="password" id="create-pwd" class="form-control" required/>
         </div>
     </div>
     <div class="form-group row">
         <label class="col-md-4 col-form-label text-md-right" for="create-pwd2">Confirm password</label>
         <div class="col-md-8">
-            <input type="password" id="create-pwd2" class="form-control" required />
+            <input type="password" id="create-pwd2" class="form-control" required/>
         </div>
     </div>
     <div class="form-group row">
         <label class="col-md-4 col-form-label text-md-right" for="create-admin">Admin</label>
         <div class="col-md-8">
-            <input type="checkbox" id="create-admin" class="form-control" />
+            <input type="checkbox" id="create-admin" class="form-control"/>
         </div>
     </div>
 </modal>
@@ -83,31 +83,31 @@
     <div class="form-group row">
         <label class="col-md-4 col-form-label text-md-right" for="edit-username">Username</label>
         <div class="col-md-8">
-            <input type="text" id="edit-username" class="form-control" value="{{ user.username }}" disabled required />
+            <input type="text" id="edit-username" class="form-control" value="{{ user.username }}" disabled required/>
         </div>
     </div>
     <div class="form-group row">
         <label class="col-md-4 col-form-label text-md-right" for="edit-old-pwd">Old password</label>
         <div class="col-md-8">
-            <input type="password" id="edit-old-pwd" class="form-control" required />
+            <input type="password" id="edit-old-pwd" class="form-control" required/>
         </div>
     </div>
     <div class="form-group row">
         <label class="col-md-4 col-form-label text-md-right" for="edit-new-pwd">New password</label>
         <div class="col-md-8">
-            <input type="password" id="edit-new-pwd" class="form-control" required />
+            <input type="password" id="edit-new-pwd" class="form-control" required/>
         </div>
     </div>
     <div class="form-group row">
         <label class="col-md-4 col-form-label text-md-right" for="edit-new-pwd2">Confirm new password</label>
         <div class="col-md-8">
-            <input type="password" id="edit-new-pwd2" class="form-control" required />
+            <input type="password" id="edit-new-pwd2" class="form-control" required/>
         </div>
     </div>
     <div class="form-group row">
         <label class="col-md-4 col-form-label text-md-right" for="edit-admin">Admin</label>
         <div class="col-md-8">
-            <input type="checkbox" id="edit-admin" class="form-control" ng-model="user.is_admin" />
+            <input type="checkbox" id="edit-admin" class="form-control" ng-model="user.is_admin"/>
         </div>
     </div>
 </modal>
