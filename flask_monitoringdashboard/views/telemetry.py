@@ -9,20 +9,16 @@ from flask_monitoringdashboard.database import session_scope
 @blueprint.route('/telemetry/accept_telemetry_consent', methods=['POST'])
 def accept_telemetry_consent():
 
-    consent = request.form.get('consent')
     with session_scope() as session:
         try:
             telemetry_user = get_telemetry_user(session)
-            consent = request.form.get('consent')
-            #  {'consent': 'true'}
-            if consent == 'true':  # if True then agreed
-                print('consent true')
+            data = request.get_json()
+            if 'consent' in data and isinstance(data['consent'], bool) and data.get('consent'):  # if True then agreed
                 telemetry_user.monitoring_consent = 3  # agree to monitoring
                 telemetry_config.telemetry_consent = True
-
             else:
-                print('consent false')
                 telemetry_user.monitoring_consent = 2  # reject monitoring
+                telemetry_config.telemetry_consent = False
 
             session.commit()
 
