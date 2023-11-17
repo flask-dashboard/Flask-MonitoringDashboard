@@ -19,7 +19,7 @@ export function SurveyController($scope, $http, $sce) {
         $sce.trustAsHtml(variation)
     );
 
-    // Fetches the survey from database
+    // Fetches to check if the survey is filled from database
     $scope.fetchSurveyFilled = function () {
         $http.get('/dashboard/telemetry/get_is_survey_filled')
             .then(function (response) {

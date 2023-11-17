@@ -1,11 +1,13 @@
 export function TelemetryController($scope, $http, $window) {
-    
-    // Local
+
+    // Check if telemetry response is already stored in local storage
     const telemetryAnswered = $window.localStorage.getItem('telemetryAnswered') === 'true';
 
+    // Control the visibility of the telemetry prompt based on previous response
     $scope.telemetryShow = !telemetryAnswered;
     $scope.followUpShow = false;
 
+    // Function to fetch telemetry consent status from database 
     $scope.fetchTelemetryConsent = function () {
         $http.get(`/dashboard/telemetry/get_is_telemetry_answered`)
             .then(function (response) {
@@ -16,6 +18,7 @@ export function TelemetryController($scope, $http, $window) {
     };
     $scope.fetchTelemetryConsent();
 
+    // Function to handle user response to telemetry prompt
     $scope.handleTelemetry = function (consent) {
         $scope.telemetryShow = false;
         $scope.followUpShow = !consent;
@@ -29,7 +32,7 @@ export function TelemetryController($scope, $http, $window) {
             });
     };
 
-
+    // Object to track reasons for declining telemetry
     $scope.reasons = {
         privacy: false,
         performance: false,
@@ -38,6 +41,7 @@ export function TelemetryController($scope, $http, $window) {
     };
     $scope.customReason = '';
 
+    // Configuration for HTTP requests to Back4App
     var config = {
         headers: {
             'X-Parse-Application-Id': 'zwfDL1t45KjnXSF5ELGQajShV6eJiaKVmRFaQjUb',
@@ -46,6 +50,7 @@ export function TelemetryController($scope, $http, $window) {
         }
     };
 
+    // Function to submit follow-up feedback
     $scope.submitFollowUp = function () {
         $scope.followUpShow = false;
 
