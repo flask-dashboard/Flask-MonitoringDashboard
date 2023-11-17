@@ -8,7 +8,6 @@ from flask_monitoringdashboard.database import session_scope
 
 @blueprint.route('/telemetry/accept_telemetry_consent', methods=['POST'])
 def accept_telemetry_consent():
-
     with session_scope() as session:
         try:
             telemetry_user = get_telemetry_user(session)
@@ -49,7 +48,7 @@ def survey_has_been_filled():
 def get_is_telemetry_answered():
     with session_scope() as session:
         telemetry_user = get_telemetry_user(session)
-        res = True if telemetry_user.monitoring_consent == (2, 3) else False
+        res = True if telemetry_user.monitoring_consent in (2, 3) else False
         return {'is_telemetry_answered': res}
 
 
