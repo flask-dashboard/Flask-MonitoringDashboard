@@ -19,7 +19,6 @@ def accept_telemetry_consent():
             else:
                 telemetry_user.monitoring_consent = 2  # reject monitoring
                 telemetry_config.telemetry_consent = False
-
             session.commit()
 
         except SQLAlchemyError as e:

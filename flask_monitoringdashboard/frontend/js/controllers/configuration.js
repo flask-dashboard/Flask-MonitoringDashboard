@@ -96,7 +96,7 @@ export function ConfigurationController($scope, $http, menuService, endpointServ
     $scope.telemetryConsent;
 
     $scope.fetchTelemetryConsent = function () {
-        $http.post(`/dashboard/get_is_telemetry_answered`)
+        $http.get('/dashboard/get_is_telemetry_answered')
             .then(function (response) {
                 $scope.telemetryConsent = response.data;
             }, function (error) {
