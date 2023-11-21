@@ -1,81 +1,105 @@
 <ul class="navbar-nav navbar-sidenav nav-pills">
     <li class="nav-item" title="Dashboard">
-        <a class="nav-link nav-link-collapse collapsed"
-           data-bs-toggle="collapse" data-bs-target="#collapseDashboard">
+        <a class="nav-link nav-link-collapse collapsed" data-bs-toggle="collapse" data-bs-target="#collapseDashboard">
             <i class="fas fa-tachometer-alt"></i>
             <span class="nav-link-text">Dashboard</span>
         </a>
         <ul class="sidenav-second-level collapse" id="collapseDashboard">
             <li ng-class="{'active': menu.page=='overview'}">
-                <a href="overview">Overview</a></li>
+                <a href="overview">Overview</a>
+            </li>
             <li ng-class="{'active': menu.page=='hourly_load'}">
-                <a href="hourly_load">Hourly API Utilization</a></li>
+                <a href="hourly_load">Hourly API Utilization</a>
+            </li>
             <li ng-class="{'active': menu.page=='multi_version'}">
-                <a href="multi_version">Multi Version API Utilization</a></li>
+                <a href="multi_version">Multi Version API Utilization</a>
+            </li>
             <li ng-class="{'active': menu.page=='daily_load'}">
-                <a href="daily_utilization">Daily API Utilization</a></li>
+                <a href="daily_utilization">Daily API Utilization</a>
+            </li>
             <li ng-class="{'active': menu.page=='api_performance'}">
-                <a href="api_performance">API Performance</a></li>
+                <a href="api_performance">API Performance</a>
+            </li>
             <li ng-class="{'active': menu.page=='reporting'}">
-                <a href="reporting">Reporting</a></li>
+                <a href="reporting">Reporting</a>
+            </li>
         </ul>
     </li>
 
     <li class="nav-item" data-bs-toggle="tooltip" data-bs-placement="right" ng-show="menu.endpoint.info.id > 0"
         data-original-title="{{ menu.endpoint.info.endpoint }}">
-        <a class="nav-link nav-link-collapse collapsed"
-           data-bs-toggle="collapse" data-bs-target="#collapseEndpoint">
+        <a class="nav-link nav-link-collapse collapsed" data-bs-toggle="collapse" data-bs-target="#collapseEndpoint">
             <i class="fa fa-fw fa-asterisk"></i>
             <span class="nav-link-text">{{ menu.endpoint.info.endpoint }}</span>
         </a>
         <ul class="sidenav-second-level collapse" id="collapseEndpoint">
             <li ng-class="{'active': menu.page=='endpoint_hourly'}">
                 <a href="endpoint/{{ menu.endpoint.info.id }}/hourly_load">
-                    Hourly API Utilization</a></li>
+                    Hourly API Utilization</a>
+            </li>
             <li ng-class="{'active': menu.page=='endpoint_user_version'}">
                 <a href="endpoint/{{ menu.endpoint.info.id }}/version_user">
-                    User-Focused Multi-Version Performance</a></li>
+                    User-Focused Multi-Version Performance</a>
+            </li>
             <li ng-class="{'active': menu.page=='endpoint_ip'}">
                 <a href="endpoint/{{ menu.endpoint.info.id }}/version_ip">
-                    IP-Focused Multi-Version Performance</a></li>
+                    IP-Focused Multi-Version Performance</a>
+            </li>
             <li ng-class="{'active': menu.page=='endpoint_version'}">
                 <a href="endpoint/{{ menu.endpoint.info.id }}/versions">
-                    Per-Version Performance</a></li>
+                    Per-Version Performance</a>
+            </li>
             <li ng-class="{'active': menu.page=='endpoint_user'}">
                 <a href="endpoint/{{ menu.endpoint.info.id }}/users">
-                    Per-User Performance</a></li>
+                    Per-User Performance</a>
+            </li>
             <li ng-class="{'active': menu.page=='endpoint_profiler'}">
                 <a href="endpoint/{{ menu.endpoint.info.id }}/profiler">
-                    Profiler</a></li>
+                    Profiler</a>
+            </li>
             <li ng-class="{'active': menu.page=='endpoint_grouped_profiler'}">
                 <a href="endpoint/{{ menu.endpoint.info.id }}/grouped-profiler">
-                    Grouped Profiler</a></li>
+                    Grouped Profiler</a>
+            </li>
             <li ng-class="{'active': menu.page=='endpoint_outlier'}">
                 <a href="endpoint/{{ menu.endpoint.info.id }}/outliers">
-                    Outliers</a></li>
-              <li ng-class="{'active': menu.page=='status_code_distribution'}">
+                    Outliers</a>
+            </li>
+            <li ng-class="{'active': menu.page=='status_code_distribution'}">
                 <a href="endpoint/{{ menu.endpoint.info.id }}/status_code_distribution">Status Code Distribution</a>
             </li>
         </ul>
     </li>
 
     <li class="nav-item" title="Custom graphs" ng-show="menu.endpoint.customGraphs.length > 0">
-        <a class="nav-link nav-link-collapse collapsed"
-           data-bs-toggle="collapse" data-bs-target="#collapseCustomGraphs">
+        <a class="nav-link nav-link-collapse collapsed" data-bs-toggle="collapse"
+            data-bs-target="#collapseCustomGraphs">
             <i class="fa fa-fw fa-desktop"></i>
             <span class="nav-link-text">Custom graphs</span>
         </a>
         <ul class="sidenav-second-level collapse" id="collapseCustomGraphs">
             <li ng-repeat="graph in menu.endpoint.customGraphs"
                 ng-class="{'active': menu.page=='custom_graph'+graph.graph_id}">
-                <a href="custom_graph/{{ graph.graph_id }}">{{ graph.title }}</a></li>
+                <a href="custom_graph/{{ graph.graph_id }}">{{ graph.title }}</a>
+            </li>
         </ul>
     </li>
 
-    <li ng-class="{'active': menu.page=='configuration'}" class="nav-item" title="Configuration">
-        <a class="nav-link" href="configuration">
-            <i class="fa fa-fw fa-gear"></i>
+    <li class="nav-item" title="Configuration">
+        <a class="nav-link nav-link-collapse collapsed" data-bs-toggle="collapse"
+            data-bs-target="#collapseConfiguration">
+            <i class="fa fa-fw fa-cog"></i>
             <span class="nav-link-text">Configuration</span>
         </a>
+        <ul class="sidenav-second-level collapse" id="collapseConfiguration">
+            <li ng-class="{'active': menu.page=='configuration'}">
+                <a href="configuration">General Settings</a>
+            </li>
+            <li ng-class="{'active': menu.page=='database_management'}">
+                <a href="database_management">Database Management</a>
+            </li>
+        </ul>
     </li>
+
+
 </ul>

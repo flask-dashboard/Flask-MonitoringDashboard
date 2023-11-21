@@ -1,0 +1,87 @@
+<div class="card mb-3">
+    <div class="card-header">
+        <h4>Performance Monitoring</h4>
+    </div>
+    <div class="card-body">
+        <!-- Visualization of Data Storage -->
+        <!-- Real-time monitoring interface -->
+        <!-- Graphs and alerts for performance metrics -->
+    </div>
+</div>
+
+
+<div class="card mb-3">
+    <div class="card-header">
+        <h4>Automated Cleaning Setup</h4>
+    </div>
+    <div class="card-body">
+        <form ng-submit="submitCleaningConfig()">
+            
+            <!-- Data Age Criteria -->
+            <div class="form-group">
+                <label for="cleaningAge">Age of Data (in days):</label>
+                <input type="number" class="form-control" id="cleaningAge" ng-model="cleaningConfig.age">
+                <span ng-show="!isValidAge()" class="help-block">Invalid age. Please enter a value between 1 and 365.</span>
+            </div>
+
+            <!-- Cleaning Schedule -->
+            <div class="form-group">
+                <label for="scheduleFrequency">Cleaning Frequency:</label>
+                <select class="form-control" id="scheduleFrequency" ng-model="cleaningConfig.frequency">
+                    <option value="daily">Daily</option>
+                    <option value="weekly">Weekly</option>
+                    <option value="monthly">Monthly</option>
+                </select>
+                <span ng-show="!isValidFrequency()" class="help-block">Please select a valid frequency.</span>
+            </div>
+
+            <!-- Cleaning Timing -->
+            <fieldset>
+                <legend>Cleaning Schedule Timing</legend>
+                <div class="form-group">
+                    <label for="cleaningDate">Date:</label>
+                    <input type="date" class="form-control" id="cleaningDate" ng-model="cleaningConfig.date">
+                </div>
+                
+                <div class="form-group">
+                    <label for="cleaningTime">Time:</label>
+                    <input type="time" class="form-control" id="cleaningTime" ng-model="cleaningConfig.time">
+                </div>
+            </fieldset>
+
+            <br>
+            <!-- Submit Button -->
+            <button type="submit" class="btn btn-primary" ng-click="setupAutomatedCleaning()">Set Up Cleaning</button>
+        </form>
+    </div>
+</div>
+
+<div class="card mb-3">
+    <div class="card-header">
+        <h4>Command Line Operations</h4>
+    </div>
+    <div class="card-body">
+        <textarea class="form-control mb-2" rows="3" ng-model="commandInput"
+            placeholder="Enter command here..."></textarea>
+        <button class="btn btn-primary mb-2" ng-click="executeCommandLine()">Execute</button>
+        <pre>{{ commandOutput }}</pre> <!-- Display command output here -->
+    </div>
+</div>
+
+
+<div class="card mb-3">
+    <div class="card-header">
+        <h4>Backup and Restore</h4>
+    </div>
+    <div class="card-body">
+        <!-- Backup Section -->
+        <button class="btn btn-primary mb-2" ng-click="createBackup()">Create Backup</button>
+
+        <!-- Restore Section -->
+        <div class="form-group">
+            <label for="backupFile">Select Backup File:</label>
+            <input type="file" class="form-control-file" id="backupFile" ng-model="selectedBackupFile">
+        </div>
+        <button class="btn btn-secondary" ng-click="restoreBackup()">Restore</button>
+    </div>
+</div>
