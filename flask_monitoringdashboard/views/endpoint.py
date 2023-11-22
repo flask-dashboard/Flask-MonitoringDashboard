@@ -16,6 +16,7 @@ from flask_monitoringdashboard.core.auth import secure, admin_secure
 from flask_monitoringdashboard.core.utils import get_endpoint_details
 from flask_monitoringdashboard.core.telemetry import initialize_telemetry_session, post_to_back_if_telemetry_enabled
 from flask_monitoringdashboard.database import session_scope, row2dict
+from flask_monitoringdashboard.database.size import get_table_sizes, sum_table_sizes
 from flask_monitoringdashboard.database.endpoint import (
     get_users,
     get_ips,
@@ -31,6 +32,14 @@ def get_overview():
     Get information per endpoint about the number of hits and median execution time
     :return: A JSON-list with a JSON-object per endpoint
     """
+
+    table_sizes = get_table_sizes()
+    total_size = sum_table_sizes(table_sizes)
+    for table_name, size in table_sizes.items():
+        print(f"Estimated size of table {table_name}: {size} bytes")
+    print(f"Total estimated size of all tables: {total_size} bytes")
+
+
     with session_scope() as session:
         if not telemetry_config.telemetry_initialized:
             initialize_telemetry_session(session)
