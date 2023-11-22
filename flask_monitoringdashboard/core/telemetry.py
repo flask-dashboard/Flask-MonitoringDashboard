@@ -37,7 +37,7 @@ def collect_general_telemetry_data(session, telemetry_user):
     no_of_endpoints = len(endpoints)
     no_of_blueprints = len(blueprints)
 
-    # collect monitoring levels
+    # collect the amount of endpoints with their respective monitoring levels
     counts = (
         session.query(Endpoint.monitor_level, func.count(Endpoint.monitor_level))
         .group_by(Endpoint.monitor_level)

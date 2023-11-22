@@ -123,8 +123,7 @@ To run the testing environment:
 
     npm run dev
 
-Any changes made in the code will now be reflected on the dashboard. 
-A flask project with the dashboard already installed can be found at `<https://github.com/wielas/fmd_weather>`_.
+Any changes made in the code will now be reflected on the dashboard.
 
 
 Tools
