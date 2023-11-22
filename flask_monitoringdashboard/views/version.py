@@ -8,7 +8,7 @@ from flask_monitoringdashboard.controllers.versions import (
 from flask_monitoringdashboard.database import session_scope
 
 from flask_monitoringdashboard.core.auth import secure
-from flask_monitoringdashboard.core.telemetry import post_to_back
+from flask_monitoringdashboard.core.telemetry import post_to_back_if_telemetry_enabled
 
 from flask_monitoringdashboard import blueprint
 from flask_monitoringdashboard.database.versions import get_versions
@@ -22,7 +22,7 @@ def versions(endpoint_id=None):
     :param endpoint_id: integer
     :return: A JSON-list with all versions of a specific endpoint (version represented by a string)
     """
-    post_to_back(**{'name': f'versions/{endpoint_id}'})
+    post_to_back_if_telemetry_enabled(**{'name': f'versions/{endpoint_id}'})
     with session_scope() as session:
         version_dates = get_versions(session, endpoint_id)
         dicts = []
@@ -48,7 +48,7 @@ def multi_version():
             ]
           }
     """
-    post_to_back(**{'name': 'multi_version'})
+    post_to_back_if_telemetry_enabled(**{'name': 'multi_version'})
     data = json.loads(request.data)['data']
     endpoints = data['endpoints']
     versions = data['versions']
@@ -78,7 +78,7 @@ def version_user(endpoint_id):
             ]
           }
     """
-    post_to_back(**{'name': f'version_user/{endpoint_id}'})
+    post_to_back_if_telemetry_enabled(**{'name': f'version_user/{endpoint_id}'})
     data = json.loads(request.data)['data']
     versions = data['versions']
     users = data['users']
@@ -109,7 +109,7 @@ def version_ip(endpoint_id):
             ]
           }
     """
-    post_to_back(**{'name': f'version_ip/{endpoint_id}'})
+    post_to_back_if_telemetry_enabled(**{'name': f'version_ip/{endpoint_id}'})
     data = json.loads(request.data)['data']
     versions = data['versions']
     ips = data['ip']

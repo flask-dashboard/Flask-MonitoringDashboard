@@ -5,6 +5,7 @@ from sqlalchemy import func
 from sqlalchemy.exc import NoResultFound, MultipleResultsFound, SQLAlchemyError
 
 from flask_monitoringdashboard import telemetry_config
+from flask_monitoringdashboard.core.config import TelemetryConfig
 from flask_monitoringdashboard.core.blueprints import get_blueprint
 from flask_monitoringdashboard.database import TelemetryUser, Endpoint
 
@@ -17,12 +18,13 @@ def get_telemetry_user(session):
     except (MultipleResultsFound, NoResultFound):
         session.query(TelemetryUser).delete()
         initialize_telemetry_session(session)
-        get_telemetry_user(session)
 
     except SQLAlchemyError as e:
         session.rollback()
         initialize_telemetry_session(session)
-        get_telemetry_user(session)
+
+    finally:
+        return session.query(TelemetryUser).one()
 
 
 def collect_general_telemetry_data(session, telemetry_user):
@@ -49,7 +51,7 @@ def collect_general_telemetry_data(session, telemetry_user):
 
     data = {'endpoints': no_of_endpoints,
             'blueprints': no_of_blueprints,
-            'time_accessed': telemetry_user.last_accessed.strftime('%Y-%m-%d %H:%M:%S'),
+            'time_initialized': telemetry_user.last_initialized.strftime('%Y-%m-%d %H:%M:%S'),
             'monitoring_0': level_zeros_count,
             'monitoring_1': level_ones_count,
             'monitoring_2': level_twos_count,
@@ -57,7 +59,7 @@ def collect_general_telemetry_data(session, telemetry_user):
             }
 
     # post user data
-    post_to_back('UserSession', **data)
+    post_to_back_if_telemetry_enabled('UserSession', **data)
 
 
 def initialize_telemetry_session(session):
@@ -72,25 +74,25 @@ def initialize_telemetry_session(session):
             session.commit()
         else:
             telemetry_user = session.query(TelemetryUser).one()
-            telemetry_user.times_accessed += 1
-            telemetry_user.last_accessed = datetime.datetime.utcnow()
+            telemetry_user.times_initialized += 1
+            telemetry_user.last_initialized = datetime.datetime.utcnow()
             session.commit()
 
         # reset telemetry and survey prompt if declined in previous session
-        if telemetry_user.monitoring_consent == 2:
-            telemetry_user.monitoring_consent = 1
+        if telemetry_user.monitoring_consent == TelemetryConfig.REJECTED:
+            telemetry_user.monitoring_consent = TelemetryConfig.NOT_ANSWERED
             session.commit()
-        if telemetry_user.survey_filled == 2:
-            telemetry_user.survey_filled = 1
+        if telemetry_user.survey_filled == TelemetryConfig.REJECTED:
+            telemetry_user.survey_filled = TelemetryConfig.NOT_ANSWERED
             session.commit()
 
         # check if telemetry's been agreed on
-        telemetry_config.telemetry_consent = True if telemetry_user.monitoring_consent == 3 else False
+        telemetry_config.telemetry_consent = True if telemetry_user.monitoring_consent == TelemetryConfig.ACCEPTED else False
 
         # save the telemetry_config for quick access
         telemetry_config.fmd_user = telemetry_user.id
         telemetry_config.telemetry_initialized = True
-        telemetry_config.telemetry_session = telemetry_user.times_accessed
+        telemetry_config.telemetry_session = telemetry_user.times_initialized
 
         # collect the data and send it to the remote database
         collect_general_telemetry_data(session, telemetry_user)
@@ -105,7 +107,7 @@ def initialize_telemetry_session(session):
         session.rollback()
 
 
-def post_to_back(class_name='Endpoints', **kwargs):
+def post_to_back_if_telemetry_enabled(class_name='Endpoints', **kwargs):
     """
     Function to send telemetry data to remote database
     """

@@ -2,7 +2,7 @@ import numpy as np
 from flask import url_for
 from werkzeug.routing import BuildError
 
-from flask_monitoringdashboard import config, telemetry_config
+from flask_monitoringdashboard import config
 from flask_monitoringdashboard.core.colors import get_color
 from flask_monitoringdashboard.core.rules import get_rules
 from flask_monitoringdashboard.core.timezone import to_local_datetime

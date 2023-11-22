@@ -5,7 +5,7 @@ from flask import jsonify
 from flask_monitoringdashboard import blueprint, config
 from flask_monitoringdashboard.core.auth import secure
 from flask_monitoringdashboard.core.timezone import to_local_datetime
-from flask_monitoringdashboard.core.telemetry import post_to_back
+from flask_monitoringdashboard.core.telemetry import post_to_back_if_telemetry_enabled
 from flask_monitoringdashboard.core.utils import get_details
 from flask_monitoringdashboard.database import session_scope
 
@@ -17,7 +17,7 @@ def deploy_details():
     """
     :return: A JSON-object with deployment details
     """
-    post_to_back(**{'name': 'deploy_details'})
+    post_to_back_if_telemetry_enabled(**{'name': 'deploy_details'})
 
     with session_scope() as session:
         details = get_details(session)
@@ -36,7 +36,7 @@ def deploy_config():
     """
     :return: A JSON-object with configuration details
     """
-    post_to_back(**{'name': 'deploy_config'})
+    post_to_back_if_telemetry_enabled(**{'name': 'deploy_config'})
     return jsonify(
         {
             'database_name': config.database_name,

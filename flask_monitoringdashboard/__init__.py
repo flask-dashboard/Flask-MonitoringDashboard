@@ -47,7 +47,7 @@ def bind(app, schedule=True, include_dashboard=True):
         app.secret_key = 'my-secret-key'
 
     sentry_sdk.init(
-        dsn=TelemetryConfig.sentry_dsn,
+        dsn=TelemetryConfig.SENTRY_DSN,
         traces_sample_rate=1.0,
         profiles_sample_rate=1.0,
     )

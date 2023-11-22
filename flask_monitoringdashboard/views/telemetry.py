@@ -2,6 +2,7 @@ from flask import jsonify, request, json
 from sqlalchemy.exc import SQLAlchemyError
 from flask_monitoringdashboard.core.auth import secure
 from flask_monitoringdashboard import blueprint, telemetry_config
+from flask_monitoringdashboard.core.config import TelemetryConfig
 from flask_monitoringdashboard.core.telemetry import get_telemetry_user
 from flask_monitoringdashboard.database import session_scope
 
@@ -13,10 +14,10 @@ def accept_telemetry_consent():
             telemetry_user = get_telemetry_user(session)
             data = request.get_json()
             if 'consent' in data and isinstance(data['consent'], bool) and data.get('consent'):  # if True then agreed
-                telemetry_user.monitoring_consent = 3  # agree to monitoring
+                telemetry_user.monitoring_consent = TelemetryConfig.ACCEPTED  # agree to monitoring
                 telemetry_config.telemetry_consent = True
             else:
-                telemetry_user.monitoring_consent = 2  # reject monitoring
+                telemetry_user.monitoring_consent = TelemetryConfig.REJECTED  # reject monitoring
                 telemetry_config.telemetry_consent = False
             session.commit()
 
@@ -33,7 +34,7 @@ def survey_has_been_filled():
     with session_scope() as session:
         try:
             telemetry_user = get_telemetry_user(session)
-            telemetry_user.survey_filled = 3
+            telemetry_user.survey_filled = TelemetryConfig.ACCEPTED
             session.commit()
 
         except SQLAlchemyError as e:
@@ -48,7 +49,7 @@ def survey_has_been_filled():
 def get_is_telemetry_answered():
     with session_scope() as session:
         telemetry_user = get_telemetry_user(session)
-        res = True if telemetry_user.monitoring_consent in (2, 3) else False
+        res = True if telemetry_user.monitoring_consent in (TelemetryConfig.REJECTED, TelemetryConfig.ACCEPTED) else False
         return {'is_telemetry_answered': res}
 
 
@@ -56,5 +57,5 @@ def get_is_telemetry_answered():
 def get_is_survey_filled():
     with session_scope() as session:
         telemetry_user = get_telemetry_user(session)
-        res = True if telemetry_user.survey_filled in (2, 3) else False
+        res = True if telemetry_user.survey_filled in (TelemetryConfig.REJECTED, TelemetryConfig.ACCEPTED) else False
         return {'is_survey_filled': res}
