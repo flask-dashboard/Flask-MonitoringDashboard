@@ -11,6 +11,13 @@ import $ from 'jquery';
 
 window.$ = window.jQuery = $;
 
+// Chart.js
+import Chart from 'chart.js/auto';
+window.Chart = Chart;
+
+import ChartDataLabels from 'chartjs-plugin-datalabels';
+window.ChartDataLabels = ChartDataLabels;
+
 // Popper.js
 import { createPopper } from '@popperjs/core';
 
@@ -22,26 +29,27 @@ import moment from 'moment';
 
 window.moment = moment;
 
-import {OverviewController} from "./controllers/OverviewController";
-import {HourlyLoadController} from "./controllers/hourlyLoad";
-import {MultiVersionController} from "./controllers/multiVersion";
-import {DailyUtilizationController} from "./controllers/dailyUtilization";
-import {ApiPerformanceController} from "./controllers/apiPerformance";
-import {ReportingController} from "./controllers/reporting";
-import {EndpointHourlyLoadController} from "./controllers/endpointHourlyLoad";
-import {EndpointVersionUserController} from './controllers/endpointVersionUser'
-import {EndpointUsersController} from './controllers/endpointUsers'
-import {EndpointProfilerController} from './controllers/endpointProfiler'
-import {EndpointGroupedProfilerController} from './controllers/endpointGroupedProfiler'
-import {OutlierController} from './controllers/endpointOutlier'
-import {StatusCodeDistributionController,} from './controllers/statusCodeDistribution';
-import {CustomGraphController} from './controllers/customGraph';
-import {ConfigurationController} from './controllers/configuration';
-import {EndpointVersionIPController} from './controllers/endpointVersionIP';
-import {EndpointVersionController} from "./controllers/endpointVersion";
-import {MonitorLevelController} from "./controllers/monitorLevel";
-import {SurveyController} from "./controllers/surveyController";
-import {TelemetryController} from "./controllers/telemetryController";
+import { OverviewController } from "./controllers/OverviewController";
+import { HourlyLoadController } from "./controllers/hourlyLoad";
+import { MultiVersionController } from "./controllers/multiVersion";
+import { DailyUtilizationController } from "./controllers/dailyUtilization";
+import { ApiPerformanceController } from "./controllers/apiPerformance";
+import { ReportingController } from "./controllers/reporting";
+import { EndpointHourlyLoadController } from "./controllers/endpointHourlyLoad";
+import { EndpointVersionUserController } from './controllers/endpointVersionUser'
+import { EndpointUsersController } from './controllers/endpointUsers'
+import { EndpointProfilerController } from './controllers/endpointProfiler'
+import { EndpointGroupedProfilerController } from './controllers/endpointGroupedProfiler'
+import { OutlierController } from './controllers/endpointOutlier'
+import { StatusCodeDistributionController, } from './controllers/statusCodeDistribution';
+import { CustomGraphController } from './controllers/customGraph';
+import { ConfigurationController } from './controllers/configuration';
+import { DatabaseManagementController } from './controllers/databaseManagementController';
+import { EndpointVersionIPController } from './controllers/endpointVersionIP';
+import { EndpointVersionController } from "./controllers/endpointVersion";
+import { MonitorLevelController } from "./controllers/monitorLevel";
+import { SurveyController } from "./controllers/surveyController";
+import { TelemetryController } from "./controllers/telemetryController";
 
 
 import formService from "./services/form";
@@ -59,7 +67,7 @@ import {
     PaginationController,
     ModalController,
 } from './controllers/util';
-import {applyFilters} from "./filters";
+import { applyFilters } from "./filters";
 import applyDirectives from "./directives";
 
 let app = angular.module('fmdApp', ['ngRoute']);
@@ -87,11 +95,11 @@ app.controller('ModalController', ['$scope', '$window', '$browser', 'modalServic
 app.component('surveyComponent', {
     templateUrl: 'static/pages/survey.html',
     controller: SurveyController
-  });
+});
 app.component('telemetryComponent', {
     templateUrl: 'static/pages/telemetry.html',
     controller: TelemetryController
-  });
+});
 
 app.config(['$locationProvider', '$routeProvider', function ($locationProvider, $routeProvider) {
     $routeProvider
@@ -177,6 +185,10 @@ app.config(['$locationProvider', '$routeProvider', function ($locationProvider, 
         .when('/configuration', {
             templateUrl: 'static/pages/configuration.html',
             controller: ['$scope', '$http', 'menuService', 'endpointService', 'modalService', ConfigurationController]
+        })
+        .when('/database_management', {
+            templateUrl: 'static/pages/database_management.html',
+            controller: ['$scope', '$http', 'menuService', 'endpointService', 'modalService', DatabaseManagementController]
         })
         .otherwise({
             redirectTo: '/overview'

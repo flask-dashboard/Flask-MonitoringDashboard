@@ -4,11 +4,12 @@
     </div>
     <div class="card-body">
         <!-- Visualization of Data Storage -->
-        <!-- Real-time monitoring interface -->
-        <!-- Graphs and alerts for performance metrics -->
+        <canvas id="databaseUsageChart"></canvas>
     </div>
 </div>
 
+<!-- Real-time monitoring interface -->
+<!-- Graphs and alerts for performance metrics -->
 
 <div class="card mb-3">
     <div class="card-header">
@@ -16,13 +17,6 @@
     </div>
     <div class="card-body">
         <form ng-submit="submitCleaningConfig()">
-            
-            <!-- Data Age Criteria -->
-            <div class="form-group">
-                <label for="cleaningAge">Age of Data (in days):</label>
-                <input type="number" class="form-control" id="cleaningAge" ng-model="cleaningConfig.age">
-                <span ng-show="!isValidAge()" class="help-block">Invalid age. Please enter a value between 1 and 365.</span>
-            </div>
 
             <!-- Cleaning Schedule -->
             <div class="form-group">
@@ -39,15 +33,9 @@
             <fieldset>
                 <legend>Cleaning Schedule Timing</legend>
                 <div class="form-group">
-                    <label for="cleaningDate">Date:</label>
-                    <input type="date" class="form-control" id="cleaningDate" ng-model="cleaningConfig.date">
+                    <label for="cleaningDate">Date and time:</label>
+                    <input type="datetime-local" class="form-control" id="cleaningDate" ng-model="cleaningConfig.date">
                 </div>
-                
-                <div class="form-group">
-                    <label for="cleaningTime">Time:</label>
-                    <input type="time" class="form-control" id="cleaningTime" ng-model="cleaningConfig.time">
-                </div>
-            </fieldset>
 
             <br>
             <!-- Submit Button -->
