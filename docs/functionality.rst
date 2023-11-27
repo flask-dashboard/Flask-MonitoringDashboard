@@ -319,15 +319,16 @@ You can find detailed information about what and how data is collected below.
 
 What:
 
-1. **Number of endpoints** We collect the amount of endpoints, no names or anything that could expose your application.
+1. **Number of endpoints:** We collect the amount of endpoints, no names or anything that could expose your application.
 
-2. **Number of blueprints** We collect the amount of blueprints, again - only the number.
+2. **Number of blueprints:** We collect the amount of blueprints, again - only the number.
 
-3. **Aggregated monitoring levels** To determine the most frequently utilized monitoring level, we aggregate the levels set from each endpoint.
+3. **Aggregated monitoring levels:** To determine the most frequently utilized monitoring level, we aggregate the levels set from each endpoint.
 
-4. **Table size** In order to determine how fast the data accumulates, we collect the size of the database and its tables.
+4. **Table size:** In order to determine how fast the data accumulates, we collect the size of the database and its tables.
 
 How:
+
 We post the data anonymously to a remote server. This way we can monitor which functionalities are being used the most, and which functionalities are not being used at all. We are a small research team and this way we can focus our efforts on what actually matters.
 This is most of the logic behind the telemetry:
 
