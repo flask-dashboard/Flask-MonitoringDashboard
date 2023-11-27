@@ -18,29 +18,52 @@
     <div class="card-body">
         <form ng-submit="submitCleaningConfig()">
 
-            <!-- Cleaning Schedule -->
+            <!-- Cleaning Frequency -->
             <div class="form-group">
                 <label for="scheduleFrequency">Cleaning Frequency:</label>
-                <select class="form-control" id="scheduleFrequency" ng-model="cleaningConfig.frequency">
-                    <option value="daily">Daily</option>
+                <select class="form-control" id="scheduleFrequency" ng-model="cleaningConfig.frequency"
+                    ng-change="updateFrequency()">
                     <option value="weekly">Weekly</option>
                     <option value="monthly">Monthly</option>
+                    <option value="quarterly">Quarterly</option>
                 </select>
-                <span ng-show="!isValidFrequency()" class="help-block">Please select a valid frequency.</span>
+                <span ng-show="submitAttempted && !isValidFrequency()" class="help-block">Please select a valid
+                    frequency.</span>
             </div>
 
-            <!-- Cleaning Timing -->
-            <fieldset>
-                <legend>Cleaning Schedule Timing</legend>
-                <div class="form-group">
-                    <label for="cleaningDate">Date and time:</label>
-                    <input type="datetime-local" class="form-control" id="cleaningDate" ng-model="cleaningConfig.date">
-                </div>
+            <!-- Day of the Week -->
+            <div class="form-group">
+                <label for="dayOfWeek">Day of the Week:</label>
+                <select class="form-control" id="dayOfWeek" ng-model="cleaningConfig.dayOfWeek">
+                    <option value="monday">Monday</option>
+                    <option value="tuesday">Tuesday</option>
+                    <option value="wednesday">Wednesday</option>
+                    <option value="thursday">Thursday</option>
+                    <option value="friday">Friday</option>
+                    <option value="saturday">Saturday</option>
+                    <option value="sunday">Sunday</option>
+                </select>
+                <span ng-show="submitAttempted && !isValidDayOfWeek()" class="help-block">Please select a valid
+                    day.</span>
+            </div>
+
+            <!-- Cleaning Time -->
+            <div class="form-group">
+                <label for="cleaningTime">Time:</label>
+                <input type="time" class="form-control" id="cleaningTime" ng-model="cleaningConfig.time">
+                <span ng-show="submitAttempted && !isValidTime()" class="help-block">Please enter a valid time
+                    (HH:MM).</span>
+            </div>
+
 
             <br>
+
             <!-- Submit Button -->
             <button type="submit" class="btn btn-primary" ng-click="setupAutomatedCleaning()">Set Up Cleaning</button>
+
         </form>
+
+
     </div>
 </div>
 

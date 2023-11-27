@@ -13,11 +13,11 @@ export function DatabaseManagementController($scope, $http, menuService, endpoin
         const labels = data.map(item => item.endpoint);
         const sizes = data.map(item => item.size);
         const totalSize = sizes.reduce((a, b) => a + b, 0);
-    
+
         // Generate a color for each endpoint
         const backgroundColors = data.map((_, index) => generateColor(index));
         const borderColors = backgroundColors.map(color => color.replace(/0.2\)$/, '1)'));
-    
+
         new Chart(ctx, {
             type: 'doughnut',
             data: {
@@ -39,7 +39,7 @@ export function DatabaseManagementController($scope, $http, menuService, endpoin
                     },
                     tooltip: {
                         callbacks: {
-                            label: function(context) {
+                            label: function (context) {
                                 let label = context.label || '';
                                 if (label) {
                                     label += ': ';
@@ -66,7 +66,7 @@ export function DatabaseManagementController($scope, $http, menuService, endpoin
             }
         });
     };
-    
+
 
     // Function to generate distinct colors
     function generateColor(index) {
@@ -99,8 +99,12 @@ export function DatabaseManagementController($scope, $http, menuService, endpoin
 
 
 
-    // Assuming these are the initial configurations, update as necessary
-    $scope.cleaningConfig = {};
+    $scope.cleaningConfig = {
+        frequency: null,
+        dayOfWeek: null,
+        time: null,
+        age: null // Assuming 'age' is part of your cleaningConfig
+    };
     $scope.command = '';
     $scope.backupFile = null;
 
@@ -113,71 +117,102 @@ export function DatabaseManagementController($scope, $http, menuService, endpoin
     // Validation for Frequency
     $scope.isValidFrequency = function () {
         const frequency = $scope.cleaningConfig.frequency;
-        return frequency && ['daily', 'weekly', 'monthly'].includes(frequency);
+        return frequency && ['weekly', 'monthly', 'quarterly'].includes(frequency);
     };
 
-    // Modify setupAutomatedCleaning to include validation
+    // Validation for Time
+    $scope.isValidTime = function () {
+        const time = $scope.cleaningConfig.time;
+        if (!time) {
+            return false;
+        }
+        const timePattern = /^([01]?[0-9]|2[0-3]):[0-5][0-9]$/;
+        return timePattern.test(time);
+    };
+
+
+    // Validation for Day of the Week
+    $scope.isValidDayOfWeek = function () {
+        const dayOfWeek = $scope.cleaningConfig.dayOfWeek;
+        return dayOfWeek && ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'].includes(dayOfWeek);
+    };
+
+    // Function to handle automated cleaning setup
     $scope.setupAutomatedCleaning = function () {
-        if (!$scope.isValidAge() || !$scope.isValidFrequency()) {
-            console.error('Invalid input');
-            // Display an error message to the user
+        $scope.submitAttempted = true;
+
+        // Perform validation checks
+        if (!$scope.isValidAge()) {
+            console.error('Invalid age input');
             return;
         }
-        // Function to handle automated cleaning setup
-        $scope.setupAutomatedCleaning = function () {
-            $http.post(
-                'api/cleaning/setup',
-                $.param($scope.cleaningConfig),
-                HEADERS
-            ).then(function (successResponse) {
-                // Handle success
-                console.log('Automated cleaning setup successful');
-            }, function (errorResponse) {
-                console.error('Error setting up automated cleaning:', errorResponse);
-            });
-        };
 
-        // Function to execute command line operation
-        $scope.executeCommandLine = function () {
-            $http.post(
-                'api/command/execute',
-                $.param({ 'command': $scope.command }),
-                HEADERS
-            ).then(function (successResponse) {
-                // Handle command output
-                $scope.commandOutput = successResponse.data.output;
-            }, function (errorResponse) {
-                console.error('Error executing command:', errorResponse);
-                $scope.commandOutput = 'Error: Command execution failed';
-            });
-        };
+        if (!$scope.isValidFrequency()) {
+            console.error('Invalid frequency input');
+            return;
+        }
 
-        // Function to create a backup
-        $scope.createBackup = function () {
-            $http.post(
-                'api/backup/create',
-                {}, // Add any necessary parameters
-                HEADERS
-            ).then(function (successResponse) {
-                console.log('Backup created successfully');
-            }, function (errorResponse) {
-                console.error('Error creating backup:', errorResponse);
-            });
-        };
+        if (!$scope.isValidDayOfWeek()) {
+            console.error('Invalid day of the week input');
+            return;
+        }
 
-        // Function to restore a backup
-        $scope.restoreBackup = function () {
-            $http.post(
-                'api/backup/restore',
-                $.param({ 'file': $scope.backupFile }),
-                HEADERS
-            ).then(function (successResponse) {
-                console.log('Backup restored successfully');
-            }, function (errorResponse) {
-                console.error('Error restoring backup:', errorResponse);
-            });
-        };
-        // Add other necessary functions and service calls as per your application's requirements
-    }
+        // If all validations pass, proceed with the setup
+        $http.post(
+            'api/cleaning/setup',
+            $.param($scope.cleaningConfig),
+            HEADERS
+        ).then(function (successResponse) {
+            // Handle success
+            console.log('Automated cleaning setup successful');
+        }, function (errorResponse) {
+            console.error('Error setting up automated cleaning:', errorResponse);
+        });
+    };
+
+
+
+    // Function to execute command line operation
+    $scope.executeCommandLine = function () {
+        $http.post(
+            'api/command/execute',
+            $.param({ 'command': $scope.command }),
+            HEADERS
+        ).then(function (successResponse) {
+            // Handle command output
+            $scope.commandOutput = successResponse.data.output;
+        }, function (errorResponse) {
+            console.error('Error executing command:', errorResponse);
+            $scope.commandOutput = 'Error: Command execution failed';
+        });
+    };
+
+    // Function to create a backup
+    $scope.createBackup = function () {
+        $http.post(
+            'api/backup/create',
+            {}, // Add any necessary parameters
+            HEADERS
+        ).then(function (successResponse) {
+            console.log('Backup created successfully');
+        }, function (errorResponse) {
+            console.error('Error creating backup:', errorResponse);
+        });
+    };
+
+    // Function to restore a backup
+    $scope.restoreBackup = function () {
+        $http.post(
+            'api/backup/restore',
+            $.param({ 'file': $scope.backupFile }),
+            HEADERS
+        ).then(function (successResponse) {
+            console.log('Backup restored successfully');
+        }, function (errorResponse) {
+            console.error('Error restoring backup:', errorResponse);
+        });
+    };
+    // Add other necessary functions and service calls as per your application's requirements
 }
+
 
