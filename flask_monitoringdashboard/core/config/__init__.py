@@ -161,7 +161,7 @@ class Config(object):
                 parser, 'dashboard', 'OUTlIER_DETECTION_CONSTANT', self.outlier_detection_constant
             )
             self.sampling_period = (
-                parse_literal(parser, 'dashboard', 'SAMPLING_RATE', self.sampling_period) / 1000.0
+                    parse_literal(parser, 'dashboard', 'SAMPLING_RATE', self.sampling_period) / 1000.0
             )
             self.enable_logging = parse_bool(
                 parser, 'dashboard', 'ENABLE_LOGGING', self.enable_logging
@@ -195,3 +195,23 @@ class Config(object):
         except AttributeError:
             log('Cannot use configparser in python2.7')
             raise
+
+
+class TelemetryConfig(object):
+    """Configuration for the telemetry feature"""
+    SENTRY_DSN = "https://809cd4a03f338f24f492746ae119522a@o4506167771070464.ingest.sentry.io/4506167775854592"
+    # constants for defining survey and telemetry answers
+    NOT_ANSWERED = 1
+    REJECTED = 2
+    ACCEPTED = 3
+
+    def __init__(self):
+        self.telemetry_initialized = False
+        self.fmd_user = ''
+        self.telemetry_consent = False
+        self.telemetry_session = 0
+        self.telemetry_headers = {
+            'X-Parse-Application-Id': '4nHPABwkHqOZzNrFduzNyKH8q7wmPFdOWvajfWU2',
+            'X-Parse-REST-API-Key': 'zjv0WLI2K3UvpfzrfG4sPA6EykYyzZM4KxQk07Hs',
+            'Content-Type': 'application/json'
+        }

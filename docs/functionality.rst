@@ -24,7 +24,7 @@ features of the level below, in addition to bringing its own new features, as
 represented in the diagram below.
 
 .. figure :: img/monitoring_levels.png
-   :width: 100%
+:width: 100%
 
 Monitoring Level 0 - Disabled
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -308,6 +308,47 @@ while in the "interval" you use plurals (e.g. seconds).
 Finally, the implementation of the scheduler in the FMD
 is based on the appscheduler.schedulers.Background schedulers
 about which you can read more `in the corresponding documentation page <apscheduler.schedulers>`_.
+
+Telemetry
+----------------------
+
+The Dashboard is setup to be able to collect telemetric-data. 
+This data-collection can be toggled on and off under the "Configuration" route. 
+
+You can find detailed information about what and how data is collected below.
+
+What:
+
+1. **Number of endpoints:** We collect the amount of endpoints, no names or anything that could expose your application.
+
+2. **Number of blueprints:** We collect the amount of blueprints, again - only the number.
+
+3. **Aggregated monitoring levels:** To determine the most frequently utilized monitoring level, we aggregate the levels set from each endpoint.
+
+4. **Table size:** In order to determine how fast the data accumulates, we collect the size of the database and its tables.
+
+How:
+
+We post the data anonymously to a remote server. This way we can monitor which functionalities are being used the most, and which functionalities are not being used at all. We are a small research team and this way we can focus our efforts on what actually matters.
+This is most of the logic behind the telemetry:
+
+.. code-block:: python
+
+    def post_to_back_if_telemetry_enabled(class_name='Endpoints', **kwargs):
+    """
+    Function to send telemetry data to remote database
+    """
+    if telemetry_config.telemetry_consent:
+        back4app_endpoint = f'https://parseapi.back4app.com/classes/{class_name}'
+
+        headers = telemetry_config.telemetry_headers
+        data = {'fmd_id': telemetry_config.fmd_user, 'session': telemetry_config.telemetry_session} # fmd_id is the random uuid of the user, session is amount of times app was initialized
+
+        for key, value in kwargs.items():
+            data[key] = value
+
+        requests.post(back4app_endpoint, json=data, headers=headers)
+
 
 Need more information?
 ----------------------

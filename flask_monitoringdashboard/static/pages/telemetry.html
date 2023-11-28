@@ -1,0 +1,55 @@
+<div id="telemetry-consent" class="alert alert-info" ng-show="telemetryShow">
+    <strong>Telemetry Consent:</strong>
+    <p>Help us enhance our services by allowing anonymous usage collection. This data helps us understand which features
+        are useful, and which can be retired - we are a small research project, and we can not afford to maintain
+        features that are not useful. You have <u>full</u> control and can modify your choice at any time in the
+        "Configuration" section.</p>
+    If you can't help us with usage information, you can maybe help us with
+    adopting and fixing some <a href=https://github.com/flask-dashboard/Flask-MonitoringDashboard/issues">issues</a>? We are an open-source project! <br>
+
+    Want to know more?
+    <a href="https://flask-monitoringdashboard.readthedocs.io/en/latest/functionality.html#telemetry">Learn about what
+    we collect</a>.
+    <br><br>
+    <button class="btn btn-primary ng-binding" ng-click="handleTelemetry(true)">Agree</button>
+    <button class="btn btn-secondary ng-binding" ng-click="handleTelemetry(false)">Decline</button>
+</div>
+
+<div id="follow-up-questions" class="alert alert-info" ng-show="followUpShow">
+    <form name="feedbackForm">
+        <strong>Feedback:</strong>
+        <p>We value your feedback. Please help us understand why you declined telemetry:</p>
+
+        <div>
+            <input type="checkbox" id="privacy" ng-model="reasons.privacy">
+            <label for="privacy">Privacy concerns: I don't want my usage data to be collected.</label>
+        </div>
+
+        <div>
+            <input type="checkbox" id="performance" ng-model="reasons.performance">
+            <label for="performance">Performance concerns: I'm worried it might slow down the application.</label>
+        </div>
+
+        <div>
+            <input type="checkbox" id="trust" ng-model="reasons.trust">
+            <label for="trust">Trust issues: I'm not sure how the data will be used.</label>
+        </div>
+
+        <div>
+            <input type="checkbox" id="other" ng-model="reasons.other">
+            <label for="other">Other:</label>
+            <textarea ng-show="reasons.other" id='customReason' ng-model="customReason" ng-required="reasons.other"
+                      maxlength="2000" placeholder="Please specify your reason..."></textarea>
+        </div>
+        <div ng-show="reasons.other" style="font-size: 0.9em; margin-top: 5px;">
+            Characters: {{ customReason.length || 0 }} / 2000
+        </div>
+
+        <br>
+
+        <button class="btn btn-primary ng-binding" ng-click="submitFollowUp()"
+                ng-disabled="feedbackForm.$invalid">Submit Feedback
+        </button>
+        <button class="btn btn-secondary ng-binding" ng-click="handleTelemetry(true)">Accept Telemetry</button>
+    </form>
+</div>

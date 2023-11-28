@@ -6,6 +6,7 @@ from flask_monitoringdashboard.controllers.requests import get_num_requests_data
 from flask_monitoringdashboard.database import session_scope
 
 from flask_monitoringdashboard.core.auth import secure
+from flask_monitoringdashboard.core.telemetry import post_to_back_if_telemetry_enabled
 
 from flask_monitoringdashboard import blueprint
 
@@ -21,6 +22,7 @@ def num_requests(start_date, end_date):
           'values': [list with an integer per day],
         }
     """
+    post_to_back_if_telemetry_enabled(**{'name': 'requests'})
     start_date = datetime.datetime.strptime(start_date, '%Y-%m-%d')
     end_date = datetime.datetime.strptime(end_date, '%Y-%m-%d')
 
@@ -42,6 +44,7 @@ def hourly_load(start_date, end_date, endpoint_id=None):
           'days': ['start_date', 'start_date+1', ..., 'end_date'],
         }
     """
+    post_to_back_if_telemetry_enabled(**{'name': 'hourly_load'})
     start_date = datetime.datetime.strptime(start_date, '%Y-%m-%d')
     end_date = datetime.datetime.strptime(end_date, '%Y-%m-%d')
 

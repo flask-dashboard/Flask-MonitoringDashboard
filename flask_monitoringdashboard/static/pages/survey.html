@@ -1,0 +1,5 @@
+<div id="alert" class="alert alert-warning alert-dismissible" ng-show="surveyShow">
+    <strong>Survey:</strong>
+    <span ng-bind-html="surveyVariations[surveyVariationIndex]" ng-click="surveyFilled()"></span>
+    <a class="close" type="button" class="textarea" data-bs-dismiss="alert" aria-label="close" ng-click="closeSurvey()">&times;</a>
+</div>

@@ -1,5 +1,5 @@
 def test_static_css(dashboard):
-    response = dashboard.get('dashboard/static/css/app.css')
+    response = dashboard.get('dashboard/static/css/main.css')
     assert response.status_code == 200
 
 

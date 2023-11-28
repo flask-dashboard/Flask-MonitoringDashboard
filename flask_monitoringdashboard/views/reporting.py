@@ -7,6 +7,7 @@ from flask_monitoringdashboard.database import Request
 from flask_monitoringdashboard import blueprint
 from flask_monitoringdashboard.core.auth import secure
 from flask_monitoringdashboard.core.date_interval import DateInterval
+from flask_monitoringdashboard.core.telemetry import post_to_back_if_telemetry_enabled
 from flask_monitoringdashboard.core.reporting.questions.median_latency import \
     MedianLatency
 from flask_monitoringdashboard.core.reporting.questions.status_code_distribution import (
@@ -58,6 +59,7 @@ def make_endpoint_summaries(requests_criterion, baseline_requests_criterion):
 @blueprint.route('/api/reporting/make_report/intervals', methods=['POST'])
 @secure
 def make_report_intervals():
+    post_to_back_if_telemetry_enabled(**{'name': 'reporting/make_reports/intervals'})
     arguments = request.json
 
     try:
@@ -88,6 +90,7 @@ def make_report_intervals():
 @blueprint.route('/api/reporting/make_report/commits', methods=['POST'])
 @secure
 def make_report_commits():
+    post_to_back_if_telemetry_enabled(**{'name': 'reporting/make_reports/commits'})
     arguments = request.json
 
     baseline_commit_version = arguments['baseline_commit_version']

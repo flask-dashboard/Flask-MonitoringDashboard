@@ -12,7 +12,8 @@ import $ from 'jquery';
 window.$ = window.jQuery = $;
 
 // Popper.js
-import 'popper.js';
+import { createPopper } from '@popperjs/core';
+
 
 require('bootstrap');
 
@@ -39,6 +40,8 @@ import {ConfigurationController} from './controllers/configuration';
 import {EndpointVersionIPController} from './controllers/endpointVersionIP';
 import {EndpointVersionController} from "./controllers/endpointVersion";
 import {MonitorLevelController} from "./controllers/monitorLevel";
+import {SurveyController} from "./controllers/surveyController";
+import {TelemetryController} from "./controllers/telemetryController";
 
 
 import formService from "./services/form";
@@ -80,6 +83,15 @@ app.controller('FormController', ['$scope', 'formService', FormController]);
 app.controller('EndpointController', ['$scope', 'endpointService', EndpointController]);
 app.controller('PaginationController', ['$scope', 'paginationService', PaginationController]);
 app.controller('ModalController', ['$scope', '$window', '$browser', 'modalService', ModalController]);
+
+app.component('surveyComponent', {
+    templateUrl: 'static/pages/survey.html',
+    controller: SurveyController
+  });
+app.component('telemetryComponent', {
+    templateUrl: 'static/pages/telemetry.html',
+    controller: TelemetryController
+  });
 
 app.config(['$locationProvider', '$routeProvider', function ($locationProvider, $routeProvider) {
     $routeProvider

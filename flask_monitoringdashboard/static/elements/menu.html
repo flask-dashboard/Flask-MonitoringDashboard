@@ -1,7 +1,7 @@
 <ul class="navbar-nav navbar-sidenav nav-pills">
     <li class="nav-item" title="Dashboard">
         <a class="nav-link nav-link-collapse collapsed"
-           data-toggle="collapse" data-target="#collapseDashboard">
+           data-bs-toggle="collapse" data-bs-target="#collapseDashboard">
             <i class="fas fa-tachometer-alt"></i>
             <span class="nav-link-text">Dashboard</span>
         </a>
@@ -21,10 +21,10 @@
         </ul>
     </li>
 
-    <li class="nav-item" data-toggle="tooltip" data-placement="right" ng-show="menu.endpoint.info.id > 0"
+    <li class="nav-item" data-bs-toggle="tooltip" data-bs-placement="right" ng-show="menu.endpoint.info.id > 0"
         data-original-title="{{ menu.endpoint.info.endpoint }}">
         <a class="nav-link nav-link-collapse collapsed"
-           data-toggle="collapse" data-target="#collapseEndpoint">
+           data-bs-toggle="collapse" data-bs-target="#collapseEndpoint">
             <i class="fa fa-fw fa-asterisk"></i>
             <span class="nav-link-text">{{ menu.endpoint.info.endpoint }}</span>
         </a>
@@ -61,7 +61,7 @@
 
     <li class="nav-item" title="Custom graphs" ng-show="menu.endpoint.customGraphs.length > 0">
         <a class="nav-link nav-link-collapse collapsed"
-           data-toggle="collapse" data-target="#collapseCustomGraphs">
+           data-bs-toggle="collapse" data-bs-target="#collapseCustomGraphs">
             <i class="fa fa-fw fa-desktop"></i>
             <span class="nav-link-text">Custom graphs</span>
         </a>

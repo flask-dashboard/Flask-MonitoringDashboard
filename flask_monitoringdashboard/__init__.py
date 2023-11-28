@@ -13,10 +13,11 @@ The dashboard with the results that are collected can be found at:
 """
 
 import os
+import sentry_sdk
 
 from flask import Blueprint
 
-from flask_monitoringdashboard.core.config import Config
+from flask_monitoringdashboard.core.config import Config, TelemetryConfig
 from flask_monitoringdashboard.core.logger import log
 
 
@@ -26,6 +27,7 @@ def loc():
 
 
 config = Config()
+telemetry_config = TelemetryConfig()
 blueprint = Blueprint('dashboard', __name__, template_folder=loc() + 'templates')
 
 
@@ -44,6 +46,12 @@ def bind(app, schedule=True, include_dashboard=True):
         log('WARNING: You should provide a security key.')
         app.secret_key = 'my-secret-key'
 
+    sentry_sdk.init(
+        dsn=TelemetryConfig.SENTRY_DSN,
+        traces_sample_rate=1.0,
+        profiles_sample_rate=1.0,
+    )
+
     # Add all route-functions to the blueprint
     if include_dashboard:
         from flask_monitoringdashboard.views import (
@@ -56,6 +64,7 @@ def bind(app, schedule=True, include_dashboard=True):
             version,
             auth,
             reporting,
+            telemetry
         )
         import flask_monitoringdashboard.views
 
