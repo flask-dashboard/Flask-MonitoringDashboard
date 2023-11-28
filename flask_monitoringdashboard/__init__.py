@@ -14,8 +14,10 @@ The dashboard with the results that are collected can be found at:
 
 import os
 import sentry_sdk
+from apscheduler.jobstores.sqlalchemy import SQLAlchemyJobStore
 
 from flask import Blueprint
+from flask_apscheduler import APScheduler
 
 from flask_monitoringdashboard.core.config import Config, TelemetryConfig
 from flask_monitoringdashboard.core.logger import log
@@ -29,6 +31,7 @@ def loc():
 config = Config()
 telemetry_config = TelemetryConfig()
 blueprint = Blueprint('dashboard', __name__, template_folder=loc() + 'templates')
+scheduler = APScheduler()
 
 
 def bind(app, schedule=True, include_dashboard=True):
@@ -80,6 +83,14 @@ def bind(app, schedule=True, include_dashboard=True):
 
     # register the blueprint to the app
     app.register_blueprint(blueprint, url_prefix='/' + config.link)
+
+    # initialize the background scheduler for database pruning
+    app.config['SCHEDULER_API_ENABLED'] = True
+    app.config['SCHEDULER_JOBSTORES'] = {
+        'default': SQLAlchemyJobStore(url=config.database_name)
+    }
+    scheduler.init_app(app)
+    scheduler.start()
 
     # flush cache to db before shutdown
     import atexit
