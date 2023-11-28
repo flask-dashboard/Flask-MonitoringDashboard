@@ -6,7 +6,7 @@
 </h1>
 
 <p align="center">
-A dashboard for automatic monitoring of <a href="http://flask.pocoo.org/" target="_blank">Flask</a> web-services.
+A dashboard for automatic monitoring of <a href="https://flask.palletsprojects.com/" target="_blank">Flask</a> web-services.
 </p>
 
 <span align="center">
