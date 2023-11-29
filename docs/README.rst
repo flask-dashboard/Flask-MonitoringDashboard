@@ -1,7 +1,7 @@
 Flask Monitoring Dashboard
 ==========================
 
-A dashboard for automatic monitoring of Flask (http://flask.pocoo.org/) web-services.
+A dashboard for automatic monitoring of Flask (https://flask.palletsprojects.com) web-services.
 
 Key Features
 ------------
