@@ -13,86 +13,119 @@
 
 <div class="card mb-3">
     <div class="card-header">
-        <h4>Automated Cleaning Setup</h4>
+        <h4>Automated Pruning Setup</h4>
     </div>
     <div class="card-body">
-        <form ng-submit="submitCleaningConfig()">
+        <form ng-submit="submitPruningConfig()">
 
-            <!-- Cleaning Frequency -->
             <div class="form-group">
-                <label for="scheduleFrequency">Cleaning Frequency:</label>
-                <select class="form-control" id="scheduleFrequency" ng-model="cleaningConfig.frequency"
-                    ng-change="updateFrequency()">
-                    <option value="weekly">Weekly</option>
-                    <option value="monthly">Monthly</option>
-                    <option value="quarterly">Quarterly</option>
-                </select>
-                <span ng-show="submitAttempted && !isValidFrequency()" class="help-block">Please select a valid
-                    frequency.</span>
-            </div>
-
-            <!-- Day of the Week -->
-            <div class="form-group">
-                <label for="dayOfWeek">Day of the Week:</label>
-                <select class="form-control" id="dayOfWeek" ng-model="cleaningConfig.dayOfWeek">
-                    <option value="monday">Monday</option>
-                    <option value="tuesday">Tuesday</option>
-                    <option value="wednesday">Wednesday</option>
-                    <option value="thursday">Thursday</option>
-                    <option value="friday">Friday</option>
-                    <option value="saturday">Saturday</option>
-                    <option value="sunday">Sunday</option>
-                </select>
-                <span ng-show="submitAttempted && !isValidDayOfWeek()" class="help-block">Please select a valid
+                <label for="dayOfMonth"><b>Day of the Month (0-30):</b></label>
+                <input type="number" class="form-control" id="dayOfMonth" ng-model="pruningConfig.dayOfMonth" min="1"
+                    max="30">
+                <span ng-show="submitAutomatedPruningAttempted && !isValidDayOfMonth()" class="help-block">Please select
+                    a valid
                     day.</span>
             </div>
 
-            <!-- Cleaning Time -->
             <div class="form-group">
-                <label for="cleaningTime">Time:</label>
-                <input type="time" class="form-control" id="cleaningTime" ng-model="cleaningConfig.time">
-                <span ng-show="submitAttempted && !isValidTime()" class="help-block">Please enter a valid time
-                    (HH:MM).</span>
+                <label for="monthsBetweenRuns"><b>Months Between Runs:</b></label>
+                <select class="form-control" id="monthsBetweenRuns" ng-model="pruningConfig.monthsBetweenRuns">
+                    <option value="1">1</option>
+                    <option value="2">2</option>
+                    <option value="3">3</option>
+                    <option value="4">4</option>
+                    <option value="6">6</option>
+                    <option value="12">12</option>
+                </select>
+                <span ng-show="submitAutomatedPruningAttempted && !isValidMonthsBetweenRuns()" class="help-block">Please
+                    select a valid
+                    number of months.</span>
             </div>
 
+            <div class="form-group">
+                <label for="ageThresholdWeeks"><b>How many weeks old data should be pruned?:</b></label>
+                <input type="number" class="form-control" id="ageThresholdWeeks"
+                    ng-model="pruningConfig.ageThresholdWeeks" min="1">
+                <span ng-show="submitAutomatedPruningAttempted && !isValidAgeThresholdWeeks()" class="help-block">Please
+                    enter a valid
+                    age in weeks.</span>
+            </div>
+
+            <div class="form-group">
+                <label for="hour"><b>Hour (0-23):</b></label>
+                <input type="number" class="form-control" id="hour" ng-model="pruningConfig.hour" min="0" max="23">
+                <span ng-show="submitAutomatedPruningAttempted && !isValidHour()" class="help-block">Please enter a
+                    valid hour
+                    (0-23).</span>
+            </div>
+
+            <div class="checkbox">
+                <label>
+                    <input type="checkbox" ng-model="pruningConfig.deleteFromCustomGraphs"> <b>Delete from Custom
+                        Graphs</b>
+                </label>
+            </div>
+
+            <br>
+
+            <button type="submit" class="btn btn-primary" ng-click="updateAutomatedPruning()">Update Automated Pruning
+                Schedule</button>
+
+            <br>
+            <br>
+
+            <p ng-show="pruningMessage" class="alert"
+                ng-class="{'alert-success': pruningIsSuccess, 'alert-danger': !pruningIsSuccess}">
+                {{ pruningMessage }}
+            </p>
+        </form>
+    </div>
+</div>
+
+
+<div class="card mb-3">
+    <div class="card-header">
+        <h4>Prune On Demand</h4>
+    </div>
+    <div class="card-body">
+        <form ng-submit="pruneOnDemand()">
+
+            <!-- Age Threshold in Weeks -->
+            <div class="form-group">
+                <label for="ageThresholdWeeksPrune"><b>How many weeks of data should be kept?:</b></label>
+                <input type="number" class="form-control" id="ageThresholdWeeksPrune"
+                    ng-model="pruneOnDemandConfig.ageThresholdWeeks" min="1">
+                <span ng-show="submitPruningOnDemandAttempted && !isValidPruneOnDemandAgeThresholdWeeks()"
+                    class="help-block">Please enter a valid age
+                    in
+                    weeks.</span>
+            </div>
+
+            <!-- Delete Custom Graphs -->
+            <div class="checkbox">
+                <label>
+                    <input type="checkbox" ng-model="pruneOnDemandConfig.deleteCustomGraphs"> <b>Delete Custom
+                        Graphs</b>
+                </label>
+            </div>
 
             <br>
 
             <!-- Submit Button -->
-            <button type="submit" class="btn btn-primary" ng-click="setupAutomatedCleaning()">Set Up Cleaning</button>
+            <button type="submit" class="btn btn-primary">Prune Now</button>
+
+            <br>
+            <br>
+
+            <p ng-show="pruneOnDemandMessage" class="alert"
+                ng-class="{'alert-success': pruneOnDemandIsSuccess, 'alert-danger': !pruneOnDemandIsSuccess}">
+                {{ pruneOnDemandMessage }}
+            </p>
 
         </form>
-
-
-    </div>
-</div>
-
-<div class="card mb-3">
-    <div class="card-header">
-        <h4>Command Line Operations</h4>
-    </div>
-    <div class="card-body">
-        <textarea class="form-control mb-2" rows="3" ng-model="commandInput"
-            placeholder="Enter command here..."></textarea>
-        <button class="btn btn-primary mb-2" ng-click="executeCommandLine()">Execute</button>
-        <pre>{{ commandOutput }}</pre> <!-- Display command output here -->
     </div>
 </div>
 
 
-<div class="card mb-3">
-    <div class="card-header">
-        <h4>Backup and Restore</h4>
-    </div>
-    <div class="card-body">
-        <!-- Backup Section -->
-        <button class="btn btn-primary mb-2" ng-click="createBackup()">Create Backup</button>
 
-        <!-- Restore Section -->
-        <div class="form-group">
-            <label for="backupFile">Select Backup File:</label>
-            <input type="file" class="form-control-file" id="backupFile" ng-model="selectedBackupFile">
-        </div>
-        <button class="btn btn-secondary" ng-click="restoreBackup()">Restore</button>
-    </div>
 </div>

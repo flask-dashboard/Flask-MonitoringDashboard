@@ -8,11 +8,10 @@ export function DatabaseManagementController($scope, $http, menuService, endpoin
     endpointService.reset();
     menuService.reset('database_management');
 
-    $scope.renderChart = function (data) {
+    $scope.renderChart = function (data, totalSize) {
         const ctx = document.getElementById('databaseUsageChart').getContext('2d');
         const labels = data.map(item => item.endpoint);
         const sizes = data.map(item => item.size);
-        const totalSize = sizes.reduce((a, b) => a + b, 0);
 
         // Generate a color for each endpoint
         const backgroundColors = data.map((_, index) => generateColor(index));
@@ -67,152 +66,128 @@ export function DatabaseManagementController($scope, $http, menuService, endpoin
         });
     };
 
-
-    // Function to generate distinct colors
     function generateColor(index) {
-        const hue = index * 137.508; // use golden angle approximation for distribution
+        const hue = index * 137.508; // Golden angle approximation for distribution
         return `hsla(${hue}, 50%, 60%, 0.2)`;
     }
 
     $scope.fetchChartData = function () {
-        $http.get('api/fetch_database_data', HEADERS)
+        $http.get('/database_management/get_database_tables_size', HEADERS)
             .then(function (response) {
-                // Assuming response data is in the format: [{endpoint: 'weather.index', size: 1024}, ...]
-                $scope.renderChart([
-                    { "endpoint": "weather.index", "size": 1024 },
-                    { "endpoint": "auth.register", "size": 2048 },
-                    { "endpoint": "auth.test1", "size": 2048 },
-                    { "endpoint": "auth.test2", "size": 2048 },
-                    { "endpoint": "auth.test3", "size": 2048 },
-                    { "endpoint": "auth.test4", "size": 2048 },
+                const responseData = response.data;
+                const totalSize = responseData.total_size;
+                delete responseData.total_size; 
 
-                ]);
+                // Convert response data to the expected format for renderChart
+                const chartData = Object.keys(responseData).map(table => ({
+                    endpoint: table,
+                    size: responseData[table]
+                }));
+
+                // Render chart with the new data format
+                $scope.renderChart(chartData, totalSize);
             }, function (errorResponse) {
                 console.error('Error fetching chart data:', errorResponse);
             });
     };
     $scope.fetchChartData();
 
-
-
-
-
-
-
-    $scope.cleaningConfig = {
-        frequency: null,
-        dayOfWeek: null,
-        time: null,
-        age: null // Assuming 'age' is part of your cleaningConfig
-    };
-    $scope.command = '';
-    $scope.backupFile = null;
-
-    // Validation for Age of Data
-    $scope.isValidAge = function () {
-        const age = $scope.cleaningConfig.age;
-        return age && age > 0 && age <= 365; // Assuming a valid range is 1 to 365 days
+    $scope.pruningConfig = {
+        dayOfMonth: null,
+        monthsBetweenRuns: null,
+        ageThresholdWeeks: null,
+        deleteFromCustomGraphs: false,
+        hour: null
     };
 
-    // Validation for Frequency
-    $scope.isValidFrequency = function () {
-        const frequency = $scope.cleaningConfig.frequency;
-        return frequency && ['weekly', 'monthly', 'quarterly'].includes(frequency);
+    $scope.pruningMessage = '';
+    $scope.pruningIsSuccess = false;
+
+
+    // Validation for Day of the Month
+    $scope.isValidDayOfMonth = function () {
+        const dayOfMonth = $scope.pruningConfig.dayOfMonth;
+        return dayOfMonth && dayOfMonth >= 1 && dayOfMonth <= 30;
     };
 
-    // Validation for Time
-    $scope.isValidTime = function () {
-        const time = $scope.cleaningConfig.time;
-        if (!time) {
-            return false;
-        }
-        const timePattern = /^([01]?[0-9]|2[0-3]):[0-5][0-9]$/;
-        return timePattern.test(time);
+    // Validation for Months Between Runs
+    $scope.isValidMonthsBetweenRuns = function () {
+        const months = Number($scope.pruningConfig.monthsBetweenRuns);
+        return !isNaN(months) && [1, 2, 3, 4, 6, 12].includes(months);
+    };
+
+    // Validation for Age Threshold in Weeks
+    $scope.isValidAgeThresholdWeeks = function () {
+        const age = $scope.pruningConfig.ageThresholdWeeks;
+        return age && age > 0;
+    };
+
+    // Validation for Hour
+    $scope.isValidHour = function () {
+        const hour = $scope.pruningConfig.hour;
+        return hour !== null && hour >= 0 && hour < 24;
     };
 
 
-    // Validation for Day of the Week
-    $scope.isValidDayOfWeek = function () {
-        const dayOfWeek = $scope.cleaningConfig.dayOfWeek;
-        return dayOfWeek && ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'].includes(dayOfWeek);
-    };
+    $scope.updateAutomatedPruning = function () {
+        $scope.submitAutomatedPruningAttempted = true;
 
-    // Function to handle automated cleaning setup
-    $scope.setupAutomatedCleaning = function () {
-        $scope.submitAttempted = true;
-
-        // Perform validation checks
-        if (!$scope.isValidAge()) {
-            console.error('Invalid age input');
-            return;
-        }
-
-        if (!$scope.isValidFrequency()) {
-            console.error('Invalid frequency input');
-            return;
-        }
-
-        if (!$scope.isValidDayOfWeek()) {
-            console.error('Invalid day of the week input');
+        if (!$scope.isValidDayOfMonth() || !$scope.isValidMonthsBetweenRuns() || !$scope.isValidAgeThresholdWeeks() || !$scope.isValidHour()) {
+            console.error('Invalid input');
             return;
         }
 
         // If all validations pass, proceed with the setup
-        $http.post(
-            'api/cleaning/setup',
-            $.param($scope.cleaningConfig),
+        $http.post('/database_management/submit_prune_schedule',
+            $.param($scope.pruningConfig),
             HEADERS
         ).then(function (successResponse) {
-            // Handle success
-            console.log('Automated cleaning setup successful');
+            $scope.pruningMessage = 'Prune schedule setup successful';
+            $scope.pruningIsSuccess = true;
         }, function (errorResponse) {
-            console.error('Error setting up automated cleaning:', errorResponse);
+            $scope.pruningMessage = 'Error setting up prune schedule:', errorResponse;
+            $scope.pruningIsSuccess = false;
+            console.error('Error in pruning on demand:', errorResponse);
         });
     };
 
 
+    $scope.pruneOnDemandConfig = {
+        ageThresholdWeeks: null,
+        deleteCustomGraphs: false
+    };
 
-    // Function to execute command line operation
-    $scope.executeCommandLine = function () {
-        $http.post(
-            'api/command/execute',
-            $.param({ 'command': $scope.command }),
+    // Validation for Age Threshold in Weeks
+    $scope.isValidPruneOnDemandAgeThresholdWeeks = function () {
+        const age = $scope.pruneOnDemandConfig.ageThresholdWeeks;
+        return age && age > 0;
+    };
+
+    $scope.pruneOnDemandMessage = '';
+    $scope.pruneOnDemandIsSuccess = false;
+
+    $scope.pruneOnDemand = function () {
+        $scope.submitPruningOnDemandAttempted = true;
+
+        if (!$scope.isValidPruneOnDemandAgeThresholdWeeks()) {
+            console.error('Invalid age threshold');
+            return;
+        }
+
+        $http.post('/database_management/prune_on_demand',
+            $.param($scope.pruneOnDemandConfig),
             HEADERS
         ).then(function (successResponse) {
-            // Handle command output
-            $scope.commandOutput = successResponse.data.output;
+            $scope.pruneOnDemandIsSuccess = true;
+            $scope.pruneOnDemandMessage = 'Pruning successful';
         }, function (errorResponse) {
-            console.error('Error executing command:', errorResponse);
-            $scope.commandOutput = 'Error: Command execution failed';
+            $scope.pruneOnDemandMessage = 'Error in pruning on demand:', errorResponse;
+            $scope.pruneOnDemandIsSuccess = true;
+            console.error('Error in pruning on demand:', errorResponse);
         });
     };
 
-    // Function to create a backup
-    $scope.createBackup = function () {
-        $http.post(
-            'api/backup/create',
-            {}, // Add any necessary parameters
-            HEADERS
-        ).then(function (successResponse) {
-            console.log('Backup created successfully');
-        }, function (errorResponse) {
-            console.error('Error creating backup:', errorResponse);
-        });
-    };
 
-    // Function to restore a backup
-    $scope.restoreBackup = function () {
-        $http.post(
-            'api/backup/restore',
-            $.param({ 'file': $scope.backupFile }),
-            HEADERS
-        ).then(function (successResponse) {
-            console.log('Backup restored successfully');
-        }, function (errorResponse) {
-            console.error('Error restoring backup:', errorResponse);
-        });
-    };
-    // Add other necessary functions and service calls as per your application's requirements
 }
 
 
