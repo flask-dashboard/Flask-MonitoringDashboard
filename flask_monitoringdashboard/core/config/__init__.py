@@ -199,7 +199,6 @@ class Config(object):
 
 class TelemetryConfig(object):
     """Configuration for the telemetry feature"""
-    SENTRY_DSN = "https://809cd4a03f338f24f492746ae119522a@o4506167771070464.ingest.sentry.io/4506167775854592"
     # constants for defining survey and telemetry answers
     NOT_ANSWERED = 1
     REJECTED = 2

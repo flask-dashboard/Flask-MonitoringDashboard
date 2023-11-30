@@ -23,8 +23,8 @@ A summary of the monitoring levels is provided next. Note that every level keeps
 features of the level below, in addition to bringing its own new features, as
 represented in the diagram below.
 
-.. figure :: img/monitoring_levels.png
-:width: 100%
+.. figure:: img/monitoring_levels.png
+   :width: 100%
 
 Monitoring Level 0 - Disabled
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

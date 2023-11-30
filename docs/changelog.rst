@@ -12,6 +12,7 @@ Changed
 - Upgraded multiple frontend packages for enhanced security and performance.
 - Added survey alert
 - Added telemetry alert and functionality
+- Fixed Sphinx documentation
 
 
 v3.1.2

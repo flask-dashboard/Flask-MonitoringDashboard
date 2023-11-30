@@ -103,7 +103,7 @@ language, and contains 2 directories: static and templates.
 
 
 Frontend environment
-~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~
 
 To run the frontend, these versions of Node and NPM are known to work:
 -NPM v10.1.0
