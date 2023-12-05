@@ -9,10 +9,21 @@ v3.2.2
 ----------
 Changed
 
+- Fixed Sphinx documentation
+
+v3.2.1
+----------
+Changed
+
+- Removed sentry artifacts in code
+
+v3.2.0
+----------
+Changed
+
 - Upgraded multiple frontend packages for enhanced security and performance.
 - Added survey alert
 - Added telemetry alert and functionality
-- Fixed Sphinx documentation
 
 
 v3.1.2
