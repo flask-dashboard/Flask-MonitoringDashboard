@@ -5,14 +5,25 @@ All notable changes to this project will be documented in this file.
 This project adheres to `Semantic Versioning <http://semver.org/>`_.
 Please note that the changes before version 1.10.0 have not been documented.
 
+v3.2.2
+----------
+Changed
+
+- Fixed Sphinx documentation
+
 v3.2.1
+----------
+Changed
+
+- Removed sentry artifacts in code
+
+v3.2.0
 ----------
 Changed
 
 - Upgraded multiple frontend packages for enhanced security and performance.
 - Added survey alert
 - Added telemetry alert and functionality
-- Fixed Sphinx documentation
 
 
 v3.1.2
