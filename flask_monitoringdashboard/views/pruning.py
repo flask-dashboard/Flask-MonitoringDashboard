@@ -47,6 +47,7 @@ def get_pruning_schedule():
             'hour': str(job.trigger.fields[5]),
             'minute': str(job.trigger.fields[6]),
             'second': str(job.trigger.fields[7]),
+            'next_run_time': job.next_run_time,
             'weeks_to_keep': job.args[0],
             'delete_custom_graphs': job.args[1],
         })
