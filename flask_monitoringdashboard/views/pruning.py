@@ -1,10 +1,13 @@
+import os
+
 from flask import request
 from flask.json import jsonify
 
-from flask_monitoringdashboard import blueprint
+from flask_monitoringdashboard import blueprint, config
 from flask_monitoringdashboard.core.custom_graph import scheduler
 from flask_monitoringdashboard.core.telemetry import post_to_back_if_telemetry_enabled
 from flask_monitoringdashboard.core.database_pruning import prune_database_older_than_weeks
+from flask_monitoringdashboard.database import session_scope
 
 
 @blueprint.route('/database_pruning/prune_on_demand', methods=['POST'])
@@ -53,3 +56,19 @@ def get_pruning_schedule():
         })
     else:
         return jsonify({'error': 'No pruning schedule found'}), 404
+
+
+@blueprint.route('/database_pruning/get_database_size', methods=['GET'])
+def get_database_size():
+    with session_scope() as session:
+        engine = session.bind
+        relative_path = engine.url.database
+
+    if relative_path:
+        absolute_path = os.path.abspath(relative_path)
+        size_in_bytes = os.path.getsize(absolute_path)
+        size_in_mb = size_in_bytes / 1024 / 1024
+        return jsonify({'size': f'{size_in_mb:.2f} MB'})
+
+    else:
+        return jsonify({'size': -1}), 404
