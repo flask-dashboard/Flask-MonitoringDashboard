@@ -3,7 +3,7 @@ import os
 from flask import request
 from flask.json import jsonify
 
-from flask_monitoringdashboard import blueprint, config
+from flask_monitoringdashboard import blueprint
 from flask_monitoringdashboard.core.custom_graph import scheduler
 from flask_monitoringdashboard.core.telemetry import post_to_back_if_telemetry_enabled
 from flask_monitoringdashboard.core.database_pruning import prune_database_older_than_weeks
