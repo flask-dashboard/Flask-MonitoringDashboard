@@ -309,6 +309,37 @@ Finally, the implementation of the scheduler in the FMD
 is based on the appscheduler.schedulers.Background schedulers
 about which you can read more `in the corresponding documentation page <apscheduler.schedulers>`_.
 
+
+Adding database cleaning schedule
+-----------------
+
+As your application grows, so will the amount of data stored in the database.
+To prevent it from growing too large, you can set up a schedule to clean the database.
+Pruning is fully customizable, and can be set up to run as often as you want deleting data as old as you want through
+your own cron schedule.
+
+This can be done by adding the following code to your application:
+
+.. code-block:: python
+
+    weeks_to_keep = 8
+    delete_custom_graph_data = True
+    pruning_cron_schedule = {'month':"*/2",
+                            'day': 1,
+                            'hour': 3,
+                            'minute': 0,
+                            'second': 0}
+
+    dashboard.add_database_pruning_schedule(weeks_to_keep, delete_custom_graph_data, **pruning_cron_schedule)
+
+
+The first argument is how many weeks of data you want to keep - in this case we delete data older than the last two months.
+Second argument indicates whether you want to delete custom graph data as well.
+The third argument is the cron schedule, which in the presented case will
+clean the database every 2 months, on the first day of the month at 3:00 AM.
+
+That's it! Now you won't have to worry about the performance slowing down with time.
+
 Telemetry
 ----------------------
 

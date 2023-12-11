@@ -14,19 +14,19 @@ def prune_database_on_demand():
     """
     data = request.json
     weeks = data.get('age_threshold_weeks')
-    delete_custom_graphs = data.get('delete_custom_graphs')
+    delete_custom_graph_data = data.get('delete_custom_graph_data')
 
     # Validation
     if not isinstance(weeks, int) or weeks < 0:
         return jsonify({'error': 'age_threshold_weeks must be a natural number'}), 400
-    if not isinstance(delete_custom_graphs, bool):
+    if not isinstance(delete_custom_graph_data, bool):
         return jsonify({'error': 'delete_custom_graphs must be a boolean'}), 400
 
     # Prune database
-    prune_database_older_than_weeks(weeks, delete_custom_graphs)
+    prune_database_older_than_weeks(weeks, delete_custom_graph_data)
 
     # Post info to telemetry if enabled
-    post_data = {'age_threshold_weeks': weeks, 'delete_custom_graphs': delete_custom_graphs}
+    post_data = {'age_threshold_weeks': weeks, 'delete_custom_graphs': delete_custom_graph_data}
     post_to_back_if_telemetry_enabled('DatabasePruning', **post_data)
 
     return jsonify({'message': 'Database pruning complete'}), 200
@@ -49,7 +49,7 @@ def get_pruning_schedule():
             'second': str(job.trigger.fields[7]),
             'next_run_time': job.next_run_time,
             'weeks_to_keep': job.args[0],
-            'delete_custom_graphs': job.args[1],
+            'delete_custom_graph_data': job.args[1],
         })
     else:
         return jsonify({'error': 'No pruning schedule found'}), 404
