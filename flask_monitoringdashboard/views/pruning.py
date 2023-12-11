@@ -60,6 +60,9 @@ def get_pruning_schedule():
 
 @blueprint.route('/database_pruning/get_database_size', methods=['GET'])
 def get_database_size():
+    """
+    Endpoint for getting the size of the database in MB
+    """
     with session_scope() as session:
         engine = session.bind
         relative_path = engine.url.database
@@ -71,4 +74,4 @@ def get_database_size():
         return jsonify({'size': f'{size_in_mb:.2f} MB'})
 
     else:
-        return jsonify({'size': -1}), 404
+        return jsonify({'size': 'N/A'}), 404
