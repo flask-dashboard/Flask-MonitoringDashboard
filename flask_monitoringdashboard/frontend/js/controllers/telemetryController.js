@@ -4,7 +4,7 @@ export function TelemetryController($scope, $http, $window) {
     const telemetryAnswered = $window.localStorage.getItem('telemetryAnswered') === 'true';
 
     // Control the visibility of the telemetry prompt based on previous response
-    $scope.telemetryShow = !telemetryAnswered;
+    $scope.telemetryShow = !telemetryAnswered   ;
     $scope.followUpShow = false;
 
     // Function to fetch telemetry consent status from database 

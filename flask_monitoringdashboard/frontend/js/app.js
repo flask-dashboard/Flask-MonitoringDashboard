@@ -11,13 +11,6 @@ import $ from 'jquery';
 
 window.$ = window.jQuery = $;
 
-// Chart.js
-import Chart from 'chart.js/auto';
-window.Chart = Chart;
-
-import ChartDataLabels from 'chartjs-plugin-datalabels';
-window.ChartDataLabels = ChartDataLabels;
-
 // Popper.js
 import { createPopper } from '@popperjs/core';
 
