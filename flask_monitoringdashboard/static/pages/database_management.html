@@ -4,7 +4,7 @@
     </div>
     <div class="card-body">
         <h5 class="mt-3">Current Database Size: </h5>
-        <p> {{ databaseSize }} <div ng-show="databaseSize != 'N/A'"> MB</div></p>
+        <p> {{ databaseSize }} </p>
     </div>
 </div>
 
@@ -19,7 +19,7 @@
             <div class="form-group">
                 <label for="ageThresholdWeeksPrune"><b>How many weeks of data should be kept?:</b></label>
                 <input type="number" class="form-control" id="ageThresholdWeeksPrune"
-                    ng-model="pruneOnDemandConfig.ageThresholdWeeks" min="1">
+                    ng-model="pruneOnDemandConfig.ageThresholdWeeks" min="0">
                 <span ng-show="submitPruningOnDemandAttempted && !isValidPruneOnDemandAgeThresholdWeeks()"
                     class="help-block">Please enter a valid age in weeks.</span>
             </div>
@@ -27,8 +27,8 @@
             <!-- Delete Custom Graphs -->
             <div class="checkbox">
                 <label>
-                    <input type="checkbox" ng-model="pruneOnDemandConfig.deleteCustomGraphs"> <b>Delete Custom
-                        Graphs</b>
+                    <input type="checkbox" ng-model="pruneOnDemandConfig.deleteCustomGraphData"> <b>Delete Custom
+                        Graph Data?</b>
                 </label>
             </div>
 
@@ -55,19 +55,24 @@
         <h4>Pruning Schedule</h4>
     </div>
     <div class="card-body">
-        <div ng-if="pruningSchedule">
-            <h5 class="mt-3">Pruning Schedule Details:</h5>
-            <p>Year: {{ pruningSchedule.year }}</p>
-            <p>Month: {{ pruningSchedule.month }}</p>
-            <p>Day of the Month: {{ pruningSchedule.day_of_the_month }}</p>
-            <p>Week: {{ pruningSchedule.week }}</p>
-            <p>Day of the Week: {{ pruningSchedule.day_of_the_week }}</p>
-            <p>Hour: {{ pruningSchedule.hour }}</p>
-            <p>Minute: {{ pruningSchedule.minute }}</p>
-            <p>Second: {{ pruningSchedule.second }}</p>
-            <p>Next Run Time: {{ pruningSchedule.next_run_time }}</p>
-            <p>Weeks to Keep: {{ pruningSchedule.weeks_to_keep }}</p>
-            <p>Delete Custom Graphs: {{ pruningSchedule.delete_custom_graphs }}</p>
+        <div ng-if="pruningSchedule" style="display: flex;">
+            <div style="padding-right: 20px; border-right: 1px solid black;">
+                <h5 class="mt-3">Cron Schedule:</h5>
+                <p>Year: {{ pruningSchedule.year }}</p>
+                <p>Month: {{ pruningSchedule.month }}</p>
+                <p>Day of the Month: {{ pruningSchedule.day_of_the_month }}</p>
+                <p>Week: {{ pruningSchedule.week }}</p>
+                <p>Day of the Week: {{ pruningSchedule.day_of_the_week }}</p>
+                <p>Hour: {{ pruningSchedule.hour }}</p>
+                <p>Minute: {{ pruningSchedule.minute }}</p>
+                <p>Second: {{ pruningSchedule.second }}</p>
+            </div>
+            <div style="margin-left: 20px;">
+                <h5 class="mt-3">Schedule Details:</h5>
+                <p>Next Run Time: {{ pruningSchedule.next_run_time }}</p>
+                <p>Weeks to Keep: {{ pruningSchedule.weeks_to_keep }}</p>
+                <p>Delete Custom Graphs: {{ pruningSchedule.delete_custom_graph_data }}</p>
+            </div>
         </div>
     </div>
 </div>

@@ -23,7 +23,7 @@ def prune_database_on_demand():
     if not isinstance(weeks, int) or weeks < 0:
         return jsonify({'error': 'age_threshold_weeks must be a natural number'}), 400
     if not isinstance(delete_custom_graph_data, bool):
-        return jsonify({'error': 'delete_custom_graphs must be a boolean'}), 400
+        return jsonify({'error': 'delete_custom_graph_data must be a boolean'}), 400
 
     # Prune database
     prune_database_older_than_weeks(weeks, delete_custom_graph_data)

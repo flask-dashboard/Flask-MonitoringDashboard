@@ -19,7 +19,7 @@ export function DatabaseManagementController($scope, $http, menuService, endpoin
     // Initialize the configuration for pruning
     $scope.pruneOnDemandConfig = {
         ageThresholdWeeks: 1, // Default value or null if you prefer no default
-        deleteCustomGraphs: false
+        deleteCustomGraphData: false
     };
 
     // Variables for feedback messages
@@ -30,9 +30,17 @@ export function DatabaseManagementController($scope, $http, menuService, endpoin
 
     // Function to prune the database
     $scope.pruneDatabase = function () {
+        let weekOrWeeks = $scope.pruneOnDemandConfig.ageThresholdWeeks === 1 ? ' week' : ' weeks';
+        let confirmationMessage = 'Are you sure you want to prune all request data older than '
+            + $scope.pruneOnDemandConfig.ageThresholdWeeks + weekOrWeeks + '?';
+        if (!confirm(confirmationMessage)) {
+            return; // Stop the function if the user clicks 'Cancel'
+        }
+
+        // Confirmation dialog
         const pruneData = {
             age_threshold_weeks: $scope.pruneOnDemandConfig.ageThresholdWeeks,
-            delete_custom_graphs: $scope.pruneOnDemandConfig.deleteCustomGraphs
+            delete_custom_graph_data: $scope.pruneOnDemandConfig.deleteCustomGraphData
         };
 
         $http.post('/dashboard/database_pruning/prune_on_demand', pruneData)
