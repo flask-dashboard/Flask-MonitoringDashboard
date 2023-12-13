@@ -1,6 +1,6 @@
 from datetime import datetime, timedelta
 
-from flask_monitoringdashboard.database import session_scope, Request, Outlier, CustomGraphData, CustomGraph
+from flask_monitoringdashboard.database import session_scope, Request, Outlier, CustomGraphData, StackLine
 from flask_monitoringdashboard.core.custom_graph import scheduler
 
 
@@ -14,16 +14,12 @@ def prune_database_older_than_weeks(weeks_to_keep, delete_custom_graph_data):
 
         for request in requests_to_delete:
             session.query(Outlier).filter(Outlier.request_id == request.id).delete()
+            session.query(StackLine).filter(StackLine.request_id == request.id).delete()
 
         session.query(Request).filter(Request.time_requested < date_to_delete_from).delete()
 
-        # Prune CustomGraphData table by joining with CustomGraph to get the time_added
         if delete_custom_graph_data:
-            old_graph_data = session.query(CustomGraphData) \
-                .join(CustomGraph, CustomGraph.graph_id == CustomGraphData.graph_id) \
-                .filter(CustomGraph.time_added < date_to_delete_from).all()
-            for graph_data in old_graph_data:
-                session.delete(graph_data)
+            session.query(CustomGraphData).filter(CustomGraphData.time < date_to_delete_from).delete()
 
         session.commit()
 
