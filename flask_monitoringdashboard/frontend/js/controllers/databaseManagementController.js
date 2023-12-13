@@ -59,7 +59,6 @@ export function DatabaseManagementController($scope, $http, menuService, endpoin
             .then(function (response) {
                 $scope.pruningSchedule = response.data;
             }, function (error) {
-                console.error('Error fetching pruning schedule:', error.data);
             });
     };
     $scope.getPruningSchedule();

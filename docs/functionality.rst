@@ -311,7 +311,7 @@ about which you can read more `in the corresponding documentation page <apschedu
 
 
 Adding database cleaning schedule
------------------
+----------------------------------
 
 As your application grows, so will the amount of data stored in the database.
 To prevent it from growing too large, you can set up a schedule to clean the database.
@@ -357,6 +357,8 @@ What:
 3. **Aggregated monitoring levels:** To determine the most frequently utilized monitoring level, we aggregate the levels set from each endpoint.
 
 4. **Table size:** In order to determine how fast the data accumulates, we collect the size of the database and its tables.
+
+5. **Route visits:** We collect which routes you use in the dashboard.
 
 How:
 
