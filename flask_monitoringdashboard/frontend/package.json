@@ -20,7 +20,6 @@
     "angular-datatables": "^16.0.0",
     "angular-route": "^1.8.0",
     "bootstrap": "^5.3.2",
-    "chartjs-plugin-datalabels": "^2.2.0",
     "css-loader": "^6.8.1",
     "d3": "^7.8.5",
     "datatables": "^1.10.18",
