@@ -87,8 +87,14 @@ Adding the extension to your Flask app is simple:
     import flask_monitoringdashboard as dashboard
 
     app = Flask(__name__)
-    dashboard.bind(app)
     
+    @app.route("/test")
+    def test():
+	    return 'ok'
+    
+    dashboard.bind(app)
+    app.run()
+
 ## Live Demo
 To view a live deployment of the Flask-MonitoringDashboard, check [this site](https://fmd-master.herokuapp.com/).
 Use the credentials u:`admin`, p:`admin` to log in.
