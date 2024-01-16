@@ -96,9 +96,9 @@ export function ConfigurationController($scope, $http, menuService, endpointServ
     $scope.telemetryConsent;
 
     $scope.fetchTelemetryConsent = function () {
-        $http.get('/dashboard/get_is_telemetry_answered')
+        $http.get('/dashboard/telemetry/get_is_telemetry_answered')
             .then(function (response) {
-                $scope.telemetryConsent = response.data;
+                $scope.telemetryConsent = response.data.is_telemetry_answered;
             }, function (error) {
                 console.error('Error fetching telemetry consent:', error);
             });
