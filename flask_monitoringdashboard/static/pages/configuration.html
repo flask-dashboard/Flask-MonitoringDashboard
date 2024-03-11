@@ -74,7 +74,7 @@
     <div class="form-group row">
         <label class="col-md-4 col-form-label text-md-right" for="create-admin">Admin</label>
         <div class="col-md-8">
-            <input type="checkbox" id="create-admin" class="form-control"/>
+            <input type="checkbox" id="create-admin"/>
         </div>
     </div>
 </modal>
@@ -107,7 +107,7 @@
     <div class="form-group row">
         <label class="col-md-4 col-form-label text-md-right" for="edit-admin">Admin</label>
         <div class="col-md-8">
-            <input type="checkbox" id="edit-admin" class="form-control" ng-model="user.is_admin"/>
+            <input type="checkbox" id="edit-admin" ng-model="user.is_admin"/>
         </div>
     </div>
 </modal>
@@ -131,14 +131,14 @@
                     <td>{{ user.username }}</td>
                     <td>{{ user.is_admin ? 'Yes' : 'No' }}</td>
                     <td>
-                        <button class="btn btn-primary" ng-click="openModal('edit', user)">Edit</button>
+                        <button class="btn btn-primary" ng-click="openModal('edit', user)" data-bs-toggle="modal" data-bs-target="#editModal">Edit</button>
                     </td>
                     <td>
-                        <button class="btn btn-primary" ng-click="openModal('delete', user)">Delete</button>
+                        <button class="btn btn-primary" ng-click="openModal('delete', user)" data-bs-toggle="modal" data-bs-target="#deleteModal">Delete</button>
                     </td>
                 </tr>
             </table>
-            <button class="btn btn-primary" ng-click="openModal('create', null)">Create new user</button>
+            <button class="btn btn-primary" ng-click="openModal('create', null)" data-bs-toggle="modal" data-bs-target="#createModal">Create new user</button>
         </div>
     </div>
 </div>
