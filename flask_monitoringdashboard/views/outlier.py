@@ -10,7 +10,7 @@ from flask_monitoringdashboard.core.telemetry import post_to_back_if_telemetry_e
 from flask_monitoringdashboard import blueprint
 
 
-@blueprint.route('/api/num_outliers/<endpoint_id>')
+@blueprint.route('/api/num_outliers/<int:endpoint_id>')
 @secure
 def num_outliers(endpoint_id):
     post_to_back_if_telemetry_enabled(**{'name': f'num_outliers/{endpoint_id}'})
@@ -18,7 +18,7 @@ def num_outliers(endpoint_id):
         return jsonify(count_outliers(session, endpoint_id))
 
 
-@blueprint.route('/api/outlier_graph/<endpoint_id>')
+@blueprint.route('/api/outlier_graph/<int:endpoint_id>')
 @secure
 def outlier_graph(endpoint_id):
     post_to_back_if_telemetry_enabled(**{'name': f'outlier_graph/{endpoint_id}'})
@@ -26,7 +26,7 @@ def outlier_graph(endpoint_id):
         return jsonify(get_outlier_graph(session, endpoint_id))
 
 
-@blueprint.route('/api/outlier_table/<endpoint_id>/<offset>/<per_page>')
+@blueprint.route('/api/outlier_table/<int:endpoint_id>/<offset>/<per_page>')
 @secure
 def outlier_table(endpoint_id, offset, per_page):
     post_to_back_if_telemetry_enabled(**{'name': f'outlier_table/{endpoint_id}'})

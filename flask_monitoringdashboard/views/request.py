@@ -31,7 +31,7 @@ def num_requests(start_date, end_date):
 
 
 @blueprint.route('/api/hourly_load/<start_date>/<end_date>')
-@blueprint.route('/api/hourly_load/<start_date>/<end_date>/<endpoint_id>')
+@blueprint.route('/api/hourly_load/<start_date>/<end_date>/<int:endpoint_id>')
 @secure
 # both days must be in the form: yyyy-mm-dd
 def hourly_load(start_date, end_date, endpoint_id=None):
