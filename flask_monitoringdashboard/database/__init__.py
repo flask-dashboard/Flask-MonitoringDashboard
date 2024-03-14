@@ -44,7 +44,7 @@ class User(Base):
     username = Column(String(250), unique=True, nullable=False)
     """Username for logging into the FMD."""
 
-    password_hash = Column(String(128), nullable=False)
+    password_hash = Column(String(162), nullable=False)
     """Hashed password."""
 
     is_admin = Column(Boolean, default=False)
