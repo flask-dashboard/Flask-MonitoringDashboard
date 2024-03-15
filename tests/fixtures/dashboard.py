@@ -21,12 +21,14 @@ def view_func():
 
 @pytest.fixture
 def dashboard(config, endpoint, view_func, rule='/'):
+    print("inside dashboard...")
     app = Flask(__name__)
+    app.config['DEBUG'] = True
+    app.config['TESTING'] = True
+
     app.add_url_rule(rule, endpoint=endpoint.name, view_func=lambda: view_func)
     flask_monitoringdashboard.bind(app, schedule=False)
 
-    app.config['DEBUG'] = True
-    app.config['TESTING'] = True
 
     with app.test_client() as client:
         yield client

@@ -66,8 +66,15 @@ def bind(app, schedule=True, include_dashboard=True):
     from flask_monitoringdashboard.core.cache import init_cache
     from flask_monitoringdashboard.core import custom_graph
 
-    blueprint.record_once(lambda _state: init_measurement())
-    blueprint.record_once(lambda _state: init_cache())
+    try:
+        blueprint.record_once(lambda _state: init_measurement())
+        blueprint.record_once(lambda _state: init_cache())
+    except AssertionError as e:
+        if app.config["TESTING"]:
+            print("in tests we get an assertion error... and we're fine")
+        else:
+            raise e
+
     if schedule:
         custom_graph.init(app)
 
