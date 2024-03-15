@@ -38,7 +38,7 @@ def get_overview():
         return jsonify(get_endpoint_overview(session))
 
 
-@blueprint.route('/api/users/<endpoint_id>')
+@blueprint.route('/api/users/<int:endpoint_id>')
 @secure
 def users(endpoint_id):
     """
@@ -54,7 +54,7 @@ def users(endpoint_id):
         return jsonify(dicts)
 
 
-@blueprint.route('/api/ip/<endpoint_id>')
+@blueprint.route('/api/ip/<int:endpoint_id>')
 @secure
 def ips(endpoint_id):
     """
@@ -135,7 +135,7 @@ def set_rule():
     return 'OK'
 
 
-@blueprint.route('/api/endpoint_info/<endpoint_id>')
+@blueprint.route('/api/endpoint_info/<int:endpoint_id>')
 @secure
 def endpoint_info(endpoint_id):
     """
@@ -154,7 +154,7 @@ def endpoint_info(endpoint_id):
         return jsonify(get_endpoint_details(session, endpoint_id))
 
 
-@blueprint.route('api/endpoint_status_code_distribution/<endpoint_id>')
+@blueprint.route('api/endpoint_status_code_distribution/<int:endpoint_id>')
 @secure
 def endpoint_status_code_distribution(endpoint_id):
     post_to_back_if_telemetry_enabled(**{'name': f'endpoint_status_code_distribution/{endpoint_id}'})
@@ -162,7 +162,7 @@ def endpoint_status_code_distribution(endpoint_id):
         return jsonify(get_status_code_distribution(session, endpoint_id))
 
 
-@blueprint.route('api/endpoint_status_code_summary/<endpoint_id>')
+@blueprint.route('api/endpoint_status_code_summary/<int:endpoint_id>')
 @secure
 def endpoint_status_code_summary(endpoint_id):
     post_to_back_if_telemetry_enabled(**{'name': f'endpoint_status_code_summary/{endpoint_id}'})
@@ -176,7 +176,7 @@ def endpoint_status_code_summary(endpoint_id):
         return jsonify(result)
 
 
-@blueprint.route('api/endpoint_versions/<endpoint_id>', methods=['POST'])
+@blueprint.route('api/endpoint_versions/<int:endpoint_id>', methods=['POST'])
 @secure
 def endpoint_versions(endpoint_id):
     post_to_back_if_telemetry_enabled(**{'name': f'endpoint_versions/{endpoint_id}'})
@@ -186,7 +186,7 @@ def endpoint_versions(endpoint_id):
         return jsonify(get_endpoint_versions(session, endpoint_id, versions))
 
 
-@blueprint.route('/api/endpoint_users/<endpoint_id>', methods=['POST'])
+@blueprint.route('/api/endpoint_users/<int:endpoint_id>', methods=['POST'])
 @secure
 def endpoint_users(endpoint_id):
     post_to_back_if_telemetry_enabled(**{'name': f'endpoint_users/{endpoint_id}'})
