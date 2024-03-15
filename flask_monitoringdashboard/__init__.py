@@ -57,7 +57,8 @@ def bind(app, schedule=True, include_dashboard=True):
             version,
             auth,
             reporting,
-            telemetry
+            telemetry,
+            pruning
         )
         import flask_monitoringdashboard.views
 
@@ -99,3 +100,16 @@ def add_graph(title, func, trigger="interval", **schedule):
 
     graph_id = custom_graph.register_graph(title)
     custom_graph.add_background_job(func, graph_id, trigger, **schedule)
+
+
+def add_database_pruning_schedule(weeks_to_keep, delete_custom_graph_data, **schedule):
+    """
+    Add a scheduled job to prune the database of Request and optionally CustomGraph data older than the specified
+
+    :param weeks_to_keep: number of weeks to keep in the database
+    :param delete_custom_graph_data: flag telling if CustomGraph data should be deleted as well
+    :param schedule: dict containing cron schedule values
+    """
+    from flask_monitoringdashboard.core import database_pruning
+
+    database_pruning.add_background_pruning_job(weeks_to_keep, delete_custom_graph_data, **schedule)
