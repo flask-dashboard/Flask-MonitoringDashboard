@@ -4,6 +4,7 @@
 """
 import time
 from functools import wraps
+from werkzeug.exceptions import HTTPException
 
 from flask_monitoringdashboard import config
 from flask_monitoringdashboard.core.profiler import (
@@ -108,7 +109,8 @@ def evaluate(route_handler, args, kwargs):
         status_code = status_code_from_response(result)
 
         return result, status_code, None
-
+    except HTTPException as e:
+        return None, e.code, e
     except Exception as e:
         return None, 500, e
 
