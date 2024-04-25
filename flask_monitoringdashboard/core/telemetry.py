@@ -8,6 +8,7 @@ from sqlalchemy.exc import NoResultFound, MultipleResultsFound, SQLAlchemyError
 from flask_monitoringdashboard import telemetry_config
 from flask_monitoringdashboard.core.config import TelemetryConfig
 from flask_monitoringdashboard.core.blueprints import get_blueprint
+from flask_monitoringdashboard.core.utils import get_details
 from flask_monitoringdashboard.database import TelemetryUser, Endpoint
 
 
@@ -50,6 +51,10 @@ def collect_general_telemetry_data(session, telemetry_user):
     level_twos_count = counts_dict.get(2, 0)
     level_threes_count = counts_dict.get(3, 0)
 
+    # Get details including the dashboard version
+    details = get_details(session)
+    dashboard_version = details['dashboard-version']
+
     data = {'endpoints': no_of_endpoints,
             'blueprints': no_of_blueprints,
             'time_initialized': telemetry_user.last_initialized.strftime('%Y-%m-%d %H:%M:%S'),
@@ -57,6 +62,7 @@ def collect_general_telemetry_data(session, telemetry_user):
             'monitoring_1': level_ones_count,
             'monitoring_2': level_twos_count,
             'monitoring_3': level_threes_count,
+            'dashboard_version': dashboard_version,
             }
 
     # post user data
@@ -149,3 +155,4 @@ def post_to_back_if_telemetry_enabled(class_name='Endpoints', **kwargs):
         except requests.exceptions.ConnectionError as e:
             return None
 
+ 
