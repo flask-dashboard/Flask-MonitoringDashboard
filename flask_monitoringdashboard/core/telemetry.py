@@ -79,12 +79,9 @@ def initialize_telemetry_session(session):
             telemetry_user.last_initialized = datetime.datetime.utcnow()
             session.commit()
 
-        # reset telemetry and survey prompt if declined in previous session
+        # reset telemetry if declined in previous session
         if telemetry_user.monitoring_consent == TelemetryConfig.REJECTED:
             telemetry_user.monitoring_consent = TelemetryConfig.NOT_ANSWERED
-            session.commit()
-        if telemetry_user.survey_filled == TelemetryConfig.REJECTED:
-            telemetry_user.survey_filled = TelemetryConfig.NOT_ANSWERED
             session.commit()
 
         # check if telemetry's been agreed on

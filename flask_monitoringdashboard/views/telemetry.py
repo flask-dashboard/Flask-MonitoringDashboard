@@ -29,37 +29,12 @@ def accept_telemetry_consent():
     return '', 204
 
 
-@blueprint.route('/telemetry/survey_has_been_filled', methods=['GET'])
-def survey_has_been_filled():
-    with session_scope() as session:
-        try:
-            telemetry_user = get_telemetry_user(session)
-            telemetry_user.survey_filled = TelemetryConfig.ACCEPTED
-            session.commit()
-
-        except SQLAlchemyError as e:
-            print('error committing survey consent to database', e)
-            session.rollback()
-
-    # Return no content
-    return '', 204
-
-
 @blueprint.route('/telemetry/get_is_telemetry_answered', methods=['GET'])
 def get_is_telemetry_answered():
     with session_scope() as session:
         telemetry_user = get_telemetry_user(session)
         res = True if telemetry_user.monitoring_consent in (TelemetryConfig.REJECTED, TelemetryConfig.ACCEPTED) else False
         return {'is_telemetry_answered': res}
-
-
-@blueprint.route('/telemetry/get_is_survey_filled', methods=['GET'])
-def get_is_survey_filled():
-    with session_scope() as session:
-        telemetry_user = get_telemetry_user(session)
-        res = True if telemetry_user.survey_filled in (TelemetryConfig.REJECTED, TelemetryConfig.ACCEPTED) else False
-        return {'is_survey_filled': res}
-
 
 @blueprint.route('/telemetry/submit_follow_up', methods=['POST'])
 def submit_follow_up():

@@ -199,7 +199,7 @@ class Config(object):
 
 class TelemetryConfig(object):
     """Configuration for the telemetry feature"""
-    # constants for defining survey and telemetry answers
+    # constants for defining telemetry answers
     NOT_ANSWERED = 1
     REJECTED = 2
     ACCEPTED = 3
