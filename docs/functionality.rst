@@ -346,6 +346,8 @@ Telemetry
 The Dashboard is setup to be able to collect telemetric-data. 
 This data-collection can be toggled on and off under the "Configuration" route. 
 
+The collected data is released weekly at https://flask-dashboard.github.io/fmd-telemetry. 
+
 You can find detailed information about what and how data is collected below.
 
 What:
@@ -356,7 +358,7 @@ What:
 
 3. **Aggregated monitoring levels:** To determine the most frequently utilized monitoring level, we aggregate the levels set from each endpoint.
 
-4. **Table size:** In order to determine how fast the data accumulates, we collect the size of the database and its tables.
+4. **Version number:** In order to determine how often people update their dashboards, we collect the build number.
 
 5. **Route visits:** Which routes you use in the dashboard.
 
@@ -368,19 +370,29 @@ This is most of the logic behind the telemetry:
 .. code-block:: python
 
     def post_to_back_if_telemetry_enabled(class_name='Endpoints', **kwargs):
-    """
-    Function to send telemetry data to remote database
-    """
-    if telemetry_config.telemetry_consent:
-        back4app_endpoint = f'https://parseapi.back4app.com/classes/{class_name}'
+      """
+      Function to send data to server, with dynamic IP fetching.
+      If the IP cannot be fetched, the function will silently exit without sending data.
+      """
+      if telemetry_config.telemetry_consent or class_name == 'FollowUp':
+         github_file_url = 'https://raw.githubusercontent.com/flask-dashboard/fmd-telemetry/master/ip_address'
+         parse_server_ip = fetch_ip_from_github(github_file_url)
+         if parse_server_ip is None:
+               return  # Exit silently if no IP is fetched
+         
+         
 
-        headers = telemetry_config.telemetry_headers
-        data = {'fmd_id': telemetry_config.fmd_user, 'session': telemetry_config.telemetry_session} # fmd_id is the random uuid of the user, session is amount of times app was initialized
+         parse_server_endpoint = f'http://{parse_server_ip}/parse/classes/{class_name}'
+         headers = telemetry_config.telemetry_headers
+         data = {'fmd_id': telemetry_config.fmd_user, 'session': telemetry_config.telemetry_session}
+         for key, value in kwargs.items():
+               data[key] = value
 
-        for key, value in kwargs.items():
-            data[key] = value
-
-        requests.post(back4app_endpoint, json=data, headers=headers)
+         try:
+               response = requests.post(parse_server_endpoint, json=data, headers=headers, timeout=1)
+               return response
+         except requests.exceptions.ConnectionError as e:
+               return None
 
 
 Need more information?
