@@ -3,7 +3,7 @@ from sqlalchemy.exc import SQLAlchemyError
 from flask_monitoringdashboard.core.auth import secure
 from flask_monitoringdashboard import blueprint, telemetry_config
 from flask_monitoringdashboard.core.config import TelemetryConfig
-from flask_monitoringdashboard.core.telemetry import get_telemetry_user
+from flask_monitoringdashboard.core.telemetry import get_telemetry_user, post_to_back_if_telemetry_enabled
 from flask_monitoringdashboard.database import session_scope
 
 
@@ -59,3 +59,15 @@ def get_is_survey_filled():
         telemetry_user = get_telemetry_user(session)
         res = True if telemetry_user.survey_filled in (TelemetryConfig.REJECTED, TelemetryConfig.ACCEPTED) else False
         return {'is_survey_filled': res}
+
+
+@blueprint.route('/telemetry/submit_follow_up', methods=['POST'])
+def submit_follow_up():
+    data = request.json
+    feedback = data.get('feedback')
+    
+    post_to_back_if_telemetry_enabled('FollowUp', feedback=feedback)
+
+    return jsonify({'message': 'Feedback submitted successfully'}), 200
+
+
