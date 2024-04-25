@@ -210,7 +210,6 @@ class TelemetryConfig(object):
         self.telemetry_consent = False
         self.telemetry_session = 0
         self.telemetry_headers = {
-            'X-Parse-Application-Id': '4nHPABwkHqOZzNrFduzNyKH8q7wmPFdOWvajfWU2',
-            'X-Parse-REST-API-Key': 'zjv0WLI2K3UvpfzrfG4sPA6EykYyzZM4KxQk07Hs',
+            'X-Parse-Application-Id': 'yourAppID1234',
             'Content-Type': 'application/json'
         }
