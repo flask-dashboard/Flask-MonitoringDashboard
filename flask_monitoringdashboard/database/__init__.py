@@ -70,9 +70,6 @@ class TelemetryUser(Base):
     last_initialized = Column(DateTime, default=datetime.datetime.utcnow)
     """Check when was the last time user accessed FMD"""
 
-    survey_filled = Column(Integer, default=1)
-    """If user filled the survey 1 - not responded 2 - declined 3 - filled"""
-
     monitoring_consent = Column(Integer, default=1)
     """If user agrees to share data 1 - not responded 2 - declined 3 - accepted"""
 

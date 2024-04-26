@@ -1,5 +1,6 @@
 import datetime
 import requests
+import functools
 
 from sqlalchemy import func
 from sqlalchemy.exc import NoResultFound, MultipleResultsFound, SQLAlchemyError
@@ -7,6 +8,7 @@ from sqlalchemy.exc import NoResultFound, MultipleResultsFound, SQLAlchemyError
 from flask_monitoringdashboard import telemetry_config
 from flask_monitoringdashboard.core.config import TelemetryConfig
 from flask_monitoringdashboard.core.blueprints import get_blueprint
+from flask_monitoringdashboard.core.utils import get_details
 from flask_monitoringdashboard.database import TelemetryUser, Endpoint
 
 
@@ -49,6 +51,10 @@ def collect_general_telemetry_data(session, telemetry_user):
     level_twos_count = counts_dict.get(2, 0)
     level_threes_count = counts_dict.get(3, 0)
 
+    # Get details including the dashboard version
+    details = get_details(session)
+    dashboard_version = details['dashboard-version']
+
     data = {'endpoints': no_of_endpoints,
             'blueprints': no_of_blueprints,
             'time_initialized': telemetry_user.last_initialized.strftime('%Y-%m-%d %H:%M:%S'),
@@ -56,6 +62,7 @@ def collect_general_telemetry_data(session, telemetry_user):
             'monitoring_1': level_ones_count,
             'monitoring_2': level_twos_count,
             'monitoring_3': level_threes_count,
+            'dashboard_version': dashboard_version,
             }
 
     # post user data
@@ -78,12 +85,9 @@ def initialize_telemetry_session(session):
             telemetry_user.last_initialized = datetime.datetime.utcnow()
             session.commit()
 
-        # reset telemetry and survey prompt if declined in previous session
+        # reset telemetry if declined in previous session
         if telemetry_user.monitoring_consent == TelemetryConfig.REJECTED:
             telemetry_user.monitoring_consent = TelemetryConfig.NOT_ANSWERED
-            session.commit()
-        if telemetry_user.survey_filled == TelemetryConfig.REJECTED:
-            telemetry_user.survey_filled = TelemetryConfig.NOT_ANSWERED
             session.commit()
 
         # check if telemetry's been agreed on
@@ -107,17 +111,46 @@ def initialize_telemetry_session(session):
         session.rollback()
 
 
+@functools.cache
+def fetch_ip_from_github(file_url):
+    """
+    Fetches the IP address from a text file hosted on GitHub and caches the result.
+    
+    Args:
+    file_url (str): URL to the raw version of the GitHub hosted text file containing the IP address.
+    
+    Returns:
+    str: IP address and port as a string, or None if unable to fetch.
+    """
+    try:
+        response = requests.get(file_url)
+        response.raise_for_status()  # Raises an HTTPError for bad responses
+        return response.text.strip()  # Assuming the file contains the IP address and port in the format "IP:PORT"
+    except requests.RequestException:
+        return None
+
+
 def post_to_back_if_telemetry_enabled(class_name='Endpoints', **kwargs):
     """
-    Function to send telemetry data to remote database
+    Function to send data to server, with dynamic IP fetching.
+    If the IP cannot be fetched, the function will silently exit without sending data.
     """
-    if telemetry_config.telemetry_consent:
-        back4app_endpoint = f'https://parseapi.back4app.com/classes/{class_name}'
-
+    if telemetry_config.telemetry_consent or class_name == 'FollowUp':
+        github_file_url = 'https://raw.githubusercontent.com/flask-dashboard/fmd-telemetry/master/ip_address'
+        parse_server_ip = fetch_ip_from_github(github_file_url)
+        if parse_server_ip is None:
+            return  # Exit silently if no IP is fetched
+        
+        parse_server_endpoint = f'http://{parse_server_ip}/parse/classes/{class_name}'
         headers = telemetry_config.telemetry_headers
         data = {'fmd_id': telemetry_config.fmd_user, 'session': telemetry_config.telemetry_session}
-
         for key, value in kwargs.items():
             data[key] = value
 
-        requests.post(back4app_endpoint, json=data, headers=headers)
+        try:
+            response = requests.post(parse_server_endpoint, json=data, headers=headers, timeout=1)
+            return response
+        except requests.exceptions.ConnectionError as e:
+            return None
+
+ 

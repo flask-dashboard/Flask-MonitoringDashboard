@@ -12,6 +12,7 @@ from flask_monitoringdashboard.database.request import (
     get_date_of_first_request,
     get_date_of_first_request_version,
 )
+from flask_monitoringdashboard import telemetry_config
 
 
 def get_endpoint_details(session, endpoint_id):
@@ -57,6 +58,7 @@ def get_details(session):
         'first-request': get_date_of_first_request(session),
         'first-request-version': get_date_of_first_request_version(session, config.version),
         'total-requests': count_total_requests(session),
+        'fmd-id': telemetry_config.fmd_user,
     }
 
 

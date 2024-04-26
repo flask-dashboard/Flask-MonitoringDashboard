@@ -199,7 +199,7 @@ class Config(object):
 
 class TelemetryConfig(object):
     """Configuration for the telemetry feature"""
-    # constants for defining survey and telemetry answers
+    # constants for defining telemetry answers
     NOT_ANSWERED = 1
     REJECTED = 2
     ACCEPTED = 3
@@ -210,7 +210,6 @@ class TelemetryConfig(object):
         self.telemetry_consent = False
         self.telemetry_session = 0
         self.telemetry_headers = {
-            'X-Parse-Application-Id': '4nHPABwkHqOZzNrFduzNyKH8q7wmPFdOWvajfWU2',
-            'X-Parse-REST-API-Key': 'zjv0WLI2K3UvpfzrfG4sPA6EykYyzZM4KxQk07Hs',
+            'X-Parse-Application-Id': 'fmd-md',
             'Content-Type': 'application/json'
         }

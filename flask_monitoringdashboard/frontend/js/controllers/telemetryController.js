@@ -41,34 +41,22 @@ export function TelemetryController($scope, $http, $window) {
     };
     $scope.customReason = '';
 
-    // Configuration for HTTP requests to Back4App
-    var config = {
-        headers: {
-            'X-Parse-Application-Id': '4nHPABwkHqOZzNrFduzNyKH8q7wmPFdOWvajfWU2',
-            'X-Parse-REST-API-Key': 'zjv0WLI2K3UvpfzrfG4sPA6EykYyzZM4KxQk07Hs',
-            'Content-Type': 'application/json'
-        }
-    };
-
     // Function to submit follow-up feedback
     $scope.submitFollowUp = function () {
         $scope.followUpShow = false;
-
+    
         var feedback = [];
         for (var key in $scope.reasons) {
             if ($scope.reasons[key]) {
-                if (key === 'other') {
-                    feedback.push(key);
-                    if ($scope.customReason.trim() !== '') {
-                        feedback.push({ other: $scope.customReason });
-                    }
+                if (key === 'other' && $scope.customReason.trim() !== '') {
+                    feedback.push({ key: 'other', other_reason: $scope.customReason });
                 } else {
-                    feedback.push(key);
+                    feedback.push({ key: key });
                 }
             }
         }
-
-        $http.post('https://parseapi.back4app.com/classes/FollowUp', { reasons: feedback }, config)
+    
+        $http.post('/dashboard/telemetry/submit_follow_up', { feedback: feedback })
             .then(function (response) {
             }, function (error) {
                 console.error('Error sending feedback:', error);

@@ -5,6 +5,14 @@ All notable changes to this project will be documented in this file.
 This project adheres to `Semantic Versioning <http://semver.org/>`_.
 Please note that the changes before version 1.10.0 have not been documented.
 
+v3.3.1
+----------
+Changed
+
+- Telemetry now uses dynamic server-ip  
+- Removed survey
+- FollowUp questions refactored
+
 v3.3.0
 ----------
 Changed
