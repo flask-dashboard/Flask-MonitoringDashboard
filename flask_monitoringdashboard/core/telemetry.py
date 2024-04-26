@@ -141,8 +141,6 @@ def post_to_back_if_telemetry_enabled(class_name='Endpoints', **kwargs):
         if parse_server_ip is None:
             return  # Exit silently if no IP is fetched
         
-        
-
         parse_server_endpoint = f'http://{parse_server_ip}/parse/classes/{class_name}'
         headers = telemetry_config.telemetry_headers
         data = {'fmd_id': telemetry_config.fmd_user, 'session': telemetry_config.telemetry_session}
