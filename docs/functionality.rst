@@ -362,6 +362,8 @@ What:
 
 5. **Route visits:** Which routes you use in the dashboard.
 
+6. **Python version:** To know what versions of python are actively being used.
+
 How:
 
 Anonymized data is sent to a remote server. This way we can monitor which functionalities are being used the most, and which functionalities are not being used at all. We are a small research team and this way we can focus our efforts on what actually matters.

@@ -1,6 +1,7 @@
 import datetime
 import requests
 import functools
+import sys
 
 from sqlalchemy import func
 from sqlalchemy.exc import NoResultFound, MultipleResultsFound, SQLAlchemyError
@@ -55,6 +56,9 @@ def collect_general_telemetry_data(session, telemetry_user):
     details = get_details(session)
     dashboard_version = details['dashboard-version']
 
+    # Get python version
+    python_version = sys.version
+
     data = {'endpoints': no_of_endpoints,
             'blueprints': no_of_blueprints,
             'time_initialized': telemetry_user.last_initialized.strftime('%Y-%m-%d %H:%M:%S'),
@@ -63,6 +67,7 @@ def collect_general_telemetry_data(session, telemetry_user):
             'monitoring_2': level_twos_count,
             'monitoring_3': level_threes_count,
             'dashboard_version': dashboard_version,
+            'python_version': python_version,
             }
 
     # post user data
@@ -111,7 +116,7 @@ def initialize_telemetry_session(session):
         session.rollback()
 
 
-@functools.cache
+@functools.lru_cache(maxsize=None)
 def fetch_ip_from_github(file_url):
     """
     Fetches the IP address from a text file hosted on GitHub and caches the result.
