@@ -71,7 +71,7 @@ def bind(app, schedule=True, include_dashboard=True):
         blueprint.record_once(lambda _state: init_cache())
     except AssertionError as e:
         if app.config["TESTING"]:
-            print("in tests we get an assertion error... and we're fine")
+            print("We must find a better solution for the record_once exception in the tests")
         else:
             raise e
 
