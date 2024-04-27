@@ -33,7 +33,7 @@ jobs:
         pytest 
 
 
-  deploy:
+  publish:
     runs-on: ubuntu-latest
     needs: [test]
     steps:
