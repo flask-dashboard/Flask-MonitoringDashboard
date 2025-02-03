@@ -18,71 +18,141 @@
         <div class="card-header"><h4>Dashboard Overview<h4></div>
         <div class="card-body">
             <div class="spinner" ng-controller="FormController"
-                 ng-show="table.length === 0">
-                <div class="rect1"></div>
-                <div class="rect2"></div>
-                <div class="rect3"></div>
-                <div class="rect4"></div>
-                <div class="rect5"></div>
-            </div>
+                   ng-show="table.length === 0">
+                  <div class="rect1"></div>
+                  <div class="rect2"></div>
+                  <div class="rect3"></div>
+                  <div class="rect4"></div>
+                  <div class="rect5"></div>
+              </div>
 
-            <ul class="pagination">
-                <li class="page-item" ng-class="{'active': isHits}"><a class="page-link"
-                                                                       ng-click="toggleHits()">Number
-                    of hits</a></li>
-                <li class="page-item" ng-class="{'active': !isHits}"><a class="page-link"
-                                                                        ng-click="toggleHits()">Median
-                    request duration (ms)</a></li>
-            </ul>
+              <ul class="pagination">
+                  <li class="page-item" ng-class="{'active': isHits}"><a class="page-link"
+                                                                         ng-click="toggleHits()">Number
+                      of hits</a></li>
+                  <li class="page-item" ng-class="{'active': !isHits}"><a class="page-link"
+                                                                          ng-click="toggleHits()">Median
+                      request duration (ms)</a></li>
+              </ul>
 
-            <div class="row" style="margin-bottom: 7px">
-                <div class="col-md-3 col-sm-12">
-                    Show
-                    <select style="width: 60px; display: inline-block;"
-                            class='form-control form-control-sm' name="ddwa"
-                            ng-model="pageSize">
-                        <option value="10">10</option>
-                        <option value="25">25</option>
-                        <option value="50">50</option>
-                        <option value="100">100</option>
-                    </select>
-                    entries
-                </div>
+              <div class="row" style="margin-bottom: 7px">
+                  <div class="col-md-3 col-sm-12">
+                      Show
+                      <select style="width: 60px; display: inline-block;"
+                              class='form-control form-control-sm' name="ddwa"
+                              ng-model="pageSize">
+                          <option value="10">10</option>
+                          <option value="25">25</option>
+                          <option value="50">50</option>
+                          <option value="100">100</option>
+                      </select>
+                      entries
+                  </div>
 
-                <div class="col-md-6 col-sm-12">
-                    Blueprint:
-                    <select style='width: 180px; display: inline-block;' ng-model="slectedBlueprint"
-                            class="form-control form-control-sm">
-                        <option ng-repeat="blueprint in blueprints track by $index"
-                                value="{{ blueprint }}">
-                            {{ blueprint }}
-                        </option>
-                    </select>
-                </div>
+                  <div class="col-md-6 col-sm-12">
+                      Blueprint:
+                      <select style='width: 180px; display: inline-block;' ng-model="slectedBlueprint"
+                              class="form-control form-control-sm">
+                          <option ng-repeat="blueprint in blueprints track by $index"
+                                  value="{{ blueprint }}">
+                              {{ blueprint }}
+                          </option>
+                      </select>
+                  </div>
 
-                <div class="col-md-3 col-sm-12" style="text-align: right">
-                    Search:
-                    <input ng-model="searchQuery"
-                           style="display: inline-block; width: 180px"
-                           class="form-control form-control-sm">
-                </div>
-            </div>
+                  <div class="col-md-3 col-sm-12" style="text-align: right">
+                      Search:
+                      <input ng-model="searchQuery"
+                             style="display: inline-block; width: 180px"
+                             class="form-control form-control-sm">
+                  </div>
+              </div>
 
-            <div class="row">
-                <div class="col-md-12">
-                    <table class="table table-hover table-bordered table-sm">
-                        <thead>
-                        <tr>
-                            <th></th>
-                            <th>Endpoint</th>
-                            <th ng-show="isHits">Today</th>
-                            <th ng-show="isHits">Last 7 days</th>
-                            <th ng-show="isHits">Overall</th>
-                            <th ng-show="isHits==false">Today</th>
-                            <th ng-show="isHits==false">Last 7 days</th>
-                            <th ng-show="isHits==false">Overall</th>
-                            <th>Last requested</th>
-                            <th>Monitoring-level<sup>*</sup></th>
+              <div class="row">
+                  <div class="col-md-12">
+                      <table class="table table-hover table-bordered table-sm">
+                          <thead>
+                          <tr>
+                              <th></th>
+                            <th 
+                              ng-click="sortBy = {'prop': 'name', 'desc': !sortBy.desc}" 
+                              style="cursor: pointer">
+                                <div class="d-flex justify-content-between">
+                                  Endpoint
+                                  <span ng-show="sortBy.prop === 'name'" ng-class="{'rotate-up': sortBy.desc, 'rotate-down': !sortBy.desc}">&uarr;</span>
+                                </div>
+                            </th>
+                            <th 
+                              ng-show="isHits" 
+                              style="cursor: pointer"
+                              ng-click="sortBy = {'prop': 'hits-today', 'desc': !sortBy.desc}" >
+                              <div class="d-flex justify-content-between">
+                                  Today
+                                  <span ng-show="sortBy.prop === 'hits-today'" ng-class="{'rotate-up': sortBy.desc, 'rotate-down': !sortBy.desc}">&uarr;</span>
+                                </div>
+                            </th>
+                            <th 
+                              ng-show="isHits"
+                              style="cursor: pointer"
+                              ng-click="sortBy = {'prop': 'hits-week', 'desc': !sortBy.desc}" >
+                              <div class="d-flex justify-content-between">
+                                  Last 7 days
+                                  <span ng-show="sortBy.prop === 'hits-week'" ng-class="{'rotate-up': sortBy.desc, 'rotate-down': !sortBy.desc}">&uarr;</span>
+                                </div>
+                            </th>
+                            <th 
+                              ng-show="isHits"
+                              style="cursor: pointer"
+                              ng-click="sortBy = {'prop': 'hits-overall', 'desc': !sortBy.desc}" >
+                                <div class="d-flex justify-content-between">
+                                  Overall 
+                                  <span ng-show="sortBy.prop === 'hits-overall'" ng-class="{'rotate-up': sortBy.desc, 'rotate-down': !sortBy.desc}">&uarr;</span>
+                                </div>
+                            </th>
+                            <th 
+                                style="cursor: pointer"
+                                ng-click="sortBy = {'prop': 'hits-today', 'desc': !sortBy.desc}" 
+                                ng-show="isHits===false">
+                                    <div class="d-flex justify-content-between">
+                                    Today
+                                    <span ng-show="sortBy.prop === 'hits-today'" ng-class="{'rotate-up': sortBy.desc, 'rotate-down': !sortBy.desc}">&uarr;</span>
+                                  </div>
+
+                            </th>
+                            <th 
+                                ng-show="isHits===false"
+                                style="cursor: pointer"
+                                ng-click="sortBy = {'prop': 'hits-week', 'desc': !sortBy.desc}" >
+                                    <div class="d-flex justify-content-between">
+                                        Last 7 days
+                                        <span ng-show="sortBy.prop === 'hits-week'" ng-class="{'rotate-up': sortBy.desc, 'rotate-down': !sortBy.desc}">&uarr;</span>
+                                    </div>
+                            </th>
+                            <th 
+                              ng-show="isHits===false"
+                              style="cursor: pointer"
+                              ng-click="sortBy = {'prop': 'hits-overall', 'desc': !sortBy.desc}" >
+                                <div class="d-flex justify-content-between">
+                                  Overall 
+                                  <span ng-show="sortBy.prop === 'hits-overall'" ng-class="{'rotate-up': sortBy.desc, 'rotate-down': !sortBy.desc}">&uarr;</span>
+                                </div>
+                            </th>
+                            <th
+                                style="cursor: pointer"
+                                ng-click="sortBy = {'prop': 'last-accessed', 'desc': !sortBy.desc}" >
+                                    <div class="d-flex justify-content-between">
+                                        Last requested
+                                        <span ng-show="sortBy.prop === 'last-accessed'" ng-class="{'rotate-up': sortBy.desc, 'rotate-down': !sortBy.desc}">&uarr;</span>
+                                    </div>
+                            </th>
+                            <th
+                            style="cursor: pointer"
+                            ng-click="sortBy = {'prop': 'monitor', 'desc': !sortBy.desc}" >
+                                <div class="d-flex justify-content-between">
+                                    <div> Monitoring-level<sup>*</sup></div>
+                                    <span ng-show="sortBy.prop === 'monitor'" ng-class="{'rotate-up': sortBy.desc, 'rotate-down': !sortBy.desc}">&uarr;</span>
+                                </div>
+                            </th>
                         </tr>
                         </thead>
 

@@ -562,3 +562,14 @@ textarea#customReason:focus {
         max-width: 1600px !important;
     }
 }
+
+.rotate-up {
+    transform: rotate(0deg);
+    transition: transform 0.3s ease;
+}
+
+.rotate-down {
+    transform: rotate(180deg);
+    transition: transform 0.3s ease;
+}
+
