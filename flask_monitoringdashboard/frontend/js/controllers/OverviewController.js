@@ -36,7 +36,6 @@ export function OverviewController($scope, $http, $location, menuService, endpoi
         items.sort((a, b) => a[$scope.sortBy.prop] > b[$scope.sortBy.prop] || b[$scope.sortBy.prop] === null);
       else 
         items.sort((a, b) => a[$scope.sortBy.prop] < b[$scope.sortBy.prop] || a[$scope.sortBy.prop] === null);
-
     }
 
     function getItemsForPage(pageNumber) {
