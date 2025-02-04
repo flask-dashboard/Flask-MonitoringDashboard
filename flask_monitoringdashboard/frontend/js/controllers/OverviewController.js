@@ -5,6 +5,7 @@ export function OverviewController($scope, $http, $location, menuService, endpoi
     $scope.pypi_version = '';
     $scope.dashboard_version = '';
     $scope.isHits = true;
+    $scope.sortBy = { 'prop': 'name', 'desc': true}
 
     $scope.table = [];
     $scope.selectedItem = 2;
@@ -28,17 +29,27 @@ export function OverviewController($scope, $http, $location, menuService, endpoi
         $scope.table = response.data;
     });
 
+    
+
+    function sortItems(items){
+      if ($scope.sortBy.desc)
+        return items.sort((a, b) => a[$scope.sortBy.prop] > b[$scope.sortBy.prop] || b[$scope.sortBy.prop] === null);
+      else 
+        return items.sort((a, b) => a[$scope.sortBy.prop] < b[$scope.sortBy.prop] || a[$scope.sortBy.prop] === null);
+    }
+
     function getItemsForPage(pageNumber) {
-        const start = Number(pageNumber) * $scope.pageSize;
-        const end = (Number(pageNumber) + 1) * Number($scope.pageSize);
-
+        const start = pageNumber * Number($scope.pageSize);
+        const end = (pageNumber + 1) * Number($scope.pageSize);
+  
         let items = $scope.table
-            .filter(item => item.name.includes($scope.searchQuery))
-        if ($scope.slectedBlueprint) {
-            items = items.filter(item => item.blueprint===$scope.slectedBlueprint)
-        }
+            .filter(item => item.name.includes($scope.searchQuery));
 
-        return items.slice(start, end);
+        if ($scope.slectedBlueprint) {
+            items = items.filter(item => item.blueprint===$scope.slectedBlueprint);
+        }
+    
+        return sortItems(items).slice(start, end);
     }
 
     $scope.getFilteredItems = function () {
