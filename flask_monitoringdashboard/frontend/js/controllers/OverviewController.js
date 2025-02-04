@@ -33,9 +33,9 @@ export function OverviewController($scope, $http, $location, menuService, endpoi
 
     function sortItems(items){
       if ($scope.sortBy.desc)
-        items.sort((a, b) => a[$scope.sortBy.prop] > b[$scope.sortBy.prop] || b[$scope.sortBy.prop] === null);
+        return items.sort((a, b) => a[$scope.sortBy.prop] > b[$scope.sortBy.prop] || b[$scope.sortBy.prop] === null);
       else 
-        items.sort((a, b) => a[$scope.sortBy.prop] < b[$scope.sortBy.prop] || a[$scope.sortBy.prop] === null);
+        return items.sort((a, b) => a[$scope.sortBy.prop] < b[$scope.sortBy.prop] || a[$scope.sortBy.prop] === null);
     }
 
     function getItemsForPage(pageNumber) {
@@ -43,14 +43,13 @@ export function OverviewController($scope, $http, $location, menuService, endpoi
         const end = (pageNumber + 1) * Number($scope.pageSize);
   
         let items = $scope.table
-            .filter(item => item.name.includes($scope.searchQuery))
+            .filter(item => item.name.includes($scope.searchQuery));
+
         if ($scope.slectedBlueprint) {
-            items = items.filter(item => item.blueprint===$scope.slectedBlueprint)
+            items = items.filter(item => item.blueprint===$scope.slectedBlueprint);
         }
     
-        let sl = items.slice(start, end);
-        sortItems(sl);
-        return sl;
+        return sortItems(items).slice(start, end);
     }
 
     $scope.getFilteredItems = function () {

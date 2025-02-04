@@ -115,7 +115,9 @@
                                 ng-show="isHits===false">
                                     <div class="d-flex justify-content-between">
                                     Today
-                                    <span ng-show="sortBy.prop === 'hits-today'" ng-class="{'rotate-up': sortBy.desc, 'rotate-down': !sortBy.desc}">&uarr;</span>
+                                    <span 
+                                        ng-show="sortBy.prop === 'hits-today'" 
+                                        ng-class="{'rotate-up': sortBy.desc, 'rotate-down': !sortBy.desc}">&uarr;</span>
                                   </div>
 
                             </th>
