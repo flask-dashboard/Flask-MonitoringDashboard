@@ -79,7 +79,7 @@
                               style="cursor: pointer">
                                 <div class="d-flex justify-content-between">
                                   Endpoint
-                                  <span ng-show="sortBy.prop === 'name'" ng-class="{'rotate-up': sortBy.desc, 'rotate-down': !sortBy.desc}">&uarr;</span>
+                                  <span ng-class="{'rotate-up': sortBy.desc && sortBy.prop === 'name', 'rotate-down': !sortBy.desc && sortBy.prop === 'name', 'text-gray': sortBy.prop !== 'name'}">&uarr;</span>
                                 </div>
                             </th>
                             <th 
@@ -88,7 +88,7 @@
                               ng-click="sortBy = {'prop': 'hits-today', 'desc': !sortBy.desc}" >
                               <div class="d-flex justify-content-between">
                                   Today
-                                  <span ng-show="sortBy.prop === 'hits-today'" ng-class="{'rotate-up': sortBy.desc, 'rotate-down': !sortBy.desc}">&uarr;</span>
+                                  <span ng-class="{'rotate-up': sortBy.desc && sortBy.prop === 'hits-today', 'rotate-down': !sortBy.desc && sortBy.prop === 'hits-today', 'text-gray': sortBy.prop !== 'hits-today'}">&uarr;</span>
                                 </div>
                             </th>
                             <th 
@@ -97,7 +97,7 @@
                               ng-click="sortBy = {'prop': 'hits-week', 'desc': !sortBy.desc}" >
                               <div class="d-flex justify-content-between">
                                   Last 7 days
-                                  <span ng-show="sortBy.prop === 'hits-week'" ng-class="{'rotate-up': sortBy.desc, 'rotate-down': !sortBy.desc}">&uarr;</span>
+                                  <span ng-class="{'rotate-up': sortBy.desc && sortBy.prop === 'hits-week', 'rotate-down': !sortBy.desc && sortBy.prop === 'hits-week', 'text-gray': sortBy.prop !== 'hits-week'}">&uarr;</span>
                                 </div>
                             </th>
                             <th 
@@ -106,7 +106,7 @@
                               ng-click="sortBy = {'prop': 'hits-overall', 'desc': !sortBy.desc}" >
                                 <div class="d-flex justify-content-between">
                                   Overall 
-                                  <span ng-show="sortBy.prop === 'hits-overall'" ng-class="{'rotate-up': sortBy.desc, 'rotate-down': !sortBy.desc}">&uarr;</span>
+                                  <span ng-class="{'rotate-up': sortBy.desc && sortBy.prop === 'hits-overall', 'rotate-down': !sortBy.desc && sortBy.prop === 'hits-overall', 'text-gray': sortBy.prop !== 'hits-overall'}">&uarr;</span>
                                 </div>
                             </th>
                             <th 
@@ -115,9 +115,7 @@
                                 ng-show="isHits===false">
                                     <div class="d-flex justify-content-between">
                                     Today
-                                    <span 
-                                        ng-show="sortBy.prop === 'hits-today'" 
-                                        ng-class="{'rotate-up': sortBy.desc, 'rotate-down': !sortBy.desc}">&uarr;</span>
+                                    <span ng-class="{'rotate-up': sortBy.desc && sortBy.prop === 'hits-today', 'rotate-down': !sortBy.desc && sortBy.prop === 'hits-today', 'text-gray': sortBy.prop !== 'hits-today'}">&uarr;</span>
                                   </div>
 
                             </th>
@@ -127,7 +125,7 @@
                                 ng-click="sortBy = {'prop': 'hits-week', 'desc': !sortBy.desc}" >
                                     <div class="d-flex justify-content-between">
                                         Last 7 days
-                                        <span ng-show="sortBy.prop === 'hits-week'" ng-class="{'rotate-up': sortBy.desc, 'rotate-down': !sortBy.desc}">&uarr;</span>
+                                        <span ng-class="{'rotate-up': sortBy.desc && sortBy.prop === 'hits-week', 'rotate-down': !sortBy.desc && sortBy.prop === 'hits-week', 'text-gray': sortBy.prop !== 'hits-week'}">&uarr;</span>
                                     </div>
                             </th>
                             <th 
@@ -136,7 +134,7 @@
                               ng-click="sortBy = {'prop': 'hits-overall', 'desc': !sortBy.desc}" >
                                 <div class="d-flex justify-content-between">
                                   Overall 
-                                  <span ng-show="sortBy.prop === 'hits-overall'" ng-class="{'rotate-up': sortBy.desc, 'rotate-down': !sortBy.desc}">&uarr;</span>
+                                  <span ng-class="{'rotate-up': sortBy.desc && sortBy.prop === 'hits-overall', 'rotate-down': !sortBy.desc && sortBy.prop === 'hits-overall', 'text-gray': sortBy.prop !== 'hits-overall'}">&uarr;</span>
                                 </div>
                             </th>
                             <th
@@ -144,7 +142,7 @@
                                 ng-click="sortBy = {'prop': 'last-accessed', 'desc': !sortBy.desc}" >
                                     <div class="d-flex justify-content-between">
                                         Last requested
-                                        <span ng-show="sortBy.prop === 'last-accessed'" ng-class="{'rotate-up': sortBy.desc, 'rotate-down': !sortBy.desc}">&uarr;</span>
+                                        <span ng-class="{'rotate-up': sortBy.desc && sortBy.prop === 'last-accessed', 'rotate-down': !sortBy.desc && sortBy.prop === 'last-accessed', 'text-gray': sortBy.prop !== 'last-accessed'}">&uarr;</span>
                                     </div>
                             </th>
                             <th
@@ -152,7 +150,7 @@
                             ng-click="sortBy = {'prop': 'monitor', 'desc': !sortBy.desc}" >
                                 <div class="d-flex justify-content-between">
                                     <div> Monitoring-level<sup>*</sup></div>
-                                    <span ng-show="sortBy.prop === 'monitor'" ng-class="{'rotate-up': sortBy.desc, 'rotate-down': !sortBy.desc}">&uarr;</span>
+                                    <span ng-class="{'rotate-up': sortBy.desc && sortBy.prop === 'monitor', 'rotate-down': !sortBy.desc && sortBy.prop === 'monitor', 'text-gray': sortBy.prop !== 'monitor'}">&uarr;</span>
                                 </div>
                             </th>
                         </tr>
