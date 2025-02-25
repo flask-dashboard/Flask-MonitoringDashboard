@@ -33,9 +33,9 @@ export function OverviewController($scope, $http, $location, menuService, endpoi
 
     function ascendingOrder(a, b){
       if ($scope.sortBy === 'last-accessed') {
-        return Date.parse(a[$scope.sortBy]) < Date.parse(b[$scope.sortBy]) || a[$scope.sortBy] === null;
+        return Date.parse(a[$scope.sortBy]) < Date.parse(b[$scope.sortBy]) || a[$scope.sortBy] === null; //null if endpoint was never accessed
         }
-      return a[$scope.sortBy] < b[$scope.sortBy] || a[$scope.sortBy] === null;
+      return a[$scope.sortBy] < b[$scope.sortBy];
     }
 
     function descendingOrder(a, b){
