@@ -164,7 +164,7 @@ app.config(['$locationProvider', '$routeProvider', function ($locationProvider, 
         .when('/endpoint/:endpointId/exceptions', {
             templateUrl: 'static/pages/exception_stack_trace.html',
             controller: ['$scope', '$http', 'menuService',
-                'paginationService', 'endpointService', EndpointExceptionController]
+                'paginationService', 'endpointService', 'plotlyService', EndpointExceptionController]
         })
         .when('/endpoint/:endpointId/outliers', {
             templateUrl: 'static/pages/outliers.html',

@@ -1,4 +1,4 @@
-export function EndpointExceptionController ($scope, $http, menuService, paginationService, endpointService) {
+export function EndpointExceptionController ($scope, $http, menuService, paginationService, endpointService, plotlyService) {
     Prism.plugins.NormalizeWhitespace.setDefaults({
         'remove-trailing': false,
         'remove-indent': false,  
@@ -44,4 +44,46 @@ export function EndpointExceptionController ($scope, $http, menuService, paginat
                 });
         }
     }
+    
+    //Mock data for chart-test
+    let mockResponse = {
+        data: [
+            { value: 10, time: 'date 1'},
+            { value: 15, time: 'date 2'},
+            { value: 20, time: 'date 3'},
+            { value: 10, time: 'date 4'},
+            { value: 15, time: 'date 5'},
+            { value: 20, time: 'date 6'},
+            { value: 10, time: 'date 7'},
+            { value: 5, time: 'date 8'},
+            { value: 2, time: 'date 9'},
+            { value: 10, time: 'date 10'},
+            { value: 15, time: 'date 11'},
+            { value: 20, time: 'date 12'}
+        ]
+    };
+    //Chart with mock data:
+    $http.get('api/exception_graph/' + endpointService.info.id).then(function (response) {
+        let values = mockResponse.data.map(o => o.value);
+        let times = mockResponse.data.map(o => o.time);
+        plotlyService.chart([{
+                x: times,
+                y: values,
+                type: 'bar',
+        }], {
+            xaxis: {
+                title: 'date',
+                showticklabels: false
+            },
+            yaxis: {
+                title: 'occurences',
+            },
+            margin: {
+                l: 700,
+                r: 500
+            },
+            height: 300,
+        });
+    });
+    
 };
