@@ -32,7 +32,7 @@ export function OverviewController($scope, $http, $location, menuService, endpoi
     });
 
     function ascendingOrder(a, b){
-      return a[$scope.sortBy] > b[$scope.sortBy] || b[$scope.sortBy] === null;
+      return a[$scope.sortBy] < b[$scope.sortBy] || a[$scope.sortBy] === null;
     }
 
     function descendingOrder(a, b){
