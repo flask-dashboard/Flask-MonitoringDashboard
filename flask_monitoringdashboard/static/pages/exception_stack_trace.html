@@ -16,16 +16,18 @@
                     <div class="col-sm"><h6>{{ request.message }}</h6></div>
                     <div class="col-sm"><h6>Latest: {{ request.latest_timestamp | dateDifference }} | First: {{ request.first_timestamp | dateDifference }}</h6></div>
                 </div>
-                <div class="d-flex flex-column">
-                    <button 
-                        class="btn btn-danger" 
-                        ng-click="deleteExceptionById(request.full_stack_trace_id)">Delete</button>
-                </div>
-                <div class="d-flex flex-column">
-                    <button 
-                        class="btn btn-secondary" 
-                        ng-click="collapseAllDetails(request.full_stack_trace_id)">Collapse</button>
-                </div>
+                    <div class="d-flex flex-row justify-content-between">
+                        <div class="d-flex flex-column p-1">
+                            <button 
+                                class="btn btn-danger" 
+                                ng-click="deleteExceptionById(request.full_stack_trace_id)">Delete</button>
+                        </div>
+                        <div class="d-flex flex-column p-1">
+                            <button 
+                                class="btn btn-secondary" 
+                                ng-click="collapseAllDetails(request.full_stack_trace_id)">Collapse</button>
+                        </div>
+                    </div>
                 </div>
             </div>
             <table class="table table-bordered table-hover" width="100%" style="margin: 0;" cellspacing="0">
