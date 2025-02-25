@@ -3,7 +3,7 @@ from flask import jsonify
 from flask_monitoringdashboard import blueprint
 from flask_monitoringdashboard.core.auth import secure
 
-from flask_monitoringdashboard.controllers.exceptions import get_exception_function_definition, get_exceptions_with_timestamp, get_detailed_exception_info
+from flask_monitoringdashboard.controllers.exceptions import delete_exceptions_via_full_stack_trace_id, get_exception_function_definition, get_exceptions_with_timestamp, get_detailed_exception_info
 from flask_monitoringdashboard.core.telemetry import post_to_back_if_telemetry_enabled
 from flask_monitoringdashboard.database import session_scope
 
@@ -60,7 +60,16 @@ def get_function_definition_for_exception(function_id, full_stack_trace_id):
             - 'code' (str): The function's source code.
             - 'exception_line_number' (int): The relative line number of the exception within the function.
     """
-    post_to_back_if_telemetry_enabled(**{'name': 'detailed_exception_info'})
+    post_to_back_if_telemetry_enabled(**{'name': 'function_definition'})
     with session_scope() as session:
         definition = get_exception_function_definition(session, function_id, full_stack_trace_id)
         return jsonify(definition)
+
+
+@blueprint.route('/api/exception_info/<int:full_stack_trace_id>', methods=['DELETE'])
+@secure
+def delete_exception(full_stack_trace_id: int):
+    post_to_back_if_telemetry_enabled(**{'name': 'delete_exception_info'})
+    with session_scope() as session:
+        delete_exceptions_via_full_stack_trace_id(session, full_stack_trace_id)
+    return "ok"

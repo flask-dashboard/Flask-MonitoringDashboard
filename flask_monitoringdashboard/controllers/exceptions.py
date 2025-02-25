@@ -1,5 +1,5 @@
 from flask_monitoringdashboard.database import FunctionDefinition
-from flask_monitoringdashboard.database.exception_info import get_exceptions_with_timestamps, get_exceptions_with_timestamps_and_stacktrace_id
+from flask_monitoringdashboard.database.exception_info import delete_exception, get_exceptions_with_timestamps, get_exceptions_with_timestamps_and_stacktrace_id
 from flask_monitoringdashboard.database.full_stack_trace import get_stacklines_from_full_stacktrace_id
 from flask_monitoringdashboard.database.function_definition import get_function_definition_from_id, get_function_startlineno_and_relativelineno_from_function_definition_id
 
@@ -31,6 +31,15 @@ def get_exceptions_with_timestamp(session, offset, per_page):
         }
         for exception in get_exceptions_with_timestamps(session, offset, per_page)
     ]
+
+def delete_exceptions_via_full_stack_trace_id(session, full_stack_trace_id: int) -> None:
+    """
+    Deltes the specified exception
+    :param session: session for the database
+    :param full_stack_trace: stack trace id to be deleted
+    :return: None
+    """
+    delete_exception(session, full_stack_trace_id)
 
 def get_detailed_exception_info(session, offset, per_page, endpoint_id):
     """

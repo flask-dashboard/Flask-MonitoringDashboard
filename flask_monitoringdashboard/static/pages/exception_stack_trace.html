@@ -1,23 +1,38 @@
+<modal name="'delete'" title="'Delete'">
+  <p>Are you sure you want to delete?</p>
+</modal>
 <div class="card mb-3">
     <div class="card-header"><h4>{{ title }}</h4></div>
     <div class="card-body">
         <pagination></pagination>
         <div class="card" ng-repeat="request in table" style="margin-bottom: 10px;">
             <div class="card-header">
-                <div class="row align-items-end">
+                <div class="d-flex flex-row justify-content-between">
+                <div class="d-flex flex-column">
                     <div class="col-sm"><h6>{{ request.type }}</h6></div>
                     <div class="col-sm"><h6>Number of occurences: {{ request.count }}</h6></div>
                 </div>
-                <div class="row align-items-end">
+                <div class="d-flex flex-column">
                     <div class="col-sm"><h6>{{ request.message }}</h6></div>
                     <div class="col-sm"><h6>Latest: {{ request.latest_timestamp | dateDifference }} | First: {{ request.first_timestamp | dateDifference }}</h6></div>
+                </div>
+                <div class="d-flex flex-column">
+                    <button 
+                        class="btn btn-danger" 
+                        ng-click="deleteExceptionById(request.full_stack_trace_id)">Delete</button>
+                </div>
+                <div class="d-flex flex-column">
+                    <button 
+                        class="btn btn-secondary" 
+                        ng-click="collapseAllDetails(request.full_stack_trace_id)">Collapse</button>
+                </div>
                 </div>
             </div>
             <table class="table table-bordered table-hover" width="100%" style="margin: 0;" cellspacing="0">
                 <tbody>
                     <tr ng-repeat="row in request.full_stacktrace" ng-init="key = getUniqueKey(row.function_definition_id, request.full_stack_trace_id)">
                         <td style="padding-left: 10px;">
-                            <details ng-click="getFunctionById(row.function_definition_id, request.full_stack_trace_id)">
+                            <details ng-click="getFunctionById(row.function_definition_id, request.full_stack_trace_id)" id="details_{{request.full_stack_trace_id}}">
                             <summary>{{ row.filename }} <span style="color: grey;">in</span> {{ row.function_name }} <span style="color: grey;">at</span> {{ row.line_number }} </summary>
                             <div ng-if="f_def = id2Function[key]">
                                 <pre 
