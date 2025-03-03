@@ -35,7 +35,7 @@ def get_function_startlineno_and_relativelineno_from_function_definition_id(sess
     :return: A tuple containing:
             - (int) The absolute starting line number of the function in the source file.
             - (int) The relative line number of the exception within the function.
-            Returns (None, None) if no matching data is found.
+            Returns None if no matching data is found.
     """
     result : ExceptionStackLine | None = (session.query(ExceptionStackLine)
                     .filter(ExceptionStackLine.function_definition_id == function_defintion_id)
