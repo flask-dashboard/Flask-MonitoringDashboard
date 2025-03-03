@@ -2,7 +2,7 @@
 Contains all functions that access an ExceptionInfo object.
 """
 from sqlalchemy import func, desc
-from flask_monitoringdashboard.database import ExceptionInfo, ExceptionStackLine, FullStackTrace, Request, Endpoint
+from flask_monitoringdashboard.database import ExceptionInfo, Request, Endpoint, ExceptionType, ExceptionMessage
 from flask_monitoringdashboard.core.database_pruning import delete_entries_unreferenced_by_exception_info
 def get_exception_info(session, request_id: int):
     """
