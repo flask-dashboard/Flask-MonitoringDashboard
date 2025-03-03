@@ -15,7 +15,7 @@ def get_stack_trace_by_hash(session: Session, full_stack_trace: str) -> FullStac
 
 def add_full_stack_trace(session: Session, full_stack_trace: str) -> int:
     """
-    Add a new FullStackTrace record.
+    Add a new FullStackTrace record. Returns the id.
     """
     result = FullStackTrace(
         stack_trace_hash = full_stack_trace

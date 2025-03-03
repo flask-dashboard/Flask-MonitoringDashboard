@@ -11,7 +11,7 @@ def get_exception_info(session: Session, request_id: int) -> ExceptionInfo | Non
     """
     return session.query(ExceptionInfo).filter_by(request_id=request_id).first()
     
-def add_exception_info(session: Session, request_id: int, trace_id: int, exception_type_id: int, exception_msg_id: int) -> ExceptionInfo:
+def add_exception_info(session: Session, request_id: int, trace_id: int, exception_type_id: int, exception_msg_id: int):
     """
     Add a new ExceptionInfo record.
     """
@@ -23,7 +23,6 @@ def add_exception_info(session: Session, request_id: int, trace_id: int, excepti
     )
     session.add(exception_info)
     session.commit()
-    return exception_info
 
 def count_grouped_exceptions(session: Session):
     """

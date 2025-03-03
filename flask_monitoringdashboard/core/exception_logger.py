@@ -63,4 +63,4 @@ class ExceptionLogger():
         
         exc_msg_id = add_exception_message(session, str(self.value))
         exc_type_id = add_exception_type(session, self.type.__name__)
-        _ = add_exception_info(session, request_id, trace_id, exc_type_id, exc_msg_id)
+        add_exception_info(session, request_id, trace_id, exc_type_id, exc_msg_id)
