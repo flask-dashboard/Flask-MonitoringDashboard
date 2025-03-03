@@ -6,6 +6,9 @@ export function OverviewController($scope, $http, $location, menuService, endpoi
     $scope.dashboard_version = '';
     $scope.isHits = true;
 
+    $scope.sortBy = 'name';
+    $scope.isDesc = true;
+
     $scope.table = [];
     $scope.selectedItem = 2;
 
@@ -28,21 +31,54 @@ export function OverviewController($scope, $http, $location, menuService, endpoi
         $scope.table = response.data;
     });
 
-    function getItemsForPage(pageNumber) {
-        const start = Number(pageNumber) * $scope.pageSize;
-        const end = (Number(pageNumber) + 1) * Number($scope.pageSize);
-
-        let items = $scope.table
-            .filter(item => item.name.includes($scope.searchQuery))
-        if ($scope.slectedBlueprint) {
-            items = items.filter(item => item.blueprint===$scope.slectedBlueprint)
+    function ascendingOrder(a, b){
+      if ($scope.sortBy === 'last-accessed') {
+        return Date.parse(a[$scope.sortBy]) < Date.parse(b[$scope.sortBy]) || a[$scope.sortBy] === null; //null if endpoint was never accessed
         }
+      return a[$scope.sortBy] < b[$scope.sortBy];
+    }
 
-        return items.slice(start, end);
+    function descendingOrder(a, b){
+        return ascendingOrder(b, a);
+    }
+    
+    function sortItems(items){
+      return $scope.isDesc ? items.sort(descendingOrder) : items.sort(ascendingOrder)
+    }
+
+    function getItemsForPage(pageNumber) {
+        const start = pageNumber * Number($scope.pageSize);
+        const end = (pageNumber + 1) * Number($scope.pageSize);
+  
+        let items = $scope.table
+            .filter(item => item.name.includes($scope.searchQuery));
+
+        if ($scope.slectedBlueprint) {
+            items = items.filter(item => item.blueprint===$scope.slectedBlueprint);
+        }
+    
+        return sortItems(items).slice(start, end);
+    }
+
+    $scope.changeSortingOrder = function (column) {
+        if (column !== $scope.sortBy){
+            $scope.isDesc = true;
+            $scope.sortBy = column;
+            return;
+        }
+        $scope.isDesc = !$scope.isDesc;
     }
 
     $scope.getFilteredItems = function () {
         return getItemsForPage($scope.currentPage);
+    }
+
+    $scope.getSortArrowClassName = function (column) {
+      return {
+        'rotate-up': !$scope.isDesc && $scope.sortBy === column,
+        'rotate-down': $scope.isDesc && $scope.sortBy === column,
+        'text-gray': $scope.sortBy !== column 
+      }
     }
 
     $scope.canGoBack = function () {

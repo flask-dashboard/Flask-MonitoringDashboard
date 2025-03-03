@@ -106,3 +106,7 @@ flask_monitoringdashboard/make_requests.py
 flask_monitoringdashboard/session_test.py
 flask_monitoringdashboard/frontend/node_modules/
 frontend/build/
+
+# webpack generated
+flask_monitoringdashboard/static/css/main.css
+flask_monitoringdashboard/static/js/app.js
