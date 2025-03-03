@@ -23,11 +23,11 @@ def prune_database_older_than_weeks(weeks_to_keep, delete_custom_graph_data):
         if delete_custom_graph_data:
             session.query(CustomGraphData).filter(CustomGraphData.time < date_to_delete_from).delete()
             
-        delete_unreferenced_entries(session)
+        delete_entries_unreferenced_by_exception_info(session)
 
         session.commit()
 
-def delete_unreferenced_entries(session):
+def delete_entries_unreferenced_by_exception_info(session):
     """Delete FullStackTraces, ExceptionStackLines, FunctionDefinitions that are not referenced by any ExceptionInfos"""
 
     # Find and delete FullStackTraces (along with their ExceptionStackLines) that are not referenced by any ExceptionInfos
