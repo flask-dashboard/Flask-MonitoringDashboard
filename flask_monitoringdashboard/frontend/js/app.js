@@ -23,7 +23,7 @@ import moment from 'moment';
 window.moment = moment;
 
 import { OverviewController } from "./controllers/OverviewController";
-import { ExceptionController } from "./controllers/exceptionInfo";
+import { ExceptionController } from "./controllers/exception";
 import { EndpointExceptionController } from "./controllers/endpointException";
 import { HourlyLoadController } from "./controllers/hourlyLoad";
 import { MultiVersionController } from "./controllers/multiVersion";
@@ -162,7 +162,7 @@ app.config(['$locationProvider', '$routeProvider', function ($locationProvider, 
                 'endpointService', 'formService', EndpointGroupedProfilerController]
         })
         .when('/endpoint/:endpointId/exceptions', {
-            templateUrl: 'static/pages/exception_stack_trace.html',
+            templateUrl: 'static/pages/exceptions.html',
             controller: ['$scope', '$http', 'menuService',
                 'paginationService', 'endpointService', EndpointExceptionController]
         })
