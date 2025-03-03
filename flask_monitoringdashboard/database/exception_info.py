@@ -1,10 +1,9 @@
 """
 Contains all functions that access an ExceptionInfo object.
 """
-from os import walk
 from sqlalchemy import func, desc
 from flask_monitoringdashboard.database import ExceptionInfo, ExceptionStackLine, FullStackTrace, Request, Endpoint
-from flask_monitoringdashboard.core.database_pruning import delete_unreferenced_entries
+from flask_monitoringdashboard.core.database_pruning import delete_entries_unreferenced_by_exception_info
 def get_exception_info(session, request_id: int):
     """
     Retrieve an ExceptionInfo record by request_id.
@@ -99,12 +98,11 @@ def delete_exception(session, full_stack_trace_id: int) -> None:
     :param full_stack_trace_id: the stack trace id
     :return: None
     """
-    session.query(ExceptionStackLine).filter(ExceptionStackLine.full_stack_trace_id == full_stack_trace_id).delete()
-    result = (session.query(FullStackTrace).filter(FullStackTrace.id == full_stack_trace_id).all())
-    for stack_trace in result:
-        session.delete(stack_trace)
-    delete_unreferenced_entries(session)
-    session.query(ExceptionInfo).filter(ExceptionInfo.full_stack_trace_id == full_stack_trace_id).delete()
+    (session
+        .query(ExceptionInfo)
+        .filter(ExceptionInfo.full_stack_trace_id == full_stack_trace_id)
+        .delete())
+    delete_entries_unreferenced_by_exception_info(session)
     session.commit()
 
 def get_exceptions_with_timestamps_and_stacktrace_id(session, offset, per_page, endpoint_id):

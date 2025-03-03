@@ -9,8 +9,6 @@ export function EndpointExceptionController ($scope, $http, menuService, paginat
     endpointService.reset();
     menuService.reset('endpoint_exception');
     $scope.id2Function = {};
-    $scope.childKey = 0;
-    $scope.stackTraceToDelete = undefined;
 
     $scope.table = [];
 

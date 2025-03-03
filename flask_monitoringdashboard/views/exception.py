@@ -69,7 +69,7 @@ def get_function_definition_for_exception(function_id, full_stack_trace_id):
 @blueprint.route('/api/exception_info/<int:full_stack_trace_id>', methods=['DELETE'])
 @secure
 def delete_exception(full_stack_trace_id: int):
-    post_to_back_if_telemetry_enabled(**{'name': 'delete_exception_info'})
+    post_to_back_if_telemetry_enabled(**{'name': 'delete_exception'})
     with session_scope() as session:
         delete_exceptions_via_full_stack_trace_id(session, full_stack_trace_id)
     return "ok"

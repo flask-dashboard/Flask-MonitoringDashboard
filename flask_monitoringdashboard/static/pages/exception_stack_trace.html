@@ -1,6 +1,3 @@
-<modal name="'delete'" title="'Delete'">
-  <p>Are you sure you want to delete?</p>
-</modal>
 <div class="card mb-3">
     <div class="card-header"><h4>{{ title }}</h4></div>
     <div class="card-body">
@@ -34,7 +31,9 @@
                 <tbody>
                     <tr ng-repeat="row in request.full_stacktrace" ng-init="key = getUniqueKey(row.function_definition_id, request.full_stack_trace_id)">
                         <td style="padding-left: 10px;">
-                            <details ng-click="getFunctionById(row.function_definition_id, request.full_stack_trace_id)" id="details_{{request.full_stack_trace_id}}">
+                            <details 
+                                ng-click="getFunctionById(row.function_definition_id, request.full_stack_trace_id)" 
+                                id="details_{{request.full_stack_trace_id}}">
                             <summary>{{ row.filename }} <span style="color: grey;">in</span> {{ row.function_name }} <span style="color: grey;">at</span> {{ row.line_number }} </summary>
                             <div ng-if="f_def = id2Function[key]">
                                 <pre 
