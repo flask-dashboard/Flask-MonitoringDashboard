@@ -29,12 +29,12 @@ export function EndpointExceptionController ($scope, $http, menuService, paginat
             });
     };
 
-    $scope.getUniqueKey = function (function_definition_id, full_stack_trace_id) {
-        return `code_${function_definition_id}_${full_stack_trace_id}`;
+    $scope.getUniqueKey = function (function_definition_id, full_stack_trace_id, row_index) {
+        return `code_${function_definition_id}_${full_stack_trace_id}_${row_index}`; // the row_index is important when dealing with recursive functions
     };
 
-    $scope.getFunctionById = function (function_id, full_stack_trace_id) {
-        let key = $scope.getUniqueKey(function_id, full_stack_trace_id);
+    $scope.getFunctionById = function (function_id, full_stack_trace_id, row_index) {
+        let key = $scope.getUniqueKey(function_id, full_stack_trace_id, row_index);
         
         if ($scope.id2Function[key] === undefined){
             $http.get(`api/function_definition/${function_id}/${full_stack_trace_id}`)
