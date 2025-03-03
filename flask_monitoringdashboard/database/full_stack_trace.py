@@ -1,7 +1,8 @@
-from flask_monitoringdashboard.database import CodeLine, ExceptionStackLine, FullStackTrace, code_line
+from sqlalchemy.orm import Session
+from flask_monitoringdashboard.database import ExceptionStackLine, FullStackTrace
 from sqlalchemy import desc
 
-def get_stack_trace_by_hash(session, full_stack_trace):
+def get_stack_trace_by_hash(session: Session, full_stack_trace: str) -> FullStackTrace | None:
     """
     Get FullStackTrace record by its stack_trace_hash.
     """
@@ -12,7 +13,7 @@ def get_stack_trace_by_hash(session, full_stack_trace):
     )
     return result
 
-def add_full_stack_trace(session, full_stack_trace: str):
+def add_full_stack_trace(session: Session, full_stack_trace: str) -> int:
     """
     Add a new FullStackTrace record.
     """
@@ -22,10 +23,10 @@ def add_full_stack_trace(session, full_stack_trace: str):
     session.add(result)
     session.flush()
 
-    return result.id
+    return int(result.id)
 
 
-def get_stacklines_from_full_stacktrace_id(session, full_stack_trace_id):
+def get_stacklines_from_full_stacktrace_id(session: Session, full_stack_trace_id: int) -> list[ExceptionStackLine]:
     """
     Gets all the stack lines referred to by a stacktrace.
     :param session: session for the database

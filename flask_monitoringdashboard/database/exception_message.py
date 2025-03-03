@@ -1,7 +1,7 @@
 
 from flask_monitoringdashboard.database import ExceptionMessage
 
-def add_exception_message(session, message):
+def add_exception_message(session, message) -> int:
         exception_message = (session.query(ExceptionMessage)
                              .filter_by(message=message)
                              .first())

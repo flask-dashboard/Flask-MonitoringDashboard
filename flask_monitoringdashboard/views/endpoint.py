@@ -22,7 +22,6 @@ from flask_monitoringdashboard.database.endpoint import (
     get_endpoints,
     get_endpoints_hits,
 )
-    
 @blueprint.route('/api/overview', methods=['GET', 'POST'])
 @secure
 def get_overview():

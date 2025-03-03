@@ -10,14 +10,14 @@ from flask_monitoringdashboard.database import session_scope
 from flask_monitoringdashboard.database.exception_info import count_grouped_exceptions, count_endpoint_grouped_exceptions
 
 
-@blueprint.route('/api/exception_info/<offset>/<per_page>')
+@blueprint.route('/api/exception_info/<int:offset>/<int:per_page>')
 @secure
-def get_exception_info(offset, per_page):
+def get_exception_info(offset: int, per_page: int):
     """
     Get information about all the exceptions that have occured for all endpoint
     :return: A JSON-list with a JSON-object per exception-group (grouped by endpoint and stack trace)
     """
-    post_to_back_if_telemetry_enabled(**{'name': 'exception_info'}) # Ved ikke 100% hvorfor, tror det er business behov, ikke et funktionelt behov som sådan
+    post_to_back_if_telemetry_enabled(**{'name': 'exception_info'})
     with session_scope() as session:
         exceptions = get_exceptions_with_timestamp(session, offset, per_page)
         
@@ -32,14 +32,14 @@ def num_exceptions():
     
 @blueprint.route('/api/num_exceptions/<int:endpoint_id>')
 @secure
-def num_endpoint_exceptions(endpoint_id):
+def num_endpoint_exceptions(endpoint_id: int):
     post_to_back_if_telemetry_enabled(**{'name': f'num_endpoint_exceptions'})
     with session_scope() as session:
         return jsonify(count_endpoint_grouped_exceptions(session, endpoint_id))
 
-@blueprint.route('/api/detailed_exception_info/<int:endpoint_id>/<offset>/<per_page>')
+@blueprint.route('/api/detailed_exception_info/<int:endpoint_id>/<int:offset>/<int:per_page>')
 @secure
-def get_detailed_exception_info_endpoint(endpoint_id, offset, per_page):
+def get_detailed_exception_info_endpoint(endpoint_id: int, offset: int, per_page: int):
     """
     Get information about all the exceptions that have occured for a specific endpoint
     :return: A JSON-list with a JSON-object per traceback id

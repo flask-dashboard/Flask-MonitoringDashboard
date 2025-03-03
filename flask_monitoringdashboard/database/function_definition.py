@@ -1,14 +1,15 @@
-from flask_monitoringdashboard.database import ExceptionStackLine, FunctionDefinition
+from sqlalchemy.orm import Session
+from flask_monitoringdashboard.database import CodeLine, ExceptionStackLine, FunctionDefinition
 
 
-def add_function_definition(session, f_def: FunctionDefinition):
+def add_function_definition(session : Session, f_def: FunctionDefinition) -> int:
     """
     Adds a FunctionDefinition to the database if it does not already exist.
     :param session: Session for the database
     :param f_def: The FunctionDefinition object to be added
     :return: The ID of the existing or newly added FunctionDefinition.
     """
-    result = (session.query(FunctionDefinition)
+    result : FunctionDefinition | None = (session.query(FunctionDefinition)
             .filter(FunctionDefinition.function_hash == f_def.function_hash)
             .first())
     if result is not None:
@@ -18,12 +19,12 @@ def add_function_definition(session, f_def: FunctionDefinition):
         session.flush()
         return f_def.id
 
-def get_function_definition_from_id(session, function_id):
+def get_function_definition_from_id(session: Session, function_id: int) -> FunctionDefinition | None:
     return (session.query(FunctionDefinition)
             .filter(FunctionDefinition.id == function_id)
             .first())
 
-def get_function_startlineno_and_relativelineno_from_function_definition_id(session, function_defintion_id, full_stack_trace_id):
+def get_function_startlineno_and_relativelineno_from_function_definition_id(session : Session, function_defintion_id : int, full_stack_trace_id : int) -> tuple[int, int] | None:
     """
     Retrieves the starting line number of a function and the relative line number of an exception 
     from the ExceptionStackLine table.
@@ -40,10 +41,9 @@ def get_function_startlineno_and_relativelineno_from_function_definition_id(sess
                     .filter(ExceptionStackLine.function_definition_id == function_defintion_id)
                     .filter(ExceptionStackLine.full_stack_trace_id == full_stack_trace_id)
                     .first())
-    
-    if result is not None:
+    if result is not None and isinstance(result.code, CodeLine):
         return result.code.line_number, result.relative_line_number
     else:
-        return None, None
+        return None
 
 

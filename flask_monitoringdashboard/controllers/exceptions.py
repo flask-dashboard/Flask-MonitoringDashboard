@@ -1,9 +1,10 @@
+from sqlalchemy.orm import Session
 from flask_monitoringdashboard.database import FunctionDefinition
 from flask_monitoringdashboard.database.exception_info import delete_exception, get_exceptions_with_timestamps, get_exceptions_with_timestamps_and_stacktrace_id
 from flask_monitoringdashboard.database.full_stack_trace import get_stacklines_from_full_stacktrace_id
 from flask_monitoringdashboard.database.function_definition import get_function_definition_from_id, get_function_startlineno_and_relativelineno_from_function_definition_id
 
-def get_exceptions_with_timestamp(session, offset, per_page):
+def get_exceptions_with_timestamp(session: Session, offset: int, per_page: int):
     """
     Gets information about exceptions including timestamps of latest and first occurence. 
     :param session: session for the database
@@ -32,7 +33,7 @@ def get_exceptions_with_timestamp(session, offset, per_page):
         for exception in get_exceptions_with_timestamps(session, offset, per_page)
     ]
 
-def delete_exceptions_via_full_stack_trace_id(session, full_stack_trace_id: int) -> None:
+def delete_exceptions_via_full_stack_trace_id(session: Session, full_stack_trace_id: int) -> None:
     """
     Deltes the specified exception
     :param session: session for the database
@@ -41,7 +42,7 @@ def delete_exceptions_via_full_stack_trace_id(session, full_stack_trace_id: int)
     """
     delete_exception(session, full_stack_trace_id)
 
-def get_detailed_exception_info(session, offset, per_page, endpoint_id):
+def get_detailed_exception_info(session: Session, offset: int, per_page: int, endpoint_id: int):
     """
     Gets detailed information about exceptions on an endpoint (including stack trace).
     :param session: session for the database
@@ -81,7 +82,7 @@ def get_detailed_exception_info(session, offset, per_page, endpoint_id):
         }
         for exception in get_exceptions_with_timestamps_and_stacktrace_id(session, offset, per_page, endpoint_id)]
 
-def get_exception_function_definition(session, function_id, stack_trace_id):
+def get_exception_function_definition(session: Session, function_id: int, stack_trace_id: int):
     """
     Retrieves the source code of the function where an exception occurred, the starting line number of the function in the source file, and the relative line number of the exception.
     :param session: session for the database
@@ -93,8 +94,10 @@ def get_exception_function_definition(session, function_id, stack_trace_id):
              - exception_line_number (int)
     """
     result : FunctionDefinition | None = get_function_definition_from_id(session, function_id)
-    file_lineno, relative_lineno = get_function_startlineno_and_relativelineno_from_function_definition_id(session, function_id, stack_trace_id)
-    if result is None or file_lineno is None or relative_lineno is None: return []
+    linenumbers = get_function_startlineno_and_relativelineno_from_function_definition_id(session, function_id, stack_trace_id)
+    if result is None or linenumbers is None: 
+        return {}
+    file_lineno, relative_lineno = linenumbers
     startlineno = file_lineno - relative_lineno
     return {
             'start_line_number': startlineno,

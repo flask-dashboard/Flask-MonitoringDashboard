@@ -2,11 +2,9 @@
     Contains all functions that are used to track the performance of the flask-application.
     See init_measurement() for more detailed info.
 """
-import linecache
 import sys
 import time
 from functools import wraps
-import traceback
 from flask_monitoringdashboard.core.exception_logger import ExceptionLogger
 from werkzeug.exceptions import HTTPException
 
@@ -21,10 +19,6 @@ from flask_monitoringdashboard.core.rules import get_rules
 from flask_monitoringdashboard.database import session_scope
 from flask_monitoringdashboard.database.endpoint import get_endpoint_by_name
 
-def print_fs(lst: list[traceback.FrameSummary]):
-    for fs in lst:
-        print(f"code: {linecache.getline(fs.filename, fs.lineno)}, name {fs.name}")
-
 def init_measurement():
     """
     This should be added to the list of functions that are executed before the first request.
@@ -35,7 +29,6 @@ def init_measurement():
         for rule in get_rules():
             endpoint = get_endpoint_by_name(session, rule.endpoint)
             add_decorator(endpoint)
-
 
 def add_decorator(endpoint):
     """
@@ -74,7 +67,7 @@ def is_valid_status_code(status_code):
     return type(status_code) == int and 100 <= status_code < 600
 
 
-def status_code_from_response(result) -> int:
+def status_code_from_response(result):
     """
     Extracts the status code from the result that was returned from the route handler.
 
@@ -101,12 +94,6 @@ def status_code_from_response(result) -> int:
 
     return status_code
 
-def ptb(tb):
-    fsl : list[traceback.FrameSummary] = traceback.extract_tb(tb)
-    sl : list[traceback.FrameSummary] = traceback.extract_stack()
-    print_fs(sl)
-    print_fs(fsl)
-
 def evaluate(route_handler, args, kwargs):
     """
     Invokes the given route handler and extracts the return value, status_code and the exception if it was raised
@@ -129,7 +116,6 @@ def evaluate(route_handler, args, kwargs):
         return None, 500, (ExceptionLogger(exc_info) if exc_info[0] is not None else None)
 
 
-
 def add_wrapper1(endpoint, fun):
     @wraps(fun)
     def wrapper(*args, **kwargs):
@@ -140,7 +126,7 @@ def add_wrapper1(endpoint, fun):
         duration = time.time() - start_time
         start_performance_thread(endpoint, duration, status_code, e_logger)
 
-        if e_logger:
+        if e_logger is not None:
             raise e_logger.value
 
         return result
@@ -160,7 +146,7 @@ def add_wrapper2(endpoint, fun):
         duration = time.time() - start_time
         outlier.stop(duration, status_code, e_logger)
 
-        if e_logger:
+        if e_logger is not None:
             raise e_logger.value
 
         return result
@@ -180,8 +166,8 @@ def add_wrapper3(endpoint, fun):
         duration = time.time() - start_time
         thread.stop(duration, status_code, e_logger)
 
-        #if raised_exception:
-        #    raise raised_exception
+        if e_logger is not None:
+            raise e_logger.value
 
         return result
 

@@ -14,7 +14,6 @@ The dashboard with the results that are collected can be found at:
 
 import os
 
-import traceback
 from flask import Blueprint
 
 from flask_monitoringdashboard.core.config import Config, TelemetryConfig

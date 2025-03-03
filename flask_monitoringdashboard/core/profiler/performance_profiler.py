@@ -11,7 +11,7 @@ class PerformanceProfiler(BaseProfiler):
     Used when monitoring-level == 1
     """
 
-    def __init__(self, endpoint, ip, duration, group_by, e_logger, status_code=200):
+    def __init__(self, endpoint, ip, duration, group_by, e_logger: ExceptionLogger | None, status_code=200):
         super(PerformanceProfiler, self).__init__(endpoint)
         self._ip = ip
         self._duration = duration * 1000  # Conversion from sec to ms

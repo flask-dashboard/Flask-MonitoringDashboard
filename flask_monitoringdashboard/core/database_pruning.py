@@ -1,5 +1,7 @@
 from datetime import datetime, timedelta
 
+from sqlalchemy.orm import Session
+
 from flask_monitoringdashboard.core.custom_graph import scheduler
 from flask_monitoringdashboard.database import ( 
     session_scope, 
@@ -27,7 +29,7 @@ def prune_database_older_than_weeks(weeks_to_keep, delete_custom_graph_data):
 
         session.commit()
 
-def delete_entries_unreferenced_by_exception_info(session):
+def delete_entries_unreferenced_by_exception_info(session: Session):
     """Delete FullStackTraces, ExceptionStackLines, FunctionDefinitions that are not referenced by any ExceptionInfos"""
 
     # Find and delete FullStackTraces (along with their ExceptionStackLines) that are not referenced by any ExceptionInfos

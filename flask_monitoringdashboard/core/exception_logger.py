@@ -3,6 +3,8 @@ import traceback
 import hashlib
 
 from types import FrameType, TracebackType
+
+from sqlalchemy.orm import Session
 from flask_monitoringdashboard.database import CodeLine, FunctionDefinition
 from flask_monitoringdashboard.database.exception_info import add_exception_info
 from flask_monitoringdashboard.database.full_stack_trace import add_full_stack_trace, get_stack_trace_by_hash
@@ -38,12 +40,13 @@ class ExceptionLogger():
         self.value : BaseException = exc_info[1]
         self.tb : TracebackType = exc_info[2]
 
-    def log(self, request_id: int, session):
+    def log(self, request_id: int, session: Session):
         hashed_trace = hash_stack_trace(self)
         existing_trace = get_stack_trace_by_hash(session, hashed_trace)
+        trace_id: int = 0
         
         if existing_trace:
-            trace_id = existing_trace.id
+            trace_id = int(existing_trace.id)
         else:
             trace_id = add_full_stack_trace(session, hashed_trace)
             
@@ -60,4 +63,4 @@ class ExceptionLogger():
         
         exc_msg_id = add_exception_message(session, str(self.value))
         exc_type_id = add_exception_type(session, self.type.__name__)
-        add_exception_info(session, request_id, trace_id, exc_type_id, exc_msg_id)
+        _ = add_exception_info(session, request_id, trace_id, exc_type_id, exc_msg_id)
