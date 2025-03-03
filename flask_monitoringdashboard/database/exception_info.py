@@ -9,7 +9,12 @@ def get_exception_info(session: Session, request_id: int) -> ExceptionInfo | Non
     """
     Retrieve an ExceptionInfo record by request_id.
     """
-    return session.query(ExceptionInfo).filter_by(request_id=request_id).first()
+    result = ( 
+        session.query(ExceptionInfo)
+        .filter_by(request_id=request_id)
+        .first()
+    )
+    return result
     
 def add_exception_info(session: Session, request_id: int, trace_id: int, exception_type_id: int, exception_msg_id: int):
     """
