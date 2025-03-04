@@ -300,6 +300,7 @@ class ExceptionStackLine(Base):
     __tablename__ = '{}ExceptionStackLine'.format(config.table_prefix)
     
     full_stack_trace_id = Column(Integer, ForeignKey(FullStackTrace.id), primary_key=True)
+    full_stack_trace = relationship(FullStackTrace)
     """Request that belongs to this exc_stack_line."""
     
     code_id = Column(Integer, ForeignKey(CodeLine.id))
@@ -361,4 +362,4 @@ def row2dict(row):
 
 
 def get_tables():
-    return [Endpoint, Request, Outlier, StackLine, CodeLine, CustomGraph, CustomGraphData, ExceptionInfo, ExceptionStackLine]
+    return [Endpoint, Request, Outlier, StackLine, CodeLine, CustomGraph, CustomGraphData, ExceptionInfo, ExceptionStackLine, FullStackTrace, FunctionDefinition, ExceptionType, ExceptionMessage]

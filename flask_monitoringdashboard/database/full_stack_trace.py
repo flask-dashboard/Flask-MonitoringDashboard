@@ -14,13 +14,18 @@ def get_stack_trace_by_hash(session: Session, full_stack_trace: str) -> Union[Fu
     )
     return result
 
-def add_full_stack_trace(session: Session, full_stack_trace: str) -> int:
+def add_full_stack_trace(session: Session, stack_trace_hash: str) -> int:
     """
     Add a new FullStackTrace record. Returns the id.
     """
+    existing_trace = get_stack_trace_by_hash(session, stack_trace_hash)
+    if existing_trace is not None:
+        return int(existing_trace.id)
+
     result = FullStackTrace(
-        stack_trace_hash = full_stack_trace
-    )
+        stack_trace_hash = stack_trace_hash
+    )    
+    
     session.add(result)
     session.flush()
 

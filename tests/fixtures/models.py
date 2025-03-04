@@ -17,6 +17,12 @@ from flask_monitoringdashboard.database import (
     CustomGraph,
     CustomGraphData,
     User,
+    ExceptionInfo,
+    ExceptionType,
+    ExceptionMessage,
+    ExceptionStackLine,
+    FullStackTrace,
+    FunctionDefinition,
 )
 from tests.fixtures.database import ModelFactory
 
@@ -144,6 +150,49 @@ class PathHashFactory(factory.Factory):
         obj._string_hash = kwargs.get('_string_hash')
         return obj
 
+class ExceptionMessageFactory(ModelFactory):
+    class Meta:
+        model = ExceptionMessage
+
+    message = factory.Faker('sentence')
+
+class ExceptionTypeFactory(ModelFactory):
+    class Meta:
+        model = ExceptionType
+
+    type = factory.Faker('word')
+
+class FunctionDefinitionFactory(ModelFactory):
+    class Meta:
+        model = FunctionDefinition
+    
+    function_code = 'def fun(): return 0'
+    function_hash = factory.LazyFunction(lambda: str(uuid.uuid4()))
+
+class FullStackTraceFactory(ModelFactory):
+    class Meta:
+        model = FullStackTrace
+
+    stack_trace_hash = factory.LazyFunction(lambda: str(uuid.uuid4()))
+
+class ExceptionStackLineFactory(ModelFactory):
+    class Meta:
+        model = ExceptionStackLine
+    
+    full_stack_trace = None
+    code = factory.SubFactory(CodeLineFactory)
+    position = 0
+    function_definition = None
+    relative_line_number = factory.LazyFunction(lambda: int(random() * 100))
+
+class ExceptionInfoFactory(ModelFactory):
+    class Meta:
+        model = ExceptionInfo
+    
+    request = None
+    exception_msg = None
+    exception_type = None
+    full_stack_trace = None
 
 register(UserFactory, 'user')
 register(UserFactory, 'another_user')
@@ -161,3 +210,10 @@ register(CustomGraphDataFactory, 'custom_graph_data')
 register(GroupedStackLineFactory, 'grouped_stack_line')
 register(StringHashFactory, 'string_hash')
 register(PathHashFactory, 'path_hash')
+
+register(ExceptionMessageFactory, 'exception_message')
+register(ExceptionTypeFactory, 'exception_type')
+register(FunctionDefinitionFactory, 'function_definition')
+register(FullStackTraceFactory, 'full_stack_trace')
+register(ExceptionStackLineFactory, 'exception_stack_line', function_definition=LazyFixture('function_definition'), full_stack_trace=LazyFixture('full_stack_trace'))
+register(ExceptionInfoFactory, 'exception_info', exception_msg=LazyFixture('exception_message'), exception_type=LazyFixture('exception_type'), full_stack_trace=LazyFixture('full_stack_trace'))
