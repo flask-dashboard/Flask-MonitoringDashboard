@@ -1,11 +1,9 @@
 from datetime import datetime, timedelta
-
 from sqlalchemy.orm import Session
-
 from flask_monitoringdashboard.core.custom_graph import scheduler
 from flask_monitoringdashboard.database import ( 
     session_scope, 
-    Request, Outlier, StackLine, CustomGraphData, ExceptionInfo, FullStackTrace, ExceptionStackLine, FunctionDefinition
+    CustomGraphData, ExceptionInfo, ExceptionMessage, ExceptionStackLine, ExceptionType, FullStackTrace, FunctionDefinition, Outlier, Request, StackLine
 )
 
 def prune_database_older_than_weeks(weeks_to_keep, delete_custom_graph_data):
@@ -30,7 +28,20 @@ def prune_database_older_than_weeks(weeks_to_keep, delete_custom_graph_data):
         session.commit()
 
 def delete_entries_unreferenced_by_exception_info(session: Session):
-    """Delete FullStackTraces, ExceptionStackLines, FunctionDefinitions that are not referenced by any ExceptionInfos"""
+    """Delete ExceptionTypes, ExceptionMessages, FullStackTraces, ExceptionStackLines, FunctionDefinitions that are not referenced by any ExceptionInfos"""
+    # Delete ExceptionTypes that are not referenced by any ExceptionInfos
+    session.query(ExceptionType).filter(
+        ~session.query(ExceptionInfo)
+        .filter(ExceptionInfo.exception_type_id == ExceptionType.id)
+        .exists()
+    ).delete(synchronize_session=False)
+
+    # Delete ExceptionMessages that are not referenced by any ExceptionInfos
+    session.query(ExceptionMessage).filter(
+        ~session.query(ExceptionInfo)
+        .filter(ExceptionInfo.exception_msg_id == ExceptionMessage.id)
+        .exists()
+    ).delete(synchronize_session=False)
 
     # Find and delete FullStackTraces (along with their ExceptionStackLines) that are not referenced by any ExceptionInfos
     full_stack_traces_to_delete = session.query(FullStackTrace).filter(
@@ -44,14 +55,11 @@ def delete_entries_unreferenced_by_exception_info(session: Session):
         session.delete(full_stack_trace)
         
     # Find and delete FunctionDefenitions that are not referenced by any ExceptionStackLines
-    function_definitions_to_delete = session.query(FunctionDefinition).filter(
+    session.query(FunctionDefinition).filter(
         ~session.query(ExceptionStackLine)
         .filter(ExceptionStackLine.function_definition_id == FunctionDefinition.id)
         .exists()
-    ).all()
-    
-    for function_definition in function_definitions_to_delete:
-        session.delete(function_definition)
+    ).delete(synchronize_session=False)
 
 
 def add_background_pruning_job(weeks_to_keep, delete_custom_graph_data, **schedule):
