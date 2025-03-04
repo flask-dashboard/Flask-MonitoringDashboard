@@ -5,15 +5,15 @@ from flask_monitoringdashboard.database.exception_info import delete_exception, 
 from flask_monitoringdashboard.database.full_stack_trace import get_stacklines_from_full_stacktrace_id
 from flask_monitoringdashboard.database.function_definition import get_function_definition_from_id, get_function_startlineno_and_relativelineno_from_function_definition_id
 
+app_dir = os.path.dirname(os.path.abspath(sys.argv[0]))
+app_parent_dir = os.path.dirname(app_dir) + '/'
+    
 def get_relative_file_path_if_in_app(file_path):
     """
     Returns the relative file path if the file is within the application directory. Otherwise, returns the full file path.
     :param file_path: The full file path to be checked.
     :return: The relative file path if the file is inside the app directory, otherwise the full file path.
     """
-    app_dir = os.path.dirname(os.path.abspath(sys.argv[0]))
-    app_parent_dir = os.path.dirname(app_dir) + '/'
-
     if file_path.startswith(app_parent_dir):
         return file_path[len(app_parent_dir):]
     return file_path

@@ -34,7 +34,7 @@
                             <details 
                                 ng-click="getFunctionById(row.function_definition_id, request.full_stack_trace_id, $index)" 
                                 id="details_{{request.full_stack_trace_id}}">
-                            <summary>{{ row.filename }} <span style="color: grey;">in</span> {{ row.function_name }} <span style="color: grey;">at</span> {{ row.line_number }} </summary>
+                            <summary>{{ row.filename }} <span style="color: grey;">in</span> {{ row.function_name }} <span style="color: grey;">at line</span> {{ row.line_number }} </summary>
                             <div ng-if="f_def = id2Function[key]">
                                 <pre 
                                     class="line-numbers" 
