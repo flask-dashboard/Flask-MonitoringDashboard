@@ -1,7 +1,7 @@
 <h1 align="center">
     <img src="/docs/img/header.png" width="600">
     <br>
-    Flask Monitoring Dashboard
+    Flask Monitoring Dashboard 
     <br>
 </h1>
 
