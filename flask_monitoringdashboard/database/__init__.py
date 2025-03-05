@@ -279,6 +279,7 @@ class ExceptionInfo(Base):
     exception_msg = relationship(ExceptionMessage)
     
     full_stack_trace_id = Column(Integer, ForeignKey(FullStackTrace.id), nullable=False)
+    full_stack_trace = relationship(FullStackTrace) 
 
 class FunctionDefinition(Base):
     """Table for storing entire functions for better logging"""
