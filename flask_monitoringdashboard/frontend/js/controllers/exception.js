@@ -1,3 +1,5 @@
+import { coerceString } from "plotly.js-cartesian-dist";
+
 export function ExceptionController($scope, $http, $location, menuService, paginationService, endpointService) {
     endpointService.reset();
     menuService.reset('exception_overview'); 
@@ -6,8 +8,7 @@ export function ExceptionController($scope, $http, $location, menuService, pagin
     $scope.table = [];
 
     const handleKeyDown = function (key) {
-        const keycode = key.keyCode;
-        if(keycode==13) {
+        if(key.key === "Enter") {
             $scope.query();
         }
     }
@@ -42,7 +43,7 @@ export function ExceptionController($scope, $http, $location, menuService, pagin
     });
 
     paginationService.init('exceptions');
-    $http.get('api/num_exceptions').then(function (response) {
+    $http.get('api/num_exceptions'+window.location.search).then(function (response) {
         paginationService.setTotal(response.data);
     });
 
@@ -86,6 +87,9 @@ export function ExceptionController($scope, $http, $location, menuService, pagin
     paginationService.onReload = function () {
         $http.get($scope.getEndpoint()+window.location.search).then(function (response) {
             $scope.table = response.data;
+        });
+        $http.get('api/num_exceptions'+window.location.search).then(function (response) {
+            paginationService.total = response.data;
         });
     };
 };

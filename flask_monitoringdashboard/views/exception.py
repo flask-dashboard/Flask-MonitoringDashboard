@@ -38,7 +38,7 @@ def get_exception_info(offset: int, per_page: int):
 def num_exceptions():
     post_to_back_if_telemetry_enabled(**{"name": f"num_exceptions"})
     with session_scope() as session:
-        return jsonify(count_grouped_exceptions(session))
+        return jsonify(count_grouped_exceptions(session, ExceptionFilter(request)))
 
 
 @blueprint.route("/api/num_exceptions/<int:endpoint_id>")

@@ -27,6 +27,7 @@ def get_exception_groups(session: Session, offset: int, per_page: int, filter: E
     :param session: session for the database
     :param offset: number of items to skip
     :param per_page: number of items to return
+    :param filter: the query parameter filter
     :return: A list of dicts. Each dict contains:
              - exception_type (str)
              - exception_msg (str)

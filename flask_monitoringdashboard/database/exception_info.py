@@ -46,16 +46,18 @@ def add_exception_info(
     session.commit()
 
 
-def count_grouped_exceptions(session: Session):
+def count_grouped_exceptions(session: Session, filter: ExceptionFilter):
     """
     Count the number of different kinds of exceptions grouped by endpoint and stack trace snapshot.
     :param session: session for the database
+    :param filter: the query parameter filter
     :return: Integer (total number of groups of exceptions)
     """
     return (
         session.query(ExceptionInfo.request_id)
         .join(Request, ExceptionInfo.request)
         .join(Endpoint, Request.endpoint)
+        .filter(filter.get_filter())
         .group_by(Endpoint.name, ExceptionInfo.stack_trace_snapshot_id)
         .count()
     )
@@ -84,6 +86,7 @@ def get_exceptions_with_timestamps(session: Session, offset: int, per_page: int,
     :param session: session for the database
     :param offset: number of items to skip
     :param per_page: number of items to return
+    :param filter: the query parameter filter
     :return: A list of dicts. Each dict contains:
              - exception_type (str)
              - exception_msg (str)
