@@ -28,7 +28,9 @@ def get_exception_info(offset: int, per_page: int):
     """
     post_to_back_if_telemetry_enabled(**{"name": "exception_info"})
     with session_scope() as session:
-        exceptions = get_exception_groups(session, offset, per_page, ExceptionFilter(request))
+        exceptions = get_exception_groups(
+            session, offset, per_page, ExceptionFilter(request)
+        )
 
         return jsonify(exceptions)
 

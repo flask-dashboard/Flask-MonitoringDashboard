@@ -5,7 +5,7 @@ from sqlalchemy.sql.expression import ColumnExpressionArgument
 from flask_monitoringdashboard.database import Endpoint, ExceptionMessage, ExceptionType
 
 
-class ExceptionFilter():
+class ExceptionFilter:
     def __init__(self, req: Request):
         self.messageFilter: str = req.args.get("message", "", str)
         self.typeFilter: str = req.args.get("type", "", str)
@@ -14,11 +14,14 @@ class ExceptionFilter():
 
     def get_filter(self) -> ColumnExpressionArgument[bool]:
         if self.genericSearch is not None:
-            return ExceptionType.type.contains(self.genericSearch)|\
-                ExceptionMessage.message.contains(self.genericSearch)|\
-                Endpoint.name.contains(self.genericSearch)
+            return (
+                ExceptionType.type.contains(self.genericSearch)
+                | ExceptionMessage.message.contains(self.genericSearch)
+                | Endpoint.name.contains(self.genericSearch)
+            )
 
-        return ExceptionType.type.contains(self.typeFilter)&\
-                ExceptionMessage.message.contains(self.messageFilter)&\
-                Endpoint.name.contains(self.endpointFilter)
-        
+        return (
+            ExceptionType.type.contains(self.typeFilter)
+            & ExceptionMessage.message.contains(self.messageFilter)
+            & Endpoint.name.contains(self.endpointFilter)
+        )

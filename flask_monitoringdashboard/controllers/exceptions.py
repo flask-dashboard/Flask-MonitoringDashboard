@@ -21,7 +21,9 @@ app_dir = os.path.dirname(os.path.abspath(sys.argv[0]))
 app_parent_dir = os.path.dirname(app_dir) + os.sep
 
 
-def get_exception_groups(session: Session, offset: int, per_page: int, filter: ExceptionFilter):
+def get_exception_groups(
+    session: Session, offset: int, per_page: int, filter: ExceptionFilter
+):
     """
     Gets information about exceptions including timestamps of latest and first occurrence.
     :param session: session for the database
@@ -48,7 +50,9 @@ def get_exception_groups(session: Session, offset: int, per_page: int, filter: E
             "first_timestamp": exception.first_timestamp,
             "count": exception.count,
         }
-        for exception in get_exceptions_with_timestamps(session, offset, per_page, filter)
+        for exception in get_exceptions_with_timestamps(
+            session, offset, per_page, filter
+        )
     ]
 
 

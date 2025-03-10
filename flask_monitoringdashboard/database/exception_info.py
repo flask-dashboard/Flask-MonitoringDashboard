@@ -80,7 +80,9 @@ def count_endpoint_grouped_exceptions(session: Session, endpoint_id: int):
     )
 
 
-def get_exceptions_with_timestamps(session: Session, offset: int, per_page: int, filter: ExceptionFilter):
+def get_exceptions_with_timestamps(
+    session: Session, offset: int, per_page: int, filter: ExceptionFilter
+):
     """
     Gets the information about exceptions grouped by endpoint and stack trace snapshot and sorted by latest request time.
     :param session: session for the database
