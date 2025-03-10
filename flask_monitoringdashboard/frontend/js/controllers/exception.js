@@ -1,7 +1,7 @@
 export function ExceptionController($scope, $http, $location, menuService, paginationService, endpointService) {
     endpointService.reset();
     menuService.reset('exception_overview'); 
-    const queryables = ['message', 'type', 'endpoint']
+    const queryables = ['message', 'type', 'endpoint', 'genericSearch']
 
     $scope.table = [];
 
