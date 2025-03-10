@@ -1,16 +1,19 @@
 from typing import Union
 from flask import Request
 from sqlalchemy.sql.expression import ColumnExpressionArgument
+from urllib.parse import unquote
 
 from flask_monitoringdashboard.database import Endpoint, ExceptionMessage, ExceptionType
 
 
 class ExceptionFilter:
     def __init__(self, req: Request):
-        self.messageFilter: str = req.args.get("message", "", str)
-        self.typeFilter: str = req.args.get("type", "", str)
-        self.endpointFilter: str = req.args.get("endpoint", "", str)
+        self.messageFilter: str = unquote(req.args.get("message", "", str))
+        self.typeFilter: str = unquote(req.args.get("type", "", str))
+        self.endpointFilter: str = unquote(req.args.get("endpoint", "", str))
         self.genericSearch: Union[str, None] = req.args.get("genericSearch")
+        if self.genericSearch is not None:
+            self.genericSearch = unquote(self.genericSearch)
 
     def get_filter(self) -> ColumnExpressionArgument[bool]:
         if self.genericSearch is not None:
