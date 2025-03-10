@@ -5,6 +5,7 @@ Contains all functions that access an ExceptionInfo object.
 from typing import Union
 from sqlalchemy import func, desc
 from sqlalchemy.orm import Session
+from flask_monitoringdashboard.core.filter_exceptions import ExceptionFilter
 from flask_monitoringdashboard.database import (
     ExceptionInfo,
     Request,
@@ -77,7 +78,7 @@ def count_endpoint_grouped_exceptions(session: Session, endpoint_id: int):
     )
 
 
-def get_exceptions_with_timestamps(session: Session, offset: int, per_page: int):
+def get_exceptions_with_timestamps(session: Session, offset: int, per_page: int, filter: ExceptionFilter):
     """
     Gets the information about exceptions grouped by endpoint and stack trace snapshot and sorted by latest request time.
     :param session: session for the database
@@ -106,6 +107,7 @@ def get_exceptions_with_timestamps(session: Session, offset: int, per_page: int)
         .join(Endpoint, Request.endpoint)
         .join(ExceptionType, ExceptionInfo.exception_type)
         .join(ExceptionMessage, ExceptionInfo.exception_msg)
+        .filter(filter.get_filter())
         .group_by(Endpoint.name, ExceptionInfo.stack_trace_snapshot_id)
         .order_by(desc("latest_timestamp"))
         .offset(offset)

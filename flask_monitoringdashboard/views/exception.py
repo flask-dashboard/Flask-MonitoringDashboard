@@ -1,4 +1,4 @@
-from flask import jsonify
+from flask import jsonify, request
 
 from flask_monitoringdashboard import blueprint
 from flask_monitoringdashboard.core.auth import secure
@@ -9,6 +9,7 @@ from flask_monitoringdashboard.controllers.exceptions import (
     get_exception_groups,
     get_exception_groups_with_details_for_endpoint,
 )
+from flask_monitoringdashboard.core.filter_exceptions import ExceptionFilter
 from flask_monitoringdashboard.core.telemetry import post_to_back_if_telemetry_enabled
 from flask_monitoringdashboard.database import session_scope
 
@@ -27,7 +28,7 @@ def get_exception_info(offset: int, per_page: int):
     """
     post_to_back_if_telemetry_enabled(**{"name": "exception_info"})
     with session_scope() as session:
-        exceptions = get_exception_groups(session, offset, per_page)
+        exceptions = get_exception_groups(session, offset, per_page, ExceptionFilter(request))
 
         return jsonify(exceptions)
 

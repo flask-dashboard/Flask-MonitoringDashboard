@@ -99,7 +99,7 @@ app.config(['$locationProvider', '$routeProvider', function ($locationProvider, 
         })
         .when('/exception_overview', {
             templateUrl: 'static/pages/exception_overview.html',
-            controller: ['$scope', '$http', 'menuService', 'paginationService', 'endpointService', ExceptionController]
+            controller: ['$scope', '$http', '$location', 'menuService', 'paginationService', 'endpointService', ExceptionController]
         })
         .when('/hourly_load', {
             templateUrl: 'static/pages/plotly_graph.html',

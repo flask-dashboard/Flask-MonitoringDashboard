@@ -2,6 +2,7 @@ from typing import Union
 from sqlalchemy.orm import Session
 import os
 import sys
+from flask_monitoringdashboard.core.filter_exceptions import ExceptionFilter
 from flask_monitoringdashboard.database import FunctionDefinition
 from flask_monitoringdashboard.database.exception_info import (
     delete_exception,
@@ -20,7 +21,7 @@ app_dir = os.path.dirname(os.path.abspath(sys.argv[0]))
 app_parent_dir = os.path.dirname(app_dir) + os.sep
 
 
-def get_exception_groups(session: Session, offset: int, per_page: int):
+def get_exception_groups(session: Session, offset: int, per_page: int, filter: ExceptionFilter):
     """
     Gets information about exceptions including timestamps of latest and first occurrence.
     :param session: session for the database
@@ -46,7 +47,7 @@ def get_exception_groups(session: Session, offset: int, per_page: int):
             "first_timestamp": exception.first_timestamp,
             "count": exception.count,
         }
-        for exception in get_exceptions_with_timestamps(session, offset, per_page)
+        for exception in get_exceptions_with_timestamps(session, offset, per_page, filter)
     ]
 
 
