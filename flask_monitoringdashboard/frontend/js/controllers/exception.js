@@ -1,5 +1,3 @@
-import { coerceString } from "plotly.js-cartesian-dist";
-
 export function ExceptionController($scope, $http, $location, menuService, paginationService, endpointService) {
     endpointService.reset();
     menuService.reset('exception_overview'); 
