@@ -21,7 +21,7 @@ export function ExceptionController($scope, $http, $location, menuService, pagin
     const getQueryString = function () {
         removeUnwelcomeParameters();
         let query = decodeURI(window.location.search);
-        if (query.includes("?")){
+        if (query.length > 0 && query[0] === "?"){
             query = query.slice(1);
         }
         if (query.includes("genericSearch=")){
@@ -41,9 +41,13 @@ export function ExceptionController($scope, $http, $location, menuService, pagin
     });
 
     paginationService.init('exceptions');
-    $http.get('api/num_exceptions'+window.location.search).then(function (response) {
-        paginationService.setTotal(response.data);
-    });
+
+    const setPaginationTotal = function() {
+        $http.get('api/num_exceptions'+window.location.search).then(function (response) {
+            paginationService.setTotal(response.data);
+        });
+    }
+    setPaginationTotal();
 
     $scope.getEndpoint = function () {
         return 'api/exception_info/' + paginationService.getLeft() + '/' + paginationService.perPage;
@@ -79,15 +83,12 @@ export function ExceptionController($scope, $http, $location, menuService, pagin
     $scope.query = function (){
         if ($scope.queryString === $scope.oldQuery) return;
         $scope.buildQueryString($scope.queryString);
-        paginationService.onReload();
+        setPaginationTotal();
     }
 
     paginationService.onReload = function () {
         $http.get($scope.getEndpoint()+window.location.search).then(function (response) {
             $scope.table = response.data;
-        });
-        $http.get('api/num_exceptions'+window.location.search).then(function (response) {
-            paginationService.total = response.data;
         });
     };
 };
