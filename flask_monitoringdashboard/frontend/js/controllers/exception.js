@@ -1,6 +1,7 @@
 export function ExceptionController($scope, $http, $location, menuService, paginationService, endpointService) {
     endpointService.reset();
     menuService.reset('exception_overview'); 
+    paginationService.init('exceptions');
     const queryables = ['message', 'type', 'endpoint', 'genericSearch']
 
     $scope.table = [];
@@ -42,18 +43,12 @@ export function ExceptionController($scope, $http, $location, menuService, pagin
         document.removeEventListener('keydown', handleKeyDown, false);
     });
 
-    paginationService.init('exceptions');
-
     const setPaginationTotal = function() {
         $http.get('api/num_exceptions'+window.location.search).then(function (response) {
             paginationService.setTotal(response.data);
         });
     }
     setPaginationTotal();
-
-    $scope.getEndpoint = function () {
-        return 'api/exception_info/' + paginationService.getLeft() + '/' + paginationService.perPage;
-    }
 
     function findValueInArray(key, arr){
         for (let i = 0; i < arr.length; i++){
@@ -83,7 +78,8 @@ export function ExceptionController($scope, $http, $location, menuService, pagin
     }
 
     paginationService.onReload = function () {
-        $http.get($scope.getEndpoint()+window.location.search).then(function (response) {
+        const endpoint = 'api/exception_info/' + paginationService.getLeft() + '/' + paginationService.perPage;
+        $http.get(endpoint+window.location.search).then(function (response) {
             $scope.table = response.data;
         });
     };
