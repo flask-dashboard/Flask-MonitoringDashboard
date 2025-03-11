@@ -6,7 +6,6 @@ export function ExceptionController($scope, $http, $location, menuService, pagin
 
     $scope.table = [];
 
-    
     const getQueryString = function () {
         const params = new URLSearchParams(window.location.search);
         
@@ -28,11 +27,6 @@ export function ExceptionController($scope, $http, $location, menuService, pagin
         });
     }
     setPaginationTotal();
-
-
-    function parseQueryString(queryString) {
-        return Object.fromEntries(new URLSearchParams(queryString));
-    }
     
     function buildQueryString(queryString) {
         if (!queryString) {
@@ -40,13 +34,13 @@ export function ExceptionController($scope, $http, $location, menuService, pagin
             return;
         }
 
-        const queryParams = parseQueryString(queryString);
+        const queryParams = new URLSearchParams(queryString);
         let isGenericSearch = true;
     
         queryables.forEach(queryable => {
-            if (queryParams.hasOwnProperty(queryable)) {
+            if (queryParams.has(queryable)) {
                 isGenericSearch = false;
-                $location.search(queryable, queryParams[queryable]);
+                $location.search(queryable, queryParams.get(queryable));
             } else {
                 $location.search(queryable, null);
             }
@@ -75,5 +69,4 @@ export function ExceptionController($scope, $http, $location, menuService, pagin
     $scope.$on('$destroy', function() {
         document.removeEventListener('keydown', handleKeyDown, false);
     });
-
 };
