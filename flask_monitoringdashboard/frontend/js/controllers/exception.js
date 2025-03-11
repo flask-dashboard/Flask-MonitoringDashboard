@@ -6,42 +6,21 @@ export function ExceptionController($scope, $http, $location, menuService, pagin
 
     $scope.table = [];
 
-    const handleKeyDown = function (key) {
-        if(key.key === "Enter") {
-            if ($scope.queryString === $scope.oldQuery) return;
-            $scope.buildQueryString($scope.queryString);
-            setPaginationTotal();
-        }
-    }
-
-    const removeUnwelcomeParameters = function () {
-        const params = $location.search();
-        Object.keys(params).forEach(key => {
-            if (!queryables.includes(key)) $location.search(key, null);
-        });
-    }
-
+    
     const getQueryString = function () {
-        removeUnwelcomeParameters();
-        let query = decodeURI(window.location.search);
-        if (query.length > 0 && query[0] === "?"){
-            query = query.slice(1);
+        const params = new URLSearchParams(window.location.search);
+        
+        for (const key of params.keys()) { // remove keys from URL that aren't queryables
+            if (!queryables.includes(key)) {
+                $location.search(key, null);
+            }
         }
-        if (query.includes("genericSearch=")){
-            const parameters = query.split("&");
-            query = findValueInArray("genericSearch", parameters);
-        }
-        return query;
-    }
+
+        return params.has("genericSearch") ? params.get("genericSearch") : params.toString();
+    };
 
     $scope.queryString = getQueryString();
     $scope.oldQuery = $scope.queryString;
-
-    document.addEventListener("keydown", handleKeyDown, false);
-
-    $scope.$on('$destroy', function() {
-        document.removeEventListener('keydown', handleKeyDown, false);
-    });
 
     const setPaginationTotal = function() {
         $http.get('api/num_exceptions'+window.location.search).then(function (response) {
@@ -50,32 +29,31 @@ export function ExceptionController($scope, $http, $location, menuService, pagin
     }
     setPaginationTotal();
 
-    function findValueInArray(key, arr){
-        for (let i = 0; i < arr.length; i++){
-            const currentParam = arr[i].split('=');
-            if (currentParam.length > 0 && currentParam[0] === key) return currentParam[1];
-        }
-    }
 
-    $scope.buildQueryString = function (queryString){
-        if (queryString === "" || queryString === undefined || queryString === null) {
+    function parseQueryString(queryString) {
+        return Object.fromEntries(new URLSearchParams(queryString));
+    }
+    
+    function buildQueryString(queryString) {
+        if (!queryString) {
             $location.search("genericSearch", null);
             return;
         }
+
+        const queryParams = parseQueryString(queryString);
         let isGenericSearch = true;
-        const parameters = queryString.split("&");
-        queryables.forEach((queryable, _) => {
-            if (queryString.includes(queryable+"=")){
+    
+        queryables.forEach(queryable => {
+            if (queryParams.hasOwnProperty(queryable)) {
                 isGenericSearch = false;
-                const val = findValueInArray(queryable, parameters);
-                $location.search(queryable, val);
+                $location.search(queryable, queryParams[queryable]);
             } else {
                 $location.search(queryable, null);
             }
         });
-        if (isGenericSearch) $location.search("genericSearch", queryString);
-        else $location.search("genericSearch", null);
-    }
+    
+        $location.search("genericSearch", isGenericSearch ? queryString : null);
+    };
 
     paginationService.onReload = function () {
         const endpoint = 'api/exception_info/' + paginationService.getLeft() + '/' + paginationService.perPage;
@@ -83,4 +61,19 @@ export function ExceptionController($scope, $http, $location, menuService, pagin
             $scope.table = response.data;
         });
     };
+
+    const handleKeyDown = function (key) {
+        if(key.key === "Enter") {
+            if ($scope.queryString === $scope.oldQuery) return;
+            buildQueryString($scope.queryString);
+            setPaginationTotal();
+        }
+    }
+
+    document.addEventListener("keydown", handleKeyDown, false);
+
+    $scope.$on('$destroy', function() {
+        document.removeEventListener('keydown', handleKeyDown, false);
+    });
+
 };
