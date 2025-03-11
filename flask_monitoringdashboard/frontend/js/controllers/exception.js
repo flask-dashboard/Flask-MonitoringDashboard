@@ -7,7 +7,9 @@ export function ExceptionController($scope, $http, $location, menuService, pagin
 
     const handleKeyDown = function (key) {
         if(key.key === "Enter") {
-            $scope.query();
+            if ($scope.queryString === $scope.oldQuery) return;
+            $scope.buildQueryString($scope.queryString);
+            setPaginationTotal();
         }
     }
 
@@ -78,12 +80,6 @@ export function ExceptionController($scope, $http, $location, menuService, pagin
         });
         if (isGenericSearch) $location.search("genericSearch", queryString);
         else $location.search("genericSearch", null);
-    }
-
-    $scope.query = function (){
-        if ($scope.queryString === $scope.oldQuery) return;
-        $scope.buildQueryString($scope.queryString);
-        setPaginationTotal();
     }
 
     paginationService.onReload = function () {
