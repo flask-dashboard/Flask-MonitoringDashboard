@@ -57,6 +57,8 @@ def count_grouped_exceptions(session: Session, filter: ExceptionFilter):
         session.query(ExceptionInfo.request_id)
         .join(Request, ExceptionInfo.request)
         .join(Endpoint, Request.endpoint)
+        .join(ExceptionType, ExceptionInfo.exception_type)
+        .join(ExceptionMessage, ExceptionInfo.exception_msg)
         .filter(filter.get_filter())
         .group_by(Endpoint.name, ExceptionInfo.stack_trace_snapshot_id)
         .count()
