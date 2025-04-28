@@ -7,7 +7,9 @@ from flask import request
 
 from flask_monitoringdashboard import config
 from flask_monitoringdashboard.core.cache import update_duration_cache, get_avg_endpoint
-from flask_monitoringdashboard.core.exceptions.exception_logger import ExceptionLogger
+from flask_monitoringdashboard.core.exceptions.exception_collector import (
+    ExceptionCollector,
+)
 from flask_monitoringdashboard.core.logger import log
 from flask_monitoringdashboard.database import session_scope
 from flask_monitoringdashboard.database.outlier import add_outlier
@@ -64,7 +66,7 @@ class OutlierProfiler(threading.Thread):
             self._cpu_percent = str(psutil.cpu_percent(interval=None, percpu=True))
             self._memory = str(psutil.virtual_memory())
 
-    def stop(self, duration, status_code, e_logger: ExceptionLogger):
+    def stop(self, duration, status_code, e_logger: ExceptionCollector):
         self._exit.set()
         update_duration_cache(
             endpoint_name=self._endpoint.name, duration=duration * 1000

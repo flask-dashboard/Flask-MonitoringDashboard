@@ -1,7 +1,7 @@
 from typing import Union
 
 
-class ScopedExceptionLogger:
+class ScopedExceptionCollector:
     """
     This class is for logging user captured exceptions, in the scope of the current request.
     It is just a DTO for transmitting the user captured exceptions and uncaught exceptions to the exception logger.

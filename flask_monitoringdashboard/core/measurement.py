@@ -7,7 +7,9 @@ import time
 from functools import wraps
 
 from flask import g
-from flask_monitoringdashboard.core.exceptions.exception_logger import ExceptionLogger
+from flask_monitoringdashboard.core.exceptions.exception_collector import (
+    ExceptionCollector,
+)
 from werkzeug.exceptions import HTTPException
 
 from flask_monitoringdashboard import config
@@ -18,8 +20,8 @@ from flask_monitoringdashboard.core.profiler import (
     start_profiler_and_outlier_thread,
 )
 from flask_monitoringdashboard.core.rules import get_rules
-from flask_monitoringdashboard.core.exceptions.scoped_exception_logger import (
-    ScopedExceptionLogger,
+from flask_monitoringdashboard.core.exceptions.scoped_exception_collector import (
+    ScopedExceptionCollector,
 )
 from flask_monitoringdashboard.database import session_scope
 from flask_monitoringdashboard.database.endpoint import get_endpoint_by_name
@@ -111,7 +113,7 @@ def evaluate(route_handler, args, kwargs):
     :param kwargs:
     :return:
     """
-    g.scoped_logger = ScopedExceptionLogger()
+    g.scoped_logger = ScopedExceptionCollector()
 
     def evaluate_():
         try:
@@ -128,7 +130,7 @@ def evaluate(route_handler, args, kwargs):
 
     result, status_code, exception = evaluate_()
 
-    return result, status_code, ExceptionLogger(g.scoped_logger), exception
+    return result, status_code, ExceptionCollector(g.scoped_logger), exception
 
 
 def add_wrapper1(endpoint, fun):

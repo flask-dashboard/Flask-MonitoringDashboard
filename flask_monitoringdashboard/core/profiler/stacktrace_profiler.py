@@ -7,7 +7,9 @@ from collections import defaultdict
 from typing import Union
 from flask_monitoringdashboard import config
 from flask_monitoringdashboard.core.cache import update_duration_cache
-from flask_monitoringdashboard.core.exceptions.exception_logger import ExceptionLogger
+from flask_monitoringdashboard.core.exceptions.exception_collector import (
+    ExceptionCollector,
+)
 from flask_monitoringdashboard.core.logger import log
 from flask_monitoringdashboard.core.profiler.util import order_histogram
 from flask_monitoringdashboard.core.profiler.util.path_hash import PathHash
@@ -41,7 +43,7 @@ class StacktraceProfiler(threading.Thread):
         self._total = 0
         self._outlier_profiler = outlier_profiler
         self._status_code = 404
-        self.e_logger: Union[ExceptionLogger, None] = None
+        self.e_logger: Union[ExceptionCollector, None] = None
 
     def run(self):
         """
@@ -89,7 +91,7 @@ class StacktraceProfiler(threading.Thread):
 
         self._on_thread_stopped()
 
-    def stop(self, duration, status_code, e_logger: ExceptionLogger):
+    def stop(self, duration, status_code, e_logger: ExceptionCollector):
         self._duration = duration * 1000
         self._status_code = status_code
         if self._outlier_profiler:
