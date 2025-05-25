@@ -227,11 +227,11 @@
                     [monitoringLevel]="row.monitor"
                   />
                 </td>
-                <td
-                  (click)='go("/endpoint/" + row.id + "/exceptions")'
-                  style="text-align: right"
-                >
-                  <button class="btn btn-light">
+                <td style="text-align: right">
+                  <button
+                    class="btn btn-light"
+                    [routerLink]='"/endpoint/" + row.id + "/exceptions"'
+                  >
                     {{ row["exceptions"] }}
                   </button>
                 </td>

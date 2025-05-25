@@ -27,6 +27,8 @@ def loc():
     """Get the current location of the project."""
     return os.path.abspath(os.path.dirname(__file__)) + "/"
 
+def static_path_exists(path):
+    return os.path.exists(loc()+'templates/browser/'+path)
 
 config = Config()
 telemetry_config = TelemetryConfig()
