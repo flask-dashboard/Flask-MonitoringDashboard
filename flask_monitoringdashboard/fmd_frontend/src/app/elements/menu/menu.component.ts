@@ -5,9 +5,10 @@ import { EndpointInfo } from 'src/app/service/endpoint/endpoint-defs';
 import { EndpointService } from 'src/app/service/endpoint/endpoint.service';
 
 @Component({
-  selector: 'app-menu',
-  templateUrl: './menu.component.html',
-  styleUrls: ['./menu.component.css'],
+    selector: 'app-menu',
+    templateUrl: './menu.component.html',
+    styleUrls: ['./menu.component.css'],
+    standalone: false
 })
 export class MenuComponent implements OnInit, OnDestroy {
   private destroyed: Subject<void> = new Subject();
