@@ -5,7 +5,7 @@
 from flask import render_template
 from flask.helpers import send_from_directory
 
-from flask_monitoringdashboard import loc, blueprint, config
+from flask_monitoringdashboard import loc, blueprint, config, static_path_exists
 from flask_monitoringdashboard.core.auth import secure
 
 
@@ -24,11 +24,10 @@ def static(filename):
 @blueprint.route('/<path:path>')  # Catch-All URL: http://flask.pocoo.org/snippets/57/
 @secure
 def index(path):
-    print(path)
-    if path == '':
-        return send_from_directory(loc() + 'templates', "index.html")
+    if static_path_exists(path) and path != '':
+        return send_from_directory(loc() + 'templates/browser', path)
     else: 
-        return send_from_directory(loc() + 'templates', path)
+        return send_from_directory(loc() + 'templates/browser', "index.html")
     #return render_template('index.html', 
     #    blueprint_name=config.blueprint_name, 
     #    brand_name=config.brand_name, 

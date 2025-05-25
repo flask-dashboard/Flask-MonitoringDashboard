@@ -30,7 +30,7 @@ def login():
         if user is not None:
             on_login(user=user)
             return redirect(url_for(MAIN_PAGE))
-    return render_template('assets/fmd_pages/fmd_login.html', 
+    return render_template('browser/assets/fmd_pages/fmd_login.html', 
         blueprint_name=config.blueprint_name, 
         show_login_banner=config.show_login_banner, 
         show_login_footer=config.show_login_footer,

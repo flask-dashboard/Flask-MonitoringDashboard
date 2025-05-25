@@ -1,97 +1,53 @@
 <ul class="navbar-nav navbar-sidenav nav-pills">
   <li class="nav-item" title="Dashboard">
     <a
-      class="nav-link nav-link-collapse collapsed"
-      data-bs-toggle="collapse"
-      data-bs-target="#collapseDashboard"
+      class="nav-link nav-link-collapse collapsed d-flex justify-content-between"
+      (click)='toggleMenuState("dashboard")'
     >
-      <i class="fas fa-tachometer-alt"></i>
-      <span class="nav-link-text">Dashboard</span>
+      <div>
+        <i class="fas fa-tachometer-alt p-1"></i>
+        <span class="nav-link-text">Dashboard</span>
+      </div>
+      <fa-icon *ngIf="!menuState.dashboard" [icon]="chevronDown" />
+      <fa-icon *ngIf="menuState.dashboard" [icon]="chevronUp" />
     </a>
-    <ul class="sidenav-second-level collapse" id="collapseDashboard">
-      <li ng-class="{'active': menu.page=='overview'}">
-        <a href="overview">Overview</a>
-      </li>
-      <li ng-class="{'active': menu.page=='hourly_load'}">
-        <a href="hourly_load">Hourly API Utilization</a>
-      </li>
-      <li ng-class="{'active': menu.page=='exception_overview'}">
-        <a href="exception_overview">Exception Monitoring</a>
-      </li>
-      <li ng-class="{'active': menu.page=='multi_version'}">
-        <a href="multi_version">Multi Version API Utilization</a>
-      </li>
-      <li ng-class="{'active': menu.page=='daily_load'}">
-        <a href="daily_utilization">Daily API Utilization</a>
-      </li>
-      <li ng-class="{'active': menu.page=='api_performance'}">
-        <a href="api_performance">API Performance</a>
-      </li>
-      <li ng-class="{'active': menu.page=='reporting'}">
-        <a href="reporting">Reporting</a>
+    <ul
+      class="sidenav-second-level"
+      [ngbCollapse]="!menuState.dashboard"
+    >
+      <li *ngFor="let config of overviewConfig" routerLinkActive="active">
+        <a [routerLink]="config.path">{{ config.text }}</a>
       </li>
     </ul>
   </li>
 
   <li
     class="nav-item"
-    data-bs-toggle="tooltip"
-    data-bs-placement="right"
-    ng-show="endpointId > 0"
-    data-original-title="{{ menu.endpoint.info.endpoint }}"
+    *ngIf="endpoint"
   >
     <a
-      class="nav-link nav-link-collapse collapsed"
-      data-bs-toggle="collapse"
-      data-bs-target="#collapseEndpoint"
+      class="nav-link nav-link-collapse collapsed d-flex justify-content-between"
+      (click)='toggleMenuState("endpoint")'
     >
-      <i class="fa fa-fw fa-asterisk"></i>
-      <span class="nav-link-text">{{ menu.endpoint.info.endpoint }}</span>
+      <div>
+        <i class="fa fa-fw fa-asterisk"></i>
+        <span class="nav-link-text">{{ endpoint.endpoint }}</span>
+      </div>
+      <fa-icon *ngIf="!menuState.endpoint" [icon]="chevronDown" />
+      <fa-icon *ngIf="menuState.endpoint" [icon]="chevronUp" />
     </a>
-    <ul class="sidenav-second-level collapse" id="collapseEndpoint">
-      <li ng-class="{'active': menu.page=='endpoint_hourly'}">
-        <a href="endpoint/{{ endpointId }}/hourly_load">
-          Hourly API Utilization</a>
-      </li>
-      <li ng-class="{'active': menu.page=='endpoint_user_version'}">
-        <a href="endpoint/{{ endpointId }}/version_user">
-          User-Focused Multi-Version Performance</a>
-      </li>
-      <li ng-class="{'active': menu.page=='endpoint_ip'}">
-        <a href="endpoint/{{ endpointId }}/version_ip">
-          IP-Focused Multi-Version Performance</a>
-      </li>
-      <li ng-class="{'active': menu.page=='endpoint_version'}">
-        <a href="endpoint/{{ endpointId }}/versions">
-          Per-Version Performance</a>
-      </li>
-      <li ng-class="{'active': menu.page=='endpoint_user'}">
-        <a href="endpoint/{{ endpointId }}/users">
-          Per-User Performance</a>
-      </li>
-      <li ng-class="{'active': menu.page=='endpoint_profiler'}">
-        <a href="endpoint/{{ endpointId }}/profiler">
-          Profiler</a>
-      </li>
-      <li ng-class="{'active': menu.page=='endpoint_grouped_profiler'}">
-        <a href="endpoint/{{ endpointId }}/grouped-profiler">
-          Grouped Profiler</a>
-      </li>
-      <li ng-class="{'active': menu.page=='endpoint_exception'}">
-        <a href="endpoint/{{ endpointId }}/exceptions">
-          Exceptions</a>
-      </li>
-      <li ng-class="{'active': menu.page=='endpoint_outlier'}">
-        <a href="endpoint/{{ endpointId }}/outliers">
-          Outliers</a>
-      </li>
-      <li ng-class="{'active': menu.page=='status_code_distribution'}">
-        <a href="endpoint/{{ endpointId }}/status_code_distribution"
-        >Status Code Distribution</a>
+    <ul
+      class="sidenav-second-level collapse"
+      [ngbCollapse]="!menuState.endpoint"
+    >
+      <li *ngFor="let config of endpointConfig" routerLinkActive="active">
+        <a [routerLink]='"endpoint/" + endpoint.id + "/" + config.path'>{{
+            config.text
+          }}</a>
       </li>
     </ul>
   </li>
-
+  <!--
   <li
     class="nav-item"
     title="Custom graphs"
@@ -108,28 +64,32 @@
     <ul class="sidenav-second-level collapse" id="collapseCustomGraphs">
       <li
         ng-repeat="graph in menu.endpoint.customGraphs"
-        ng-class="{'active': menu.page=='custom_graph'+graph.graph_id}"
+        [class]="{'active': activePage=='custom_graph'+graph.graph_id}"
       >
         <a href="custom_graph/{{ graph.graph_id }}">{{ graph.title }}</a>
       </li>
     </ul>
   </li>
-
+-->
   <li class="nav-item" title="Configuration">
     <a
-      class="nav-link nav-link-collapse collapsed"
-      data-bs-toggle="collapse"
-      data-bs-target="#collapseConfiguration"
+      class="nav-link nav-link-collapse collapsed d-flex justify-content-between"
+      (click)='toggleMenuState("configuration")'
     >
-      <i class="fa fa-fw fa-cog"></i>
-      <span class="nav-link-text">Configuration</span>
+      <div>
+        <i class="fa fa-fw fa-cog"></i>
+        <span class="nav-link-text">Configuration</span>
+      </div>
+      <fa-icon *ngIf="!menuState.configuration" [icon]="chevronDown" />
+      <fa-icon *ngIf="menuState.configuration" [icon]="chevronUp" />
     </a>
-    <ul class="sidenav-second-level collapse" id="collapseConfiguration">
-      <li ng-class="{'active': menu.page=='configuration'}">
-        <a href="configuration">General Settings</a>
-      </li>
-      <li ng-class="{'active': menu.page=='database_management'}">
-        <a href="database_management">Database Management</a>
+
+    <ul
+      class="sidenav-second-level"
+      [ngbCollapse]="!menuState.configuration"
+    >
+      <li *ngFor="let config of configurationConfig" routerLinkActive="active">
+        <a [routerLink]="config.path">{{ config.text }}</a>
       </li>
     </ul>
   </li>

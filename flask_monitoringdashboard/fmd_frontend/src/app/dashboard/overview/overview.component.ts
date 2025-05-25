@@ -5,10 +5,10 @@ import { from, map, mergeMap, take, tap } from 'rxjs';
 import { Router } from '@angular/router';
 
 @Component({
-    selector: 'app-overview',
-    templateUrl: './overview.component.html',
-    styleUrls: ['./overview.component.css'],
-    standalone: false
+  selector: 'app-overview',
+  templateUrl: './overview.component.html',
+  styleUrls: ['./overview.component.css'],
+  standalone: false,
 })
 export class OverviewComponent implements OnInit {
   public table: OverviewDto[] = [];
@@ -69,8 +69,6 @@ export class OverviewComponent implements OnInit {
   }
 
   ascendingOrder(a: OverviewDto, b: OverviewDto): number {
-    console.log(a);
-    console.log(b);
     if (!a && !b) return 0;
 
     const valA = a[this.sortBy];
