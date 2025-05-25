@@ -1,0 +1,253 @@
+
+<div>
+    <div id="alert" class="alert alert-warning alert-dismissible" ng-show="alertShow">
+        <a class="close" data-bs-dismiss="alert" aria-label="close"
+           ng-click="alertShow = false">&times;</a>
+        <strong>Warning:</strong>
+        Version {{ pypi_version }} is now available, while you are still using
+        version {{ dashboard_version }}.<br/>
+        To upgrade run the following command on your server: <code>pip install --upgrade
+        flask_monitoringdashboard</code>
+    </div>
+
+    <div>
+        <telemetry-component></telemetry-component>
+    </div>
+
+    <div class="card mb-3">
+        <div class="card-header"><h4>Dashboard Overview<h4></div>
+        <div class="card-body">
+            <div class="spinner" ng-controller="FormController"
+                   ng-show="table.length === 0">
+                  <div class="rect1"></div>
+                  <div class="rect2"></div>
+                  <div class="rect3"></div>
+                  <div class="rect4"></div>
+                  <div class="rect5"></div>
+              </div>
+
+              <ul class="pagination">
+                  <li class="page-item" ng-class="{'active': isHits}"><a class="page-link"
+                                                                         ng-click="toggleHits()">Number
+                      of hits</a></li>
+                  <li class="page-item" ng-class="{'active': !isHits}"><a class="page-link"
+                                                                          ng-click="toggleHits()">Median
+                      request duration (ms)</a></li>
+              </ul>
+
+              <div class="row" style="margin-bottom: 7px">
+                  <div class="col-md-3 col-sm-12">
+                      Show
+                      <select style="width: 60px; display: inline-block;"
+                              class='form-control form-control-sm' name="ddwa"
+                              ng-model="pageSize">
+                          <option value="10">10</option>
+                          <option value="25">25</option>
+                          <option value="50">50</option>
+                          <option value="100">100</option>
+                      </select>
+                      entries
+                  </div>
+
+                  <div class="col-md-6 col-sm-12">
+                      Blueprint:
+                      <select style='width: 180px; display: inline-block;' ng-model="slectedBlueprint"
+                              class="form-control form-control-sm">
+                          <option ng-repeat="blueprint in blueprints track by $index"
+                                  value="{{ blueprint }}">
+                              {{ blueprint }}
+                          </option>
+                      </select>
+                  </div>
+
+                  <div class="col-md-3 col-sm-12" style="text-align: right">
+                      Search:
+                      <input ng-model="searchQuery"
+                             style="display: inline-block; width: 180px"
+                             class="form-control form-control-sm">
+                  </div>
+              </div>
+
+              <div class="row">
+                  <div class="col-md-12">
+                      <table class="table table-hover table-bordered table-sm">
+                          <thead>
+                          <tr>
+                              <th></th>
+                            <th 
+                                ng-click="changeSortingOrder('name')" 
+                                style="cursor: pointer">
+                                <div class="d-flex justify-content-between">
+                                  Endpoint
+                                  <span ng-class="getSortArrowClassName('name')">&uarr;</span>
+                                </div>
+                            </th>
+                            <th 
+                                ng-show="isHits" 
+                                style="cursor: pointer"
+                                ng-click="changeSortingOrder('hits-today')">
+                                <div class="d-flex justify-content-between">
+                                  Today
+                                  <span ng-class="getSortArrowClassName('hits-today')">&uarr;</span>
+                                </div>
+                            </th>
+                            <th 
+                                ng-show="isHits"
+                                style="cursor: pointer"
+                                ng-click="changeSortingOrder('hits-week')">
+                                <div class="d-flex justify-content-between">
+                                  Last 7 days
+                                  <span ng-class="getSortArrowClassName('hits-week')">&uarr;</span>
+                                </div>
+                            </th>
+                            <th 
+                                ng-show="isHits"
+                                style="cursor: pointer"
+                                ng-click="changeSortingOrder('hits-overall')">
+                                <div class="d-flex justify-content-between">
+                                  Overall 
+                                  <span ng-class="getSortArrowClassName('hits-overall')">&uarr;</span>
+                                </div>
+                            </th>
+                            <th 
+                                style="cursor: pointer"
+                                ng-click="changeSortingOrder('hits-today')"
+                                ng-show="isHits===false">
+                                    <div class="d-flex justify-content-between">
+                                    Today
+                                    <span ng-class="getSortArrowClassName('hits-today')">&uarr;</span>
+                                  </div>
+
+                            </th>
+                            <th 
+                                ng-show="isHits===false"
+                                style="cursor: pointer"
+                                ng-click="changeSortingOrder('hits-week')">
+                                    <div class="d-flex justify-content-between">
+                                        Last 7 days
+                                        <span ng-class="getSortArrowClassName('hits-week')">&uarr;</span>
+                                    </div>
+                            </th>
+                            <th 
+                                ng-show="isHits===false"
+                                style="cursor: pointer"
+                                ng-click="changeSortingOrder('hits-overall')">
+                                <div class="d-flex justify-content-between">
+                                  Overall 
+                                  <span ng-class="getSortArrowClassName('hits-overall')">&uarr;</span>
+                                </div>
+                            </th>
+                            <th
+                                style="cursor: pointer"
+                                ng-click="changeSortingOrder('last-accessed')">
+                                    <div class="d-flex justify-content-between">
+                                        Last requested
+                                        <span ng-class="getSortArrowClassName('last-accessed')">&uarr;</span>
+                                    </div>
+                            </th>
+                            <th
+                                style="cursor: pointer"
+                                ng-click="changeSortingOrder('monitor')">
+                                <div class="d-flex justify-content-between">
+                                    <div> Monitoring-level<sup>*</sup></div>
+                                    <span ng-class="getSortArrowClassName('monitor')">&uarr;</span>
+                                </div>
+                            </th>
+                            <th
+                                style="cursor: pointer;"    
+                                ng-click="changeSortingOrder('exceptions')" >
+                                <div class="d-flex justify-content-between">
+                                    <div>Exceptions</div>
+                                    <span ng-class="getSortArrowClassName('exceptions')">&uarr;</span>
+                                </div>
+                            </th>
+                        </tr>
+                        </thead>
+
+                        <tbody>
+                        <tr ng-repeat="row in getFilteredItems() track by $index"
+                            style="cursor: pointer"
+                            ng-click="go('/endpoint/' + row.id + '/hourly_load')">
+
+                            <td ng-style="{'background-color': row.color}"></td>
+                            <td class="align-middle">{{ row.name }}</td>
+                            <td class="table_cell_with_error_count align-middle"
+                                ng-show="isHits"
+                                style="text-align: right;"
+                                ng-attr-error-count="
+                                        {{ (row['hits-today-errors'] > 0) ? row['hits-today-errors'] : ''}}">
+                                {{ row['hits-today'] | number }}
+                            </td>
+                            <td class="table_cell_with_error_count align-middle"
+                                ng-show="isHits" style="text-align: right;"
+                                ng-attr-error-count="
+                                        {{ (row['hits-week-errors'] > 0) ? row['hits-week-errors'] : ''}}">
+                                {{ row['hits-week'] | number }}
+                            </td>
+                            <td ng-show="isHits" style="text-align: right;" class="align-middle">
+                                {{ row['hits-overall'] | number }}
+                            </td>
+                            <td ng-show="isHits==false" class="align-middle"
+                                style="text-align: right;">{{ row['median-today'] | duration_ms }}</td>
+                            <td ng-show="isHits==false" class="align-middle"
+                                style="text-align: right;">{{ row['median-week'] | duration_ms }}</td>
+                            <td ng-show="isHits==false" class="align-middle"
+                                style="text-align: right;">{{ row['median-overall'] | duration_ms }}</td>
+                            <td style="text-align: center;" class="align-middle">{{ row['last-accessed'] | dateDifference }}</td>
+                            <td ng-click="$event.stopPropagation()">
+                                <monitorlevel name="row.name"
+                                              value="row.monitor"></monitorlevel>
+                            </td>
+                            <td ng-click="$event.stopPropagation(); go('/endpoint/' + row.id + '/exceptions')"
+                                style="text-align: right;">
+                                <button class="btn btn-light">
+                                {{ row['exceptions'] }}
+                                </button>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-12">
+                    <nav aria-label="Page navigation example" style="float: right">
+                        <ul class="pagination">
+                            <li ng-class="{'disabled': !canGoBack()}"
+                                class="page-item">
+                                <a class="page-link" href="#" ng-click="previousPage()">Previous</a>
+                            </li>
+
+                            <li ng-class="{'disabled': !canGoForward() }" class="page-item">
+                                <a class="page-link" href="#"
+                                   ng-click="nextPage()">Next</a>
+                            </li>
+                        </ul>
+                    </nav>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="card mb-3">
+        <div class="card-header"><h5><sup>*</sup>Monitoring-level</h5></div>
+        <div class="card-body">
+            <b>0 - Disabled</b>
+            <p>When the monitoring-level is set to 0, you don't monitor anything about the
+                performance of this endpoint.
+                The only data that is stored is when the <b>endpoint is last
+                    requested.</b></p><b>1 - Performance</b>
+            <p>When the monitoring-level is set to 1, you collect data when the endpoint
+                is last requested, plus data
+                about the <b>performance and utilization</b> of this endpoint (as a
+                black-box).</p><b>2 - Outliers</b>
+            <p>When the monitoring-level is set to 2, you get all the functionality from
+                1, plus <b>extra information
+                    if the request is an outlier.</b></p><b>3 - Profiler + Outliers</b>
+            <p>When the monitoring-level is set to 3, you get all the functionality from
+                2, plus data about the <b>performance
+                    per line of code</b> from all requests.</p>
+        </div>
+    </div>
+</div>

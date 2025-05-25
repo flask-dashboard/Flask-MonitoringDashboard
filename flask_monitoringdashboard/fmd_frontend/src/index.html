@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <title>FmdFrontend</title>
+        <base href="/dashboard/">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="icon" type="image/x-icon" href="favicon.ico">
+    </head>
+    <body class="fixed-nav sticky-footer bg-dark" id="page-top">
+        <nav
+            class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top"
+            id="mainNav"
+        >
+            <div class="navbar-brand brand-plain">
+                <a href="overview"><h4>hej</h4></a>
+            </div>
+
+            <div class="collapse navbar-collapse" id="navbarResponsive">
+                <menu></menu>
+                <ul class="navbar-nav sidenav-toggler">
+                    <li class="nav-item">
+                        <a class="nav-link text-center" id="sidenavToggler">
+                            <i class="fa fa-fw fa-angle-left"></i>
+                        </a>
+                    </li>
+                </ul>
+                <ul class="navbar-nav ml-auto">
+                    <li class="nav-item">
+                        <span style="color: #adb5bd"> </span>
+                    </li>
+                </ul>
+                <ul class="navbar-nav ml-auto">
+                    <li class="nav-item">
+                        <a
+                            class="nav-link"
+                            data-bs-toggle="modal"
+                            data-bs-target="#logoutModal"
+                        >
+                            <i class="fas fa-sign-out-alt"></i>Logout</a>
+                    </li>
+                </ul>
+            </div>
+        </nav>
+
+        <div class="content-wrapper">
+            <div class="container page">
+                <app-root></app-root>
+            </div>
+            <footer class="sticky-footer">
+                <div class="container">
+                    <div class="text-center">
+                        Click
+                        <a
+                            target="_blank"
+                            href="http://flask-monitoringdashboard.readthedocs.io"
+                        >here</a>
+                        to read advanced documentation.
+                    </div>
+                </div>
+            </footer>
+
+            <modal name="'logout'" title="'Logout?'">
+                <p>Are you sure you want to logout? hej igen</p>
+            </modal>
+        </div>
+    </body>
+</html>
