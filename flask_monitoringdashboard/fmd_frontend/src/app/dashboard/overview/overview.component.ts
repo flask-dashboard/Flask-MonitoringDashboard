@@ -5,9 +5,10 @@ import { from, map, mergeMap, take, tap } from 'rxjs';
 import { Router } from '@angular/router';
 
 @Component({
-  selector: 'app-overview',
-  templateUrl: './overview.component.html',
-  styleUrls: ['./overview.component.css'],
+    selector: 'app-overview',
+    templateUrl: './overview.component.html',
+    styleUrls: ['./overview.component.css'],
+    standalone: false
 })
 export class OverviewComponent implements OnInit {
   public table: OverviewDto[] = [];

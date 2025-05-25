@@ -3,9 +3,10 @@ import { take } from 'rxjs';
 import { DashboardService } from 'src/app/service/dashboard/dashboard.service';
 
 @Component({
-  selector: 'app-monitor-level',
-  templateUrl: './monitor-level.component.html',
-  styleUrls: ['./monitor-level.component.css'],
+    selector: 'app-monitor-level',
+    templateUrl: './monitor-level.component.html',
+    styleUrls: ['./monitor-level.component.css'],
+    standalone: false
 })
 export class MonitorLevelComponent implements OnInit {
   @Input() public monitoringLevel!: number;
