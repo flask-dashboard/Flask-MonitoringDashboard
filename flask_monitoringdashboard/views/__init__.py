@@ -16,16 +16,22 @@ def static(filename):
     :param filename: filename in the /static file
     :return: content of the file
     """
-    return send_from_directory(loc() + 'static', filename)
+    #return send_from_directory(loc() + 'static', filename)
+    return send_from_directory(loc() + 'templates', filename)
 
 
 @blueprint.route('/', defaults={'path': ''})
 @blueprint.route('/<path:path>')  # Catch-All URL: http://flask.pocoo.org/snippets/57/
 @secure
 def index(path):
-    return render_template('fmd_base.html', 
-        blueprint_name=config.blueprint_name, 
-        brand_name=config.brand_name, 
-        title_name=config.title_name,
-        description=config.description,
-    )
+    print(path)
+    if path == '':
+        return send_from_directory(loc() + 'templates', "index.html")
+    else: 
+        return send_from_directory(loc() + 'templates', path)
+    #return render_template('index.html', 
+    #    blueprint_name=config.blueprint_name, 
+    #    brand_name=config.brand_name, 
+    #    title_name=config.title_name,
+    #    description=config.description,
+    #)

@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="fmdApp">
+  <head>
+    <title>{{ title_name }}</title>
+    <base href="{{ url_for(blueprint_name + '.index') }}" />
+    <meta charset="utf-8" />
+
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, shrink-to-fit=no"
+    />
+
+    <link
+      rel="stylesheet"
+      href="{{ url_for(blueprint_name + '.static', filename='css/main.css') }}"
+    />
+
+    <link
+      rel="shortcut icon"
+      href="{{ url_for(blueprint_name + '.static', filename='img/favicon.ico') }}"
+    />
+        <link href="{{ url_for(blueprint_name + '.static', filename='css/prism.css') }}" rel="stylesheet" />
+
+  </head>
+
+  {% block body %}
+  <body class="fixed-nav sticky-footer bg-dark" id="page-top">
+        <script src="{{ url_for(blueprint_name + '.static', filename='js/prism.js') }}"></script>
+    <nav
+      class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top"
+      id="mainNav"
+    >
+      <div class="navbar-brand brand-plain">
+        <a href="overview"><h4>{{ brand_name }}</h4></a>
+      </div>
+
+      <div class="collapse navbar-collapse" id="navbarResponsive">
+        <menu></menu>
+        <ul class="navbar-nav sidenav-toggler">
+          <li class="nav-item">
+            <a class="nav-link text-center" id="sidenavToggler">
+              <i class="fa fa-fw fa-angle-left"></i>
+            </a>
+          </li>
+        </ul>
+        <ul class="navbar-nav ml-auto">
+          <li class="nav-item">
+            <span style="color: #adb5bd"> {{ description }} </span>
+          </li>
+        </ul>
+        <ul class="navbar-nav ml-auto">
+          <li class="nav-item">
+            <a class="nav-link" data-bs-toggle="modal"  data-bs-target="#logoutModal">
+              <i class="fas fa-sign-out-alt"></i>Logout</a
+            >
+          </li>
+        </ul>
+      </div>
+    </nav>
+
+    <div class="content-wrapper">
+      <div class="container page">
+        <div id="content" class="main" ng-view></div>
+      </div>
+      <footer class="sticky-footer">
+        <div class="container">
+          <div class="text-center">
+            Click
+            <a
+              target="_blank"
+              href="http://flask-monitoringdashboard.readthedocs.io"
+              >here</a
+            >
+            to read advanced documentation.
+          </div>
+        </div>
+      </footer>
+
+      <modal name="'logout'" title="'Logout?'">
+        <p>Are you sure you want to logout?</p>
+      </modal>
+    </div>
+    {% endblock %}
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.7.5/angular.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.7.5/angular-route.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/4.12.0/d3.min.js"></script>
+    <script src="https://unpkg.com/sunburst-chart"></script>
+
+    <script src="{{ url_for(blueprint_name + '.static', filename='js/app.js') }}"></script>
+  </body>
+</html>

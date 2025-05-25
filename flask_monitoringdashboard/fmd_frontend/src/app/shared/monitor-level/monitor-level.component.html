@@ -1,0 +1,12 @@
+<ul class="pagination mb-0 ml-2">
+  <li *ngFor="let n of [0,1,2,3]" class="page-item">
+    <a
+      class="page-link"
+      (click)="sendForm(n)"
+      [style]='{
+    "background-color": computeColor(n),
+    "text-decoration": (n == monitoringLevel) ? "underline" : "",
+  }'
+    >{{ n }}</a>
+  </li>
+</ul>

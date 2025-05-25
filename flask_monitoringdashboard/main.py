@@ -147,4 +147,4 @@ def my_func():
 
 if __name__ == "__main__":
     dashboard.bind(app)
-    app.run(port=4200)
+    app.run(port=4200, debug=True)
