@@ -177,7 +177,7 @@
               >
                 <td [ngStyle]='{ "background-color": row.color }'></td>
                 <td class="align-middle">{{ row.name }}</td>
-                <!--
+                @if (isHits) {
                   <td
                     class="table_cell_with_error_count align-middle"
                     style="text-align: right"
@@ -198,25 +198,26 @@
                   >
                     {{ row["hits-overall"] }}
                   </td>
--->
-                <td
-                  class="align-middle"
-                  style="text-align: right"
-                >
-                  {{ row["median-today"] | durationMs }}
-                </td>
-                <td
-                  class="align-middle"
-                  style="text-align: right"
-                >
-                  {{ row["median-week"] | durationMs }}
-                </td>
-                <td
-                  class="align-middle"
-                  style="text-align: right"
-                >
-                  {{ row["median-overall"] | durationMs }}
-                </td>
+                } @else {
+                  <td
+                    class="align-middle"
+                    style="text-align: right"
+                  >
+                    {{ row["median-today"] | durationMs }}
+                  </td>
+                  <td
+                    class="align-middle"
+                    style="text-align: right"
+                  >
+                    {{ row["median-week"] | durationMs }}
+                  </td>
+                  <td
+                    class="align-middle"
+                    style="text-align: right"
+                  >
+                    {{ row["median-overall"] | durationMs }}
+                  </td>
+                }
                 <td style="text-align: center" class="align-middle">
                   {{ row["last-accessed"] | dateDifference }}
                 </td>
