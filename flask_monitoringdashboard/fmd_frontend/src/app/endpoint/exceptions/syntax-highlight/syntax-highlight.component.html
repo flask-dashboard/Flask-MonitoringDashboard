@@ -1,0 +1,17 @@
+<details (click)="fetchCode()">
+  <summary class="tooltip-wrapper">
+    {{ file_path }}
+    <span class="tooltip">{{ full_file_path }}</span>
+    <span style="color: grey">in</span>
+    {{ function_name }}
+    <span style="color: grey">at</span>
+    {{ line_number }}
+  </summary>
+  <pre
+    class="line-numbers"
+    style="white-space: pre"
+    [attr.data-line]="line_number"
+    [attr.data-line-offset]="function_start_line_number"
+    [attr.data-start]="function_start_line_number"
+  ><code class="language-python"  #codeElement>{{code}}</code></pre>
+</details>

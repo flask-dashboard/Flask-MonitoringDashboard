@@ -1,22 +1,29 @@
 import { CommonModule, NgIf } from '@angular/common';
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { NavigationEnd, Router, RouterModule, UrlTree } from '@angular/router';
+import { NavigationEnd, Router, RouterModule } from '@angular/router';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { faChevronDown, faChevronUp } from '@fortawesome/free-solid-svg-icons';
 import { NgbCollapse } from '@ng-bootstrap/ng-bootstrap';
-import { filter, map, mergeMap, Subject, takeUntil, tap } from 'rxjs';
+import {
+  combineLatest,
+  filter,
+  merge,
+  Subject,
+  takeUntil,
+  tap,
+  withLatestFrom,
+} from 'rxjs';
+import { EndpointContextService } from 'src/app/service/endpoint-context/endpoint-context.service';
 import { EndpointInfo } from 'src/app/service/endpoint/endpoint-defs';
-import { EndpointService } from 'src/app/service/endpoint/endpoint.service';
+import {
+  MenuConfig,
+  MenuSegmentComponent,
+} from './menu-segment/menu-segment.component';
 
 interface MenuState {
-  dashboard: boolean;
-  endpoint: boolean;
-  configuration: boolean;
-}
-
-interface MenuConfig {
-  path: string;
-  text: string;
+  dashboardExpanded: boolean;
+  endpointExpanded: boolean;
+  configurationExpanded: boolean;
 }
 
 @Component({
@@ -31,11 +38,11 @@ export class MenuComponent implements OnInit, OnDestroy {
   public chevronUp = faChevronUp;
   private destroyed: Subject<void> = new Subject();
   public menuState: MenuState = {
-    dashboard: false,
-    endpoint: false,
-    configuration: false,
+    dashboardExpanded: false,
+    endpointExpanded: false,
+    configurationExpanded: false,
   };
-  public endpoint: EndpointInfo | undefined;
+  public endpoint: EndpointInfo | null = null;
 
   public overviewConfig: MenuConfig[] = [
     { path: 'overview', text: 'Overview' },
@@ -67,7 +74,7 @@ export class MenuComponent implements OnInit, OnDestroy {
 
   constructor(
     private readonly router: Router,
-    private readonly endpointService: EndpointService
+    private readonly endpointContext: EndpointContextService
   ) {}
 
   ngOnDestroy(): void {
@@ -76,48 +83,36 @@ export class MenuComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    this.router.events
+    combineLatest([
+      this.router.events.pipe(
+        filter((event) => event instanceof NavigationEnd)
+      ),
+      this.endpointContext.endpoint,
+    ])
       .pipe(
         takeUntil(this.destroyed),
-        filter((event) => event instanceof NavigationEnd),
-        tap((event) => {
+        tap(([event, endpoint]) => {
           const url = event.urlAfterRedirects || event.url;
-          console.log(url);
           const possibleSegments = url
             .split('/')
             .filter((segment) => segment.length > 0);
           if (possibleSegments.length > 0) {
             const startSegment = possibleSegments[0];
 
-            this.endpoint =
-              possibleSegments[0] !== 'endpoint' ? undefined : this.endpoint;
+            this.endpoint = endpoint;
             this.menuState = {
-              dashboard: this.overviewConfig
+              dashboardExpanded: this.overviewConfig
                 .map((cfg) => cfg.path)
                 .includes(startSegment),
-              endpoint: possibleSegments[0] === 'endpoint',
-              configuration: this.configurationConfig
+              endpointExpanded: endpoint !== null,
+              configurationExpanded: this.configurationConfig
                 .map((cfg) => cfg.path)
                 .includes(startSegment),
             };
           }
-        }),
-        map(() => this.router.routerState.root),
-        map((route) => {
-          while (route.firstChild) {
-            route = route.firstChild;
-          }
-          return route;
-        }),
-        filter((route) => route.outlet === 'primary'),
-        map((route) => Number(route.snapshot.params['id'])),
-        filter((id) => !isNaN(id) && id !== this.endpoint?.id),
-        mergeMap((id) => this.endpointService.getEndpointInfo(id))
+        })
       )
-      .subscribe((endpoint) => {
-        console.log('hit');
-        this.endpoint = endpoint;
-      });
+      .subscribe();
   }
 
   toggleMenuState(item: keyof MenuState): void {

@@ -18,6 +18,9 @@ import { APP_BASE_HREF } from '@angular/common';
 import { MenuComponent } from './elements/menu/menu.component';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { ExceptionsComponent } from './endpoint/exceptions/exceptions.component';
+import { EndpointDetailsComponent } from './shared/endpoint-details/endpoint-details.component';
+import { PaginationComponent } from './shared/pagination/pagination.component';
+import { SyntaxHighlightComponent } from './endpoint/exceptions/syntax-highlight/syntax-highlight.component';
 
 @NgModule({
   declarations: [
@@ -25,9 +28,9 @@ import { ExceptionsComponent } from './endpoint/exceptions/exceptions.component'
     DurationMsPipe,
     OverviewComponent,
     DateDifferencePipe,
-    MonitorLevelComponent,
     ExceptionsComponent,
     HourlyLoadComponent,
+    SyntaxHighlightComponent,
   ],
   bootstrap: [AppComponent],
   imports: [
@@ -36,6 +39,9 @@ import { ExceptionsComponent } from './endpoint/exceptions/exceptions.component'
     FormsModule,
     FontAwesomeModule,
     MenuComponent,
+    MonitorLevelComponent,
+    EndpointDetailsComponent,
+    PaginationComponent,
     NgbModule,
   ],
   providers: [

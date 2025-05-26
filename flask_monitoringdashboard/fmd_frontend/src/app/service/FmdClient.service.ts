@@ -19,4 +19,8 @@ export class FmdClientService {
   post<T>(path: string, body: any): Observable<T> {
     return this.client.post<T>(this.config.constructPath(path), body);
   }
+
+  delete<T>(path: string): Observable<T> {
+    return this.client.delete<T>(this.config.constructPath(path));
+  }
 }
