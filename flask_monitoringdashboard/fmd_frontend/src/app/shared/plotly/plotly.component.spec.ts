@@ -3,21 +3,21 @@ import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
 import { DebugElement } from '@angular/core';
 
-import { ExceptionsComponent } from './exceptions.component';
+import { PlotlyComponent } from './plotly.component';
 
-describe('ExceptionsComponent', () => {
-  let component: ExceptionsComponent;
-  let fixture: ComponentFixture<ExceptionsComponent>;
+describe('PlotlyComponent', () => {
+  let component: PlotlyComponent;
+  let fixture: ComponentFixture<PlotlyComponent>;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ ExceptionsComponent ]
+      declarations: [ PlotlyComponent ]
     })
     .compileComponents();
   }));
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(ExceptionsComponent);
+    fixture = TestBed.createComponent(PlotlyComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

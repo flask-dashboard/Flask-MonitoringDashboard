@@ -1,0 +1,28 @@
+<li class="nav-item" title="Dashboard">
+  <a
+    class="nav-link nav-link-collapse collapsed d-flex justify-content-between no-marker"
+    style="padding: 1em"
+    (click)="expanded = !expanded"
+  >
+    <div>
+      <ng-content></ng-content>
+    </div>
+    <fa-icon *ngIf="!expanded" [icon]="chevronDown" />
+    <fa-icon *ngIf="expanded" [icon]="chevronUp" />
+  </a>
+  <ul
+    class="sidenav-second-level no-marker"
+    [ngbCollapse]="!expanded"
+  >
+    <li
+      *ngFor="let config of menuConfig"
+      routerLinkActive="active"
+      class="no-marker"
+    >
+      <a
+        [routerLink]="format(config.path, config.formatArgs)"
+        style="color: #adb5bd; word-wrap: normal"
+      >{{ config.text }}</a>
+    </li>
+  </ul>
+</li>

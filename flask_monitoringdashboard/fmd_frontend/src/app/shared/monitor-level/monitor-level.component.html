@@ -5,7 +5,7 @@
       (click)="sendForm(n)"
       [style]='{
     "background-color": computeColor(n),
-    "text-decoration": (n == monitoringLevel) ? "underline" : "",
+    "text-decoration": (n === monitoringLevel) ? "underline" : "",
   }'
     >{{ n }}</a>
   </li>

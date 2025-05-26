@@ -2,18 +2,18 @@
   <li class="nav-item" title="Dashboard">
     <a
       class="nav-link nav-link-collapse collapsed d-flex justify-content-between"
-      (click)='toggleMenuState("dashboard")'
+      (click)='toggleMenuState("dashboardExpanded")'
     >
       <div>
         <i class="fas fa-tachometer-alt p-1"></i>
         <span class="nav-link-text">Dashboard</span>
       </div>
-      <fa-icon *ngIf="!menuState.dashboard" [icon]="chevronDown" />
-      <fa-icon *ngIf="menuState.dashboard" [icon]="chevronUp" />
+      <fa-icon *ngIf="!menuState.dashboardExpanded" [icon]="chevronDown" />
+      <fa-icon *ngIf="menuState.dashboardExpanded" [icon]="chevronUp" />
     </a>
     <ul
       class="sidenav-second-level"
-      [ngbCollapse]="!menuState.dashboard"
+      [ngbCollapse]="!menuState.dashboardExpanded"
     >
       <li *ngFor="let config of overviewConfig" routerLinkActive="active">
         <a [routerLink]="config.path">{{ config.text }}</a>
@@ -27,18 +27,18 @@
   >
     <a
       class="nav-link nav-link-collapse collapsed d-flex justify-content-between"
-      (click)='toggleMenuState("endpoint")'
+      (click)='toggleMenuState("endpointExpanded")'
     >
       <div>
         <i class="fa fa-fw fa-asterisk"></i>
         <span class="nav-link-text">{{ endpoint.endpoint }}</span>
       </div>
-      <fa-icon *ngIf="!menuState.endpoint" [icon]="chevronDown" />
-      <fa-icon *ngIf="menuState.endpoint" [icon]="chevronUp" />
+      <fa-icon *ngIf="!menuState.endpointExpanded" [icon]="chevronDown" />
+      <fa-icon *ngIf="menuState.endpointExpanded" [icon]="chevronUp" />
     </a>
     <ul
       class="sidenav-second-level collapse"
-      [ngbCollapse]="!menuState.endpoint"
+      [ngbCollapse]="!menuState.endpointExpanded"
     >
       <li *ngFor="let config of endpointConfig" routerLinkActive="active">
         <a [routerLink]='"endpoint/" + endpoint.id + "/" + config.path'>{{
@@ -74,19 +74,19 @@
   <li class="nav-item" title="Configuration">
     <a
       class="nav-link nav-link-collapse collapsed d-flex justify-content-between"
-      (click)='toggleMenuState("configuration")'
+      (click)='toggleMenuState("configurationExpanded")'
     >
       <div>
         <i class="fa fa-fw fa-cog"></i>
         <span class="nav-link-text">Configuration</span>
       </div>
-      <fa-icon *ngIf="!menuState.configuration" [icon]="chevronDown" />
-      <fa-icon *ngIf="menuState.configuration" [icon]="chevronUp" />
+      <fa-icon *ngIf="!menuState.configurationExpanded" [icon]="chevronDown" />
+      <fa-icon *ngIf="menuState.configurationExpanded" [icon]="chevronUp" />
     </a>
 
     <ul
       class="sidenav-second-level"
-      [ngbCollapse]="!menuState.configuration"
+      [ngbCollapse]="!menuState.configurationExpanded"
     >
       <li *ngFor="let config of configurationConfig" routerLinkActive="active">
         <a [routerLink]="config.path">{{ config.text }}</a>
