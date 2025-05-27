@@ -3,7 +3,9 @@ import 'prismjs';
 import 'prismjs/components/prism-python';
 import 'prismjs/plugins/line-numbers/prism-line-numbers';
 import 'prismjs/plugins/line-highlight/prism-line-highlight';
+import 'plotly.js-cartesian-dist';
 
+declare var Plotly: any;
 declare var Prism: any;
 
 import { platformBrowserDynamic } from '@angular/platform-browser-dynamic';

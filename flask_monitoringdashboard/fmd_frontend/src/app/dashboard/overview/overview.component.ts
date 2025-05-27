@@ -12,7 +12,7 @@ import { Router } from '@angular/router';
 })
 export class OverviewComponent implements OnInit {
   public table: OverviewDto[] = [];
-  public blueprints: string[] = [];
+  public blueprints: string[] = [''];
   public selectedBlueprint: string = '';
   public isHits: boolean = true;
   public pageSize: number = 10;

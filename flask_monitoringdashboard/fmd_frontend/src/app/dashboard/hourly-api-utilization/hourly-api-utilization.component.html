@@ -1,3 +1,9 @@
-<p>
-  hourly-api-utilization works!
-</p>
+<app-plotly
+  [title]="title"
+  [axesText]="axesText"
+  [contentText]="contentText"
+  [useDateRange]="true"
+  [graphType]='"heatmap"'
+  (formChange)="fetchData($event)"
+  [graphDataEmitter]="graphDataEmitter"
+/>

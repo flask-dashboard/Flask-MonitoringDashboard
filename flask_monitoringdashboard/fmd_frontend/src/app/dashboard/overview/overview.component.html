@@ -23,8 +23,7 @@
     <div class="card-body">
       <div
         class="spinner"
-        ng-controller="FormController"
-        ng-show="table.length === 0"
+        *ngIf="table.length === 0"
       >
         <div class="rect1"></div>
         <div class="rect2"></div>
@@ -249,12 +248,11 @@
                 [ngClass]='{ "disabled": !canGoBack() }'
                 class="page-item"
               >
-                <a class="page-link" href="#" (click)="previousPage()"
-                >Previous</a>
+                <a class="page-link" (click)="previousPage()">Previous</a>
               </li>
 
               <li [ngClass]='{ "disabled": !canGoForward() }' class="page-item">
-                <a class="page-link" href="#" (click)="nextPage()">Next</a>
+                <a class="page-link" (click)="nextPage()">Next</a>
               </li>
             </ul>
           </nav>

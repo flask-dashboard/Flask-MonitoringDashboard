@@ -12,7 +12,7 @@ import { DurationMsPipe } from './pipes/duration-ms.pipe';
 import { OverviewComponent } from './dashboard/overview/overview.component';
 import { DateDifferencePipe } from './pipes/date-difference.pipe';
 import { MonitorLevelComponent } from './shared/monitor-level/monitor-level.component';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { APP_BASE_HREF } from '@angular/common';
 import { MenuComponent } from './elements/menu/menu.component';
@@ -21,6 +21,9 @@ import { ExceptionsComponent } from './endpoint/exceptions/exceptions.component'
 import { EndpointDetailsComponent } from './shared/endpoint-details/endpoint-details.component';
 import { PaginationComponent } from './shared/pagination/pagination.component';
 import { SyntaxHighlightComponent } from './endpoint/exceptions/syntax-highlight/syntax-highlight.component';
+import { PlotlyComponent } from './shared/plotly/plotly.component';
+import { HourlyApiUtilizationComponent } from './dashboard/hourly-api-utilization/hourly-api-utilization.component';
+import { DateShortPipe } from './pipes/date-short.pipe';
 
 @NgModule({
   declarations: [
@@ -30,13 +33,17 @@ import { SyntaxHighlightComponent } from './endpoint/exceptions/syntax-highlight
     DateDifferencePipe,
     ExceptionsComponent,
     HourlyLoadComponent,
+    HourlyApiUtilizationComponent,
     SyntaxHighlightComponent,
+    PlotlyComponent,
+    DateShortPipe,
   ],
   bootstrap: [AppComponent],
   imports: [
     BrowserModule,
     AppRoutingModule,
     FormsModule,
+    ReactiveFormsModule,
     FontAwesomeModule,
     MenuComponent,
     MonitorLevelComponent,
@@ -45,6 +52,7 @@ import { SyntaxHighlightComponent } from './endpoint/exceptions/syntax-highlight
     NgbModule,
   ],
   providers: [
+    DateShortPipe,
     provideHttpClient(withInterceptorsFromDi()),
     { provide: APP_BASE_HREF, useValue: '/dashboard/' },
   ],

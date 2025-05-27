@@ -11,7 +11,6 @@
         [class]='{ "disabled": paginationConfig.page === getFirstPage() }'
       >
         <a
-          href="#"
           class="page-link"
           (click)="goto(paginationConfig.page - 1)"
         >Previous</a>
@@ -23,7 +22,6 @@
         [class]='{ "active": paginationConfig.page === p, "disabled": p === "..." }'
       >
         <a
-          href="#"
           class="page-link"
           (click)="goto(p)"
         >{{ p }}</a>
@@ -33,7 +31,6 @@
         [class]='{ "disabled": paginationConfig.page === getLastPage() }'
       >
         <a
-          href="#"
           class="page-link"
           (click)="goto(paginationConfig.page + 1)"
         >Next</a>

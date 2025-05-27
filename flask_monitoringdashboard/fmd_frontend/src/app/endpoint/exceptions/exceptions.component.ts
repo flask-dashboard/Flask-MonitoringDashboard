@@ -1,5 +1,5 @@
+import { PaginationDetails } from './../../shared/pagination/pagination.component';
 import {
-  AfterViewInit,
   Component,
   EventEmitter,
   OnDestroy,
@@ -12,20 +12,14 @@ import {
   filter,
   map,
   mergeMap,
+  of,
   Subject,
-  switchMap,
-  take,
   takeUntil,
-  withLatestFrom,
 } from 'rxjs';
 import { EndpointContextService } from 'src/app/service/endpoint-context/endpoint-context.service';
 import { EndpointInfo } from 'src/app/service/endpoint/endpoint-defs';
 import { ExceptionDetails } from 'src/app/service/exception/exception-defs';
 import { ExceptionService } from 'src/app/service/exception/exception.service';
-import {
-  PaginationComponent,
-  PaginationDetails,
-} from 'src/app/shared/pagination/pagination.component';
 
 @Component({
   selector: 'app-exceptions',
@@ -42,13 +36,9 @@ export class ExceptionsComponent implements OnInit, OnDestroy {
     total: 0,
   };
   public table: ExceptionDetails[] = [];
-  public totalPages: number = 0;
   public paginationEmitter: EventEmitter<PaginationDetails> =
     new EventEmitter();
   private destoyed = new Subject<void>();
-
-  @ViewChildren(PaginationComponent)
-  paginationChildren!: QueryList<PaginationComponent>;
 
   constructor(
     private readonly endpointContext: EndpointContextService,
@@ -61,15 +51,21 @@ export class ExceptionsComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    this.endpointContext.endpoint
+    combineLatest([
+      this.endpointContext.endpoint,
+      this.paginationEmitter.asObservable(),
+    ])
       .pipe(
         takeUntil(this.destoyed),
-        filter((endpoint) => endpoint !== undefined && endpoint !== null),
-        mergeMap((endpoint) => {
+        filter(([endpoint]) => endpoint !== undefined && endpoint !== null),
+        mergeMap(([endpoint]) => {
           this.endpoint = endpoint;
-          return this.exceptionService
-            .getNumberOfExceptions(endpoint.id)
-            .pipe(map((numExceptions) => ({ numExceptions, endpoint })));
+          if (this.paginationConfig.total === 0) {
+            return this.exceptionService
+              .getNumberOfExceptions(endpoint!.id)
+              .pipe(map((numExceptions) => ({ numExceptions, endpoint })));
+          }
+          return of({ numExceptions: this.paginationConfig.total, endpoint });
         }),
         map(({ numExceptions, endpoint }) => {
           this.paginationConfig.total = numExceptions;
@@ -84,8 +80,13 @@ export class ExceptionsComponent implements OnInit, OnDestroy {
         )
       )
       .subscribe((details) => {
-        console.log(details);
         this.table = details;
       });
+
+    this.onPageChange(this.paginationConfig);
+  }
+
+  onPageChange(config: PaginationDetails): void {
+    this.paginationEmitter.emit(config);
   }
 }

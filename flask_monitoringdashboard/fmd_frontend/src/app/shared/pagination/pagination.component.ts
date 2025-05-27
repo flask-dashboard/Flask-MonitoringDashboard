@@ -89,7 +89,8 @@ export class PaginationComponent implements OnInit {
   goto(idx: number | string): void {
     if (typeof idx === 'number') {
       this.paginationConfig.page = idx;
-
+      this.paginationConfig.offset = this.getLeft();
+      this.onPageChange.emit(this.paginationConfig);
       if (this.onReload) this.onReload();
     }
   }
