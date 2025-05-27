@@ -1,0 +1,9 @@
+<app-plotly
+  [title]="title"
+  [axesText]="axesText"
+  [contentText]="contentText"
+  [useDateRange]="true"
+  [graphType]='"chart"'
+  (formChange)="fetchData($event)"
+  [graphDataEmitter]="graphDataEmitter"
+/>

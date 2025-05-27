@@ -13,3 +13,8 @@ export interface Hit {
   name: string;
   hits: number;
 }
+
+export interface ApiPerformance {
+  name: string;
+  values: number[];
+}

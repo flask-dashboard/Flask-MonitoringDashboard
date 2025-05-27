@@ -27,6 +27,8 @@ import { DateShortPipe } from './pipes/date-short.pipe';
 import { ExceptionOverviewComponent } from './dashboard/exception-overview/exception-overview.component';
 import { DateLayoutPipe } from './pipes/date-layout.pipe';
 import { MultiVersionComponent } from './dashboard/multi-version/multi-version.component';
+import { DailyApiUtilizationComponent } from './dashboard/daily-api-utilization/daily-api-utilization.component';
+import { ApiPerformanceComponent } from './dashboard/api-performance/api-performance.component';
 
 @NgModule({
   declarations: [
@@ -42,6 +44,8 @@ import { MultiVersionComponent } from './dashboard/multi-version/multi-version.c
     DateShortPipe,
     ExceptionOverviewComponent,
     MultiVersionComponent,
+    DailyApiUtilizationComponent,
+    ApiPerformanceComponent,
   ],
   bootstrap: [AppComponent],
   imports: [

@@ -6,6 +6,8 @@ import { ExceptionsComponent } from './endpoint/exceptions/exceptions.component'
 import { HourlyLoadComponent } from './endpoint/hourly-load/hourly-load.component';
 import { ExceptionOverviewComponent } from './dashboard/exception-overview/exception-overview.component';
 import { MultiVersionComponent } from './dashboard/multi-version/multi-version.component';
+import { DailyApiUtilizationComponent } from './dashboard/daily-api-utilization/daily-api-utilization.component';
+import { ApiPerformanceComponent } from './dashboard/api-performance/api-performance.component';
 @Component({ template: '<p>Dashboard Parent Hit</p>' })
 export class TempDashboardParentComponent {}
 
@@ -14,6 +16,8 @@ const routes: Routes = [
   { path: 'hourly_load', component: HourlyApiUtilizationComponent },
   { path: 'exception_overview', component: ExceptionOverviewComponent },
   { path: 'multi_version', component: MultiVersionComponent },
+  { path: 'daily_utilization', component: DailyApiUtilizationComponent },
+  { path: 'api_performance', component: ApiPerformanceComponent },
   {
     path: 'endpoint/:id',
     children: [

@@ -1,7 +1,8 @@
 import { Injectable } from '@angular/core';
 import { Observable, of, tap } from 'rxjs';
-import { Hit, EndpointInfo } from './endpoint-defs';
+import { Hit, EndpointInfo, ApiPerformance } from './endpoint-defs';
 import { FmdClientService } from '../FmdClient.service';
+import { MultiSelect } from 'src/app/shared/plotly/plotly.component';
 
 @Injectable({
   providedIn: 'root',
@@ -34,5 +35,11 @@ export class EndpointService {
 
   getIPHits(id: number): Observable<Hit[]> {
     return this.client.get('api/users/' + id);
+  }
+
+  getApiPerformance(endpoints: MultiSelect): Observable<ApiPerformance[]> {
+    return this.client.post('api/api_performance', {
+      data: { endpoints: endpoints.selected.map((sel) => sel.id) },
+    });
   }
 }

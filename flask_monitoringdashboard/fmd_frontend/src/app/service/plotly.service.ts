@@ -14,7 +14,7 @@ export interface HeatMap {
 
 export interface Chart {
   root: Root;
-  data: Data[];
+  data: Partial<Data>[];
   layout_ext: Partial<Layout>;
 }
 

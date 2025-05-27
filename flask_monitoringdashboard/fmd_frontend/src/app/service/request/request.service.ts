@@ -1,7 +1,7 @@
 import { Observable } from 'rxjs';
 import { FmdClientService } from './../FmdClient.service';
 import { Injectable } from '@angular/core';
-import { HourlyLoad, Requests } from './request-defs';
+import { HourlyLoad, RequestsData } from './request-defs';
 import { formatDate } from '@angular/common';
 
 @Injectable({
@@ -13,7 +13,7 @@ export class RequestService {
 
   constructor(private readonly client: FmdClientService) {}
 
-  getRequests(startDate: Date, endDate: Date): Observable<Requests> {
+  getRequests(startDate: Date, endDate: Date): Observable<RequestsData> {
     return this.client.get(
       `api/requests/${this.formatDate(startDate)}/${this.formatDate(endDate)}`
     );
