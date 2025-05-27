@@ -4,12 +4,14 @@ import { OverviewComponent } from './dashboard/overview/overview.component';
 import { HourlyApiUtilizationComponent } from './dashboard/hourly-api-utilization/hourly-api-utilization.component';
 import { ExceptionsComponent } from './endpoint/exceptions/exceptions.component';
 import { HourlyLoadComponent } from './endpoint/hourly-load/hourly-load.component';
+import { ExceptionOverviewComponent } from './dashboard/exception-overview/exception-overview.component';
 @Component({ template: '<p>Dashboard Parent Hit</p>' })
 export class TempDashboardParentComponent {}
 
 const routes: Routes = [
   { path: 'overview', component: OverviewComponent },
   { path: 'hourly_load', component: HourlyApiUtilizationComponent },
+  { path: 'exception_overview', component: ExceptionOverviewComponent },
   {
     path: 'endpoint/:id',
     children: [

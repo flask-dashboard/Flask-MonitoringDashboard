@@ -24,6 +24,7 @@ import { SyntaxHighlightComponent } from './endpoint/exceptions/syntax-highlight
 import { PlotlyComponent } from './shared/plotly/plotly.component';
 import { HourlyApiUtilizationComponent } from './dashboard/hourly-api-utilization/hourly-api-utilization.component';
 import { DateShortPipe } from './pipes/date-short.pipe';
+import { ExceptionOverviewComponent } from './dashboard/exception-overview/exception-overview.component';
 
 @NgModule({
   declarations: [
@@ -37,6 +38,7 @@ import { DateShortPipe } from './pipes/date-short.pipe';
     SyntaxHighlightComponent,
     PlotlyComponent,
     DateShortPipe,
+    ExceptionOverviewComponent,
   ],
   bootstrap: [AppComponent],
   imports: [

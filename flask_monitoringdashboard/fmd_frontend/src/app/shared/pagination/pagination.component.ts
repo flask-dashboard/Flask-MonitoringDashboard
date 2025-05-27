@@ -5,7 +5,6 @@ export interface PaginationDetails {
   offset: number;
   perPage: number;
   page: number;
-  total: number;
 }
 
 @Component({
@@ -16,6 +15,7 @@ export interface PaginationDetails {
 })
 export class PaginationComponent implements OnInit {
   @Input() paginationConfig!: PaginationDetails;
+  @Input() total!: number;
   @Input() name!: string;
   @Input() onReload?: (() => void) | undefined;
   @Output() onPageChange: EventEmitter<PaginationDetails> = new EventEmitter();
@@ -24,9 +24,7 @@ export class PaginationComponent implements OnInit {
   ngOnInit() {}
 
   maxPages(): number {
-    return Math.ceil(
-      this.paginationConfig.total / this.paginationConfig.perPage
-    );
+    return Math.ceil(this.total / this.paginationConfig.perPage);
   }
 
   getLeft(): number {
@@ -34,10 +32,7 @@ export class PaginationComponent implements OnInit {
   }
 
   getRight(): number {
-    return Math.min(
-      this.paginationConfig.total,
-      this.getLeft() + this.paginationConfig.perPage
-    );
+    return Math.min(this.total, this.getLeft() + this.paginationConfig.perPage);
   }
 
   getPages(): (string | number)[] {

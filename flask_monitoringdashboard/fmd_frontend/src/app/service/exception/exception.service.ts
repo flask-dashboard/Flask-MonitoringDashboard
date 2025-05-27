@@ -11,8 +11,10 @@ export class ExceptionService {
 
   constructor(private readonly client: FmdClientService) {}
 
-  getNumberOfExceptions(id: number): Observable<number> {
-    return this.client.get(`api/num_exceptions/${id}`);
+  getNumberOfExceptions(id?: number): Observable<number> {
+    return this.client.get(
+      `api/num_exceptions${id !== undefined ? '/' + id : ''}`
+    );
   }
 
   getExceptionDetails(
@@ -36,7 +38,7 @@ export class ExceptionService {
   getExceptionGroups(
     offset: number,
     perPage: number
-  ): Observable<ExceptionGroup> {
+  ): Observable<ExceptionGroup[]> {
     return this.client.get(`api/exception_occurrence/${offset}/${perPage}`);
   }
 

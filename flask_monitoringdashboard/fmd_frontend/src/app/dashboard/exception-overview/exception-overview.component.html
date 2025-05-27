@@ -1,0 +1,38 @@
+<div class="card mb-3">
+  <div class="card-header"><h4>Exceptions</h4></div>
+  <div class="card-body">
+    <table class="table">
+      <thead>
+        <tr>
+          <th>Last seen</th>
+          <th>First occurence</th>
+          <th>Endpoint</th>
+          <th>Type</th>
+          <th>Message</th>
+          <th>Count</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let row of table">
+          <td>{{ row.latest_timestamp | dateDifference }}</td>
+          <td>{{ row.first_timestamp | dateDifference }}</td>
+          <td>
+            <a [routerLink]="`/endpoint/${row.endpoint_id}/exceptions`">{{
+                row.endpoint
+              }}</a>
+          </td>
+          <td>{{ row.type }}</td>
+          <td>{{ row.message }}</td>
+          <td>{{ row.count }}</td>
+        </tr>
+      </tbody>
+    </table>
+    <app-pagination
+      *ngIf="total !== undefined"
+      [total]="total"
+      [paginationConfig]="paginationConfig"
+      (onPageChange)="onPageChange($event)"
+      name="exceptions"
+    ></app-pagination>
+  </div>
+</div>

@@ -14,7 +14,9 @@ import {
   mergeMap,
   of,
   Subject,
+  switchMap,
   takeUntil,
+  tap,
 } from 'rxjs';
 import { EndpointContextService } from 'src/app/service/endpoint-context/endpoint-context.service';
 import { EndpointInfo } from 'src/app/service/endpoint/endpoint-defs';
@@ -33,12 +35,12 @@ export class ExceptionsComponent implements OnInit, OnDestroy {
     page: 1,
     perPage: 5,
     offset: 0,
-    total: 0,
   };
   public table: ExceptionDetails[] = [];
   public paginationEmitter: EventEmitter<PaginationDetails> =
     new EventEmitter();
   private destoyed = new Subject<void>();
+  public total: number | undefined;
 
   constructor(
     private readonly endpointContext: EndpointContextService,
@@ -58,18 +60,14 @@ export class ExceptionsComponent implements OnInit, OnDestroy {
       .pipe(
         takeUntil(this.destoyed),
         filter(([endpoint]) => endpoint !== undefined && endpoint !== null),
-        mergeMap(([endpoint]) => {
-          this.endpoint = endpoint;
-          if (this.paginationConfig.total === 0) {
-            return this.exceptionService
-              .getNumberOfExceptions(endpoint!.id)
-              .pipe(map((numExceptions) => ({ numExceptions, endpoint })));
+        mergeMap(([endpoint, _]) => {
+          if (this.total === undefined) {
+            return this.exceptionService.getNumberOfExceptions().pipe(
+              tap((exceptions) => (this.total = exceptions)),
+              map(() => endpoint)
+            );
           }
-          return of({ numExceptions: this.paginationConfig.total, endpoint });
-        }),
-        map(({ numExceptions, endpoint }) => {
-          this.paginationConfig.total = numExceptions;
-          return endpoint;
+          return of(endpoint);
         }),
         mergeMap((endpoint) =>
           this.exceptionService.getExceptionDetails(
