@@ -11,7 +11,7 @@ import { SelectionFilter } from 'src/app/shared/plotly/plotly.component';
   styleUrls: ['./hourly-api-utilization.component.css'],
   standalone: false,
 })
-export class HourlyApiUtilizationComponent implements OnInit {
+export class HourlyApiUtilizationComponent {
   public title = 'Hourly API Utilization';
   public axesText =
     'The X-axis represents the dates. The Y-axis presents the hours of the day.';
@@ -26,8 +26,6 @@ export class HourlyApiUtilizationComponent implements OnInit {
     private readonly requestService: RequestService,
     private readonly dateShortPipe: DateShortPipe
   ) {}
-
-  ngOnInit() {}
 
   fetchData(filter: SelectionFilter): void {
     this.requestService

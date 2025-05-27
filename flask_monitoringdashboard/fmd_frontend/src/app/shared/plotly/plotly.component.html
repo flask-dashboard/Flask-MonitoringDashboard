@@ -55,20 +55,27 @@
             <div *ngIf="useMultiSelect">
               <div
                 class="form-group"
-                *ngFor="let item of getMultiSelect()"
+                *ngFor="let itemGroup of getMultiSelectFormArray().controls; let i = index"
+                [formGroup]="itemGroup"
               >
-                <label for="{{ item.name }}" class="col-form-label">Select the
-                  {{ item.name }}
-                  (hold Shift or Cmd/Ctrl to select multiple):
+                <label
+                  for="{{ itemGroup.get('name')?.value }}"
+                  class="col-form-label"
+                >
+                  Select the {{ itemGroup.get("name")?.value }} (hold Shift or
+                  Cmd/Ctrl to select multiple):
                 </label>
                 <select
                   multiple
                   class="form-control"
-                  id="{{ item.name }}"
-                  [(ngModel)]="item.selected"
-                  size="{{ item.values.length < 10 ? item.values.length : 10 }}"
+                  id="{{ itemGroup.get('name')?.value }}"
+                  formControlName="selected"
+                  size="{{itemGroup.get('values')!.value!.length < 10? itemGroup.get('values')?.value?.length: 10}}"
                 >
-                  <option *ngFor="let obj of item.values" [ngValue]="obj">
+                  <option
+                    *ngFor="let obj of itemGroup.get('values')?.value"
+                    [ngValue]="obj"
+                  >
                     {{ obj.text }}
                   </option>
                 </select>

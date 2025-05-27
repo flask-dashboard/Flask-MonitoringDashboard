@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Observable, of, tap } from 'rxjs';
-import { EndpointInfo } from './endpoint-defs';
+import { Hit, EndpointInfo } from './endpoint-defs';
 import { FmdClientService } from '../FmdClient.service';
 
 @Injectable({
@@ -22,5 +22,17 @@ export class EndpointService {
     return this.client
       .get<EndpointInfo>('/api/endpoint_info/' + id)
       .pipe(tap((endpoint) => this.endpoints.set(id, endpoint)));
+  }
+
+  getEndpointsHits(): Observable<Hit[]> {
+    return this.client.get('api/endpoints_hits');
+  }
+
+  getUserHits(id: number): Observable<Hit[]> {
+    return this.client.get('api/users/' + id);
+  }
+
+  getIPHits(id: number): Observable<Hit[]> {
+    return this.client.get('api/users/' + id);
   }
 }

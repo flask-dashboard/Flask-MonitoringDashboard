@@ -13,7 +13,7 @@ import { FormArray, FormControl, FormGroup } from '@angular/forms';
 import { Chart, HeatMap, PlotlyService } from 'src/app/service/plotly.service';
 
 export interface MultiSelectValue {
-  id: number;
+  id: string;
   text: string;
 }
 
@@ -26,7 +26,7 @@ export interface MultiSelect {
 export interface SelectionFilter {
   startDate: Date | null;
   endDate: Date | null;
-  selected: MultiSelectValue[] | null;
+  selected: MultiSelect[];
 }
 
 @Component({
@@ -59,7 +59,13 @@ export class PlotlyComponent implements OnInit, OnDestroy {
   public filterForm: FormGroup = new FormGroup({
     startDate: new FormControl<Date | null>(null),
     endDate: new FormControl<Date | null>(null),
-    multiSelect: new FormArray<FormControl<MultiSelect | null>>([]),
+    multiSelect: new FormArray<
+      FormGroup<{
+        name: FormControl<string>;
+        values: FormControl<MultiSelectValue[]>;
+        selected: FormControl<MultiSelectValue[]>;
+      }>
+    >([]),
   });
 
   public isLoading = true;
@@ -84,11 +90,26 @@ export class PlotlyComponent implements OnInit, OnDestroy {
     }
 
     if (this.useMultiSelect) {
-      const ms = this.filterForm.get('multiSelect') as FormArray<
-        FormControl<MultiSelect | null>
+      const msFormArray = this.filterForm.get('multiSelect') as FormArray<
+        FormGroup<{
+          name: FormControl<string>;
+          values: FormControl<MultiSelectValue[]>;
+          selected: FormControl<MultiSelectValue[]>;
+        }>
       >;
+
       this.selectData.forEach((data) => {
-        ms.push(new FormControl(data));
+        msFormArray.push(
+          new FormGroup({
+            name: new FormControl<string>(data.name, { nonNullable: true }),
+            values: new FormControl<MultiSelectValue[]>(data.values, {
+              nonNullable: true,
+            }),
+            selected: new FormControl<MultiSelectValue[]>(data.selected, {
+              nonNullable: true,
+            }),
+          })
+        );
       });
     }
 
@@ -114,13 +135,10 @@ export class PlotlyComponent implements OnInit, OnDestroy {
   }
 
   formAsSelectionFilter(): SelectionFilter {
-    const ms = this.filterForm.get('multiSelect') as FormArray<
-      FormControl<MultiSelect>
-    >;
     return {
       startDate: this.filterForm.get('startDate')?.value,
       endDate: this.filterForm.get('endDate')?.value,
-      selected: ms.controls.map((control) => control.value.selected).flat(),
+      selected: this.filterForm.get('multiSelect')?.value as MultiSelect[],
     };
   }
 
@@ -129,5 +147,21 @@ export class PlotlyComponent implements OnInit, OnDestroy {
       FormControl<MultiSelect>
     >;
     return ms.controls.map((control) => control.value);
+  }
+
+  getMultiSelectFormArray(): FormArray<
+    FormGroup<{
+      name: FormControl<string>;
+      values: FormControl<MultiSelectValue[]>;
+      selected: FormControl<MultiSelectValue[]>;
+    }>
+  > {
+    return this.filterForm.get('multiSelect') as FormArray<
+      FormGroup<{
+        name: FormControl<string>;
+        values: FormControl<MultiSelectValue[]>;
+        selected: FormControl<MultiSelectValue[]>;
+      }>
+    >;
   }
 }

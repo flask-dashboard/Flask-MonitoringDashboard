@@ -8,3 +8,8 @@ export interface EndpointInfo {
   url: string;
   total_hits: number;
 }
+
+export interface Hit {
+  name: string;
+  hits: number;
+}

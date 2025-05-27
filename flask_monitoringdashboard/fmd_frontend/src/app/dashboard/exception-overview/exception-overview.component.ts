@@ -41,10 +41,6 @@ export class ExceptionOverviewComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    //this.exceptionService
-    //  .getNumberOfExceptions()
-    //  .pipe(take(1))
-    //  .subscribe((total) => (this.total = total));
     this.paginationEmitter
       .asObservable()
       .pipe(

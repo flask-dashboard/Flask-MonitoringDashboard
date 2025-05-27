@@ -25,6 +25,8 @@ import { PlotlyComponent } from './shared/plotly/plotly.component';
 import { HourlyApiUtilizationComponent } from './dashboard/hourly-api-utilization/hourly-api-utilization.component';
 import { DateShortPipe } from './pipes/date-short.pipe';
 import { ExceptionOverviewComponent } from './dashboard/exception-overview/exception-overview.component';
+import { DateLayoutPipe } from './pipes/date-layout.pipe';
+import { MultiVersionComponent } from './dashboard/multi-version/multi-version.component';
 
 @NgModule({
   declarations: [
@@ -39,6 +41,7 @@ import { ExceptionOverviewComponent } from './dashboard/exception-overview/excep
     PlotlyComponent,
     DateShortPipe,
     ExceptionOverviewComponent,
+    MultiVersionComponent,
   ],
   bootstrap: [AppComponent],
   imports: [
@@ -55,6 +58,7 @@ import { ExceptionOverviewComponent } from './dashboard/exception-overview/excep
   ],
   providers: [
     DateShortPipe,
+    DateLayoutPipe,
     provideHttpClient(withInterceptorsFromDi()),
     { provide: APP_BASE_HREF, useValue: '/dashboard/' },
   ],
