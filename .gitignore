@@ -111,3 +111,8 @@ frontend/build/
 flask_monitoringdashboard/static/css/main.css
 flask_monitoringdashboard/static/js/app.js
 flask_monitoringdashboard/templates
+
+# new frontend
+.angular/
+node_modules/
+browser/
