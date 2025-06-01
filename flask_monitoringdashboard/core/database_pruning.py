@@ -1,4 +1,5 @@
 from datetime import datetime, timedelta
+from sqlalchemy import select
 from sqlalchemy.orm import Session
 from flask_monitoringdashboard.core.custom_graph import scheduler
 from flask_monitoringdashboard.database import (
@@ -26,19 +27,27 @@ def prune_database_older_than_weeks(weeks_to_keep, delete_custom_graph_data):
         date_to_delete_from = datetime.utcnow() - timedelta(weeks=weeks_to_keep)
 
         # Prune Request table and related Outlier entries
-        requests_to_delete = (
-            session.query(Request)
+        requests_subquery = (
+            session.query(Request.id)
             .filter(Request.time_requested < date_to_delete_from)
-            .all()
+            .subquery()
         )
 
-        for request in requests_to_delete:
-            session.query(Outlier).filter(Outlier.request_id == request.id).delete()
-            session.query(StackLine).filter(StackLine.request_id == request.id).delete()
-            session.query(ExceptionOccurrence).filter(
-                ExceptionOccurrence.request_id == request.id
-            ).delete()
-            session.delete(request)
+        session.query(Outlier).filter(
+            Outlier.request_id.in_(select(requests_subquery))
+        ).delete()
+
+        session.query(StackLine).filter(
+            StackLine.request_id.in_(select(requests_subquery))
+        ).delete()
+
+        session.query(ExceptionOccurrence).filter(
+            ExceptionOccurrence.request_id.in_(select(requests_subquery))
+        ).delete()
+
+        session.query(Request).filter(
+            Request.time_requested < date_to_delete_from
+        ).delete()
 
         # Find and delete CodeLines not referenced by any StackLines
         session.query(CodeLine).filter(
@@ -57,10 +66,10 @@ def prune_database_older_than_weeks(weeks_to_keep, delete_custom_graph_data):
 
 def delete_entries_unreferenced_by_exception_occurrence(session: Session):
     """
-    Delete ExceptionTypes, ExceptionMessages, StackTraceSnapshots (along with their ExceptionStackLines) 
-    that are not referenced by any ExceptionOccurrences, 
+    Delete ExceptionTypes, ExceptionMessages, StackTraceSnapshots (along with their ExceptionStackLines)
+    that are not referenced by any ExceptionOccurrences,
     ExceptionFrames that are not referenced by any ExceptionStackLines,
-    FunctionLocations that are not referenced by any ExceptionFrames, 
+    FunctionLocations that are not referenced by any ExceptionFrames,
     FilePaths and FunctionDefinitions that are not referenced by any FunctionLocations, and
     CodeLines that are not referenced by any ExceptionStackLines and not referenced by any StackLines
     """
@@ -83,7 +92,9 @@ def delete_entries_unreferenced_by_exception_occurrence(session: Session):
         session.query(StackTraceSnapshot)
         .filter(
             ~session.query(ExceptionOccurrence)
-            .filter(ExceptionOccurrence.stack_trace_snapshot_id == StackTraceSnapshot.id)
+            .filter(
+                ExceptionOccurrence.stack_trace_snapshot_id == StackTraceSnapshot.id
+            )
             .exists()
         )
         .all()
@@ -136,5 +147,5 @@ def add_background_pruning_job(weeks_to_keep, delete_custom_graph_data, **schedu
         ],  # These are arguments passed to the prune function
         trigger="cron",
         replace_existing=True,  # This will replace an existing job
-        **schedule
+        **schedule,
     )
