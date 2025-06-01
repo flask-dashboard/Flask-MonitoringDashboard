@@ -5,7 +5,7 @@ import { Pipe, PipeTransform } from '@angular/core';
   standalone: false,
 })
 export class DateShortPipe implements PipeTransform {
-  transform(date: Date | string): string {
+  transform(date: Date | string, shorter?: boolean): string {
     const monthNames = [
       'Jan',
       'Feb',
@@ -24,6 +24,7 @@ export class DateShortPipe implements PipeTransform {
     const day = d.getDate();
     const monthIndex = d.getMonth();
     const year = d.getFullYear();
+    if (shorter) return monthNames[monthIndex] + ' ' + day;
 
     return monthNames[monthIndex] + ' ' + day + ', ' + year;
   }

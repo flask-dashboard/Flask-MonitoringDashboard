@@ -18,6 +18,7 @@ const routes: Routes = [
   { path: 'multi_version', component: MultiVersionComponent },
   { path: 'daily_utilization', component: DailyApiUtilizationComponent },
   { path: 'api_performance', component: ApiPerformanceComponent },
+  //{ path: 'reporting', component: ReportingComponent },
   {
     path: 'endpoint/:id',
     children: [

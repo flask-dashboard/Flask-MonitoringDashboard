@@ -29,6 +29,7 @@ import { DateLayoutPipe } from './pipes/date-layout.pipe';
 import { MultiVersionComponent } from './dashboard/multi-version/multi-version.component';
 import { DailyApiUtilizationComponent } from './dashboard/daily-api-utilization/daily-api-utilization.component';
 import { ApiPerformanceComponent } from './dashboard/api-performance/api-performance.component';
+//import { ReportingComponent } from './dashboard/reporting/reporting.component';
 
 @NgModule({
   declarations: [
@@ -46,6 +47,7 @@ import { ApiPerformanceComponent } from './dashboard/api-performance/api-perform
     MultiVersionComponent,
     DailyApiUtilizationComponent,
     ApiPerformanceComponent,
+    //ReportingComponent,
   ],
   bootstrap: [AppComponent],
   imports: [

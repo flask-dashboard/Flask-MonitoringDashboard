@@ -2,20 +2,20 @@ import { Observable } from 'rxjs';
 import { FmdClientService } from './../FmdClient.service';
 import { Injectable } from '@angular/core';
 import { HourlyLoad, RequestsData } from './request-defs';
-import { formatDate } from '@angular/common';
+import { TimeMachineService } from '../time-machine.service';
 
 @Injectable({
   providedIn: 'root',
 })
 export class RequestService {
-  private formatDate = (date: Date): string =>
-    formatDate(date, 'yyyy-MM-dd', navigator.language);
-
-  constructor(private readonly client: FmdClientService) {}
+  constructor(
+    private readonly client: FmdClientService,
+    private readonly time: TimeMachineService
+  ) {}
 
   getRequests(startDate: Date, endDate: Date): Observable<RequestsData> {
     return this.client.get(
-      `api/requests/${this.formatDate(startDate)}/${this.formatDate(endDate)}`
+      `api/requests/${this.time.format(startDate)}/${this.time.format(endDate)}`
     );
   }
 
@@ -25,7 +25,7 @@ export class RequestService {
     id?: number
   ): Observable<HourlyLoad> {
     return this.client.get(
-      `api/hourly_load/${this.formatDate(startDate)}/${this.formatDate(
+      `api/hourly_load/${this.time.format(startDate)}/${this.time.format(
         endDate
       )}${id ? '/' + id : ''}`
     );
