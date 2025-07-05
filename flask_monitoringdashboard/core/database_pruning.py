@@ -1,4 +1,4 @@
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from sqlalchemy.orm import Session
 from flask_monitoringdashboard.core.custom_graph import scheduler
 from flask_monitoringdashboard.database import (
@@ -23,7 +23,7 @@ from flask_monitoringdashboard.database import (
 def prune_database_older_than_weeks(weeks_to_keep, delete_custom_graph_data):
     """Prune the database of Request and optionally CustomGraph data older than the specified number of weeks"""
     with session_scope() as session:
-        date_to_delete_from = datetime.utcnow() - timedelta(weeks=weeks_to_keep)
+        date_to_delete_from = datetime.now(timezone.utc) - timedelta(weeks=weeks_to_keep)
 
         # Prune Request table and related Outlier entries
         requests_to_delete = (

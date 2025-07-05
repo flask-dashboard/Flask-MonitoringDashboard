@@ -116,3 +116,4 @@ flask_monitoringdashboard/templates
 .angular/
 node_modules/
 browser/
+/.envrc

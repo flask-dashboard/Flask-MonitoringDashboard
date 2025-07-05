@@ -87,7 +87,7 @@ def initialize_telemetry_session(session):
         else:
             telemetry_user = session.query(TelemetryUser).one()
             telemetry_user.times_initialized += 1
-            telemetry_user.last_initialized = datetime.datetime.utcnow()
+            telemetry_user.last_initialized = datetime.datetime.now(datetime.timezone.utc)
             session.commit()
 
         # reset telemetry if declined in previous session

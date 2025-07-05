@@ -125,7 +125,7 @@ def get_hourly_load(session, endpoint_id, start_date, end_date):
     end_datetime = to_utc_datetime(datetime.datetime.combine(end_date, datetime.time(23, 59, 59)))
 
     for time, count in get_num_requests(session, endpoint_id, start_datetime, end_datetime):
-        parsed_time = datetime.datetime.strptime(time, '%Y-%m-%d %H:%M:%S')
+        parsed_time = datetime.datetime.strptime(time, '%Y-%m-%d %H:%M:%S').replace(tzinfo=datetime.timezone.utc)
         day_index = (parsed_time - start_datetime).days
         hour_index = int(to_local_datetime(parsed_time).strftime('%H'))
         heatmap_data[hour_index][day_index] = count

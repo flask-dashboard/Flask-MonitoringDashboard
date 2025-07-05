@@ -186,16 +186,76 @@ and standard deviation, and also total execution time.
 
 
 2. Exception Monitoring
-~~~~~~~~~~~~~~~~~~~~
-  Flask-MonitoringDashboard automatically logs unhandled exceptions with full stack traces, showing where and why errors occur, if you have monitoring level 1 or above.
+-----------------------
 
-  To capture handled exceptions manually and save them for displaying in the exception dashboard:
-  ```python
-  try:
-      # Your code
-  except Exception as e:
-      dashboard.capture(e)  # Logs exception with stack trace for debugging
-  ```
+Flask-MonitoringDashboard provides comprehensive exception monitoring to help you track
+and debug errors in your application. Exception monitoring is automatically enabled for
+all endpoints with monitoring level 1 or above.
+
+Automatic Exception Capture
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+All unhandled exceptions are automatically captured with:
+
+- Full stack traces showing the exact line where the error occurred
+- Exception type and message
+- Request context (endpoint, method, parameters)
+- Timestamp and occurrence count
+- Function code context with syntax highlighting
+
+The captured exceptions are grouped by their stack trace signature, making it easy to
+identify recurring issues.
+
+Manual Exception Capture
+^^^^^^^^^^^^^^^^^^^^^^^^^
+
+You can also manually capture exceptions for better debugging:
+
+.. code-block:: python
+
+   from flask_monitoringdashboard import capture_exception
+
+   try:
+       # Your code that might raise an exception
+       result = risky_operation()
+   except ValueError as e:
+       capture_exception(e)  # Manually capture with stack trace
+       # Handle the error gracefully
+       return "An error occurred", 400
+
+This is useful when you want to track handled exceptions or add additional context
+to error reporting.
+
+Viewing Exceptions in the Dashboard
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+To view captured exceptions:
+
+1. **Application-wide view:** Go to http://localhost:5000/dashboard/exceptions
+
+   This shows all exceptions across all endpoints, with:
+
+   - Exception count by type
+   - Most recent occurrences
+   - Affected endpoints
+   - Filtering by exception type, endpoint, or time period
+
+2. **Endpoint-specific view:** Click on any endpoint in the Overview, then navigate to
+   the Exceptions tab: http://localhost:5000/dashboard/endpoint/:endpoint_id:/exceptions
+
+   This shows exceptions specific to that endpoint with:
+
+   - Stack trace visualization with syntax-highlighted code
+   - Line numbers and function names
+   - Ability to expand/collapse stack frames
+   - Full file paths on hover
+
+Exception Data Management
+^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Exception data is automatically cleaned up as part of the database pruning schedule
+(see section 5 below). When you run database pruning, old exception occurrences
+are removed along with orphaned exception types and messages.
 
 
 

@@ -1,5 +1,5 @@
 import uuid
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from random import random
 
 import factory
@@ -58,9 +58,9 @@ class EndpointFactory(ModelFactory):
 
     name = factory.LazyFunction(lambda: str(uuid.uuid4()))
     monitor_level = 1
-    time_added = factory.LazyFunction(lambda: datetime.utcnow() - timedelta(days=1))
+    time_added = factory.LazyFunction(lambda: datetime.now(timezone.utc) - timedelta(days=1))
     version_added = "1.0"
-    last_requested = factory.LazyFunction(datetime.utcnow)
+    last_requested = factory.LazyFunction(lambda: datetime.now(timezone.utc))
 
 
 class RequestFactory(ModelFactory):
@@ -69,7 +69,7 @@ class RequestFactory(ModelFactory):
 
     endpoint = factory.SubFactory(EndpointFactory)
     duration = factory.LazyFunction(lambda: random() * 5000)
-    time_requested = factory.LazyFunction(datetime.utcnow)
+    time_requested = factory.LazyFunction(lambda: datetime.now(timezone.utc))
     version_requested = factory.LazyFunction(lambda: str(uuid.uuid4()))
     group_by = None
     ip = factory.Faker("ipv4_private")
@@ -115,7 +115,7 @@ class CustomGraphFactory(ModelFactory):
         model = CustomGraph
 
     title = factory.Faker("name")
-    time_added = factory.LazyFunction(datetime.utcnow)
+    time_added = factory.LazyFunction(lambda: datetime.now(timezone.utc))
     version_added = factory.LazyFunction(lambda: str(uuid.uuid4()))
 
 
@@ -124,7 +124,7 @@ class CustomGraphDataFactory(ModelFactory):
         model = CustomGraphData
 
     graph = factory.SubFactory(CustomGraphFactory)
-    time = factory.LazyFunction(datetime.utcnow)
+    time = factory.LazyFunction(lambda: datetime.now(timezone.utc))
     value = factory.LazyFunction(random)
 
 

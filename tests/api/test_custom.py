@@ -1,4 +1,4 @@
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 
 from flask_monitoringdashboard.database import CustomGraph
 
@@ -17,7 +17,7 @@ def test_custom_graphs(dashboard_user, custom_graph, session):
 
 
 def test_custom_graph_data(dashboard_user, custom_graph, custom_graph_data):
-    today = datetime.utcnow()
+    today = datetime.now(timezone.utc)
     yesterday = today - timedelta(days=1)
     response = dashboard_user.get('dashboard/api/custom_graph/{id}/{start}/{end}'.format(
         id=custom_graph.graph_id,

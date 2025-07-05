@@ -166,14 +166,6 @@ The following tools are used for helping the development of the Dashboard:
     corresponding feature has been merged into the development branch. It is recommended to often
     merge development into this branch, to keep the feature branch up to date.
 
-- **Heroku deployment**: The following branches are automatically deployed to Heroku. This is useful for quickly
-  testing, without running any code locally.
-
-   - **Master**: The master branch is deployed at: `<https://fmd-master.herokuapp.com>`_.
-   - **Development**: The development is deployed at: `<https://fmd-development.herokuapp.com>`_.
-   - **Pull requests**: Pull requests are also automatically build with a unique URL.
-
-
 - **Unit testing**: The code is tested before a Pull Request is accepted. If you want to run the unit
   tests locally, you can use the following command from the root of Flask-MonitoringDashboard
   directory:

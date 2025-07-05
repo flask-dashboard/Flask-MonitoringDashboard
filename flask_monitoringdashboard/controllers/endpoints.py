@@ -32,8 +32,8 @@ def get_endpoint_overview(session):
     :param session: session for the database
     :return: A list of properties for each endpoint that is found in the database
     """
-    week_ago = datetime.datetime.utcnow() - datetime.timedelta(days=7)
-    now_local = to_local_datetime(datetime.datetime.utcnow())
+    week_ago = datetime.datetime.now(datetime.timezone.utc) - datetime.timedelta(days=7)
+    now_local = to_local_datetime(datetime.datetime.now(datetime.timezone.utc))
     today_local = now_local.replace(hour=0, minute=0, second=0, microsecond=0)
     today_utc = to_utc_datetime(today_local)
 

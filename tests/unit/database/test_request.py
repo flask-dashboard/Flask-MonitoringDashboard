@@ -5,7 +5,7 @@ file: 'flask_monitoringdashboard/database/request.py')
 from __future__ import division  # can be removed once we leave python 2.7
 
 import time
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 
 import pytest
 
@@ -18,7 +18,7 @@ from flask_monitoringdashboard.database.versions import get_versions
 
 
 def test_get_latencies_sample(session, request_1, endpoint):
-    interval = DateInterval(datetime.utcnow() - timedelta(days=1), datetime.utcnow())
+    interval = DateInterval(datetime.now(timezone.utc) - timedelta(days=1), datetime.now(timezone.utc))
     requests_criterion = create_time_based_sample_criterion(interval.start_date(),
                                                             interval.end_date())
     data = get_latencies_sample(session, endpoint.id, requests_criterion, sample_size=500)

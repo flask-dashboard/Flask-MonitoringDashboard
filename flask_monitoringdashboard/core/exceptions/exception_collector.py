@@ -62,7 +62,8 @@ def _get_copy_of_exception(e: BaseException):
         try:
             new_exc = copy.deepcopy(e)
         except Exception:
-            new_exc = e.__class__()
+            # For exceptions that can't be instantiated without args, just return the original
+            return e
 
     if e.__traceback__:
         return new_exc.with_traceback(e.__traceback__)

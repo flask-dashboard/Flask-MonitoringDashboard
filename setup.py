@@ -64,6 +64,7 @@ setuptools.setup(
     description="Automatically monitor the evolving performance of Flask/Python web services.",
     long_description=get_description(),
     install_requires=required,
+    python_requires='>=3.11',
     entry_points={'flask.commands': ['fmd=flask_monitoringdashboard.cli:fmd']},
     classifiers=[
         'Environment :: Web Environment',
@@ -71,6 +72,10 @@ setuptools.setup(
         'Operating System :: OS Independent',
         'License :: OSI Approved :: MIT License',
         'Programming Language :: Python',
+        'Programming Language :: Python :: 3',
+        'Programming Language :: Python :: 3.11',
+        'Programming Language :: Python :: 3.12',
+        'Programming Language :: Python :: 3.13',
         'Topic :: Software Development :: Libraries :: Python Modules',
         'Programming Language :: Python :: 2.7',
         'Programming Language :: Python :: 3.5',

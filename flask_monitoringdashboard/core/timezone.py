@@ -10,7 +10,9 @@ def to_local_datetime(dt):
     from flask_monitoringdashboard import config
 
     if dt:
-        return dt + config.timezone.utcoffset(datetime.datetime.utcnow())
+        if dt.tzinfo is None:
+            dt = dt.replace(tzinfo=datetime.timezone.utc)
+        return dt.astimezone(config.timezone)
     return None
 
 
@@ -23,5 +25,7 @@ def to_utc_datetime(dt):
     from flask_monitoringdashboard import config
 
     if dt:
-        return dt - config.timezone.utcoffset(datetime.datetime.utcnow())
+        if dt.tzinfo is None:
+            dt = dt.replace(tzinfo=config.timezone)
+        return dt.astimezone(datetime.timezone.utc)
     return None

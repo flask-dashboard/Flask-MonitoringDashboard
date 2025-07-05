@@ -1,5 +1,5 @@
 import sys
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 import pytest
 
 from flask_monitoringdashboard.database import Endpoint
@@ -11,24 +11,24 @@ def test_make_report_get(dashboard_user):
     assert not response.is_json
 
 
-@pytest.mark.parametrize('request_1__time_requested', [datetime.utcnow() - timedelta(hours=6)])
+@pytest.mark.parametrize('request_1__time_requested', [datetime.now(timezone.utc) - timedelta(hours=6)])
 @pytest.mark.parametrize('request_1__duration', [5000])
 @pytest.mark.parametrize('request_1__status_code', [500])
-@pytest.mark.parametrize('request_2__time_requested', [datetime.utcnow() - timedelta(days=1, hours=6)])
+@pytest.mark.parametrize('request_2__time_requested', [datetime.now(timezone.utc) - timedelta(days=1, hours=6)])
 @pytest.mark.parametrize('request_2__duration', [100])
 @pytest.mark.skipif(sys.version_info < (3, ), reason="For some reason, this doesn't work in python 2.7.")
 def test_make_report_post_not_significant(dashboard_user, endpoint, request_1, request_2, session):
-    epoch = datetime(1970, 1, 1)
+    epoch = datetime(1970, 1, 1, tzinfo=timezone.utc)
     response = dashboard_user.post(
         'dashboard/api/reporting/make_report/intervals',
         json={
             'interval': {
-                'from': (datetime.utcnow() - timedelta(days=1) - epoch).total_seconds(),
-                'to': (datetime.utcnow() - epoch).total_seconds(),
+                'from': (datetime.now(timezone.utc) - timedelta(days=1) - epoch).total_seconds(),
+                'to': (datetime.now(timezone.utc) - epoch).total_seconds(),
             },
             'baseline_interval': {
-                'from': (datetime.utcnow() - timedelta(days=2) - epoch).total_seconds(),
-                'to': (datetime.utcnow() - timedelta(days=1) - epoch).total_seconds(),
+                'from': (datetime.now(timezone.utc) - timedelta(days=2) - epoch).total_seconds(),
+                'to': (datetime.now(timezone.utc) - timedelta(days=1) - epoch).total_seconds(),
             },
         },
     )

@@ -5,7 +5,7 @@
 
 What is Flask-MonitoringDashboard?
 ---------------------------------------
-The Flask Monitoring Dashboard is designed to easily monitor your Flask application.
+The Flask Monitoring Dashboard (FMD) is designed to easily monitor your Flask application.
 
 
 Functionality
