@@ -150,7 +150,7 @@ def update_last_requested(session, endpoint_name, timestamp=None):
     :param endpoint_name: name of the endpoint
     :param timestamp: optional timestamp. If not given, timestamp is current time
     """
-    ts = timestamp if timestamp else datetime.datetime.now(datetime.UTC)
+    ts = timestamp if timestamp else datetime.datetime.utcnow()
     session.query(Endpoint).filter(Endpoint.name == endpoint_name).update(
         {Endpoint.last_requested: ts}
     )

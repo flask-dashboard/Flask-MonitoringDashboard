@@ -10,7 +10,7 @@ def to_local_datetime(dt):
     from flask_monitoringdashboard import config
 
     if dt:
-        return dt + config.timezone.utcoffset(datetime.datetime.now(datetime.UTC))
+        return dt + config.timezone.utcoffset(datetime.datetime.utcnow())
     return None
 
 
@@ -23,5 +23,5 @@ def to_utc_datetime(dt):
     from flask_monitoringdashboard import config
 
     if dt:
-        return dt - config.timezone.utcoffset(datetime.datetime.now(datetime.UTC))
+        return dt - config.timezone.utcoffset(datetime.datetime.utcnow())
     return None

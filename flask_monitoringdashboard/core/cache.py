@@ -69,7 +69,7 @@ def update_last_requested_cache(endpoint_name):
     Use this instead of updating the last requested to the database.
     """
     global memory_cache
-    memory_cache.get(endpoint_name).set_last_requested(datetime.datetime.now(datetime.UTC))
+    memory_cache.get(endpoint_name).set_last_requested(datetime.datetime.utcnow())
 
 
 def update_duration_cache(endpoint_name, duration):
@@ -77,7 +77,7 @@ def update_duration_cache(endpoint_name, duration):
     Use this together with adding a request to the database.
     """
     global memory_cache
-    memory_cache.get(endpoint_name).set_last_requested(datetime.datetime.now(datetime.UTC))
+    memory_cache.get(endpoint_name).set_last_requested(datetime.datetime.utcnow())
     memory_cache.get(endpoint_name).set_duration(duration)
 
 
