@@ -2,7 +2,7 @@
 Contains all functions that access a Request object.
 """
 import time
-
+from datetime import datetime, timezone
 from sqlalchemy import and_, func
 
 from flask_monitoringdashboard.database import Request
@@ -42,6 +42,7 @@ def add_request(session, duration, endpoint_id, ip, group_by, status_code):
         ip=ip,
         group_by=group_by,
         status_code=status_code,
+        time_requested=datetime.now(timezone.utc)
     )
     session.add(request)
     session.commit()

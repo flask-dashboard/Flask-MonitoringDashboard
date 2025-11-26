@@ -1,4 +1,4 @@
-from datetime import timedelta
+from datetime import timedelta, datetime, timezone
 
 from sqlalchemy.orm.exc import NoResultFound
 
@@ -23,7 +23,9 @@ def get_graph_id_from_name(session, name):
 
 
 def add_value(session, graph_id, value):
-    data = CustomGraphData(graph_id=graph_id, value=value)
+    data = CustomGraphData(graph_id=graph_id,
+                           value=value,
+                           time=datetime.now(timezone.utc))
     session.add(data)
 
 
