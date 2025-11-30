@@ -1,6 +1,8 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, EventEmitter, OnInit } from '@angular/core';
+import { Data } from 'plotly.js';
 import { catchError, EMPTY, Observable, take, tap } from 'rxjs';
 import { EndpointService } from 'src/app/service/endpoint/endpoint.service';
+import { Chart, HeatMap } from 'src/app/service/plotly.service';
 import {
   AnswerType,
   IAnswer,
@@ -23,6 +25,12 @@ type Section = 'custom' | 'commits' | 'month' | 'week' | 'day';
   standalone: false,
 })
 export class ReportingComponent implements OnInit {
+  public title = '';
+  public axesText = '';
+  public contentText = '';
+
+  public graphDataEmitter: EventEmitter<Partial<Chart>> = new EventEmitter();
+
   public activeSection: Section = 'custom';
   public reports: Map<Section, Summary[]> = new Map();
 
@@ -63,7 +71,7 @@ export class ReportingComponent implements OnInit {
 
   ngOnInit() {}
 
-  selectSetion(section: Section): void {
+  selectSection(section: Section): void {
     this.activeSection = section;
     if (section == 'commits' && this.versions.length === 0) {
       this.versionService
@@ -84,6 +92,38 @@ export class ReportingComponent implements OnInit {
 
     const [amnt, type] = INTERVAL_SIZES[section];
     this.intervals = this.time.intervals(amnt, type as any);
+  }
+
+  selectEntry(summary: Summary, answer: MedianLatencyAnswer): void {
+    this.selectedSummary = summary;
+    this.selectedAnswer = answer;
+
+    const { comparison, baseline } = this.selectedAnswer.latencies_samples;
+
+    const data: Partial<Data>[] = [
+      {
+        name: `Comparison (N=${comparison.length})`,
+        type: 'violin',
+        y: comparison,
+      },
+      {
+        name: `Baseline (N=${baseline.length})`,
+        type: 'violin',
+        y: baseline,
+      },
+    ];
+
+    this.graphDataEmitter.emit({
+      data: data,
+      layout_ext: {
+        yaxis: {
+          title: {
+            text: 'Execution time (ms)',
+          },
+          rangemode: 'nonnegative',
+        },
+      },
+    });
   }
 
   generateReport(): void {

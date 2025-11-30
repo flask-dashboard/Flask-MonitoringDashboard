@@ -8,8 +8,9 @@ import { ExceptionOverviewComponent } from './dashboard/exception-overview/excep
 import { MultiVersionComponent } from './dashboard/multi-version/multi-version.component';
 import { DailyApiUtilizationComponent } from './dashboard/daily-api-utilization/daily-api-utilization.component';
 import { ApiPerformanceComponent } from './dashboard/api-performance/api-performance.component';
+import { ReportingComponent } from './dashboard/reporting/reporting.component';
 @Component({ template: '<p>Dashboard Parent Hit</p>' })
-export class TempDashboardParentComponent {}
+export class TempDashboardParentComponent { }
 
 const routes: Routes = [
   { path: 'overview', component: OverviewComponent },
@@ -18,7 +19,7 @@ const routes: Routes = [
   { path: 'multi_version', component: MultiVersionComponent },
   { path: 'daily_utilization', component: DailyApiUtilizationComponent },
   { path: 'api_performance', component: ApiPerformanceComponent },
-  //{ path: 'reporting', component: ReportingComponent },
+  { path: 'reporting', component: ReportingComponent },
   {
     path: 'endpoint/:id',
     children: [
@@ -39,4 +40,4 @@ const routes: Routes = [
   imports: [RouterModule.forRoot(routes)],
   exports: [RouterModule],
 })
-export class AppRoutingModule {}
+export class AppRoutingModule { }

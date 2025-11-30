@@ -4,7 +4,7 @@ import { Injectable } from '@angular/core';
   providedIn: 'root',
 })
 export class AppConfigurationService {
-  private _baseUrl = 'http://localhost:4200/dashboard/';
+  private _baseUrl = 'http://127.0.0.1:4200/dashboard/';
   constructor() {}
 
   public get baseUrl() {

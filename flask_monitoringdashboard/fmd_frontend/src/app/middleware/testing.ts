@@ -15,13 +15,15 @@ export class LoggingInterceptor implements HttpInterceptor {
   ): Observable<HttpEvent<any>> {
     console.log('*** Outgoing Request Check ***');
     console.log('URL:', request.url);
-    // This logs all headers, including any cookies the browser automatically attaches
     console.log(
       'Headers:',
       request.headers.keys().map((key) => `${key}: ${request.headers.get(key)}`)
     );
     console.log('******************************');
+    const apiRequest = request.clone({
+      withCredentials: true,
+    });
 
-    return next.handle(request);
+    return next.handle(apiRequest);
   }
 }

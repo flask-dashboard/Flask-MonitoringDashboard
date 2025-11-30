@@ -21,6 +21,7 @@ from flask_monitoringdashboard.core.logger import log
 from flask_monitoringdashboard.core.exceptions.exception_collector import (
     ExceptionCollector,
 )
+from flask_cors import CORS
 
 
 def loc():
@@ -45,6 +46,10 @@ def bind(app, schedule=True, include_dashboard=True):
     """
     blueprint.name = config.blueprint_name
     config.app = app
+    CORS(app, resources={r"/*": {"origins": [
+        "http://localhost:4200", 
+        "http://127.0.0.1:4200"
+    ]}}, supports_credentials=True)
     # Provide a secret-key for using WTF-forms
     if not app.secret_key:
         log("WARNING: You should provide a security key.")

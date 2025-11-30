@@ -35,7 +35,6 @@ export class HourlyApiUtilizationComponent {
         const x = data.days;
         const y = [...Array(24).keys()].map((d) => d + ':00');
         const z = data.data;
-        console.log('hi');
         this.graphDataEmitter.emit({
           x,
           y,

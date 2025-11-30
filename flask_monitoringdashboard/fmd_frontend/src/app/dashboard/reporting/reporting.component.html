@@ -40,29 +40,29 @@
     <div class="card-header">
         <ul class="nav nav-tabs card-header-tabs">
             <li class="nav-item">
-                <a onclick="selectSection('day')" [ngClass]="activeSection == 'day' ? 'active nav-link' : 'nav-link'">{{
+                <a (click)="selectSection('day')" [ngClass]="activeSection == 'day' ? 'active nav-link' : 'nav-link'">{{
                     currentDay }} vs {{ yesterday }}</a>
             </li>
             <li class="nav-item">
-                <a onclick="selectSection('week')"
+                <a (click)="selectSection('week')"
                     [ngClass]="activeSection == 'week' ? 'active nav-link' : 'nav-link'">Week {{ currentWeekNumber }} vs
                     Week {{ previousWeekNumber }}</a>
             </li>
             <li class="nav-item">
-                <a onclick="selectSection('month')"
+                <a (click)="selectSection('month')"
                     [ngClass]="activeSection == 'month' ? 'active nav-link' : 'nav-link'">{{ monthName }} vs {{
                     previousMonthName }}</a>
             </li>
 
             <li class="nav-item">
-                <a onclick="selectSection('commits')"
+                <a (click)="selectSection('commits')"
                     [ngClass]="activeSection == 'commits' ? 'active nav-link' : 'nav-link'">
                     Compare commits
                 </a>
             </li>
 
             <li class="nav-item">
-                <a onclick="selectSection('custom')"
+                <a (click)="selectSection('custom')"
                     [ngClass]="activeSection == 'custom' ? 'active nav-link' : 'nav-link'">Custom</a>
             </li>
         </ul>
@@ -117,7 +117,7 @@
         }
         <div style="display: flex; justify-content: space-between; align-items:center; padding-top: 15px">
             <div>
-                <button onclick="generateReport()" type="button"
+                <button (click)="generateReport()" type="button"
                     [ngClass]="generating == true ? 'btn btn-primary disabled' : 'btn btn-primary'">
                     @if(generating){
                     <i class='fa fa-spinner fa-spin '></i>
@@ -147,65 +147,64 @@
                 @for (summary of reports.get(activeSection); track $index) {
 
                 @if(summary.has_anything_significant || !onlyShowInteresting){
-                        <h1>{{ summary.endpoint_name }}</h1>
-                        @for(answer of summary.answers; track $index){
+                <h1>{{ summary.endpoint_name }}</h1>
+                @for(answer of summary.answers; track $index){
 
-                        <ul class="list-group">
-                            @if (answer.is_significant && !onlyShowInteresting) {
-                            <li class="list-group-item">
-                                @switch (answer.type) {
-                                @case (answerType.MEDIAN_LATENCY) {
-                                @let cast = castToMedianAnswer(answer);
-                                <div  style="padding-bottom:15px">
-                                    <h4 [ngClass]="cast.percentual_diff > 0 ? 'redText' : 'greenText'">
-                                        Median latency
-                                        {{ cast.percentual_diff > 0 ? 'increased' : 'decreased' }}
-                                        by
-                                        {{ cast.percentual_diff | abs | number : '1' }}%</h4>
-                                    <p>From {{ cast.baseline_median|number:'1' }}ms
-                                        to
-                                        {{ cast.median|number:'1' }}ms</p>
+                <ul class="list-group">
+                    @if (answer.is_significant && !onlyShowInteresting) {
+                    <li class="list-group-item">
+                        @switch (answer.type) {
+                        @case (answerType.MEDIAN_LATENCY) {
+                        @let cast = castToMedianAnswer(answer);
+                        <div style="padding-bottom:15px">
+                            <h4 [ngClass]="cast.percentual_diff > 0 ? 'redText' : 'greenText'">
+                                Median latency
+                                {{ cast.percentual_diff > 0 ? 'increased' : 'decreased' }}
+                                by
+                                {{ cast.percentual_diff | abs | number : '1' }}%</h4>
+                            <p>From {{ cast.baseline_median|number:'1' }}ms
+                                to
+                                {{ cast.median|number:'1' }}ms</p>
 
-                                    <button onclick="selectEntry(summary, answer)" type="button"
-                                        class="btn btn-secondary btm-sm" data-bs-toggle="modal"
-                                        data-bs-target="#details-modal">
-                                        Details
-                                    </button>
-                                </div>
-                                }
-                                @case (answerType.STATUS_CODE_DISTRIBUTION) {
-                                @let cast = castToStatusDistributionAnswer(answer);
-                                <h4>Distribution of status code changed</h4>
+                            <button (click)="selectEntry(summary, cast)" type="button" class="btn btn-secondary btm-sm"
+                                data-bs-toggle="modal" data-bs-target="#details-modal">
+                                Details
+                            </button>
+                        </div>
+                        }
+                        @case (answerType.STATUS_CODE_DISTRIBUTION) {
+                        @let cast = castToStatusDistributionAnswer(answer);
+                        <h4>Distribution of status code changed</h4>
 
-                                <table class="table">
-                                    <thead>
-                                        <tr>
-                                            <th scope="col">Status code</th>
-                                            <th scope="col"></th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <tr *ngFor="let percentage of cast.percentages">
-                                            <td>{{ percentage.status_code }}</td>
-                                            <td>
-                                                {{ percentage.baseline | number:'1' }}%
-                                                {{"->"}}
-                                                {{ percentage.comparison | number:'1' }}%
-                                            </td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                                }
-                                }
-                            </li>
-                            }
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th scope="col">Status code</th>
+                                    <th scope="col"></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr *ngFor="let percentage of cast.percentages">
+                                    <td>{{ percentage.status_code }}</td>
+                                    <td>
+                                        {{ percentage.baseline | number:'1' }}%
+                                        {{"->"}}
+                                        {{ percentage.comparison | number:'1' }}%
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        }
+                        }
+                    </li>
+                    }
 
-                        </ul>
+                </ul>
 
-                          }
-                        <hr />
+                }
+                <hr />
 
-                  }
+                }
                 }
                 }
             </div>
