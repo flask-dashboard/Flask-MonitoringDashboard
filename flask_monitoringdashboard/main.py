@@ -17,9 +17,9 @@ import flask_monitoringdashboard as dashboard
 
 app = Flask(__name__)
 
-dashboard.config.version = "3.2"
-dashboard.config.group_by = "2"
-dashboard.config.database_name = "mysql+pymysql://root:Wsf5555391@localhost/fmd"
+#dashboard.config.version = "3.2"
+#dashboard.config.group_by = "2"
+#dashboard.config.database_name = "mysql+pymysql://root:Wsf5555391@localhost/fmd"
 
 # dashboard.config.database_name = 'mysql+pymysql://user:password@localhost:3306/db1'
 # dashboard.config.database_name = 'postgresql://user:password@localhost:5432/mydb'
