@@ -3,7 +3,7 @@
     id="alert"
     class="alert alert-warning alert-dismissible"
     ng-show="alertShow"
-  >
+    >
     <a
       class="close"
       data-bs-dismiss="alert"
@@ -14,166 +14,168 @@
     Version {{ pypi_version }} is now available, while you are still using
     version {{ dashboard_version }}.<br />
     To upgrade run the following command on your server: <code>pip install
-      --upgrade flask_monitoringdashboard</code>
+  --upgrade flask_monitoringdashboard</code>
+</div>
+<div class="card mb-3">
+  <div class="card-header">
+    <h4>Dashboard Overview</h4>
   </div>
-  <div class="card mb-3">
-    <div class="card-header">
-      <h4>Dashboard Overview</h4>
-    </div>
-    <div class="card-body">
+  <div class="card-body">
+    @if (table.length === 0) {
       <div
         class="spinner"
-        *ngIf="table.length === 0"
-      >
+        >
         <div class="rect1"></div>
         <div class="rect2"></div>
         <div class="rect3"></div>
         <div class="rect4"></div>
         <div class="rect5"></div>
       </div>
+    }
 
-      <ul class="pagination">
-        <li
-          class="page-item"
-          [ngClass]='{ "active": isHits }'
+    <ul class="pagination">
+      <li
+        class="page-item"
+        [ngClass]='{ "active": isHits }'
         >
-          <a class="page-link" (click)="toggleHits()">Number of hits</a>
-        </li>
-        <li class="page-item" [ngClass]='{ "active": !isHits }'>
-          <a class="page-link" (click)="toggleHits()"
-          >Median request duration (ms)</a>
-        </li>
-      </ul>
+        <a class="page-link" (click)="toggleHits()">Number of hits</a>
+      </li>
+      <li class="page-item" [ngClass]='{ "active": !isHits }'>
+        <a class="page-link" (click)="toggleHits()"
+        >Median request duration (ms)</a>
+      </li>
+    </ul>
 
-      <div class="row" style="margin-bottom: 7px">
-        <div class="col-md-3 col-sm-12">
-          Show
-          <select
-            style="width: 60px; display: inline-block"
-            class="form-control form-control-sm"
-            name="ddwa"
-            [(ngModel)]="pageSize"
+    <div class="row" style="margin-bottom: 7px">
+      <div class="col-md-3 col-sm-12">
+        Show
+        <select
+          style="width: 60px; display: inline-block"
+          class="form-control form-control-sm"
+          name="ddwa"
+          [(ngModel)]="pageSize"
           >
-            <option value="10">10</option>
-            <option value="25">25</option>
-            <option value="50">50</option>
-            <option value="100">100</option>
-          </select>
-          entries
-        </div>
-
-        <div class="col-md-6 col-sm-12">
-          Blueprint:
-          <select
-            style="width: 180px; display: inline-block"
-            [(ngModel)]="selectedBlueprint"
-            class="form-control form-control-sm"
-          >
-            <option
-              *ngFor="let blueprint of blueprints"
-              [value]="blueprint"
-            >
-              {{ blueprint }}
-            </option>
-          </select>
-        </div>
-
-        <div class="col-md-3 col-sm-12" style="text-align: right">
-          Search:
-          <input
-            [(ngModel)]="searchQuery"
-            style="display: inline-block; width: 180px"
-            class="form-control form-control-sm"
-          >
-        </div>
+          <option value="10">10</option>
+          <option value="25">25</option>
+          <option value="50">50</option>
+          <option value="100">100</option>
+        </select>
+        entries
       </div>
 
-      <div class="row">
-        <div class="col-md-12">
-          <table class="table table-hover table-bordered table-sm">
-            <thead>
-              <tr>
-                <th></th>
-                <th
-                  (click)='changeSortingOrder("name")'
-                  style="cursor: pointer"
-                >
-                  <div class="d-flex justify-content-between">
-                    Endpoint
-                    <span [ngClass]='getSortArrowClassName("name")'
-                    >&uarr;</span>
-                  </div>
-                </th>
-                <th
-                  style="cursor: pointer"
-                  (click)='changeSortingOrder("hits-today")'
-                >
-                  <div class="d-flex justify-content-between">
-                    Today
-                    <span [ngClass]='getSortArrowClassName("hits-today")'
-                    >&uarr;</span>
-                  </div>
-                </th>
-                <th
-                  style="cursor: pointer"
-                  (click)='changeSortingOrder("hits-week")'
-                >
-                  <div class="d-flex justify-content-between">
-                    Last 7 days
-                    <span [ngClass]='getSortArrowClassName("hits-week")'
-                    >&uarr;</span>
-                  </div>
-                </th>
-                <th
-                  style="cursor: pointer"
-                  (click)='changeSortingOrder("hits-overall")'
-                >
-                  <div class="d-flex justify-content-between">
-                    Overall
-                    <span [ngClass]='getSortArrowClassName("hits-overall")'
-                    >&uarr;</span>
-                  </div>
-                </th>
+      <div class="col-md-6 col-sm-12">
+        Blueprint:
+        <select
+          style="width: 180px; display: inline-block"
+          [(ngModel)]="selectedBlueprint"
+          class="form-control form-control-sm"
+          >
+          @for (blueprint of blueprints; track blueprint) {
+            <option
+              [value]="blueprint"
+              >
+              {{ blueprint }}
+            </option>
+          }
+        </select>
+      </div>
 
-                <th
-                  style="cursor: pointer"
-                  (click)='changeSortingOrder("last-accessed")'
-                >
-                  <div class="d-flex justify-content-between">
-                    Last requested
-                    <span [ngClass]='getSortArrowClassName("last-accessed")'
-                    >&uarr;</span>
-                  </div>
-                </th>
-                <th
-                  style="cursor: pointer"
-                  (click)='changeSortingOrder("monitor")'
-                >
-                  <div class="d-flex justify-content-between">
-                    <div>Monitoring-level<sup>*</sup></div>
-                    <span [ngClass]='getSortArrowClassName("monitor")'
-                    >&uarr;</span>
-                  </div>
-                </th>
-                <th
-                  style="cursor: pointer"
-                  (click)='changeSortingOrder("exceptions")'
-                >
-                  <div class="d-flex justify-content-between">
-                    <div>Exceptions</div>
-                    <span [ngClass]='getSortArrowClassName("exceptions")'
-                    >&uarr;</span>
-                  </div>
-                </th>
-              </tr>
-            </thead>
+      <div class="col-md-3 col-sm-12" style="text-align: right">
+        Search:
+        <input
+          [(ngModel)]="searchQuery"
+          style="display: inline-block; width: 180px"
+          class="form-control form-control-sm"
+          >
+      </div>
+    </div>
 
-            <tbody>
+    <div class="row">
+      <div class="col-md-12">
+        <table class="table table-hover table-bordered table-sm">
+          <thead>
+            <tr>
+              <th></th>
+              <th
+                (click)='changeSortingOrder("name")'
+                style="cursor: pointer"
+                >
+                <div class="d-flex justify-content-between">
+                  Endpoint
+                  <span [ngClass]='getSortArrowClassName("name")'
+                  >&uarr;</span>
+                </div>
+              </th>
+              <th
+                style="cursor: pointer"
+                (click)='changeSortingOrder("hits-today")'
+                >
+                <div class="d-flex justify-content-between">
+                  Today
+                  <span [ngClass]='getSortArrowClassName("hits-today")'
+                  >&uarr;</span>
+                </div>
+              </th>
+              <th
+                style="cursor: pointer"
+                (click)='changeSortingOrder("hits-week")'
+                >
+                <div class="d-flex justify-content-between">
+                  Last 7 days
+                  <span [ngClass]='getSortArrowClassName("hits-week")'
+                  >&uarr;</span>
+                </div>
+              </th>
+              <th
+                style="cursor: pointer"
+                (click)='changeSortingOrder("hits-overall")'
+                >
+                <div class="d-flex justify-content-between">
+                  Overall
+                  <span [ngClass]='getSortArrowClassName("hits-overall")'
+                  >&uarr;</span>
+                </div>
+              </th>
+
+              <th
+                style="cursor: pointer"
+                (click)='changeSortingOrder("last-accessed")'
+                >
+                <div class="d-flex justify-content-between">
+                  Last requested
+                  <span [ngClass]='getSortArrowClassName("last-accessed")'
+                  >&uarr;</span>
+                </div>
+              </th>
+              <th
+                style="cursor: pointer"
+                (click)='changeSortingOrder("monitor")'
+                >
+                <div class="d-flex justify-content-between">
+                  <div>Monitoring-level<sup>*</sup></div>
+                  <span [ngClass]='getSortArrowClassName("monitor")'
+                  >&uarr;</span>
+                </div>
+              </th>
+              <th
+                style="cursor: pointer"
+                (click)='changeSortingOrder("exceptions")'
+                >
+                <div class="d-flex justify-content-between">
+                  <div>Exceptions</div>
+                  <span [ngClass]='getSortArrowClassName("exceptions")'
+                  >&uarr;</span>
+                </div>
+              </th>
+            </tr>
+          </thead>
+
+          <tbody>
+            @for (row of getItemsForPage(currentPage); track row) {
               <tr
-                *ngFor="let row of getItemsForPage(currentPage)"
                 style="cursor: pointer"
                 (click)='go("/endpoint/" + row.id + "/hourly_load")'
-              >
+                >
                 <td [ngStyle]='{ "background-color": row.color }'></td>
                 <td class="align-middle">{{ row.name }}</td>
                 @if (isHits) {
@@ -181,39 +183,39 @@
                     class="table_cell_with_error_count align-middle"
                     style="text-align: right"
                     [attr.error-count]='(row["hits-today-errors"] > 0) ? row["hits-today-errors"] : ""'
-                  >
+                    >
                     {{ row["hits-today"] }}
                   </td>
                   <td
                     class="table_cell_with_error_count align-middle"
                     style="text-align: right"
                     [attr.error-count]='(row["hits-week-errors"] > 0) ? row["hits-week-errors"] : ""'
-                  >
+                    >
                     {{ row["hits-week"] }}
                   </td>
                   <td
                     style="text-align: right"
                     class="align-middle"
-                  >
+                    >
                     {{ row["hits-overall"] }}
                   </td>
                 } @else {
                   <td
                     class="align-middle"
                     style="text-align: right"
-                  >
+                    >
                     {{ row["median-today"] | durationMs }}
                   </td>
                   <td
                     class="align-middle"
                     style="text-align: right"
-                  >
+                    >
                     {{ row["median-week"] | durationMs }}
                   </td>
                   <td
                     class="align-middle"
                     style="text-align: right"
-                  >
+                    >
                     {{ row["median-overall"] | durationMs }}
                   </td>
                 }
@@ -224,69 +226,70 @@
                   <app-monitor-level
                     [endpointName]="row.name"
                     [monitoringLevel]="row.monitor"
-                  />
+                    />
                 </td>
                 <td style="text-align: right">
                   <button
                     class="btn btn-light"
                     [routerLink]='"/endpoint/" + row.id + "/exceptions"'
-                  >
+                    >
                     {{ row["exceptions"] }}
                   </button>
                 </td>
               </tr>
-            </tbody>
-          </table>
-        </div>
+            }
+          </tbody>
+        </table>
       </div>
+    </div>
 
-      <div class="row">
-        <div class="col-md-12">
-          <nav aria-label="Page navigation example" style="float: right">
-            <ul class="pagination">
-              <li
-                [ngClass]='{ "disabled": !canGoBack() }'
-                class="page-item"
+    <div class="row">
+      <div class="col-md-12">
+        <nav aria-label="Page navigation example" style="float: right">
+          <ul class="pagination">
+            <li
+              [ngClass]='{ "disabled": !canGoBack() }'
+              class="page-item"
               >
-                <a class="page-link" (click)="previousPage()">Previous</a>
-              </li>
+              <a class="page-link" (click)="previousPage()">Previous</a>
+            </li>
 
-              <li [ngClass]='{ "disabled": !canGoForward() }' class="page-item">
-                <a class="page-link" (click)="nextPage()">Next</a>
-              </li>
-            </ul>
-          </nav>
-        </div>
+            <li [ngClass]='{ "disabled": !canGoForward() }' class="page-item">
+              <a class="page-link" (click)="nextPage()">Next</a>
+            </li>
+          </ul>
+        </nav>
       </div>
     </div>
   </div>
+</div>
 
-  <div class="card mb-3">
-    <div class="card-header"><h5><sup>*</sup>Monitoring-level</h5></div>
-    <div class="card-body">
-      <b>0 - Disabled</b>
-      <p>
-        When the monitoring-level is set to 0, you don't monitor anything about
-        the performance of this endpoint. The only data that is stored is when
-        the <b>endpoint is last requested.</b>
-      </p>
-      <b>1 - Performance</b>
-      <p>
-        When the monitoring-level is set to 1, you collect data when the
-        endpoint is last requested, plus data about the <b>performance and
-          utilization</b> of this endpoint (as a black-box).
-      </p>
-      <b>2 - Outliers</b>
-      <p>
-        When the monitoring-level is set to 2, you get all the functionality
-        from 1, plus <b>extra information if the request is an outlier.</b>
-      </p>
-      <b>3 - Profiler + Outliers</b>
-      <p>
-        When the monitoring-level is set to 3, you get all the functionality
-        from 2, plus data about the <b>performance per line of code</b> from all
-        requests.
-      </p>
-    </div>
-  </div>
+<div class="card mb-3">
+  <div class="card-header"><h5><sup>*</sup>Monitoring-level</h5></div>
+  <div class="card-body">
+    <b>0 - Disabled</b>
+    <p>
+      When the monitoring-level is set to 0, you don't monitor anything about
+      the performance of this endpoint. The only data that is stored is when
+      the <b>endpoint is last requested.</b>
+    </p>
+    <b>1 - Performance</b>
+    <p>
+      When the monitoring-level is set to 1, you collect data when the
+      endpoint is last requested, plus data about the <b>performance and
+    utilization</b> of this endpoint (as a black-box).
+  </p>
+  <b>2 - Outliers</b>
+  <p>
+    When the monitoring-level is set to 2, you get all the functionality
+    from 1, plus <b>extra information if the request is an outlier.</b>
+  </p>
+  <b>3 - Profiler + Outliers</b>
+  <p>
+    When the monitoring-level is set to 3, you get all the functionality
+    from 2, plus data about the <b>performance per line of code</b> from all
+    requests.
+  </p>
+</div>
+</div>
 </div>

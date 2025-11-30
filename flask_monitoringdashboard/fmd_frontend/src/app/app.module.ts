@@ -5,6 +5,7 @@ import { BrowserModule } from '@angular/platform-browser';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import {
+  HTTP_INTERCEPTORS,
   provideHttpClient,
   withInterceptorsFromDi,
 } from '@angular/common/http';
@@ -29,6 +30,9 @@ import { DateLayoutPipe } from './pipes/date-layout.pipe';
 import { MultiVersionComponent } from './dashboard/multi-version/multi-version.component';
 import { DailyApiUtilizationComponent } from './dashboard/daily-api-utilization/daily-api-utilization.component';
 import { ApiPerformanceComponent } from './dashboard/api-performance/api-performance.component';
+import { AbsPipe } from './pipes/abs.pipe';
+import { ReportingComponent } from './dashboard/reporting/reporting.component';
+import { LoggingInterceptor } from './middleware/testing';
 //import { ReportingComponent } from './dashboard/reporting/reporting.component';
 
 @NgModule({
@@ -47,7 +51,7 @@ import { ApiPerformanceComponent } from './dashboard/api-performance/api-perform
     MultiVersionComponent,
     DailyApiUtilizationComponent,
     ApiPerformanceComponent,
-    //ReportingComponent,
+    ReportingComponent,
   ],
   bootstrap: [AppComponent],
   imports: [
@@ -61,10 +65,17 @@ import { ApiPerformanceComponent } from './dashboard/api-performance/api-perform
     EndpointDetailsComponent,
     PaginationComponent,
     NgbModule,
+    AbsPipe,
+    DateLayoutPipe,
   ],
   providers: [
     DateShortPipe,
     DateLayoutPipe,
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: LoggingInterceptor,
+      multi: true,
+    },
     provideHttpClient(withInterceptorsFromDi()),
     { provide: APP_BASE_HREF, useValue: '/dashboard/' },
   ],

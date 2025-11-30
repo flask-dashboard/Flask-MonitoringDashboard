@@ -3,10 +3,11 @@
     changing.</p>
 
 <!-- Modal -->
-<div class="modal fade" id="details-modal"
-     tabindex="-1" role="dialog"
-     aria-labelledby="details-modal"
-     aria-hidden="true">
+
+@if (selectedAnswer && selectedSummary) {
+<div class="modal fade" id="details-modal" tabindex="-1" role="dialog" aria-labelledby="details-modal"
+    aria-hidden="true">
+    @if (selectedAnswer && selectedSummary){
     <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
             <div class="modal-header">
@@ -15,10 +16,9 @@
                     latency
                     {{ selectedAnswer.percentual_diff > 0 ? 'increased' : 'decreased' }}
                     by
-                    {{ selectedAnswer.percentual_diff|abs|number:1 }}%
+                    {{ selectedAnswer.percentual_diff | abs | number:'1' }}%
                 </h5>
-                <button type="button" class="close" data-bs-dismiss="modal"
-                        aria-label="Close">
+                <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
@@ -31,184 +31,183 @@
             </div>
         </div>
     </div>
+    }
 </div>
 
+
+}
 <div class="card">
     <div class="card-header">
         <ul class="nav nav-tabs card-header-tabs">
             <li class="nav-item">
-                <a ng-click="selectSection('day')"
-                   ng-class="activeSection == 'day' ? 'active nav-link' : 'nav-link'"
-                   href="#">{{ currentDay }} vs {{ yesterday }}</a>
+                <a onclick="selectSection('day')" [ngClass]="activeSection == 'day' ? 'active nav-link' : 'nav-link'">{{
+                    currentDay }} vs {{ yesterday }}</a>
             </li>
             <li class="nav-item">
-                <a ng-click="selectSection('week')"
-                   ng-class="activeSection == 'week' ? 'active nav-link' : 'nav-link'"
-                   href="#">Week {{ currentWeekNumber }} vs
+                <a onclick="selectSection('week')"
+                    [ngClass]="activeSection == 'week' ? 'active nav-link' : 'nav-link'">Week {{ currentWeekNumber }} vs
                     Week {{ previousWeekNumber }}</a>
             </li>
             <li class="nav-item">
-                <a ng-click="selectSection('month')"
-                   ng-class="activeSection == 'month' ? 'active nav-link' : 'nav-link'"
-                   href="#">{{ monthName }} vs {{ previousMonthName }}</a>
+                <a onclick="selectSection('month')"
+                    [ngClass]="activeSection == 'month' ? 'active nav-link' : 'nav-link'">{{ monthName }} vs {{
+                    previousMonthName }}</a>
             </li>
 
             <li class="nav-item">
-                <a ng-click="selectSection('commits')"
-                   ng-class="activeSection == 'commits' ? 'active nav-link' : 'nav-link'"
-                   href="#">
+                <a onclick="selectSection('commits')"
+                    [ngClass]="activeSection == 'commits' ? 'active nav-link' : 'nav-link'">
                     Compare commits
                 </a>
             </li>
 
             <li class="nav-item">
-                <a ng-click="selectSection('custom')"
-                   ng-class="activeSection == 'custom' ? 'active nav-link' : 'nav-link'"
-                   href="#">Custom</a>
+                <a onclick="selectSection('custom')"
+                    [ngClass]="activeSection == 'custom' ? 'active nav-link' : 'nav-link'">Custom</a>
             </li>
         </ul>
     </div>
 
     <div class="card-body">
-        <div ng-show="activeSection == 'custom'">
-            <div>
-                <div class="input-group">
-                    <input type="datetime-local"
-                           ng-model="intervals.comparison.from"
-                           class="form-control"/>
-                    <input type="datetime-local"
-                           ng-model="intervals.comparison.to"
-                           class="form-control"/>
-                </div>
+        @if(activeSection === 'custom'){
+        <div>
+            <div class="input-group">
+                <input type="datetime-local" [ngModel]="intervals.comparison.from" class="form-control" />
+                <input type="datetime-local" [ngModel]="intervals.comparison.to" class="form-control" />
             </div>
-
-            <p style="text-align: center; margin-top: 15px">Compared to</p>
-
-            <div style="margin-top:15px; margin-bottom: 15px">
-                <div class="input-group">
-                    <input type="datetime-local"
-                           ng-model="intervals.baseline.from"
-                           class="form-control"/>
-                    <input type="datetime-local"
-                           ng-model="intervals.baseline.to"
-                           class="form-control"/>
-                </div>
-            </div>
-            <hr/>
         </div>
 
-        <div ng-show="activeSection === 'commits'">
-            <div>
-                <div class="input-group">
-                    <select class='form-control' ng-model="commitVersion">
-                        <option ng-repeat="version in versions"
-                                value="{{ version.version }}">
-                            {{ version.date | dateLayout }} : {{ version.version }}
-                        </option>
-                    </select>
-                </div>
-            </div>
+        <p style="text-align: center; margin-top: 15px">Compared to</p>
 
-            <p style="text-align: center; margin-top: 15px">Compared to</p>
-
-            <div style="margin-top:15px; margin-bottom: 15px">
-                <div class="input-group">
-                    <select class='form-control' ng-model="baseLineCommitVersion">
-                        <option ng-repeat="version in versions"
-                                value="{{ version.version }}">
-                            {{ version.version }}
-                        </option>
-                    </select>
-                </div>
+        <div style="margin-top:15px; margin-bottom: 15px">
+            <div class="input-group">
+                <input type="datetime-local" [ngModel]="intervals.baseline.from" class="form-control" />
+                <input type="datetime-local" [ngModel]="intervals.baseline.to" class="form-control" />
             </div>
-            <hr/>
+        </div>
+        <hr />
+        }
+        @if (activeSection === 'commits'){
+        <div>
+            <div class="input-group">
+                <select class='form-control' [ngModel]="commitVersion">
+                    @for (version of versions; track $index) {
+                    <option [value]="version.version">
+                        {{ version.date | dateLayout }} : {{ version.version }}
+                    </option>
+                    }
+                </select>
+            </div>
         </div>
 
+        <p style="text-align: center; margin-top: 15px">Compared to</p>
+
+        <div style="margin-top:15px; margin-bottom: 15px">
+            <div class="input-group">
+                <select class='form-control' [ngModel]="baselineCommitVersion">
+                    @for (version of versions; track $index) {
+                    <option [value]="version.version">
+                        {{ version.version }}
+                    </option>
+                    }
+                </select>
+            </div>
+        </div>
+        <hr />
+        }
         <div style="display: flex; justify-content: space-between; align-items:center; padding-top: 15px">
             <div>
-                <button ng-click="generateReport()" type="button"
-                        ng-class="generating == true ? 'btn btn-primary disabled' : 'btn btn-primary'">
-
-                    <i ng-show="generating" class='fa fa-spinner fa-spin '></i>
+                <button onclick="generateReport()" type="button"
+                    [ngClass]="generating == true ? 'btn btn-primary disabled' : 'btn btn-primary'">
+                    @if(generating){
+                    <i class='fa fa-spinner fa-spin '></i>
                     {{ generating ? 'Generating...' : 'Generate' }}
+                    }
                 </button>
                 <span style="color: red">
                     {{ error }}
                 </span>
             </div>
             <div class="form-check">
-                <input type="checkbox" ng-model="onlyShowInteresting"
-                       class="form-check-input" id="exampleCheck1">
+                <input type="checkbox" [ngModel]="onlyShowInteresting" class="form-check-input" id="exampleCheck1">
                 <label class="form-check-label" for="exampleCheck1">Only Show Significant
                     Results</label>
             </div>
         </div>
-        <hr/>
+        <hr />
 
 
         <div class="card">
             <div class="card-body">
-                <div ng-show="!reports[activeSection]" style="text-align: center">
+                @if (!reports.get(activeSection)) {
+                <div style="text-align: center">
                     <i>No report generated yet</i>
                 </div>
+                }@else {
+                @for (summary of reports.get(activeSection); track $index) {
 
-                <div ng-repeat="summary in reports[activeSection].summaries">
-                    <div ng-show="summary.has_anything_significant || !onlyShowInteresting">
+                @if(summary.has_anything_significant || !onlyShowInteresting){
                         <h1>{{ summary.endpoint_name }}</h1>
+                        @for(answer of summary.answers; track $index){
 
-                        <ul ng-repeat="answer in summary.answers" class="list-group">
-                            <li class="list-group-item"
-                                ng-show="answer.is_significant || !onlyShowInteresting">
-                                <div ng-switch="answer.type">
-                                    <div ng-switch-when="MEDIAN_LATENCY"
-                                         style="padding-bottom:15px">
-                                        <h4 ng-class="answer.percentual_diff > 0 ? 'redText' : 'greenText'">
-                                            Median latency
-                                            {{ answer.percentual_diff > 0 ? 'increased' : 'decreased' }}
-                                            by
-                                            {{ answer.percentual_diff | abs | number : 1 }}%</h4>
-                                        <p>From {{ answer.baseline_median|number:1 }}ms
-                                            to
-                                            {{ answer.median|number:1 }}ms</p>
+                        <ul class="list-group">
+                            @if (answer.is_significant && !onlyShowInteresting) {
+                            <li class="list-group-item">
+                                @switch (answer.type) {
+                                @case (answerType.MEDIAN_LATENCY) {
+                                @let cast = castToMedianAnswer(answer);
+                                <div  style="padding-bottom:15px">
+                                    <h4 [ngClass]="cast.percentual_diff > 0 ? 'redText' : 'greenText'">
+                                        Median latency
+                                        {{ cast.percentual_diff > 0 ? 'increased' : 'decreased' }}
+                                        by
+                                        {{ cast.percentual_diff | abs | number : '1' }}%</h4>
+                                    <p>From {{ cast.baseline_median|number:'1' }}ms
+                                        to
+                                        {{ cast.median|number:'1' }}ms</p>
 
-                                        <button ng-click="selectEntry(summary, answer)"
-                                                type="button"
-                                                class="btn btn-secondary btm-sm"
-                                                data-bs-toggle="modal"
-                                                data-bs-target="#details-modal">
-                                            Details
-                                        </button>
-                                    </div>
-
-                                    <div ng-switch-when="STATUS_CODE_DISTRIBUTION">
-                                        <h4>Distribution of status code changed</h4>
-
-                                        <table class="table">
-                                            <thead>
-                                            <tr>
-                                                <th scope="col">Status code</th>
-                                                <th scope="col"></th>
-                                            </tr>
-                                            </thead>
-                                            <tbody>
-                                            <tr ng-repeat="r in answer.percentages">
-                                                <td>{{ r.status_code }}</td>
-                                                <td>
-                                                    {{ r.baseline | number:1 }}%
-                                                    ->
-                                                    {{ r.comparison | number:1 }}%
-                                                </td>
-                                            </tr>
-                                            </tbody>
-                                        </table>
-                                    </div>
+                                    <button onclick="selectEntry(summary, answer)" type="button"
+                                        class="btn btn-secondary btm-sm" data-bs-toggle="modal"
+                                        data-bs-target="#details-modal">
+                                        Details
+                                    </button>
                                 </div>
+                                }
+                                @case (answerType.STATUS_CODE_DISTRIBUTION) {
+                                @let cast = castToStatusDistributionAnswer(answer);
+                                <h4>Distribution of status code changed</h4>
+
+                                <table class="table">
+                                    <thead>
+                                        <tr>
+                                            <th scope="col">Status code</th>
+                                            <th scope="col"></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr *ngFor="let percentage of cast.percentages">
+                                            <td>{{ percentage.status_code }}</td>
+                                            <td>
+                                                {{ percentage.baseline | number:'1' }}%
+                                                {{"->"}}
+                                                {{ percentage.comparison | number:'1' }}%
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                                }
+                                }
                             </li>
+                            }
+
                         </ul>
 
-                        <hr/>
-                    </div>
-                </div>
+                          }
+                        <hr />
+
+                  }
+                }
+                }
             </div>
         </div>
 

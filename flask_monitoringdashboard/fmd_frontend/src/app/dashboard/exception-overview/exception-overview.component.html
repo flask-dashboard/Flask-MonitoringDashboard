@@ -13,26 +13,29 @@
         </tr>
       </thead>
       <tbody>
-        <tr *ngFor="let row of table">
-          <td>{{ row.latest_timestamp | dateDifference }}</td>
-          <td>{{ row.first_timestamp | dateDifference }}</td>
-          <td>
-            <a [routerLink]="`/endpoint/${row.endpoint_id}/exceptions`">{{
+        @for (row of table; track row) {
+          <tr>
+            <td>{{ row.latest_timestamp | dateDifference }}</td>
+            <td>{{ row.first_timestamp | dateDifference }}</td>
+            <td>
+              <a [routerLink]="`/endpoint/${row.endpoint_id}/exceptions`">{{
                 row.endpoint
               }}</a>
-          </td>
-          <td>{{ row.type }}</td>
-          <td>{{ row.message }}</td>
-          <td>{{ row.count }}</td>
-        </tr>
+            </td>
+            <td>{{ row.type }}</td>
+            <td>{{ row.message }}</td>
+            <td>{{ row.count }}</td>
+          </tr>
+        }
       </tbody>
     </table>
-    <app-pagination
-      *ngIf="total !== undefined"
-      [total]="total"
-      [paginationConfig]="paginationConfig"
-      (onPageChange)="onPageChange($event)"
-      name="exceptions"
-    ></app-pagination>
+    @if (total !== undefined) {
+      <app-pagination
+        [total]="total"
+        [paginationConfig]="paginationConfig"
+        (onPageChange)="onPageChange($event)"
+        name="exceptions"
+      ></app-pagination>
+    }
   </div>
 </div>

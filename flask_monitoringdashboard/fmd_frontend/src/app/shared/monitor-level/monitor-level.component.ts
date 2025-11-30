@@ -1,4 +1,4 @@
-import { NgFor } from '@angular/common';
+
 import { Component, Input, OnInit } from '@angular/core';
 import { take } from 'rxjs';
 import { DashboardService } from 'src/app/service/dashboard/dashboard.service';
@@ -8,7 +8,7 @@ import { DashboardService } from 'src/app/service/dashboard/dashboard.service';
   templateUrl: './monitor-level.component.html',
   styleUrls: ['./monitor-level.component.css'],
   standalone: true,
-  imports: [NgFor],
+  imports: [],
 })
 export class MonitorLevelComponent implements OnInit {
   @Input() public monitoringLevel!: number;

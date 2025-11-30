@@ -2,7 +2,11 @@ import { Component, OnInit } from '@angular/core';
 import { catchError, EMPTY, Observable, take, tap } from 'rxjs';
 import { EndpointService } from 'src/app/service/endpoint/endpoint.service';
 import {
+  AnswerType,
+  IAnswer,
+  MedianLatencyAnswer,
   ReportInterval,
+  StatusCodeDistributionAnswer,
   Summary,
 } from 'src/app/service/reporting/reporting-defs';
 import { ReportingService } from 'src/app/service/reporting/reporting.service';
@@ -25,7 +29,7 @@ export class ReportingComponent implements OnInit {
   public monthName: string = this.time.fnow('MMMM');
   public previousMonthName: string = this.time.fnow('MMMM', 1, 'month');
 
-  public currentDaty: string = this.time.fnow('MMM DD');
+  public currentDay: string = this.time.fnow('MMM DD');
   public yesterday: string = this.time.fnow('MMM DD', 1, 'days');
 
   public currentWeekNumber: number = this.time.now().isoWeek();
@@ -45,6 +49,11 @@ export class ReportingComponent implements OnInit {
   public baselineCommitVersion: string | null = null;
 
   public error: string | undefined;
+
+  public selectedSummary: Summary | undefined;
+  public selectedAnswer: MedianLatencyAnswer | undefined;
+
+  public answerType = AnswerType;
 
   constructor(
     private readonly time: TimeMachineService,
@@ -110,5 +119,15 @@ export class ReportingComponent implements OnInit {
         tap((_) => (this.generating = false))
       )
       .subscribe();
+  }
+
+  castToMedianAnswer(answer: IAnswer): MedianLatencyAnswer {
+    return answer as MedianLatencyAnswer;
+  }
+
+  castToStatusDistributionAnswer(
+    answer: IAnswer
+  ): StatusCodeDistributionAnswer {
+    return answer as StatusCodeDistributionAnswer;
   }
 }

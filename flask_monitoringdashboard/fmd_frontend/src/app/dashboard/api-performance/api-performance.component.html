@@ -1,11 +1,5 @@
-<app-plotly
-  *ngIf="selections.length === 1"
-  [title]="title"
-  [axesText]="axesText"
-  [contentText]="contentText"
-  [useMultiSelect]="true"
-  [selectData]="selections"
-  [graphType]='"chart"'
-  (formChange)="fetchData($event)"
-  [graphDataEmitter]="graphDataEmitter"
-/>
+@if (selections.length === 1) {
+<app-plotly [title]="title" [axesText]="axesText" [contentText]="contentText" [useMultiSelect]="true"
+  [selectData]="selections" [graphType]='"chart"' (formChange)="fetchData($event)"
+  [graphDataEmitter]="graphDataEmitter" />
+}

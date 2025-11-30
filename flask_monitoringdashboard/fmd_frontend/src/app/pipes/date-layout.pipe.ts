@@ -1,7 +1,7 @@
 import { Pipe, PipeTransform } from '@angular/core';
 
 @Pipe({
-  name: 'date-layout',
+  name: 'dateLayout',
 })
 export class DateLayoutPipe implements PipeTransform {
   transform(date: Date | string): any {

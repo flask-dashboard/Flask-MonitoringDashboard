@@ -36,6 +36,7 @@ export enum AnswerType {
 
 export interface IAnswer {
   type: AnswerType;
+  is_significant: boolean;
 }
 
 export interface MedianLatencyAnswer {

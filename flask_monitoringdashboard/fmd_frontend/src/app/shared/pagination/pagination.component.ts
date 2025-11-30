@@ -1,4 +1,4 @@
-import { NgFor } from '@angular/common';
+
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 
 export interface PaginationDetails {
@@ -11,7 +11,7 @@ export interface PaginationDetails {
   selector: 'app-pagination',
   templateUrl: './pagination.component.html',
   styleUrls: ['./pagination.component.css'],
-  imports: [NgFor],
+  imports: [],
 })
 export class PaginationComponent implements OnInit {
   @Input() paginationConfig!: PaginationDetails;

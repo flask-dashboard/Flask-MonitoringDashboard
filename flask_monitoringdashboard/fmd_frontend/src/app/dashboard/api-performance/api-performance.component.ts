@@ -1,5 +1,5 @@
 import { Component, EventEmitter, OnInit } from '@angular/core';
-import { combineLatest, take, tap } from 'rxjs';
+import { combineLatest, take, takeUntil, tap } from 'rxjs';
 import { EndpointService } from 'src/app/service/endpoint/endpoint.service';
 import { MultiSelectionService } from 'src/app/service/multi-select/multi-selection.service';
 import { Chart, HeatMap } from 'src/app/service/plotly.service';
@@ -34,14 +34,14 @@ export class ApiPerformanceComponent implements OnInit {
   constructor(
     private readonly msService: MultiSelectionService,
     private readonly endpointService: EndpointService
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     this.msService
       .getEndpoints()
       .pipe(
         take(1),
-        tap((endpoints) => this.selections.push(endpoints))
+        tap((endpoints) => this.selections.push(endpoints)),
       )
       .subscribe();
   }

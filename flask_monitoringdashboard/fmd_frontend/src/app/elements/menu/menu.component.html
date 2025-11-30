@@ -3,61 +3,74 @@
     <a
       class="nav-link nav-link-collapse collapsed d-flex justify-content-between"
       (click)='toggleMenuState("dashboardExpanded")'
-    >
+      >
       <div>
         <i class="fas fa-tachometer-alt p-1"></i>
         <span class="nav-link-text">Dashboard</span>
       </div>
-      <fa-icon *ngIf="!menuState.dashboardExpanded" [icon]="chevronDown" />
-      <fa-icon *ngIf="menuState.dashboardExpanded" [icon]="chevronUp" />
+      @if (!menuState.dashboardExpanded) {
+        <fa-icon [icon]="chevronDown" />
+      }
+      @if (menuState.dashboardExpanded) {
+        <fa-icon [icon]="chevronUp" />
+      }
     </a>
     <ul
       class="sidenav-second-level"
       [ngbCollapse]="!menuState.dashboardExpanded"
-    >
-      <li *ngFor="let config of overviewConfig" routerLinkActive="active">
-        <a [routerLink]="config.path">{{ config.text }}</a>
-      </li>
+      >
+      @for (config of overviewConfig; track config) {
+        <li routerLinkActive="active">
+          <a [routerLink]="config.path">{{ config.text }}</a>
+        </li>
+      }
     </ul>
   </li>
 
-  <li
-    class="nav-item"
-    *ngIf="endpoint"
-  >
-    <a
-      class="nav-link nav-link-collapse collapsed d-flex justify-content-between"
-      (click)='toggleMenuState("endpointExpanded")'
-    >
-      <div>
-        <i class="fa fa-fw fa-asterisk"></i>
-        <span class="nav-link-text">{{ endpoint.endpoint }}</span>
-      </div>
-      <fa-icon *ngIf="!menuState.endpointExpanded" [icon]="chevronDown" />
-      <fa-icon *ngIf="menuState.endpointExpanded" [icon]="chevronUp" />
-    </a>
-    <ul
-      class="sidenav-second-level collapse"
-      [ngbCollapse]="!menuState.endpointExpanded"
-    >
-      <li *ngFor="let config of endpointConfig" routerLinkActive="active">
-        <a [routerLink]='"endpoint/" + endpoint.id + "/" + config.path'>{{
-            config.text
-          }}</a>
-      </li>
-    </ul>
-  </li>
+  @if (endpoint) {
+    <li
+      class="nav-item"
+      >
+      <a
+        class="nav-link nav-link-collapse collapsed d-flex justify-content-between"
+        (click)='toggleMenuState("endpointExpanded")'
+        >
+        <div>
+          <i class="fa fa-fw fa-asterisk"></i>
+          <span class="nav-link-text">{{ endpoint.endpoint }}</span>
+        </div>
+        @if (!menuState.endpointExpanded) {
+          <fa-icon [icon]="chevronDown" />
+        }
+        @if (menuState.endpointExpanded) {
+          <fa-icon [icon]="chevronUp" />
+        }
+      </a>
+      <ul
+        class="sidenav-second-level collapse"
+        [ngbCollapse]="!menuState.endpointExpanded"
+        >
+        @for (config of endpointConfig; track config) {
+          <li routerLinkActive="active">
+            <a [routerLink]='"endpoint/" + endpoint.id + "/" + config.path'>{{
+              config.text
+            }}</a>
+          </li>
+        }
+      </ul>
+    </li>
+  }
   <!--
   <li
     class="nav-item"
     title="Custom graphs"
     ng-show="menu.endpoint.customGraphs.length > 0"
-  >
+    >
     <a
       class="nav-link nav-link-collapse collapsed"
       data-bs-toggle="collapse"
       data-bs-target="#collapseCustomGraphs"
-    >
+      >
       <i class="fa fa-fw fa-desktop"></i>
       <span class="nav-link-text">Custom graphs</span>
     </a>
@@ -65,32 +78,38 @@
       <li
         ng-repeat="graph in menu.endpoint.customGraphs"
         [class]="{'active': activePage=='custom_graph'+graph.graph_id}"
-      >
+        >
         <a href="custom_graph/{{ graph.graph_id }}">{{ graph.title }}</a>
       </li>
     </ul>
   </li>
--->
+  -->
   <li class="nav-item" title="Configuration">
     <a
       class="nav-link nav-link-collapse collapsed d-flex justify-content-between"
       (click)='toggleMenuState("configurationExpanded")'
-    >
+      >
       <div>
         <i class="fa fa-fw fa-cog"></i>
         <span class="nav-link-text">Configuration</span>
       </div>
-      <fa-icon *ngIf="!menuState.configurationExpanded" [icon]="chevronDown" />
-      <fa-icon *ngIf="menuState.configurationExpanded" [icon]="chevronUp" />
+      @if (!menuState.configurationExpanded) {
+        <fa-icon [icon]="chevronDown" />
+      }
+      @if (menuState.configurationExpanded) {
+        <fa-icon [icon]="chevronUp" />
+      }
     </a>
 
     <ul
       class="sidenav-second-level"
       [ngbCollapse]="!menuState.configurationExpanded"
-    >
-      <li *ngFor="let config of configurationConfig" routerLinkActive="active">
-        <a [routerLink]="config.path">{{ config.text }}</a>
-      </li>
+      >
+      @for (config of configurationConfig; track config) {
+        <li routerLinkActive="active">
+          <a [routerLink]="config.path">{{ config.text }}</a>
+        </li>
+      }
     </ul>
   </li>
 </ul>

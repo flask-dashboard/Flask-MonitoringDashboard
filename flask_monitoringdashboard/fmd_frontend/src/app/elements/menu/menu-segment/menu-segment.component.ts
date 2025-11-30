@@ -1,4 +1,4 @@
-import { NgIf, CommonModule } from '@angular/common';
+
 import {
   Component,
   EventEmitter,
@@ -24,7 +24,7 @@ export interface MenuConfig {
   styleUrls: ['./menu-segment.component.css'],
   standalone: true,
   encapsulation: ViewEncapsulation.None,
-  imports: [NgIf, CommonModule, NgbCollapse, FontAwesomeModule, RouterModule],
+  imports: [NgbCollapse, FontAwesomeModule, RouterModule],
 })
 export class MenuSegmentComponent implements OnInit {
   //@Output() toggleSegment: EventEmitter<boolean> = new EventEmitter();

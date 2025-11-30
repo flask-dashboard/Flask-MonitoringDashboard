@@ -3,16 +3,17 @@
     <div class="card-header"><h4>{{ title }}</h4></div>
     <div class="card-body">
       <div id="chart" #chart>
-        <div
-          class="spinner"
-          *ngIf="isLoading"
-        >
-          <div class="rect1"></div>
-          <div class="rect2"></div>
-          <div class="rect3"></div>
-          <div class="rect4"></div>
-          <div class="rect5"></div>
-        </div>
+        @if (isLoading) {
+          <div
+            class="spinner"
+            >
+            <div class="rect1"></div>
+            <div class="rect2"></div>
+            <div class="rect3"></div>
+            <div class="rect4"></div>
+            <div class="rect5"></div>
+          </div>
+        }
       </div>
     </div>
   </div>
@@ -23,72 +24,77 @@
         <div class="card-header"><h6>Graph options</h6></div>
         <div class="card-body" ng-controller="FormController">
           <form [formGroup]="filterForm">
-            <div *ngIf="useDateRange">
-              <div class="form-group row">
-                <label for="startDate" class="col-sm-2 col-form-label">
-                  Start Date
-                </label>
+            @if (useDateRange) {
+              <div>
+                <div class="form-group row">
+                  <label for="startDate" class="col-sm-2 col-form-label">
+                    Start Date
+                  </label>
+                </div>
+                <div class="col-sm-10">
+                  <input
+                    type="date"
+                    class="form-control"
+                    id="startDate"
+                    formControlName="startDate"
+                    />
+                </div>
+                <div class="form-group row">
+                  <label for="endDate" class="col-sm-2 col-form-label">
+                    End Date
+                  </label>
+                </div>
+                <div class="col-sm-10">
+                  <input
+                    type="date"
+                    class="form-control"
+                    id="endDate"
+                    formControlName="endDate"
+                    />
+                </div>
               </div>
-              <div class="col-sm-10">
-                <input
-                  type="date"
-                  class="form-control"
-                  id="startDate"
-                  formControlName="startDate"
-                />
-              </div>
-
-              <div class="form-group row">
-                <label for="endDate" class="col-sm-2 col-form-label">
-                  End Date
-                </label>
-              </div>
-              <div class="col-sm-10">
-                <input
-                  type="date"
-                  class="form-control"
-                  id="endDate"
-                  formControlName="endDate"
-                />
-              </div>
-            </div>
-            <div *ngIf="useMultiSelect">
-              <div
-                class="form-group"
-                *ngFor="let itemGroup of getMultiSelectFormArray().controls; let i = index"
-                [formGroup]="itemGroup"
-              >
-                <label
-                  for="{{ itemGroup.get('name')?.value }}"
-                  class="col-form-label"
-                >
-                  Select the {{ itemGroup.get("name")?.value }} (hold Shift or
-                  Cmd/Ctrl to select multiple):
-                </label>
-                <select
-                  multiple
-                  class="form-control"
-                  id="{{ itemGroup.get('name')?.value }}"
-                  formControlName="selected"
-                  size="{{itemGroup.get('values')!.value!.length < 10? itemGroup.get('values')?.value?.length: 10}}"
-                >
-                  <option
-                    *ngFor="let obj of itemGroup.get('values')?.value"
-                    [ngValue]="obj"
+            }
+            @if (useMultiSelect) {
+              <div>
+                @for (itemGroup of getMultiSelectFormArray().controls; track itemGroup; let i = $index) {
+                  <div
+                    class="form-group"
+                    [formGroup]="itemGroup"
+                    >
+                    <label
+                      for="{{ itemGroup.get('name')?.value }}"
+                      class="col-form-label"
+                      >
+                      Select the {{ itemGroup.get("name")?.value }} (hold Shift or
+                      Cmd/Ctrl to select multiple):
+                    </label>
+                    <select
+                      multiple
+                      class="form-control"
+                      id="{{ itemGroup.get('name')?.value }}"
+                      formControlName="selected"
+                      size="{{itemGroup.get('values')!.value!.length < 10? itemGroup.get('values')?.value?.length: 10}}"
+                      >
+                      @for (obj of itemGroup.get('values')?.value; track obj) {
+                        <option
+                          [ngValue]="obj"
+                          >
+                          {{ obj.text }}
+                        </option>
+                      }
+                    </select>
+                  </div>
+                }
+                <!--
+                <button
+                  type="submit"
+                  class="btn btn-primary"
                   >
-                    {{ obj.text }}
-                  </option>
-                </select>
+                  Update
+                </button>
+                -->
               </div>
-              <!--
-              <button
-                type="submit"
-                class="btn btn-primary"
-              >
-                Update
-              </button>
--->
-            </div>
+            }
           </form>
         </div>
       </div>

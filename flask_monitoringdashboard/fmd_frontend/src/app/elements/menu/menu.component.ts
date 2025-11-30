@@ -1,4 +1,4 @@
-import { CommonModule, NgIf } from '@angular/common';
+
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { NavigationEnd, Router, RouterModule } from '@angular/router';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
@@ -30,7 +30,7 @@ interface MenuState {
   selector: 'app-menu',
   templateUrl: './menu.component.html',
   styleUrls: ['./menu.component.css'],
-  imports: [NgIf, CommonModule, NgbCollapse, FontAwesomeModule, RouterModule],
+  imports: [NgbCollapse, FontAwesomeModule, RouterModule],
   standalone: true,
 })
 export class MenuComponent implements OnInit, OnDestroy {

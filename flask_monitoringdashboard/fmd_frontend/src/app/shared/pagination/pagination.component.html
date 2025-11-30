@@ -1,40 +1,41 @@
 <div class="row" ng-show="pagination.total > 0">
   <div class="col-sm-6">
     Displaying <strong>{{ getLeft() + 1 }}
-      - {{ getRight() }}</strong>
-    {{ name }}: <strong>{{ total }}</strong> in total
-  </div>
-  <div class="col-sm-6">
-    <ul class="pagination" style="float: right">
-      <li
-        class="paginate_button page-item previous"
-        [class]='{ "disabled": paginationConfig.page === getFirstPage() }'
+  - {{ getRight() }}</strong>
+  {{ name }}: <strong>{{ total }}</strong> in total
+</div>
+<div class="col-sm-6">
+  <ul class="pagination" style="float: right">
+    <li
+      class="paginate_button page-item previous"
+      [class]='{ "disabled": paginationConfig.page === getFirstPage() }'
       >
-        <a
-          class="page-link"
-          (click)="goto(paginationConfig.page - 1)"
-        >Previous</a>
-      </li>
+      <a
+        class="page-link"
+        (click)="goto(paginationConfig.page - 1)"
+      >Previous</a>
+    </li>
+    @for (p of getPages(); track p) {
       <li
-        *ngFor="let p of getPages()"
         ng-repeat="p in pagination.getPages() track by $index"
         class="paginate_button page-item"
         [class]='{ "active": paginationConfig.page === p, "disabled": p === "..." }'
-      >
+        >
         <a
           class="page-link"
           (click)="goto(p)"
         >{{ p }}</a>
       </li>
-      <li
-        class="paginate_button page-item next"
-        [class]='{ "disabled": paginationConfig.page === getLastPage() }'
+    }
+    <li
+      class="paginate_button page-item next"
+      [class]='{ "disabled": paginationConfig.page === getLastPage() }'
       >
-        <a
-          class="page-link"
-          (click)="goto(paginationConfig.page + 1)"
-        >Next</a>
-      </li>
-    </ul>
-  </div>
+      <a
+        class="page-link"
+        (click)="goto(paginationConfig.page + 1)"
+      >Next</a>
+    </li>
+  </ul>
+</div>
 </div>
