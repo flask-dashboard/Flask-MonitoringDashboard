@@ -1,6 +1,6 @@
 from functools import wraps
 
-from flask import session, redirect, url_for
+from flask import session, redirect, url_for, request, jsonify
 
 from flask_monitoringdashboard import config
 
@@ -37,7 +37,13 @@ def secure(func):
     def wrapper(*args, **kwargs):
         if session and session.get(config.link + '_logged_in'):
             return func(*args, **kwargs)
-        return redirect(url_for(config.blueprint_name + '.login'))
+        if request.path.startswith('/dashboard/api/'):
+            return jsonify({
+                "error": "Unauthorized",
+                "message": "Access to this resource requires authentication."
+            }), 401
+        else:
+            return redirect(url_for(config.blueprint_name + '.login'))
 
     return wrapper
 
