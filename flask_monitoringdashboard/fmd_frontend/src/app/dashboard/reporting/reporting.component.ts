@@ -68,9 +68,6 @@ export class ReportingComponent {
 
   public error: string | undefined;
 
-  public selectedSummary: Summary | undefined;
-  public selectedAnswer: MedianLatencyAnswer | undefined;
-
   public answerType = AnswerType;
 
   selectSection(section: Section): void {
@@ -97,10 +94,8 @@ export class ReportingComponent {
   }
 
   selectEntry(summary: Summary, answer: MedianLatencyAnswer): void {
-    this.selectedSummary = summary;
-    this.selectedAnswer = answer;
 
-    const { comparison, baseline } = this.selectedAnswer.latencies_samples;
+    const { comparison, baseline } = answer.latencies_samples;
 
     const data: Partial<Data>[] = [
       {
@@ -119,8 +114,8 @@ export class ReportingComponent {
     this.dialog.open<ReportModal, ReportModalData>(ReportModal, {
       disableClose: false,
       data: {
-        selectedSummary: this.selectedSummary,
-        selectedAnswer: this.selectedAnswer,
+        selectedSummary: summary,
+        selectedAnswer: answer,
         data: data,
       },
       height: '75%',
@@ -164,10 +159,6 @@ export class ReportingComponent {
         tap((_) => (this.generating = false))
       )
       .subscribe();
-  }
-
-  stringify(obj: any): string {
-    return JSON.stringify(obj);
   }
 
   castToMedianAnswer(answer: IAnswer): MedianLatencyAnswer {
