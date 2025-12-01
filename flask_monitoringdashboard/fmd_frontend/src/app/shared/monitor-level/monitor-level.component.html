@@ -3,7 +3,7 @@
     <li class="page-item">
       <a
         class="page-link"
-        (click)="sendForm(n)"
+        (click)="sendForm($event, n)"
       [style]='{
     "background-color": computeColor(n),
     "text-decoration": (n === monitoringLevel) ? "underline" : "",

@@ -13,11 +13,12 @@ import { DashboardService } from 'src/app/service/dashboard/dashboard.service';
 export class MonitorLevelComponent implements OnInit {
   @Input() public monitoringLevel!: number;
   @Input() public endpointName!: string;
-  constructor(private readonly endpointService: DashboardService) {}
+  constructor(private readonly endpointService: DashboardService) { }
 
-  ngOnInit() {}
+  ngOnInit() { }
 
-  sendForm(val: number): void {
+  sendForm(event: Event, val: number): void {
+    event.stopPropagation();
     this.monitoringLevel = val;
     this.endpointService
       .setRule(this.endpointName, this.monitoringLevel)
