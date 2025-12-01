@@ -10,12 +10,10 @@ import { DashboardService } from 'src/app/service/dashboard/dashboard.service';
   standalone: true,
   imports: [],
 })
-export class MonitorLevelComponent implements OnInit {
+export class MonitorLevelComponent {
   @Input() public monitoringLevel!: number;
   @Input() public endpointName!: string;
   constructor(private readonly endpointService: DashboardService) { }
-
-  ngOnInit() { }
 
   sendForm(event: Event, val: number): void {
     event.stopPropagation();
@@ -32,14 +30,14 @@ export class MonitorLevelComponent implements OnInit {
       a = 1;
     }
 
-    let red = [230, 74, 54];
-    let green = [237, 255, 77];
+    const red = [230, 74, 54];
+    const green = [237, 255, 77];
 
     // level 0 = total green, level 3 = total red
-    let percentage = level / 3.0;
-    let r = red[0] * percentage + green[0] * (1 - percentage);
-    let g = red[1] * percentage + green[1] * (1 - percentage);
-    let b = red[2] * percentage + green[2] * (1 - percentage);
+    const percentage = level / 3.0;
+    const r = red[0] * percentage + green[0] * (1 - percentage);
+    const g = red[1] * percentage + green[1] * (1 - percentage);
+    const b = red[2] * percentage + green[2] * (1 - percentage);
 
     return 'rgba(' + r + ', ' + g + ', ' + b + ', ' + a + ')';
   }
