@@ -37,6 +37,7 @@
                     type="date"
                     class="form-control"
                     id="startDate"
+                    [valueAsDate]="filterForm.get('startDate')?.value"
                     formControlName="startDate"
                     />
                 </div>
@@ -50,6 +51,7 @@
                     type="date"
                     class="form-control"
                     id="endDate"
+                    [valueAsDate]="filterForm.get('endDate')?.value"
                     formControlName="endDate"
                     />
                 </div>

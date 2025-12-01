@@ -12,6 +12,7 @@ import {
 } from '@angular/core';
 import { FormArray, FormControl, FormGroup } from '@angular/forms';
 import { Chart, HeatMap, PlotlyService } from 'src/app/service/plotly.service';
+import { end } from '@popperjs/core';
 
 export interface MultiSelectValue {
   id: string;

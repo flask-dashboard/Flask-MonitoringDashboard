@@ -1,3 +1,11 @@
-<p>
-  hourly-load works!
-</p>
+@if(title){
+<app-plotly
+  [title]="title"
+  [axesText]="axesText"
+  [contentText]="contentText"
+  [useDateRange]="true"
+  [graphType]='"heatmap"'
+  (formChange)="fetchData($event)"
+  [graphDataEmitter]="eventEmitter"
+/>
+}
