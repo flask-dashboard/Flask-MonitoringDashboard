@@ -596,7 +596,7 @@ body.sidenav-toggled .navbar-sidenav-tooltip.show {
 }
 
 footer.sticky-footer {
-    position: absolute;
+    position: fixed;
     right: 0;
     bottom: 0;
     width: 100%;

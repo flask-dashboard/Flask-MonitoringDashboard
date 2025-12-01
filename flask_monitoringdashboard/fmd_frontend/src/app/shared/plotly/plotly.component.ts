@@ -1,5 +1,6 @@
 import { Subject, takeUntil } from 'rxjs';
 import {
+  AfterViewInit,
   Component,
   ElementRef,
   EventEmitter,
@@ -35,9 +36,10 @@ export interface SelectionFilter {
   styleUrls: ['./plotly.component.css'],
   standalone: false,
 })
-export class PlotlyComponent implements OnInit, OnDestroy {
+export class PlotlyComponent implements AfterViewInit, OnDestroy {
   @Input() public useDateRange: boolean = false;
   @Input() public useMultiSelect: boolean = false;
+  @Input() public footerCards: boolean = true;
   @Input() public selectData: MultiSelect[] = [];
   @Input() public title!: string;
   @Input() public graphText: string =
@@ -47,9 +49,10 @@ export class PlotlyComponent implements OnInit, OnDestroy {
   @Input() public axesText!: string;
   @Input() public contentText!: string;
   @Input() public graphType!: 'heatmap' | 'chart';
-  @Input() public graphDataEmitter!: EventEmitter<
+  @Input() public graphDataEmitter?: EventEmitter<
     Partial<HeatMap> | Partial<Chart>
   >;
+  @Input() public graphData?: Partial<HeatMap> | Partial<Chart>;
 
   @Output() public formChange: EventEmitter<SelectionFilter> =
     new EventEmitter();
@@ -70,9 +73,9 @@ export class PlotlyComponent implements OnInit, OnDestroy {
 
   public isLoading = true;
 
-  @ViewChild('chart') chartElm!: ElementRef;
+  @ViewChild('chart', { read: ElementRef }) chartElm!: ElementRef;
 
-  constructor(private readonly plotly: PlotlyService) {}
+  constructor(private readonly plotly: PlotlyService) { }
 
   ngOnDestroy(): void {
     this._destroyed.next();
@@ -80,7 +83,7 @@ export class PlotlyComponent implements OnInit, OnDestroy {
     this.formChange.complete();
   }
 
-  ngOnInit() {
+  ngAfterViewInit() {
     if (this.useDateRange) {
       const startDate = new Date();
       const endDate = new Date();
@@ -117,21 +120,29 @@ export class PlotlyComponent implements OnInit, OnDestroy {
     this.filterForm.valueChanges
       .pipe(takeUntil(this._destroyed))
       .subscribe((_) => this.formChange.emit(this.formAsSelectionFilter()));
-    this.graphDataEmitter
-      .asObservable()
-      .pipe(takeUntil(this._destroyed))
-      .subscribe((data) => {
-        const res = { root: this.chartElm.nativeElement, ...data };
-        switch (this.graphType) {
-          case 'heatmap':
-            this.plotly.heatmap(res as HeatMap);
-            break;
-          case 'chart':
-            this.plotly.chart(res as Chart);
-            break;
-        }
-        this.isLoading = false;
-      });
+    if (this.graphData) {
+      this.setGraphData(this.graphData);
+    } else {
+      this.graphDataEmitter
+        ?.asObservable()
+        .pipe(takeUntil(this._destroyed))
+        .subscribe((data) => {
+          this.setGraphData(data);
+        });
+    }
+  }
+
+  private setGraphData(data: Partial<Chart> | Partial<HeatMap>): void {
+    const res = { root: this.chartElm.nativeElement, ...data };
+    switch (this.graphType) {
+      case 'heatmap':
+        this.plotly.heatmap(res as HeatMap);
+        break;
+      case 'chart':
+        this.plotly.chart(res as Chart);
+        break;
+    }
+    this.isLoading = false;
   }
 
   formAsSelectionFilter(): SelectionFilter {

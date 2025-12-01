@@ -4,6 +4,7 @@ import {
   DateInterval,
   DateIntervalToTimestampInterval,
   Summary,
+  SummaryWrapper,
 } from './reporting-defs';
 import { Observable } from 'rxjs';
 
@@ -17,7 +18,7 @@ export class ReportingService {
     interval: DateInterval,
     baselineInterval: DateInterval,
     milliConv?: boolean
-  ): Observable<Summary[]> {
+  ): Observable<SummaryWrapper> {
     return this.client.post('api/reporting/make_report/intervals', {
       interval: DateIntervalToTimestampInterval(interval, milliConv),
       baseline_interval: DateIntervalToTimestampInterval(
@@ -30,7 +31,7 @@ export class ReportingService {
   createReportFromCommits(
     commitVersion: string,
     baselineCommitVersion: string
-  ): Observable<Summary[]> {
+  ): Observable<SummaryWrapper> {
     return this.client.post('api/reporting/make_report/commits', {
       commit_version: commitVersion,
       baseline_commit_version: baselineCommitVersion,

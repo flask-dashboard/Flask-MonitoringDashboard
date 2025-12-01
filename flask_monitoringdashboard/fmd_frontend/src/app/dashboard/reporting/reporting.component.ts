@@ -1,8 +1,12 @@
-import { Component, EventEmitter, OnInit } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  EventEmitter,
+  inject,
+} from '@angular/core';
 import { Data } from 'plotly.js';
 import { catchError, EMPTY, Observable, take, tap } from 'rxjs';
-import { EndpointService } from 'src/app/service/endpoint/endpoint.service';
-import { Chart, HeatMap } from 'src/app/service/plotly.service';
+import { Chart } from 'src/app/service/plotly.service';
 import {
   AnswerType,
   IAnswer,
@@ -10,11 +14,17 @@ import {
   ReportInterval,
   StatusCodeDistributionAnswer,
   Summary,
+  SummaryWrapper,
 } from 'src/app/service/reporting/reporting-defs';
 import { ReportingService } from 'src/app/service/reporting/reporting.service';
 import { TimeMachineService } from 'src/app/service/time-machine.service';
 import { EndpointVersion } from 'src/app/service/version/version-defs';
 import { VersionService } from 'src/app/service/version/version.service';
+import { MatDialog } from '@angular/material/dialog';
+import {
+  ReportModal,
+  ReportModalData,
+} from './report-modal/report-modal.component';
 
 type Section = 'custom' | 'commits' | 'month' | 'week' | 'day';
 
@@ -24,15 +34,15 @@ type Section = 'custom' | 'commits' | 'month' | 'week' | 'day';
   styleUrls: ['./reporting.component.css'],
   standalone: false,
 })
-export class ReportingComponent implements OnInit {
-  public title = '';
-  public axesText = '';
-  public contentText = '';
+export class ReportingComponent {
+  private readonly time = inject(TimeMachineService);
+  private readonly versionService = inject(VersionService);
+  private readonly reportingService = inject(ReportingService);
+  private readonly dialog = inject(MatDialog);
 
-  public graphDataEmitter: EventEmitter<Partial<Chart>> = new EventEmitter();
 
   public activeSection: Section = 'custom';
-  public reports: Map<Section, Summary[]> = new Map();
+  public reports: Map<Section, SummaryWrapper> = new Map();
 
   public monthName: string = this.time.fnow('MMMM');
   public previousMonthName: string = this.time.fnow('MMMM', 1, 'month');
@@ -62,14 +72,6 @@ export class ReportingComponent implements OnInit {
   public selectedAnswer: MedianLatencyAnswer | undefined;
 
   public answerType = AnswerType;
-
-  constructor(
-    private readonly time: TimeMachineService,
-    private readonly versionService: VersionService,
-    private readonly reportingService: ReportingService
-  ) {}
-
-  ngOnInit() {}
 
   selectSection(section: Section): void {
     this.activeSection = section;
@@ -113,16 +115,16 @@ export class ReportingComponent implements OnInit {
       },
     ];
 
-    this.graphDataEmitter.emit({
-      data: data,
-      layout_ext: {
-        yaxis: {
-          title: {
-            text: 'Execution time (ms)',
-          },
-          rangemode: 'nonnegative',
-        },
+
+    this.dialog.open<ReportModal, ReportModalData>(ReportModal, {
+      disableClose: false,
+      data: {
+        selectedSummary: this.selectedSummary,
+        selectedAnswer: this.selectedAnswer,
+        data: data,
       },
+      height: '75%',
+      width: '75%'
     });
   }
 
@@ -130,7 +132,7 @@ export class ReportingComponent implements OnInit {
     this.generating = true;
     this.error = undefined;
 
-    let summary: Observable<Summary[]>;
+    let summary: Observable<SummaryWrapper>;
     if (
       this.activeSection === 'commits' &&
       this.commitVersion &&
@@ -151,7 +153,10 @@ export class ReportingComponent implements OnInit {
     summary
       .pipe(
         take(1),
-        tap((res) => this.reports.set(this.activeSection, res)),
+        tap(
+          (res) =>
+            (this.reports = new Map(this.reports.set(this.activeSection, res)))
+        ),
         catchError((err) => {
           this.error = err;
           return EMPTY;
@@ -159,6 +164,10 @@ export class ReportingComponent implements OnInit {
         tap((_) => (this.generating = false))
       )
       .subscribe();
+  }
+
+  stringify(obj: any): string {
+    return JSON.stringify(obj);
   }
 
   castToMedianAnswer(answer: IAnswer): MedianLatencyAnswer {

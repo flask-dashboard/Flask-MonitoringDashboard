@@ -68,3 +68,6 @@ export interface Summary {
   answers: IAnswer[];
   has_anything_significant: boolean;
 }
+export interface SummaryWrapper {
+  summaries: Summary[];
+}

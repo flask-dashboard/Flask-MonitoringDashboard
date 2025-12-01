@@ -33,7 +33,13 @@ import { ApiPerformanceComponent } from './dashboard/api-performance/api-perform
 import { AbsPipe } from './pipes/abs.pipe';
 import { ReportingComponent } from './dashboard/reporting/reporting.component';
 import { LoggingInterceptor } from './middleware/testing';
-//import { ReportingComponent } from './dashboard/reporting/reporting.component';
+import {
+  MatDialogActions,
+  MatDialogClose,
+  MatDialogContent,
+  MatDialogTitle,
+} from '@angular/material/dialog';
+import { ReportModal } from './dashboard/reporting/report-modal/report-modal.component';
 
 @NgModule({
   declarations: [
@@ -52,6 +58,7 @@ import { LoggingInterceptor } from './middleware/testing';
     DailyApiUtilizationComponent,
     ApiPerformanceComponent,
     ReportingComponent,
+    ReportModal,
   ],
   bootstrap: [AppComponent],
   imports: [
@@ -67,6 +74,11 @@ import { LoggingInterceptor } from './middleware/testing';
     NgbModule,
     AbsPipe,
     DateLayoutPipe,
+    FormsModule,
+    MatDialogTitle,
+    MatDialogContent,
+    MatDialogActions,
+    MatDialogClose,
   ],
   providers: [
     DateShortPipe,

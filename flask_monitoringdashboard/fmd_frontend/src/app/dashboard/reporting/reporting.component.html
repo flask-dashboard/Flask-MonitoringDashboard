@@ -4,10 +4,10 @@
 
 <!-- Modal -->
 
+<!--
 @if (selectedAnswer && selectedSummary) {
 <div class="modal fade" id="details-modal" tabindex="-1" role="dialog" aria-labelledby="details-modal"
     aria-hidden="true">
-    @if (selectedAnswer && selectedSummary){
     <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
             <div class="modal-header">
@@ -31,11 +31,9 @@
             </div>
         </div>
     </div>
-    }
 </div>
-
-
 }
+-->
 <div class="card">
     <div class="card-header">
         <ul class="nav nav-tabs card-header-tabs">
@@ -118,10 +116,12 @@
         <div style="display: flex; justify-content: space-between; align-items:center; padding-top: 15px">
             <div>
                 <button (click)="generateReport()" type="button"
-                    [ngClass]="generating == true ? 'btn btn-primary disabled' : 'btn btn-primary'">
+                    [ngClass]="generating === true ? 'btn btn-primary disabled' : 'btn btn-primary'">
                     @if(generating){
                     <i class='fa fa-spinner fa-spin '></i>
                     {{ generating ? 'Generating...' : 'Generate' }}
+                    }@else {
+                    Generate report
                     }
                 </button>
                 <span style="color: red">
@@ -144,7 +144,7 @@
                     <i>No report generated yet</i>
                 </div>
                 }@else {
-                @for (summary of reports.get(activeSection); track $index) {
+                @for (summary of reports.get(activeSection)?.summaries; track $index) {
 
                 @if(summary.has_anything_significant || !onlyShowInteresting){
                 <h1>{{ summary.endpoint_name }}</h1>
@@ -161,10 +161,10 @@
                                 Median latency
                                 {{ cast.percentual_diff > 0 ? 'increased' : 'decreased' }}
                                 by
-                                {{ cast.percentual_diff | abs | number : '1' }}%</h4>
-                            <p>From {{ cast.baseline_median|number:'1' }}ms
+                                {{ cast.percentual_diff | abs | number: '1.0-1' }}%</h4>
+                            <p>From {{ cast.baseline_median|number: '1.0-1' }}ms
                                 to
-                                {{ cast.median|number:'1' }}ms</p>
+                                {{ cast.median|number: '1.0-1' }}ms</p>
 
                             <button (click)="selectEntry(summary, cast)" type="button" class="btn btn-secondary btm-sm"
                                 data-bs-toggle="modal" data-bs-target="#details-modal">
@@ -187,9 +187,9 @@
                                 <tr *ngFor="let percentage of cast.percentages">
                                     <td>{{ percentage.status_code }}</td>
                                     <td>
-                                        {{ percentage.baseline | number:'1' }}%
+                                        {{ percentage.baseline | number:'1.0-1' }}%
                                         {{"->"}}
-                                        {{ percentage.comparison | number:'1' }}%
+                                        {{ percentage.comparison | number:'1.0-1' }}%
                                     </td>
                                 </tr>
                             </tbody>
