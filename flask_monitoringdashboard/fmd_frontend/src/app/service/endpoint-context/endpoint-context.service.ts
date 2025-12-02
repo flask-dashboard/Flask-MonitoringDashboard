@@ -12,6 +12,7 @@ import {
 } from 'rxjs';
 import { EndpointInfo } from '../endpoint/endpoint-defs';
 import { EndpointService } from '../endpoint/endpoint.service';
+import { end } from '@popperjs/core';
 
 @Injectable({
   providedIn: 'root',
@@ -45,8 +46,8 @@ export class EndpointContextService implements OnDestroy {
       });
   }
 
-  public get endpoint(): Observable<EndpointInfo | null> {
-    return this._endpointSubject.asObservable();
+  public get endpoint(): Observable<EndpointInfo> {
+    return this._endpointSubject.asObservable().pipe(filter(endpoint => endpoint !== null && endpoint !== undefined));
   }
 
   ngOnDestroy(): void {

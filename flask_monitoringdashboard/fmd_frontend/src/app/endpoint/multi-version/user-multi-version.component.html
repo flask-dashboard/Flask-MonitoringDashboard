@@ -1,0 +1,13 @@
+
+@if (selections && endpoint) {
+  <app-plotly
+    [title]="title"
+    [axesText]="axesText"
+    [contentText]="contentText"
+    [useMultiSelect]="true"
+    [selectData]="selections"
+    [graphType]='"heatmap"'
+    (formChange)="fetchData($event)"
+    [graphDataEmitter]="graphDataEmitter"
+    />
+}

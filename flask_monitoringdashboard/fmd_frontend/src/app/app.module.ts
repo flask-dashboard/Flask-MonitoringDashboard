@@ -40,6 +40,7 @@ import {
   MatDialogTitle,
 } from '@angular/material/dialog';
 import { ReportModal } from './dashboard/reporting/report-modal/report-modal.component';
+import { UserMultiVersionComponent } from './endpoint/multi-version/user-multi-version.component';
 
 @NgModule({
   declarations: [
@@ -59,6 +60,7 @@ import { ReportModal } from './dashboard/reporting/report-modal/report-modal.com
     ApiPerformanceComponent,
     ReportingComponent,
     ReportModal,
+    UserMultiVersionComponent
   ],
   bootstrap: [AppComponent],
   imports: [
@@ -92,4 +94,4 @@ import { ReportModal } from './dashboard/reporting/report-modal/report-modal.com
     { provide: APP_BASE_HREF, useValue: '/dashboard/' },
   ],
 })
-export class AppModule {}
+export class AppModule { }

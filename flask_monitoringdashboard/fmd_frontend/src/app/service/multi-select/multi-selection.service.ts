@@ -1,6 +1,6 @@
 import { MultiSelect } from 'src/app/shared/plotly/plotly.component';
 import { FmdClientService } from '../FmdClient.service';
-import { Injectable } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 import { filter, map, mergeMap, Observable, take } from 'rxjs';
 import { DateLayoutPipe } from 'src/app/pipes/date-layout.pipe';
 import { VersionService } from '../version/version.service';
@@ -12,12 +12,10 @@ import { Hit } from '../endpoint/endpoint-defs';
   providedIn: 'root',
 })
 export class MultiSelectionService {
-  constructor(
-    private readonly dateLayout: DateLayoutPipe,
-    private readonly version: VersionService,
-    private readonly endpoint: EndpointService,
-    private readonly endpointContext: EndpointContextService
-  ) {}
+  private readonly dateLayout = inject(DateLayoutPipe)
+  private readonly version = inject(VersionService)
+  private readonly endpoint = inject(EndpointService)
+  private readonly endpointContext = inject(EndpointContextService)
 
   private getMs(name: string): MultiSelect {
     return {
