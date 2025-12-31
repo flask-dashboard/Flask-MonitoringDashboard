@@ -7,6 +7,7 @@ from flask_monitoringdashboard.controllers.exceptions import (
     get_function_definition_code,
     get_exception_groups,
     get_exception_groups_with_details_for_endpoint,
+    get_exception_group_page_number_for_endpoint,
 )
 from flask_monitoringdashboard.core.telemetry import post_to_back_if_telemetry_enabled
 from flask_monitoringdashboard.database import session_scope
@@ -64,6 +65,21 @@ def get_detailed_exception_occurrence_endpoint(endpoint_id: int, offset: int, pe
         )
 
         return jsonify(exceptions)
+
+
+@blueprint.route(
+    "/api/exception_occurrence_page_number/<int:endpoint_id>/<int:stack_trace_snapshot_id>/<int:per_page>"
+)
+@secure
+def get_exception_occurrence_endpoint_page_number(endpoint_id: int, stack_trace_snapshot_id: int, per_page: int):
+    """
+    Get the page number of an exception group that has occurred for a specific endpoint
+    :return: The page number of the exception group (int)
+    """
+    post_to_back_if_telemetry_enabled(**{"name": "exception_occurrence_page_number"})
+    with session_scope() as session:
+        result = get_exception_group_page_number_for_endpoint(session, per_page, endpoint_id, stack_trace_snapshot_id)
+        return jsonify(result)
 
 
 @blueprint.route("/api/function_code/<int:function_definition_id>")

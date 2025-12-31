@@ -95,6 +95,9 @@ ENV/
 # database file
 *.db
 
+# Environment variables file
+.env
+
 # Spyder project settings
 .spyderproject
 

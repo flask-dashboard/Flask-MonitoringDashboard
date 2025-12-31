@@ -257,6 +257,8 @@ Exception data is automatically cleaned up as part of the database pruning sched
 (see section 5 below). When you run database pruning, old exception occurrences
 are removed along with orphaned exception types and messages.
 
+Alerting can also be configured to notify you of exceptions. For details, see `the alerting page <alerting.html>`_.
+
 
 
 3. Data Visualization

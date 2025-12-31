@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Exception Report</title>
+
+  <style>
+    body { font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", "Noto Sans", "Liberation Sans", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji"; padding: 20px; }
+    .card { border: 1px solid #e1e1e1; border-radius: 6px; padding: 16px; background: #fff; max-width: 700px; }
+    .row { margin-bottom: 12px; }
+    .label { font-weight: 600; width: 110px; display: inline-block; }
+    pre { background: #0f1720; color: #e6eef8; padding: 12px; border-radius: 6px; white-space: pre-wrap; border-radius: 6px; }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <div class="row">
+      <span class="label">Type:</span>
+      <span><code>{{ exc_type }}</code></span>
+    </div>
+
+    <div class="row">
+      <span class="label">Message:</span>
+      <span><code>{{ exc_message }}</code></span>
+    </div>
+
+    <div class="row">
+      <span class="label">Timestamp:</span>
+      <span><code>{{ timestamp }}</code></span>
+    </div>
+
+    <div class="row">
+      <span class="label">Exception page:</span>
+        <span><a href="{{ url }}" target="_blank" rel="noopener noreferrer">{{ url }}</a></span>
+    </div>
+
+    <div class="row">
+      <span class="label">Stack trace:</span>
+      <pre>{{ stacktrace | e }}</pre>
+    </div>
+  </div>
+</body>
+</html>

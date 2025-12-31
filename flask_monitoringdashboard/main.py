@@ -16,6 +16,7 @@ from flask import Flask, redirect, url_for
 import flask_monitoringdashboard as dashboard
 
 app = Flask(__name__)
+dashboard.config.init_from(file='config.cfg')
 
 dashboard.config.version = "3.2"
 dashboard.config.group_by = "2"
@@ -139,11 +140,24 @@ def throws():
     d()()
     return "Ok"
 
+@app.route("/throws_direct")
+def throws_direct():
+    time.sleep(0.2)
+    raise Exception("This is an uncaught exception!")
+
+@app.route("/throws_di")
+def throws_di():
+    time.sleep(0.2)
+    raise ArithmeticError("This is an uncaught exception!")
+
+@app.route("/throws_n")
+def throws_f():
+    time.sleep(0.2)
+    raise ArithmeticError("This is an uncaught exception!")
 
 def my_func():
     # here should be something actually useful
     return 33.3
-
 
 if __name__ == "__main__":
     dashboard.bind(app)

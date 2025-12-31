@@ -80,6 +80,10 @@ file that contains the entry point of the app. The following properties can be c
    COLORS={'main':'[0,97,255]',
            'static':'[255,153,0]'}
 
+   [alerting]
+   ENABLED=False
+   TYPE=email
+   #TYPE=email,issue,chat
 
 As can be seen above, the configuration is split into 4 headers:
 
@@ -160,6 +164,14 @@ Visualization
 
      COLORS={'main':'[0,97,255]', 
              'static':'[255,153,0]'}
+
+Alerting
+~~~~~~~~~~~~~
+
+- **ENABLED**: Whether alerting should be turned on or off for exceptions.
+
+- **TYPE**: The type of channel used for alerting. Further alerting configuration parameters depend on the value of this
+  field, information about these can be found on `the alerting page <alerting.html>`_.
 
 What have you configured?
 -------------------------

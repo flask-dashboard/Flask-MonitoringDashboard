@@ -13,6 +13,7 @@ from flask_monitoringdashboard.core.config.parser import (
     parse_version,
     parse_bool,
     parse_literal,
+    parse_list
 )
 from flask_monitoringdashboard.core.logger import log
 
@@ -55,6 +56,23 @@ class Config(object):
         except pytz.UnknownTimeZoneError:
             log('Using default timezone, which is UTC')
             self.timezone = pytz.timezone('UTC')
+
+        # alert
+        self.alert_enabled = False
+        self.alert_type = None
+
+        self.smtp_host = None
+        self.smtp_port = None
+        self.smtp_user = None
+        self.smtp_password = None
+        self.smtp_to = None
+
+        self.chat_platform = None
+        self.chat_webhook_url = None
+
+        self.github_token = None
+        self.repository_owner = None
+        self.repository_name = None
 
         # define a custom function to retrieve the session_id or username
         self.group_by = None
@@ -148,6 +166,7 @@ class Config(object):
         try:
             parser = configparser.RawConfigParser()
             parser.read(file)
+            print(f"Config file read from: {file}")
 
             # parse 'dashboard'
             self.version = parse_version(parser, 'dashboard', self.version)
@@ -189,12 +208,50 @@ class Config(object):
                 parse_string(parser, 'visualization', 'TIMEZONE', self.timezone.zone)
             )
 
+            # alerting
+            self.alert_enabled = parse_bool(parser, 'alerting', 'ENABLED', self.alert_enabled)
+            self.alert_type = parse_list(parser, 'alerting', 'TYPE', self.alert_type)
+
+            self.smtp_host = parse_string(parser, 'alerting', 'SMTP_HOST', self.smtp_host)
+            self.smtp_port = parse_string(parser, 'alerting', 'SMTP_PORT', self.smtp_port)
+            self.smtp_user = parse_string(parser, 'alerting', 'SMTP_USER', self.smtp_user)
+            self.smtp_password = parse_string(parser, 'alerting', 'SMTP_PASSWORD', self.smtp_password)
+            self.smtp_to = parse_list(parser, 'alerting', 'SMTP_TO', self.smtp_to)
+
+            self.chat_platform = parse_string(parser, 'alerting', 'CHAT_PLATFORM', self.chat_platform)
+            self.chat_webhook_url = parse_string(parser, 'alerting', 'CHAT_WEBHOOK_URL', self.chat_webhook_url)
+
+            self.github_token = parse_string(parser, 'alerting', 'GITHUB_TOKEN', self.github_token)
+            self.repository_name = parse_string(parser, 'alerting', 'REPOSITORY_NAME', self.repository_name)
+            self.repository_owner = parse_string(parser, 'alerting', 'REPOSITORY_OWNER', self.repository_owner)
+
+            if not self.alert_type:
+                self.alert_enabled = False
+            else:
+                is_valid_email_config = self._is_valid_alert_config('email',
+                                                                    [self.smtp_host, self.smtp_port, self.smtp_user, self.smtp_to])
+                is_valid_chat_config = self._is_valid_alert_config('chat',
+                                                                   [self.chat_platform, self.chat_webhook_url])
+                is_valid_issue_config = self._is_valid_alert_config('issue',
+                                                                    [self.github_token, self.repository_name, self.repository_owner])
+                if (not is_valid_email_config) and (not is_valid_chat_config) and (not is_valid_issue_config):
+                    self.alert_enabled = False
+
             if log_verbose:
                 log("version: " + self.version)
                 log("username: " + self.username)
         except AttributeError:
             log('Cannot use configparser in python2.7')
             raise
+
+    def _is_valid_alert_config(self, alert_type, config_list):
+        if alert_type not in self.alert_type:
+            return False
+        if any([val == "" or val is None for val in config_list]):
+            log(f"Invalid {alert_type} alerting configuration, turned off {alert_type} alerting.")
+            self.alert_type.remove(alert_type)
+            return False
+        return True
 
 
 class TelemetryConfig(object):

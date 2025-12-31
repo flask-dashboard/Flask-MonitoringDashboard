@@ -5,6 +5,7 @@ from flask_monitoringdashboard.database.exception_occurrence import (
     delete_exception_group,
     get_exceptions_with_timestamps,
     get_exceptions_with_timestamps_and_stack_trace_id,
+    get_exception_group_page_number_by_endpoint,
 )
 from flask_monitoringdashboard.database.stack_trace_snapshot import (
     get_stacklines_from_stack_trace_snapshot_id,
@@ -101,6 +102,20 @@ def get_exception_groups_with_details_for_endpoint(
             session, offset, per_page, endpoint_id
         )
     ]
+
+
+def get_exception_group_page_number_for_endpoint(
+        session: Session, per_page: int, endpoint_id: int, stack_trace_snapshot_id: int
+):
+    """
+    Get the page number of an exception group that has occurred for a specific endpoint
+    :param session: session for the database
+    :param per_page: number of items per page
+    :param endpoint_id: the id of the endpoint
+    :param stack_trace_snapshot_id: the id of the stacktrace snapshot
+    :return: The page number of the exception group (int)
+    """
+    return get_exception_group_page_number_by_endpoint(session, per_page, endpoint_id, stack_trace_snapshot_id)
 
 
 def get_function_definition_code(session: Session, function_definition_id: int):

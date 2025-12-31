@@ -1,0 +1,34 @@
+<div class="card mb-3">
+    <div class="card-header">
+        <h4>Alerting settings</h4>
+    </div>
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-bordered table-hover">
+                <tr>
+                    <td style="width: 40%"><b>Alerting enabled</b></td>
+                    <td>
+                        <div ng-if="alert_config['alert_enabled'] === true" style="color: #0d6efd">Enabled</div>
+                        <div ng-if="alert_config['alert_enabled'] !== true" style="color: #d10023">Disabled</div>
+                    </td>
+                </tr>
+                <tr ng-if="alert_config['alert_enabled'] === true">
+                    <td><b>{{ labels['alert_type'] }}</b></td>
+                    <td>{{ alert_config['alert_type'] }}</td>
+                </tr>
+            </table>
+            <table ng-repeat="type in alert_type" ng-if="alert_config['alert_enabled'] === true && type !== ''"
+                   class="table table-bordered table-hover">
+                <tr>
+                    <td colspan="2" style="background-color: var(--bs-table-striped-bg)">
+                        <b><span style="text-transform: capitalize">{{ type }}</span> settings</b>
+                    </td>
+                </tr>
+                <tr ng-repeat="(key, value) in alert_config[type]">
+                    <td style="width: 40%"><b>{{ labels[key] }}</b></td>
+                    <td>{{ value }}</td>
+                </tr>
+            </table>
+        </div>
+    </div>
+</div>

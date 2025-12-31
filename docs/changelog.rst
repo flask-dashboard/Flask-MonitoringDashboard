@@ -5,6 +5,26 @@ All notable changes to this project will be documented in this file.
 This project adheres to `Semantic Versioning <http://semver.org/>`_.
 Please note that the changes before version 1.10.0 have not been documented.
 
+v5.1.0
+----------
+**Minor Release - Exception Alerting**
+
+Added
+^^^^^
+- Optional, configurable alerting on uncaught or user-defined exceptions
+- 3 types of possible alerting channels:
+
+  - Email via SMTP
+  - Chat platforms (Slack, Microsoft Teams, Rocket.Chat)
+  - Issue tracker (Github Issues)
+- Configuration parameters visualized on the "Alerting settings" page
+
+Changed
+^^^^^^^
+- Added several alerting configuration parameters
+- Added jinja2 to requirements-micro.txt for email template rendering
+- Endpoint-specific exception pages now support URL anchor-based navigation
+
 v5.0.2
 ----------
 **Bug Fix Release**

@@ -1,6 +1,6 @@
 from typing import Union
 
-from flask_monitoringdashboard import ExceptionCollector
+from flask_monitoringdashboard import ExceptionCollector, config
 from flask_monitoringdashboard.core.cache import update_duration_cache
 from flask_monitoringdashboard.core.profiler.base_profiler import BaseProfiler
 from flask_monitoringdashboard.database import session_scope
@@ -43,4 +43,4 @@ class PerformanceProfiler(BaseProfiler):
                 group_by=self._group_by,
                 status_code=self._status_code,
             )
-            self.e_collector.save_to_db(request_id, session)
+            self.e_collector.save_to_db(request_id, session, config)

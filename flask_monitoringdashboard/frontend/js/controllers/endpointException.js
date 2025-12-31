@@ -4,6 +4,9 @@ export function EndpointExceptionController(
     menuService,
     paginationService,
     endpointService,
+    $location,
+    $timeout,
+    $anchorScroll
 ) {
     Prism.plugins.NormalizeWhitespace.setDefaults({
         "remove-trailing": false,
@@ -23,10 +26,33 @@ export function EndpointExceptionController(
         $scope.title = "Exceptions for " + name;
     };
 
-    paginationService.init("exceptions");
+    const fragment = $location.hash();
+    $scope.request_id = null;
+    if (fragment) {
+        const request_id = Number(fragment.split("-")[1]);
+        if (request_id) {
+            $scope.request_id = request_id;
+        }
+    }
+
+    paginationService.init("exceptions", {preventEventDefault: true});
     $http.get("api/num_exceptions/" + endpointService.info.id).then(
         function (response) {
-            paginationService.setTotal(response.data);
+            if (!$scope.request_id) {
+                paginationService.setTotal(response.data);
+            } else {
+                paginationService.setTotalNoReload(response.data);
+                if ($scope.request_id) {
+                    $http.get(
+                        "api/exception_occurrence_page_number/" + endpointService.info.id + "/" +
+                        $scope.request_id + "/" + paginationService.perPage,
+                    )
+                        .then(function (response) {
+                            const page = response.data;
+                            paginationService.goto(page);
+                        });
+                }
+            }
         },
     );
 
@@ -39,6 +65,26 @@ export function EndpointExceptionController(
                 $scope.table = response.data;
                 $scope.id2Function = {};
                 $scope.idHasBeenClicked = {};
+                if ($scope.request_id) {
+                    $timeout(() => {
+                        $anchorScroll();
+                        const request = $scope.table.find(request => request["stack_trace_snapshot_id"] === $scope.request_id);
+                        if (!request) {
+                            return;
+                        }
+                        const first_row = request["stack_trace_snapshot"][0]
+                        const function_definition_id = first_row["function_definition_id"];
+                        const position = first_row["position"];
+                        const key = $scope.getUniqueKey($scope.request_id, position);
+                        $scope.loadFunctionCodeById(function_definition_id, key);
+                        const detail = document.querySelector(`#details-${$scope.request_id}-${position}`);
+                        if (!detail) {
+                            return;
+                        }
+                        detail.open = true;
+                        $scope.request_id = null;
+                    });
+                }
             });
     };
 
@@ -60,10 +106,10 @@ export function EndpointExceptionController(
 
     $scope.highlightCode = function (key) {
         $scope.$applyAsync(() => {
-          const element = document.getElementById(key);
-          if (element) {
-            Prism.highlightElement(element);
-          }
+            const element = document.getElementById(key);
+            if (element) {
+                Prism.highlightElement(element);
+            }
         });
     };
 
@@ -81,7 +127,7 @@ export function EndpointExceptionController(
     };
 
     $scope.collapseDetailsByStackTraceId = function (stack_trace_snapshot_id) {
-        document.querySelectorAll(`#details_${stack_trace_snapshot_id}`).forEach((details) => {
+        document.querySelectorAll(`.details-${stack_trace_snapshot_id}`).forEach((details) => {
             details.open = false;
         });
     };

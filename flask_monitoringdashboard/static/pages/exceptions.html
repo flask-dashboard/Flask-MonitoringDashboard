@@ -4,7 +4,7 @@
     </div>
     <div class="card-body">
         <pagination></pagination>
-        <div class="card" ng-repeat="request in table" style="margin-bottom: 10px">
+        <div class="card" ng-repeat="request in table" id="request-{{request.stack_trace_snapshot_id}}" style="margin-bottom: 10px">
             <div class="card-header d-flex flex-row justify-content-between">
                 <div>
                     <h6>{{ request.type }}</h6>
@@ -34,7 +34,8 @@
                         ng-init="key = getUniqueKey(request.stack_trace_snapshot_id, row.position)">
                         <td style="padding-left: 10px;">
                             <details ng-click="loadFunctionCodeById(row.function_definition_id, key)"
-                                     id="details_{{request.stack_trace_snapshot_id}}">
+                                     class="details-{{request.stack_trace_snapshot_id}}"
+                                     id="details-{{request.stack_trace_snapshot_id}}-{{row.position}}">
                                 <summary class="tooltip-wrapper">
                                     {{ row.file_path }}
                                     <span class="tooltip">{{ row.full_file_path }}</span>

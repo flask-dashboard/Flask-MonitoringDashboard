@@ -40,6 +40,7 @@ import { StatusCodeDistributionController, } from './controllers/statusCodeDistr
 import { CustomGraphController } from './controllers/customGraph';
 import { ConfigurationController } from './controllers/configuration';
 import { DatabaseManagementController } from './controllers/databaseManagementController';
+import { AlertingSettingsController } from "./controllers/alertingSettingsController";
 import { EndpointVersionIPController } from './controllers/endpointVersionIP';
 import { EndpointVersionController } from "./controllers/endpointVersion";
 import { MonitorLevelController } from "./controllers/monitorLevel";
@@ -165,7 +166,8 @@ app.config(['$locationProvider', '$routeProvider', function ($locationProvider, 
         .when('/endpoint/:endpointId/exceptions', {
             templateUrl: 'static/pages/exceptions.html',
             controller: ['$scope', '$http', 'menuService',
-                'paginationService', 'endpointService', EndpointExceptionController]
+                'paginationService', 'endpointService',
+                '$location', '$timeout', '$anchorScroll', EndpointExceptionController]
         })
         .when('/endpoint/:endpointId/outliers', {
             templateUrl: 'static/pages/outliers.html',
@@ -189,6 +191,10 @@ app.config(['$locationProvider', '$routeProvider', function ($locationProvider, 
         .when('/database_management', {
             templateUrl: 'static/pages/database_management.html',
             controller: ['$scope', '$http', 'menuService', 'endpointService', 'modalService', DatabaseManagementController]
+        })
+        .when('/alerting_settings', {
+            templateUrl: 'static/pages/alerting_settings.html',
+            controller: ['$scope', '$http', 'menuService', 'endpointService', 'modalService', AlertingSettingsController]
         })
         .otherwise({
             redirectTo: '/overview'

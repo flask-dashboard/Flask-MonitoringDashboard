@@ -1,10 +1,11 @@
 export default function () {
 
-    this.init = function (name) {
+    this.init = function (name, options = {}) {
         this.page = 1;
         this.perPage = 5;
         this.total = 0;
         this.name = name;
+        this.preventEventDefault = options.preventEventDefault || false;
     };
 
     this.maxPages = function () {
@@ -41,6 +42,10 @@ export default function () {
         this.total = t;
         this.onReload();
     };
+
+    this.setTotalNoReload = function (t) {
+        this.total = t;
+    }
 
     this.getPages = function () {
         let left = this.page - 1;

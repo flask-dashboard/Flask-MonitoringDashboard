@@ -9,3 +9,4 @@ numpy                 # for computing median and other stats
 pytz                  # for timezone info
 requests              # for telemetry data posting
 tzlocal==2.0          # for figuring out the local timezone; frozen to 2.0 because 3.0 conflicts the latest version of appscheduler (as of jan.2020)
+jinja2                # for email template rendering

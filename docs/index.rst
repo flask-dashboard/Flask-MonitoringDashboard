@@ -34,7 +34,7 @@ The Flask Monitoring Dashboard is an extension that offers 4 main functionalitie
 - **Track exceptions:**
   If your application has unhandled exceptions they will automatically be captured together with full stack traces and
   displayed in the dashboard, if you have monitoring level 1 or above. You can also explicitly capture individual
-  exceptions with the `capture_exception` function.
+  exceptions with the `capture_exception` function. Alerting can also be configured to notify you of exceptions.
 
 
 For more advanced documentation, have a look at the `the detailed functionality page <http://flask-monitoringdashboard.readthedocs.io/en/latest/functionality.html>`_.

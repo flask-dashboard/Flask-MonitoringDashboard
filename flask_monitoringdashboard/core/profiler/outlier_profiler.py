@@ -74,11 +74,11 @@ class OutlierProfiler(threading.Thread):
                 session,
                 duration=duration * 1000,
                 endpoint_id=self._endpoint.id,
-                ip=self._ip,
+                ip=self._ip,   
                 group_by=self._group_by,
                 status_code=status_code,
             )
-            e_collector.save_to_db(request_id, session)
+            e_collector.save_to_db(request_id, session, config)
             if self._memory:
                 add_outlier(
                     session,

@@ -7,15 +7,15 @@
         <ul class="pagination" style="float: right;">
             <li class="paginate_button page-item previous"
                 ng-class="{'disabled': pagination.page == pagination.getFirstPage()}">
-                <a href="#" class="page-link" ng-click="pagination.goto(pagination.page-1)">Previous</a>
+                <a href="#" class="page-link" ng-click="pagination.goto(pagination.page-1); pagination.preventEventDefault && $event.preventDefault();">Previous</a>
             </li>
             <li ng-repeat="p in pagination.getPages() track by $index" class="paginate_button page-item"
                 ng-class="{'active': pagination.page==p, 'disabled': p=='...'}">
-                <a href="#" class="page-link" ng-click="pagination.goto(p)">{{ p }}</a>
+                <a href="#" class="page-link" ng-click="pagination.goto(p); pagination.preventEventDefault && $event.preventDefault();">{{ p }}</a>
             </li>
             <li class="paginate_button page-item next"
                 ng-class="{'disabled': pagination.page == pagination.getLastPage()}">
-                <a href="#" class="page-link" ng-click="pagination.goto(pagination.page+1)">Next</a>
+                <a href="#" class="page-link" ng-click="pagination.goto(pagination.page+1); pagination.preventEventDefault && $event.preventDefault();">Next</a>
             </li>
         </ul>
     </div>
