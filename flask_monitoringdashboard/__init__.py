@@ -85,6 +85,13 @@ def bind(app, schedule=True, include_dashboard=True):
     if schedule:
         custom_graph.init(app)
 
+        # Schedule automatic data retention cleanup if configured
+        if config.data_retention_days > 0:
+            from flask_monitoringdashboard.core.database_pruning import (
+                schedule_automatic_pruning,
+            )
+            schedule_automatic_pruning(config.data_retention_days)
+
     # register the blueprint to the app
     app.register_blueprint(blueprint, url_prefix="/" + config.link)
 
