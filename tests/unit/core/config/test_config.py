@@ -41,3 +41,30 @@ def test_parser():
     assert parse_literal(parser, section, 'literal', 'default') == ['a', 'b', 'c']
     assert parse_literal(parser, section, 'literal2', 'default') == 1.23
 
+
+def test_data_retention_days_default(config):
+    """Test that data_retention_days has correct default value."""
+    from flask_monitoringdashboard.core.config import Config
+    fresh_config = Config()
+    assert fresh_config.data_retention_days == 30
+
+
+def test_data_retention_days_parser():
+    """Test that DATA_RETENTION_DAYS is correctly parsed from config."""
+    parser = configparser.RawConfigParser()
+    parser.add_section('database')
+    parser.set('database', 'DATA_RETENTION_DAYS', '60')
+
+    result = parse_literal(parser, 'database', 'DATA_RETENTION_DAYS', 30)
+    assert result == 60
+
+
+def test_data_retention_days_disable():
+    """Test that DATA_RETENTION_DAYS can be set to 0 to disable cleanup."""
+    parser = configparser.RawConfigParser()
+    parser.add_section('database')
+    parser.set('database', 'DATA_RETENTION_DAYS', '0')
+
+    result = parse_literal(parser, 'database', 'DATA_RETENTION_DAYS', 30)
+    assert result == 0
+

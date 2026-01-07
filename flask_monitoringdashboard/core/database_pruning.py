@@ -55,6 +55,51 @@ def prune_database_older_than_weeks(weeks_to_keep, delete_custom_graph_data):
         session.commit()
 
 
+def prune_database_older_than_days(days_to_keep):
+    """Prune the database of Request data older than the specified number of days.
+
+    Uses batch deletes with subqueries for better performance on large tables.
+    Does NOT delete CustomGraphData - only request-related tables are cleaned up.
+
+    :param days_to_keep: Number of days of data to retain
+    """
+    with session_scope() as session:
+        cutoff_date = datetime.now(timezone.utc) - timedelta(days=days_to_keep)
+
+        # Get subquery for old request IDs - used for batch deletes
+        old_request_ids = session.query(Request.id).filter(
+            Request.time_requested < cutoff_date
+        ).subquery().select()
+
+        # Batch delete child tables first (respecting FK relationships)
+        session.query(Outlier).filter(
+            Outlier.request_id.in_(old_request_ids)
+        ).delete(synchronize_session=False)
+
+        session.query(StackLine).filter(
+            StackLine.request_id.in_(old_request_ids)
+        ).delete(synchronize_session=False)
+
+        session.query(ExceptionOccurrence).filter(
+            ExceptionOccurrence.request_id.in_(old_request_ids)
+        ).delete(synchronize_session=False)
+
+        # Delete parent Request records
+        session.query(Request).filter(
+            Request.time_requested < cutoff_date
+        ).delete(synchronize_session=False)
+
+        # Find and delete CodeLines not referenced by any StackLines
+        session.query(CodeLine).filter(
+            ~session.query(StackLine).filter(StackLine.code_id == CodeLine.id).exists()
+        ).delete(synchronize_session=False)
+
+        # Clean up orphaned exception-related records
+        delete_entries_unreferenced_by_exception_occurrence(session)
+
+        session.commit()
+
+
 def delete_entries_unreferenced_by_exception_occurrence(session: Session):
     """
     Delete ExceptionTypes, ExceptionMessages, StackTraceSnapshots (along with their ExceptionStackLines) 
@@ -137,4 +182,23 @@ def add_background_pruning_job(weeks_to_keep, delete_custom_graph_data, **schedu
         trigger="cron",
         replace_existing=True,  # This will replace an existing job
         **schedule
+    )
+
+
+def schedule_automatic_pruning(days_to_keep):
+    """Schedule automatic data retention cleanup to run daily at 2 AM.
+
+    This function is called automatically by dashboard.bind() when
+    config.data_retention_days is greater than 0.
+
+    :param days_to_keep: Number of days of data to retain
+    """
+    scheduler.add_job(
+        id="automatic_data_retention",
+        func=prune_database_older_than_days,
+        args=[days_to_keep],
+        trigger="cron",
+        hour=2,
+        minute=0,
+        replace_existing=True,
     )

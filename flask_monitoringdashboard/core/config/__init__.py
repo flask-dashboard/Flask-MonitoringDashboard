@@ -42,6 +42,7 @@ class Config(object):
         # database
         self.database_name = 'sqlite:///flask_monitoringdashboard.db'
         self.table_prefix = ''
+        self.data_retention_days = 30
 
         # authentication
         self.username = 'admin'
@@ -117,6 +118,9 @@ class Config(object):
                 result of each project is stored in its own database.
             - TABLE_PREFIX: A prefix to every table that the Flask-MonitoringDashboard uses, to
                 ensure that there are no conflicts with the user of the dashboard.
+            - DATA_RETENTION_DAYS: Number of days to retain request data in the database.
+                Requests older than this will be automatically deleted by a scheduled background
+                task (daily at 2 AM). Set to 0 to disable automatic cleanup. Default value is 30.
 
             The config_file must at least contains the following variables in section
             'visualization':
@@ -182,6 +186,9 @@ class Config(object):
             # database
             self.database_name = parse_string(parser, 'database', 'DATABASE', self.database_name)
             self.table_prefix = parse_string(parser, 'database', 'TABLE_PREFIX', self.table_prefix)
+            self.data_retention_days = parse_literal(
+                parser, 'database', 'DATA_RETENTION_DAYS', self.data_retention_days
+            )
 
             # visualization
             self.colors = parse_literal(parser, 'visualization', 'COLORS', self.colors)
