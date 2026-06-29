@@ -1,6 +1,5 @@
 import { Subject, takeUntil } from 'rxjs';
 import {
-  AfterViewInit,
   Component,
   ElementRef,
   EventEmitter,
@@ -12,7 +11,6 @@ import {
 } from '@angular/core';
 import { FormArray, FormControl, FormGroup } from '@angular/forms';
 import { Chart, HeatMap, PlotlyService } from 'src/app/service/plotly.service';
-import { end } from '@popperjs/core';
 
 export interface MultiSelectValue {
   id: string;
@@ -37,7 +35,7 @@ export interface SelectionFilter {
   styleUrls: ['./plotly.component.css'],
   standalone: false,
 })
-export class PlotlyComponent implements AfterViewInit, OnDestroy {
+export class PlotlyComponent implements OnInit, OnDestroy {
   @Input() public useDateRange: boolean = false;
   @Input() public useMultiSelect: boolean = false;
   @Input() public footerCards: boolean = true;
@@ -84,7 +82,7 @@ export class PlotlyComponent implements AfterViewInit, OnDestroy {
     this.formChange.complete();
   }
 
-  ngAfterViewInit() {
+  ngOnInit() {
     if (this.useDateRange) {
       const startDate = new Date();
       const endDate = new Date();

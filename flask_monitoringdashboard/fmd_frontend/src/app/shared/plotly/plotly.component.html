@@ -37,9 +37,10 @@
                     type="date"
                     class="form-control"
                     id="startDate"
-                    [valueAsDate]="filterForm.get('startDate')?.value"
                     formControlName="startDate"
-                    />
+                  />
+
+
                 </div>
                 <div class="form-group row">
                   <label for="endDate" class="col-sm-2 col-form-label">
@@ -51,9 +52,8 @@
                     type="date"
                     class="form-control"
                     id="endDate"
-                    [valueAsDate]="filterForm.get('endDate')?.value"
                     formControlName="endDate"
-                    />
+                  />
                 </div>
               </div>
             }

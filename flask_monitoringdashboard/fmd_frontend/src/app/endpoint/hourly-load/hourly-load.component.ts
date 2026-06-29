@@ -13,7 +13,7 @@ import { SelectionFilter } from 'src/app/shared/plotly/plotly.component';
   styleUrls: ['./hourly-load.component.css'],
   standalone: false,
 })
-export class HourlyLoadComponent implements AfterViewInit {
+export class HourlyLoadComponent implements OnInit {
   private readonly endpointContext = inject(EndpointContextService);
   private readonly requestService = inject(RequestService);
   private readonly dateShortPipe = inject(DateShortPipe);
@@ -26,7 +26,7 @@ export class HourlyLoadComponent implements AfterViewInit {
     ' This information can be used to discover the peak usage hours of this endpoint.';
 
 
-  ngAfterViewInit() {
+  ngOnInit() {
     this.endpointContext.endpoint.pipe(
       filter(endpoint => endpoint !== null && endpoint !== undefined),
       tap(endpoint => {
