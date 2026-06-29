@@ -1,2 +1,3 @@
 -r requirements-micro.txt
 scipy                 # for statistical analysis of latency measurements
+flask-cors
