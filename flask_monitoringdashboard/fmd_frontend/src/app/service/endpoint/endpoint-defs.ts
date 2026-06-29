@@ -18,3 +18,8 @@ export interface ApiPerformance {
   name: string;
   values: number[];
 }
+
+export interface VersionIpData {
+  versions: { version: string; date: string }[];
+  data: number[][];
+}

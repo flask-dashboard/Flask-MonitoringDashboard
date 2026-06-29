@@ -10,6 +10,7 @@ import { DailyApiUtilizationComponent } from './dashboard/daily-api-utilization/
 import { ApiPerformanceComponent } from './dashboard/api-performance/api-performance.component';
 import { ReportingComponent } from './dashboard/reporting/reporting.component';
 import { UserMultiVersionComponent } from './endpoint/multi-version/user-multi-version.component';
+import { EndpointVersionIpComponent } from './endpoint/version-ip/version-ip.component';
 @Component({ template: '<p>Dashboard Parent Hit</p>' })
 export class TempDashboardParentComponent { }
 
@@ -27,6 +28,7 @@ const routes: Routes = [
       { path: 'exceptions', component: ExceptionsComponent },
       { path: 'version_user', component: UserMultiVersionComponent },
       { path: 'hourly_load', component: HourlyLoadComponent },
+      { path: 'version_ip', component: EndpointVersionIpComponent },
     ],
   },
 

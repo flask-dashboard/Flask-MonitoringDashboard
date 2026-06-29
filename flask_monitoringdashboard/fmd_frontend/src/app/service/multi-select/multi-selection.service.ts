@@ -1,5 +1,4 @@
 import { MultiSelect } from 'src/app/shared/plotly/plotly.component';
-import { FmdClientService } from '../FmdClient.service';
 import { inject, Injectable } from '@angular/core';
 import { filter, map, mergeMap, Observable, take } from 'rxjs';
 import { DateLayoutPipe } from 'src/app/pipes/date-layout.pipe';

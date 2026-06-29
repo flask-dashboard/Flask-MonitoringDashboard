@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, EventEmitter, inject, OnInit } from '@angular/core';
+import { Component, EventEmitter, inject, OnInit } from '@angular/core';
 import { filter, take, tap } from 'rxjs';
 import { DateShortPipe } from 'src/app/pipes/date-short.pipe';
 import { EndpointContextService } from 'src/app/service/endpoint-context/endpoint-context.service';

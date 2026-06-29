@@ -1,6 +1,6 @@
-import { Injectable } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 import { Observable, of, tap } from 'rxjs';
-import { Hit, EndpointInfo, ApiPerformance } from './endpoint-defs';
+import { Hit, EndpointInfo, ApiPerformance, VersionIpData } from './endpoint-defs';
 import { FmdClientService } from '../FmdClient.service';
 import { MultiSelect } from 'src/app/shared/plotly/plotly.component';
 
@@ -9,8 +9,7 @@ import { MultiSelect } from 'src/app/shared/plotly/plotly.component';
 })
 export class EndpointService {
   private endpoints: Map<number, EndpointInfo> = new Map();
-
-  constructor(private readonly client: FmdClientService) {}
+  private readonly client = inject(FmdClientService)
 
   getEndpointInfo(id: number): Observable<EndpointInfo> {
     return this.client.get<EndpointInfo>('/api/endpoint_info/' + id);
@@ -40,6 +39,12 @@ export class EndpointService {
   getApiPerformance(endpoints: MultiSelect): Observable<ApiPerformance[]> {
     return this.client.post('api/api_performance', {
       data: { endpoints: endpoints.selected.map((sel) => sel.id) },
+    });
+  }
+
+  getVersionIp(id: number, versions: string[], ip: string[]): Observable<VersionIpData> {
+    return this.client.post(`api/version_ip/${id}`, {
+      data: { versions, ip }
     });
   }
 }

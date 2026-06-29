@@ -41,6 +41,7 @@ import {
 } from '@angular/material/dialog';
 import { ReportModal } from './dashboard/reporting/report-modal/report-modal.component';
 import { UserMultiVersionComponent } from './endpoint/multi-version/user-multi-version.component';
+import { EndpointVersionIpComponent } from './endpoint/version-ip/version-ip.component';
 
 @NgModule({
   declarations: [
@@ -50,6 +51,7 @@ import { UserMultiVersionComponent } from './endpoint/multi-version/user-multi-v
     DateDifferencePipe,
     ExceptionsComponent,
     HourlyLoadComponent,
+    EndpointVersionIpComponent,
     HourlyApiUtilizationComponent,
     SyntaxHighlightComponent,
     PlotlyComponent,
