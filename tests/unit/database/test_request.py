@@ -10,6 +10,7 @@ from datetime import datetime, timedelta, timezone
 import pytest
 
 from flask_monitoringdashboard.core.date_interval import DateInterval
+from flask_monitoringdashboard.database import Request
 from flask_monitoringdashboard.database.count import count_requests
 from flask_monitoringdashboard.database.endpoint import get_avg_duration, get_endpoints
 from flask_monitoringdashboard.database.request import add_request, \
@@ -36,6 +37,24 @@ def test_add_request(endpoint, session):
         status_code=200,
     )
     assert count_requests(session, endpoint.id) == num_requests + 1
+
+
+def test_add_request_stamps_current_time(endpoint, session):
+    """time_requested must be evaluated per row, not once when the models are imported."""
+    before = datetime.now(timezone.utc).replace(tzinfo=None)
+    request_id = add_request(
+        session,
+        duration=200,
+        endpoint_id=endpoint.id,
+        ip='127.0.0.1',
+        group_by=None,
+        status_code=200,
+    )
+    after = datetime.now(timezone.utc).replace(tzinfo=None)
+
+    request = session.query(Request).get(request_id)
+    time_requested = request.time_requested.replace(tzinfo=None)
+    assert before <= time_requested <= after
 
 
 @pytest.mark.parametrize('request_1__time_requested', [datetime(2020, 2, 3)])
