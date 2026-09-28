@@ -25,6 +25,28 @@ Changed
 - Added jinja2 to requirements-micro.txt for email template rendering
 - Endpoint-specific exception pages now support URL anchor-based navigation
 
+v5.0.4
+----------
+**Bug Fix Release**
+
+Fixed
+^^^^^
+- **Pruning**: ``prune_database_older_than_weeks`` (the scheduled job and the "prune now" button) deletes old requests in batches of 10,000, each in its own transaction, with set-based deletes of their outliers, stack lines and exception occurrences. It used to load every old request into memory and delete their rows one query at a time in a single transaction, which could not finish on a large backlog
+
+v5.0.3
+----------
+**Bug Fix Release**
+
+Fixed
+^^^^^
+- **Timestamps**: ``Request.time_requested`` and four other timestamp columns were set once, when the models were imported, so every row got the worker's boot time. They are evaluated per row again. Regression from 5.0.2; affected rows cannot be recovered (#564)
+- **Performance**: Two indexes on ``Request``, ``(endpoint_id, duration)`` and ``(time_requested, endpoint_id, status_code, duration)``. On a 4.4M-row table, the per-worker startup query went from 94s to 0.7s and the overview page's time-windowed counts from 36s to 0.1s each. Existing databases get the indexes on the first startup after upgrading, which takes as long as building them (#565)
+- **Performance**: The overview page counts exceptions for all endpoints in one query instead of one query per endpoint (#565)
+
+Changed
+^^^^^^^
+- **Release**: Published to PyPI with trusted publishing instead of an API token (#566)
+
 v5.0.2
 ----------
 **Bug Fix Release**

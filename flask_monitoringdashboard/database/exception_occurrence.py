@@ -97,6 +97,24 @@ def count_endpoint_grouped_exceptions(session: Session, endpoint_id: int):
     )
 
 
+def count_grouped_exceptions_per_endpoint(session: Session):
+    """
+    Same count as count_endpoint_grouped_exceptions, for all endpoints in one query. Calling that
+    once per endpoint scans every endpoint's requests; this only reads the requests that raised.
+    :param session: session for the database
+    :return: dict of endpoint id -> number of distinct stack trace snapshots
+    """
+    return dict(
+        session.query(
+            Request.endpoint_id,
+            func.count(func.distinct(ExceptionOccurrence.stack_trace_snapshot_id)),
+        )
+        .join(Request, ExceptionOccurrence.request)
+        .group_by(Request.endpoint_id)
+        .all()
+    )
+
+
 def get_exceptions_with_timestamps(session: Session, offset: int, per_page: int):
     """
     Gets the information about exceptions grouped by endpoint and stack trace snapshot and sorted by latest request time.

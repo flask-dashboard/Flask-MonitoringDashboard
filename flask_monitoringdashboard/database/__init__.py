@@ -18,7 +18,9 @@ from sqlalchemy import (
     Float,
     TEXT,
     ForeignKey,
+    Index,
     exc,
+    inspect,
 )
 
 try:
@@ -60,6 +62,12 @@ class User(Base):
         return check_password_hash(self.password_hash, password)
 
 
+def utc_now():
+    """Column default for timestamps. Must be passed uncalled (default=utc_now), so SQLAlchemy
+    evaluates it per row; default=datetime.now(...) is evaluated once at import time."""
+    return datetime.datetime.now(datetime.timezone.utc)
+
+
 class TelemetryUser(Base):
     """Table for storing a unique identifier of an FMD user"""
 
@@ -72,7 +80,7 @@ class TelemetryUser(Base):
     times_initialized = Column(Integer, default=1)
     """For checking the amount of times the app was initialized"""
 
-    last_initialized = Column(DateTime, default=datetime.datetime.now(datetime.timezone.utc))
+    last_initialized = Column(DateTime, default=utc_now)
     """Check when was the last time user accessed FMD"""
 
     monitoring_consent = Column(Integer, default=1)
@@ -93,7 +101,7 @@ class Endpoint(Base):
     monitor_level = Column(Integer, default=config.monitor_level)
     """0 - disabled, 1 - performance, 2 - outliers, 3 - profiler + outliers"""
 
-    time_added = Column(DateTime, default=datetime.datetime.now(datetime.timezone.utc))
+    time_added = Column(DateTime, default=utc_now)
     """Time when the endpoint was added."""
 
     version_added = Column(String(100), default=config.version)
@@ -107,7 +115,25 @@ class Request(Base):
     """Table for storing measurements of requests."""
 
     __tablename__ = "{}Request".format(config.table_prefix)
-    __table_args__ = {"mysql_collate": "utf8mb4_general_ci"}
+    __table_args__ = (
+        # Covers the per-endpoint aggregates (hits, average duration) run at startup by
+        # init_cache and on the overview page, so they never read the table rows.
+        Index(
+            "ix_{}request_endpoint_duration".format(config.table_prefix.lower()),
+            "endpoint_id",
+            "duration",
+        ),
+        # Covers the time-windowed counts and medians on the overview page (today, last 7 days,
+        # error hits), so they read only the rows in the window.
+        Index(
+            "ix_{}request_time_endpoint".format(config.table_prefix.lower()),
+            "time_requested",
+            "endpoint_id",
+            "status_code",
+            "duration",
+        ),
+        {"mysql_collate": "utf8mb4_general_ci"},
+    )
 
     id = Column(Integer, primary_key=True)
 
@@ -118,7 +144,7 @@ class Request(Base):
     duration = Column(Float, nullable=False)
     """Processing time of the request in milliseconds."""
 
-    time_requested = Column(DateTime, default=datetime.datetime.now(datetime.timezone.utc))
+    time_requested = Column(DateTime, default=utc_now)
     """Moment when the request was handled."""
 
     version_requested = Column(String(100), default=config.version)
@@ -225,7 +251,7 @@ class CustomGraph(Base):
     title = Column(String(250), nullable=False, unique=True)
     """Title of this graph."""
 
-    time_added = Column(DateTime, default=datetime.datetime.now(datetime.timezone.utc))
+    time_added = Column(DateTime, default=utc_now)
     """When the graph was first added to the dashboard."""
 
     version_added = Column(String(100), default=config.version)
@@ -244,7 +270,7 @@ class CustomGraphData(Base):
     graph = relationship(CustomGraph, backref="data")
     """Graph for which the data is collected."""
 
-    time = Column(DateTime, default=datetime.datetime.now(datetime.timezone.utc))
+    time = Column(DateTime, default=utc_now)
     """Moment when the data is collected."""
 
     value = Column(Float)
@@ -401,6 +427,31 @@ class ExceptionStackLine(Base):
 # define the database
 engine = create_engine(config.database_name)
 Base.metadata.create_all(engine)
+
+
+def create_missing_indexes(engine):
+    """create_all() only creates the indexes of tables it creates itself, so indexes declared
+    after a table already exists are added here. On a large table this makes the first startup
+    after an upgrade take as long as building the index. Failures are logged, not raised: the
+    indexes are only an optimization, and when several worker processes start together all but
+    one of them lose the race to create the same index."""
+    inspector = inspect(engine)
+    existing_tables = set(inspector.get_table_names())
+    for table in Base.metadata.sorted_tables:
+        if table.name not in existing_tables:
+            continue
+        existing = {ix["name"].lower() for ix in inspector.get_indexes(table.name) if ix["name"]}
+        for index in table.indexes:
+            if index.name.lower() not in existing:
+                print("Flask-MonitoringDashboard: creating index {}".format(index.name))
+                try:
+                    index.create(engine)
+                except exc.DBAPIError as e:
+                    print("Flask-MonitoringDashboard: could not create index {}: {}".format(
+                        index.name, e.orig))
+
+
+create_missing_indexes(engine)
 Base.metadata.bind = engine
 DBSession = sessionmaker(bind=engine)
 
