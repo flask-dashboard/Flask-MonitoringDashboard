@@ -18,7 +18,9 @@ from sqlalchemy import (
     Float,
     TEXT,
     ForeignKey,
+    Index,
     exc,
+    inspect,
 )
 
 try:
@@ -107,7 +109,25 @@ class Request(Base):
     """Table for storing measurements of requests."""
 
     __tablename__ = "{}Request".format(config.table_prefix)
-    __table_args__ = {"mysql_collate": "utf8mb4_general_ci"}
+    __table_args__ = (
+        # Covers the per-endpoint aggregates (hits, average duration) run at startup by
+        # init_cache and on the overview page, so they never read the table rows.
+        Index(
+            "ix_{}request_endpoint_duration".format(config.table_prefix.lower()),
+            "endpoint_id",
+            "duration",
+        ),
+        # Covers the time-windowed counts and medians on the overview page (today, last 7 days,
+        # error hits), so they read only the rows in the window.
+        Index(
+            "ix_{}request_time_endpoint".format(config.table_prefix.lower()),
+            "time_requested",
+            "endpoint_id",
+            "status_code",
+            "duration",
+        ),
+        {"mysql_collate": "utf8mb4_general_ci"},
+    )
 
     id = Column(Integer, primary_key=True)
 
@@ -401,6 +421,31 @@ class ExceptionStackLine(Base):
 # define the database
 engine = create_engine(config.database_name)
 Base.metadata.create_all(engine)
+
+
+def create_missing_indexes(engine):
+    """create_all() only creates the indexes of tables it creates itself, so indexes declared
+    after a table already exists are added here. On a large table this makes the first startup
+    after an upgrade take as long as building the index. Failures are logged, not raised: the
+    indexes are only an optimization, and when several worker processes start together all but
+    one of them lose the race to create the same index."""
+    inspector = inspect(engine)
+    existing_tables = set(inspector.get_table_names())
+    for table in Base.metadata.sorted_tables:
+        if table.name not in existing_tables:
+            continue
+        existing = {ix["name"].lower() for ix in inspector.get_indexes(table.name) if ix["name"]}
+        for index in table.indexes:
+            if index.name.lower() not in existing:
+                print("Flask-MonitoringDashboard: creating index {}".format(index.name))
+                try:
+                    index.create(engine)
+                except exc.DBAPIError as e:
+                    print("Flask-MonitoringDashboard: could not create index {}: {}".format(
+                        index.name, e.orig))
+
+
+create_missing_indexes(engine)
 Base.metadata.bind = engine
 DBSession = sessionmaker(bind=engine)
 
