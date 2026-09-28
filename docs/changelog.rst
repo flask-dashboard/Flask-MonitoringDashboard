@@ -5,8 +5,9 @@ All notable changes to this project will be documented in this file.
 This project adheres to `Semantic Versioning <http://semver.org/>`_.
 Please note that the changes before version 1.10.0 have not been documented.
 
-Unreleased
+v5.0.4
 ----------
+**Bug Fix Release**
 
 Fixed
 ^^^^^
