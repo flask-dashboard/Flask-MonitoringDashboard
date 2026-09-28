@@ -60,6 +60,12 @@ class User(Base):
         return check_password_hash(self.password_hash, password)
 
 
+def utc_now():
+    """Column default for timestamps. Must be passed uncalled (default=utc_now), so SQLAlchemy
+    evaluates it per row; default=datetime.now(...) is evaluated once at import time."""
+    return datetime.datetime.now(datetime.timezone.utc)
+
+
 class TelemetryUser(Base):
     """Table for storing a unique identifier of an FMD user"""
 
@@ -72,7 +78,7 @@ class TelemetryUser(Base):
     times_initialized = Column(Integer, default=1)
     """For checking the amount of times the app was initialized"""
 
-    last_initialized = Column(DateTime, default=datetime.datetime.now(datetime.timezone.utc))
+    last_initialized = Column(DateTime, default=utc_now)
     """Check when was the last time user accessed FMD"""
 
     monitoring_consent = Column(Integer, default=1)
@@ -93,7 +99,7 @@ class Endpoint(Base):
     monitor_level = Column(Integer, default=config.monitor_level)
     """0 - disabled, 1 - performance, 2 - outliers, 3 - profiler + outliers"""
 
-    time_added = Column(DateTime, default=datetime.datetime.now(datetime.timezone.utc))
+    time_added = Column(DateTime, default=utc_now)
     """Time when the endpoint was added."""
 
     version_added = Column(String(100), default=config.version)
@@ -118,7 +124,7 @@ class Request(Base):
     duration = Column(Float, nullable=False)
     """Processing time of the request in milliseconds."""
 
-    time_requested = Column(DateTime, default=datetime.datetime.now(datetime.timezone.utc))
+    time_requested = Column(DateTime, default=utc_now)
     """Moment when the request was handled."""
 
     version_requested = Column(String(100), default=config.version)
@@ -225,7 +231,7 @@ class CustomGraph(Base):
     title = Column(String(250), nullable=False, unique=True)
     """Title of this graph."""
 
-    time_added = Column(DateTime, default=datetime.datetime.now(datetime.timezone.utc))
+    time_added = Column(DateTime, default=utc_now)
     """When the graph was first added to the dashboard."""
 
     version_added = Column(String(100), default=config.version)
@@ -244,7 +250,7 @@ class CustomGraphData(Base):
     graph = relationship(CustomGraph, backref="data")
     """Graph for which the data is collected."""
 
-    time = Column(DateTime, default=datetime.datetime.now(datetime.timezone.utc))
+    time = Column(DateTime, default=utc_now)
     """Moment when the data is collected."""
 
     value = Column(Float)
