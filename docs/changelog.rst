@@ -5,6 +5,13 @@ All notable changes to this project will be documented in this file.
 This project adheres to `Semantic Versioning <http://semver.org/>`_.
 Please note that the changes before version 1.10.0 have not been documented.
 
+Unreleased
+----------
+
+Fixed
+^^^^^
+- **Pruning**: ``prune_database_older_than_weeks`` (the scheduled job and the "prune now" button) deletes old requests in batches of 10,000, each in its own transaction, with set-based deletes of their outliers, stack lines and exception occurrences. It used to load every old request into memory and delete their rows one query at a time in a single transaction, which could not finish on a large backlog
+
 v5.0.3
 ----------
 **Bug Fix Release**

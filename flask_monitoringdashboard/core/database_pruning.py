@@ -20,26 +20,24 @@ from flask_monitoringdashboard.database import (
 )
 
 
-def prune_database_older_than_weeks(weeks_to_keep, delete_custom_graph_data):
-    """Prune the database of Request and optionally CustomGraph data older than the specified number of weeks"""
+PRUNE_BATCH_SIZE = 10000
+
+
+def prune_database_older_than_weeks(weeks_to_keep, delete_custom_graph_data,
+                                    batch_size=PRUNE_BATCH_SIZE):
+    """Prune the database of Request and optionally CustomGraph data older than the specified
+    number of weeks.
+
+    Requests are deleted in batches, each in its own transaction, together with the rows that
+    reference them. Memory and lock time stay bounded however large the backlog is, and since a
+    batch only deletes rows that still exist, two processes pruning at the same time is wasteful
+    but harmless."""
+    date_to_delete_from = datetime.now(timezone.utc) - timedelta(weeks=weeks_to_keep)
+
+    while _prune_request_batch(date_to_delete_from, batch_size) == batch_size:
+        pass
+
     with session_scope() as session:
-        date_to_delete_from = datetime.now(timezone.utc) - timedelta(weeks=weeks_to_keep)
-
-        # Prune Request table and related Outlier entries
-        requests_to_delete = (
-            session.query(Request)
-            .filter(Request.time_requested < date_to_delete_from)
-            .all()
-        )
-
-        for request in requests_to_delete:
-            session.query(Outlier).filter(Outlier.request_id == request.id).delete()
-            session.query(StackLine).filter(StackLine.request_id == request.id).delete()
-            session.query(ExceptionOccurrence).filter(
-                ExceptionOccurrence.request_id == request.id
-            ).delete()
-            session.delete(request)
-
         # Find and delete CodeLines not referenced by any StackLines
         session.query(CodeLine).filter(
             ~session.query(StackLine).filter(StackLine.code_id == CodeLine.id).exists()
@@ -53,6 +51,29 @@ def prune_database_older_than_weeks(weeks_to_keep, delete_custom_graph_data):
         delete_entries_unreferenced_by_exception_occurrence(session)
 
         session.commit()
+
+
+def _prune_request_batch(date_to_delete_from, batch_size):
+    """Delete up to batch_size Requests older than date_to_delete_from, and the Outliers,
+    StackLines and ExceptionOccurrences that reference them. Returns how many Requests went."""
+    with session_scope() as session:
+        request_ids = [
+            request_id
+            for (request_id,) in session.query(Request.id)
+            .filter(Request.time_requested < date_to_delete_from)
+            .limit(batch_size)
+        ]
+        if not request_ids:
+            return 0
+
+        for model in (Outlier, StackLine, ExceptionOccurrence):
+            session.query(model).filter(model.request_id.in_(request_ids)).delete(
+                synchronize_session=False
+            )
+        session.query(Request).filter(Request.id.in_(request_ids)).delete(
+            synchronize_session=False
+        )
+        return len(request_ids)
 
 
 def delete_entries_unreferenced_by_exception_occurrence(session: Session):
