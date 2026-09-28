@@ -25,6 +25,10 @@ Changed
 - Added jinja2 to requirements-micro.txt for email template rendering
 - Endpoint-specific exception pages now support URL anchor-based navigation
 
+Contributors
+^^^^^^^^^^^^
+Special thanks to: Zalán (@klnyzzz33), Gábor Tódor (@gabortodor) and Nicklas Koch Rasmussen (@xXPinkmagicXx) for the alerting feature (#542)
+
 v5.0.4
 ----------
 **Bug Fix Release**
