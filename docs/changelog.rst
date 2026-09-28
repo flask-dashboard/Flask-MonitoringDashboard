@@ -5,6 +5,20 @@ All notable changes to this project will be documented in this file.
 This project adheres to `Semantic Versioning <http://semver.org/>`_.
 Please note that the changes before version 1.10.0 have not been documented.
 
+v5.0.3
+----------
+**Bug Fix Release**
+
+Fixed
+^^^^^
+- **Timestamps**: ``Request.time_requested`` and four other timestamp columns were set once, when the models were imported, so every row got the worker's boot time. They are evaluated per row again. Regression from 5.0.2; affected rows cannot be recovered (#564)
+- **Performance**: Two indexes on ``Request``, ``(endpoint_id, duration)`` and ``(time_requested, endpoint_id, status_code, duration)``. On a 4.4M-row table, the per-worker startup query went from 94s to 0.7s and the overview page's time-windowed counts from 36s to 0.1s each. Existing databases get the indexes on the first startup after upgrading, which takes as long as building them (#565)
+- **Performance**: The overview page counts exceptions for all endpoints in one query instead of one query per endpoint (#565)
+
+Changed
+^^^^^^^
+- **Release**: Published to PyPI with trusted publishing instead of an API token (#566)
+
 v5.0.2
 ----------
 **Bug Fix Release**
