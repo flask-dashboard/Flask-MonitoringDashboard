@@ -291,6 +291,18 @@ class StackTraceSnapshot(Base):
     )
 
 
+class AlertFingerprint(Base):
+    """Table for storing the fingerprints of exceptions that have already been alerted on.
+    The hash is the primary key, so when several workers see a new exception at the same time,
+    only the one whose insert succeeds sends the alert."""
+
+    __tablename__ = "{}AlertFingerprint".format(config.table_prefix)
+    __table_args__ = {"mysql_collate": "utf8mb4_general_ci"}
+
+    hash = Column(String(64), primary_key=True)
+    time_first_alerted = Column(DateTime, default=utc_now)
+
+
 class ExceptionType(Base):
     """Table for storing Exception types"""
 

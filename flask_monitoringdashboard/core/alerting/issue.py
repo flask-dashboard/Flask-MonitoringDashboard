@@ -13,14 +13,14 @@ def make_issue_post_request(github_token: str, repo_owner: str, repo_name: str, 
     url = get_issue_endpoint_url(repo_owner, repo_name)
     headers = _post_headers(github_token)
 
-    return requests.post(url, headers=headers, json=data)
+    return requests.post(url, headers=headers, json=data, timeout=10)
 
 
 def create_issue(
         github_token: str,
         repo_owner: str,
         repo_name: str,
-        alert_content: AlertContent) -> requests.Response:
+        alert_content: AlertContent):
     is_user_captured_label = "user-captured" if alert_content.is_user_captured else "uncaught"
     data = {
         "title": alert_content.title,
@@ -28,7 +28,11 @@ def create_issue(
         "labels": ["automated-issue", "exception", is_user_captured_label]
     }
 
-    return make_issue_post_request(github_token, repo_owner, repo_name, data)
+    try:
+        resp = make_issue_post_request(github_token, repo_owner, repo_name, data)
+        resp.raise_for_status()
+    except Exception as e:
+        print("Error creating GitHub issue alert:", e)
 
 
 def _post_headers(github_token: str):
@@ -37,11 +41,3 @@ def _post_headers(github_token: str):
         "Accept": "application/vnd.github.v3+json"
     }
     return headers
-
-
-def main():
-    print("This is a utility file with helper functions not to be run directly.")
-
-
-if __name__ == "__main__":
-    main()

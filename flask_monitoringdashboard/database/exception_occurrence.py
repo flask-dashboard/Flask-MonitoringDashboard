@@ -259,16 +259,6 @@ def get_exception_group_page_number_by_endpoint(
     return int(result)
 
 
-def check_if_stack_trace_exists(session: Session, exc: BaseException, tb: Union[TracebackType, None]) -> bool:
-    """
-    Check if a stack_trace_snapshot already exists in the database.
-    """
-
-    hashed_trace = hash_stack_trace(exc, tb)
-    stacktrace = get_stack_trace_by_hash(session, hashed_trace)
-    return stacktrace is not None
-
-
 def save_exception_occurence_to_db(
     request_id: int,
     session: Session,
@@ -284,10 +274,8 @@ def save_exception_occurence_to_db(
     existing_trace = get_stack_trace_by_hash(session, hashed_trace)
 
     if existing_trace:
-        is_new_group = False
         trace_id = int(existing_trace.id)
     else:
-        is_new_group = True
         trace_id = add_stack_trace_snapshot(session, hashed_trace)
         idx = 0
         while tb:
@@ -325,4 +313,4 @@ def save_exception_occurence_to_db(
     exception_occurrence = add_exception_occurrence(
         session, request_id, trace_id, exc_type_id, exc_msg_id, is_user_captured
     )
-    return exception_occurrence.request.endpoint_id, trace_id, is_new_group
+    return exception_occurrence.request.endpoint_id, trace_id

@@ -11,7 +11,7 @@ v5.1.0
 
 Added
 ^^^^^
-- Optional, configurable alerting on uncaught or user-defined exceptions
+- Optional, configurable alerting on uncaught or user-defined exceptions, sent once per kind of exception (type and call path, ignoring the message and line numbers)
 - 3 types of possible alerting channels:
 
   - Email via SMTP

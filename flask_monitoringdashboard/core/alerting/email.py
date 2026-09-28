@@ -18,7 +18,7 @@ def send_email(alert_content: AlertContent):
     message.attach(MIMEText(alert_content.create_body_html(None), 'html', 'utf-8'))
 
     try:
-        with smtplib.SMTP(config.smtp_host, int(config.smtp_port)) as smtp:
+        with smtplib.SMTP(config.smtp_host, int(config.smtp_port), timeout=10) as smtp:
             smtp.starttls()
 
             if config.smtp_password:

@@ -6,6 +6,7 @@ from sqlalchemy.orm import Session
 from flask_monitoringdashboard.core.config import Config
 from flask_monitoringdashboard.core.logger import log
 from ..alerting.alerting import send_alert
+from ..alerting.fingerprint import alert_fingerprint
 
 
 class ExceptionCollector:
@@ -50,17 +51,22 @@ class ExceptionCollector:
     def _save_exception_and_send_alert(self, request_id: int, session: Session, config: Config, e: BaseException, is_user_captured):
         # import package config lazily to avoid circular import at module import time
         from flask_monitoringdashboard.database.exception_occurrence import save_exception_occurence_to_db
+        from flask_monitoringdashboard.database.alert_fingerprint import claim_alert_fingerprint
 
-        endpoint_id, stack_trace_snapshot_id, is_new_group = save_exception_occurence_to_db(
+        endpoint_id, stack_trace_snapshot_id = save_exception_occurence_to_db(
             request_id, session, e, type(e), e.__traceback__, is_user_captured
         )
-        if config.alert_enabled:
-            if not is_new_group:
-                log('Stack trace already exists in DB, no alert sent.')
+        if not config.alert_enabled:
+            return
+        try:
+            if not claim_alert_fingerprint(alert_fingerprint(e, e.__traceback__)):
+                log('Exception was already alerted on, no alert sent.')
                 return
             alert_url = f"{self.request_host_url}{config.link}/endpoint/{endpoint_id}/exceptions#request-{stack_trace_snapshot_id}"
             send_alert(e, config, alert_url, is_user_captured)
-
+        except Exception as alert_error:
+            # alerting must never prevent the remaining exceptions of this request from being saved
+            print("Flask-MonitoringDashboard: could not send alert:", alert_error)
 
 def _get_copy_of_exception(e: BaseException):
     """

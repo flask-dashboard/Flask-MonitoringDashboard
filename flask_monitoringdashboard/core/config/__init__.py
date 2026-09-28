@@ -166,7 +166,6 @@ class Config(object):
         try:
             parser = configparser.RawConfigParser()
             parser.read(file)
-            print(f"Config file read from: {file}")
 
             # parse 'dashboard'
             self.version = parse_version(parser, 'dashboard', self.version)

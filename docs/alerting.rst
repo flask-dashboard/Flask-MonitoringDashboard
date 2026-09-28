@@ -26,6 +26,20 @@ can be specified in a comma-separated list. Available alerting types are:
 - "chat": send alerts to supported chat platforms
 - "issue": create issues in a GitHub repository
 
+When alerts are sent
+--------------------------
+
+An alert is sent the first time an exception of a given kind occurs, and never again for that kind.
+Two exceptions are of the same kind when they have the same type and were raised along the same call
+path: the same functions in the same files. The message and the line numbers are ignored, so
+``KeyError('user 1 not found')`` and ``KeyError('user 2 not found')`` raised from the same function
+produce a single alert, and editing a function does not re-alert on exceptions it was already raising.
+The dashboard still lists every occurrence.
+
+Which kinds have been alerted on is stored in the dashboard's database, so several workers or
+processes sharing that database send each alert once. When you first enable alerting, every kind of
+exception that occurs will be new to the alerting, including ones that already appear in the dashboard.
+
 Alerting through Emails
 --------------------------
 
@@ -77,7 +91,7 @@ to exactly one of the listed values.
 
 Alerting through Github Issues
 --------------------------
-Issue alerting automatically creates a new GitHub issue for each exception.
+Issue alerting automatically creates a new GitHub issue for each new kind of exception.
 
 In addition to the base alerting configuration, the following options are required
 to enable issue creation:

@@ -74,7 +74,7 @@ class OutlierProfiler(threading.Thread):
                 session,
                 duration=duration * 1000,
                 endpoint_id=self._endpoint.id,
-                ip=self._ip,   
+                ip=self._ip,
                 group_by=self._group_by,
                 status_code=status_code,
             )
